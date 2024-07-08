@@ -28,16 +28,14 @@ dependencies = [
     "pycryptodomex>=3.6.0,<4",
     "pynacl>=1.4.0,<2",
     "ecdsa>=0.17.0",
-    "coincurve>=19.0.1"
+    "coincurve>=19.0.1",
+    "algorand-python>=1.2"
 ]
 
 [project.urls]
 Documentation = "https://github.com/algorandfoundation/puya/tree/main/algopy_testing#README.md"
 Issues = "https://github.com/algorandfoundation/puya/issues"
 Source = "https://github.com/algorandfoundation/puya/tree/main/algopy_testing"
-
-# adds dependency on stubs when building wheel via hatch_build.py
-[tool.hatch.build.hooks.custom]
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -54,7 +52,7 @@ type = "virtual"
 path = ".venv"
 python = "3.12"
 dependencies = [
-    "puyapy@{root:uri}/..",
+    "puyapy>=2.1",
     "pytest>=7.4",
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
@@ -62,7 +60,6 @@ dependencies = [
     "algokit-utils>=2.2.1",
     "pytest-cov>=4.1.0",
     "prettytable>=3.9.0",
-    "hatchling", # used for hatch_build.py
     "mypy==1.10",
 ]
 
@@ -84,7 +81,6 @@ check = [
 ]
 # type checks algorand-python-testing code
 mypy_testing = "mypy . --exclude examples"
-tests = "pytest --cov --cov-report xml"
 
 # isolated environments for dev tooling
 [tool.hatch.envs.lint]
@@ -119,6 +115,18 @@ localnet_start = [
     "algokit localnet start",
 ]
 
+# docs environment
+[tool.hatch.envs.docs]
+dependencies = [
+    "sphinx>=7.2.6",
+    "furo>=2024.1.29",
+    "myst-parser>=2.0.0",
+    "sphinx-autodoc2>=0.5.0",
+    "sphinx-copybutton>=0.5.2"
+]
+
+[tool.hatch.envs.docs.scripts]
+build = "sphinx-build docs docs/_build -W --keep-going -n -E"
 
 # Examples environment
 [tool.hatch.envs.examples]
@@ -128,7 +136,7 @@ python = "3.12"
 dev-mode= true
 detached = true
 dependencies = [
-    "algorand-python @ {root:uri}/../stubs",
+    "algorand-python>=1.2",
     "algorand-python-testing @ {root:uri}",
     "pytest>=7.4",
     "pytest-mock>=3.10.0",
@@ -150,6 +158,16 @@ check = [
     "hatch run mypy examples",
 ]
 
+[tool.hatch.envs.test]
+dependencies = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1.0",
+]
+[tool.hatch.envs.test.scripts]
+codebase = "pytest --cov --cov-report xml"
+
+[tool.hatch.envs.test.env-vars]
+PYTHONPATH = "./src"
 
 # tool configurations
 [tool.black]
