@@ -15,14 +15,14 @@ on:
     inputs:
       prerelease:
         description: "Prerelease?"
-        type: string
+        type: boolean
         required: true
-        default: "true"
+        default: true
       dry_run:
         description: "Dry Run? If true, won't commit or publish anything"
-        type: string
+        type: boolean
         required: true
-        default: "false"
+        default: false
 
 concurrency: release
 
