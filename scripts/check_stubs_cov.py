@@ -1,5 +1,6 @@
 import ast
 import inspect
+import site
 import sys
 from collections.abc import Iterable
 from pathlib import Path
@@ -7,11 +8,9 @@ from typing import NamedTuple
 
 from prettytable import PrettyTable
 
-# TODO: update to follow the new project structure
-
-PROJECT_ROOT = (Path(__file__).parent / "..").resolve()
-VCS_ROOT = (PROJECT_ROOT / "..").resolve()
-STUBS = VCS_ROOT / "stubs" / "algopy-stubs"
+PROJECT_ROOT = Path(__file__).parent.parent.resolve()
+SITE_PACKAGES = Path(site.getsitepackages()[0])
+STUBS_ROOT = SITE_PACKAGES / "algopy-stubs"
 IMPL = PROJECT_ROOT / "src"
 ROOT_MODULE = "algopy"
 
@@ -49,13 +48,20 @@ class ImplCoverage:
 
 
 def main() -> None:
+    clear_algopy_content()
     stubs = collect_public_stubs()
     coverage = collect_coverage(stubs)
     print_results(coverage)
 
 
+def clear_algopy_content() -> None:
+    algopy_path = SITE_PACKAGES / "algopy.py"
+    if algopy_path.exists():
+        algopy_path.write_text("")
+
+
 def collect_public_stubs() -> dict[str, ASTNodeDefinition]:
-    stubs_root = STUBS / "__init__.pyi"
+    stubs_root = STUBS_ROOT / "__init__.pyi"
     stubs_ast = _parse_python_file(stubs_root)
     result = dict[str, ASTNodeDefinition]()
     for stmt in stubs_ast.body:
@@ -80,15 +86,15 @@ def collect_imports(
     dest = alias.asname
     # from module import *
     if src == "*" and dest is None:
-        for defn_name, defn in collect_stubs(STUBS, relative_module).items():
+        for defn_name, defn in collect_stubs(STUBS_ROOT, relative_module).items():
             yield f"{ROOT_MODULE}.{defn_name}", defn
     # from root import src as src
     elif stmt.module == ROOT_MODULE and dest == src:
-        for defn_name, defn in collect_stubs(STUBS, src).items():
+        for defn_name, defn in collect_stubs(STUBS_ROOT, src).items():
             yield f"{ROOT_MODULE}.{dest}.{defn_name}", defn
     # from foo.bar import src as src
     elif dest == src:
-        stubs = collect_stubs(STUBS, relative_module)
+        stubs = collect_stubs(STUBS_ROOT, relative_module)
         yield f"{ROOT_MODULE}.{src}", stubs[src]
     else:
         raise NotImplementedError
@@ -138,7 +144,7 @@ def collect_coverage(stubs: dict[str, ASTNodeDefinition]) -> list[CoverageResult
         result.append(
             CoverageResult(
                 full_name=full_name,
-                stub_file=str(stub.path.relative_to(STUBS)),
+                stub_file=str(stub.path.relative_to(STUBS_ROOT)),
                 impl_file=impl_file,
                 coverage=coverage.coverage if coverage else 0,
                 missing=", ".join(coverage.missing if coverage else []),
@@ -185,15 +191,25 @@ def _parse_python_file(filepath: Path) -> ast.Module:
 
 def _get_impl_coverage(symbol: str, stub: ASTNodeDefinition) -> ImplCoverage | None:
     import importlib
+    import sys
+    from pathlib import Path
+
+    # Add the src directory to the Python path
+    src_path = Path(__file__).parent.parent / "src"
+    sys.path.insert(0, str(src_path))
 
     module, name = symbol.rsplit(".", maxsplit=1)
     try:
+        # Use importlib.import_module for both algopy and non-algopy modules
         mod = importlib.import_module(module)
-    except ImportError:
+    except ImportError as ex:
+        print(f"Error importing {module}: {ex}")
         return None
+
     try:
         impl = getattr(mod, name)
     except AttributeError:
+        print(f"Attribute {name} not found in module {module}")
         return None
 
     try:

@@ -52,7 +52,7 @@ type = "virtual"
 path = ".venv"
 python = "3.12"
 dependencies = [
-    "puyapy>=2.1",
+    "puyapy>=2.1.2",
     "pytest>=7.4",
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
@@ -81,6 +81,7 @@ check = [
 ]
 # type checks algorand-python-testing code
 mypy_testing = "mypy . --exclude examples"
+tests = "pytest --cov --cov-report xml"
 
 # isolated environments for dev tooling
 [tool.hatch.envs.lint]
@@ -157,17 +158,6 @@ check = [
     "hatch run lint:check_examples",
     "hatch run mypy examples",
 ]
-
-[tool.hatch.envs.test]
-dependencies = [
-    "pytest>=7.4",
-    "pytest-cov>=4.1.0",
-]
-[tool.hatch.envs.test.scripts]
-codebase = "pytest --cov --cov-report xml"
-
-[tool.hatch.envs.test.env-vars]
-PYTHONPATH = "./src"
 
 # tool configurations
 [tool.black]
@@ -277,3 +267,4 @@ follow_imports = "skip"
 
 [tool.pytest.ini_options]
 addopts = "-n auto --cov-config=.coveragerc"
+pythonpath = ['src']

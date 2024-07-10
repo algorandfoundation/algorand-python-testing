@@ -1,0 +1,7 @@
+#pragma version 10
+
+tests.artifacts.GlobalStateValidator.contract.GlobalStateValidator.clear_state_program:
+    // tests/artifacts/GlobalStateValidator/contract.py:4
+    // class GlobalStateValidator(ARC4Contract):
+    int 1
+    return

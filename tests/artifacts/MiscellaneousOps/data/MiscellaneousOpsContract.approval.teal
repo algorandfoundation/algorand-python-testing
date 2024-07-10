@@ -93,7 +93,7 @@ main_verify_base64_decode_standard_route@3:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -121,7 +121,7 @@ main_verify_base64_decode_url_route@4:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -197,7 +197,7 @@ main_verify_bsqrt_route@7:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -248,7 +248,7 @@ main_verify_bzero_route@9:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -282,7 +282,7 @@ main_verify_concat_route@10:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -454,7 +454,7 @@ main_verify_extract_route@16:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -482,7 +482,7 @@ main_verify_extract_from_2_route@17:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -660,7 +660,7 @@ main_verify_itob_route@24:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -721,7 +721,7 @@ main_verify_replace_route@26:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -753,7 +753,7 @@ main_verify_select_bytes_route@27:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -812,7 +812,7 @@ main_verify_setbit_bytes_route@29:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -871,7 +871,7 @@ main_verify_setbyte_route@31:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -976,7 +976,7 @@ main_verify_substring_route@35:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -1006,7 +1006,7 @@ main_verify_json_ref_string_route@36:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -1061,7 +1061,7 @@ main_verify_json_ref_object_route@38:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75

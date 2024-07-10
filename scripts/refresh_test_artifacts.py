@@ -27,6 +27,8 @@ def compile_contract(folder: Path) -> None:
         "hatch",
         "run",
         "puyapy",
+        "--log-level",
+        "debug",
         str(contract_path),
         "--out-dir",
         "data",
