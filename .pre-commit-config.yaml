@@ -1,0 +1,18 @@
+repos:
+  - repo: local
+    hooks:
+      - id: pre-commit
+        name: pre-commit
+        description: "Run pre-commit task via hatch"
+        entry: hatch run pre_commit
+        language: system
+        additional_dependencies: []
+        minimum_pre_commit_version: "0"
+
+      - id: examples-pre-commit
+        name: examples-pre-commit
+        description: "Run examples venv pre-commit task via hatch"
+        entry: hatch run examples:pre_commit
+        language: system
+        additional_dependencies: []
+        minimum_pre_commit_version: "0"

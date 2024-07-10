@@ -42,7 +42,7 @@ main_verify_sha256_route@2:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -72,7 +72,7 @@ main_verify_sha3_256_route@3:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -102,7 +102,7 @@ main_verify_keccak_256_route@4:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -132,7 +132,7 @@ main_verify_sha512_256_route@5:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -287,13 +287,13 @@ main_verify_ecdsa_recover_k1_route@10:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     dig 1
     len
     itob
-    substring 6 8
+    extract 6 2
     uncover 2
     concat
     swap
@@ -342,13 +342,13 @@ main_verify_ecdsa_recover_r1_route@11:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     dig 1
     len
     itob
-    substring 6 8
+    extract 6 2
     uncover 2
     concat
     swap
@@ -391,13 +391,13 @@ main_verify_ecdsa_decompress_k1_route@12:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     dig 1
     len
     itob
-    substring 6 8
+    extract 6 2
     uncover 2
     concat
     swap
@@ -440,13 +440,13 @@ main_verify_ecdsa_decompress_r1_route@13:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     dig 1
     len
     itob
-    substring 6 8
+    extract 6 2
     uncover 2
     concat
     swap
@@ -493,7 +493,7 @@ main_verify_vrf_verify_route@14:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x00

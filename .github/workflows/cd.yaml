@@ -1,15 +1,20 @@
 name: Continuous Delivery of Algorand Python Testing package
 
 on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "scripts/**"
+      - "examples/**"
+      - "tests/**"
+
   workflow_dispatch:
     inputs:
-      publish_pypi:
-        description: "Publish to PyPi?"
-        type: boolean
-        required: true
-        default: false
-      run_checks:
-        description: "Run checks?"
+      prerelease:
+        description: "Prerelease?"
         type: boolean
         required: true
         default: true
@@ -35,10 +40,12 @@ jobs:
       contents: write
       packages: read
     env:
-      DRY_RUN: ${{ inputs.dry_run && '--noop' || '' }}
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.dry_run && '--noop' || '') || '' }}
+      PRERELEASE: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.prerelease && 'true' || '') || 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           token: ${{ secrets.RELEASE_GITHUB_TOKEN }}
 
       - name: Install hatch
@@ -63,20 +70,25 @@ jobs:
         run: hatch build
 
       - name: Run tests (codebase)
-        run: hatch run test:codebase
+        run: hatch run tests
 
       - name: Run tests (examples)
         run: hatch run examples:tests
-
-      - name: Create Unit Testing Wheel
-        run: hatch build
 
       - uses: actions/upload-artifact@v4 # upload artifacts so they are retained on the job
         with:
           path: dist
 
-      - name: Publish to PyPI - Unit Testing
-        if: ${{ !inputs.dry_run && inputs.publish_pypi }}
+      - name: Python Semantic Release
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: python-semantic-release/python-semantic-release@master
+        with:
+          github_token: ${{ secrets.RELEASE_GITHUB_TOKEN }}
+          prerelease: ${{ env.PRERELEASE == 'true' }}
+          root_options: $DRY_RUN
+
+      - name: Publish to PyPI
+        if: ${{ !inputs.dry_run }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist

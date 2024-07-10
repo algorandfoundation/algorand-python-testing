@@ -9,5 +9,5 @@ class GlobalStateValidator(ARC4Contract):
         assert Txn.application_args(2) == arg2.bytes
         assert gtxn.ApplicationCallTransaction(Txn.group_index).app_args(1) == arg1.bytes
         assert gtxn.Transaction(Txn.group_index).app_args(1) == arg1.bytes
-        assert op.GTxn.application_args(Txn.group_index, 1) == arg1.bytes  # type: ignore[call-arg]
+        assert op.GTxn.application_args(Txn.group_index, 1) == arg1.bytes  # type: ignore[call-arg, unused-ignore]
         assert op.Txn.application_args(1) == arg1.bytes

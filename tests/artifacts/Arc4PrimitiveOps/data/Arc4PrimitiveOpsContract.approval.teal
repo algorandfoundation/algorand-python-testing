@@ -876,7 +876,7 @@ main_verify_ufixednxm_bytes_route@32:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -903,7 +903,7 @@ main_verify_bigufixednxm_bytes_route@33:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -1089,7 +1089,7 @@ main_verify_string_bytes_route@41:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -1160,7 +1160,7 @@ main_verify_bool_bytes_route@44:
     dup
     len
     itob
-    substring 6 8
+    extract 6 2
     swap
     concat
     byte 0x151f7c75
@@ -1243,21 +1243,24 @@ main_verify_emit_route@47:
     dup
     int 0
     extract_uint16
-    dup2
-    extract_uint16
+    swap
+    dup
     int 2
-    +
-    extract3
+    extract_uint16
+    swap
+    cover 2
+    substring3
     extract 2 0
     txna ApplicationArgs 15
     dup
     int 2
     extract_uint16
-    dup2
-    extract_uint16
-    int 2
-    +
-    extract3
+    swap
+    dup
+    len
+    swap
+    cover 2
+    substring3
     extract 2 0
     // tests/artifacts/Arc4PrimitiveOps/contract.py:252
     // @arc4.abimethod()
@@ -2232,7 +2235,7 @@ verify_string_add:
     dup
     len
     itob
-    extract 6 0
+    extract 6 2
     swap
     concat
     // tests/artifacts/Arc4PrimitiveOps/contract.py:221
@@ -2349,7 +2352,7 @@ verify_bool_from_log:
 verify_emit:
     // tests/artifacts/Arc4PrimitiveOps/contract.py:252-271
     // @arc4.abimethod()
-    // def verify_emit(
+    // def verify_emit(  # noqa: PLR0913
     //     self,
     //     a: arc4.String,
     //     b: arc4.UInt512,

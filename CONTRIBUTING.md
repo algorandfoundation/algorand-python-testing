@@ -1,4 +1,6 @@
-# Development dependencies
+# Contributing to `algorand-python-testing`
+
+Welcome to the Algorand Python Testing library! This guide will help you get started with the project and contribute to its development.
 
 # Development Dependencies
 
@@ -6,6 +8,7 @@ Our development environment relies on the following tools:
 
 -   **Python 3.12**
 -   **[Hatch](https://hatch.pypa.io/1.9/install/)**: A modern, extensible Python project manager.
+-   **[pre-commit](https://pre-commit.com/)**: A framework for managing and maintaining code quality.
 
 ## Common Commands
 
@@ -22,6 +25,18 @@ Here are some common commands you will use with Hatch:
 -   **Regenerate typed clients for example contracts:** `hatch run refresh_test_artifacts`
 -   **Coverage check of existing progress on implementing AlgoPy Stubs:** `hatch run check_stubs_cov`
 
+# Using `pre-commit`
+
+Execute `pre-commit install` to ensure auto run of hatch against `src` and `examples` folders
+
 # Examples folder
 
 Examples folder uses a dedicated 'venv.examples' virtual environment managed by Hatch that simulates a user environment with both algorand-python and algorand-python-testing installed explicitly. This is useful for testing new features or bug fixes in the testing library.
+
+-   **Pre-commit checks against examples:** `hatch run examples:pre-commit`
+
+# Release automation
+
+Project relies on [python-semantic-release](https://python-semantic-release.readthedocs.io/en/latest/) for release automation.
+
+Releases are triggered by a `workflow_dispatch` event on the `main` branch with `prerelease` set to accordingly using the `.github/workflows/cd.yaml` file.
