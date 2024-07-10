@@ -34,3 +34,9 @@ Execute `pre-commit install` to ensure auto run of hatch against `src` and `exam
 Examples folder uses a dedicated 'venv.examples' virtual environment managed by Hatch that simulates a user environment with both algorand-python and algorand-python-testing installed explicitly. This is useful for testing new features or bug fixes in the testing library.
 
 -   **Pre-commit checks against examples:** `hatch run examples:pre-commit`
+
+# Release automation
+
+Project relies on [python-semantic-release](https://python-semantic-release.readthedocs.io/en/latest/) for release automation.
+
+Releases are triggered by a `workflow_dispatch` event on the `main` branch with `prerelease` set to accordingly using the `.github/workflows/cd.yaml` file.
