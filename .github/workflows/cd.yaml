@@ -13,26 +13,16 @@ on:
 
   workflow_dispatch:
     inputs:
-      publish_pypi:
-        description: "Publish to PyPi?"
-        type: boolean
+      prerelease:
+        description: "Prerelease?"
+        type: string
         required: true
-        default: false
-      publish_github:
-        description: "Publish to Github?"
-        type: boolean
-        required: true
-        default: true
-      run_checks:
-        description: "Run checks?"
-        type: boolean
-        required: true
-        default: true
+        default: "true"
       dry_run:
         description: "Dry Run? If true, won't commit or publish anything"
-        type: boolean
+        type: string
         required: true
-        default: false
+        default: "false"
 
 concurrency: release
 
@@ -50,7 +40,8 @@ jobs:
       contents: write
       packages: read
     env:
-      DRY_RUN: ${{ inputs.dry_run && '--noop' || '' }}
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run == 'true' && '--noop' || '' }}
+      PRERELEASE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.prerelease == 'true' || 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -89,11 +80,12 @@ jobs:
           path: dist
 
       - name: Python Semantic Release
-        if: ${{ github.ref == 'refs/heads/main' && !inputs.dry_run && !inputs.publish_github }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         uses: python-semantic-release/python-semantic-release@master
         with:
           github_token: ${{ secrets.RELEASE_GITHUB_TOKEN }}
-          prerelease: ${{ !inputs.publish_github }}
+          prerelease: ${{ env.PRERELEASE == 'true' }}
+          root_options: $DRY_RUN
 
       - name: Publish to PyPI
         if: ${{ !inputs.dry_run }}
