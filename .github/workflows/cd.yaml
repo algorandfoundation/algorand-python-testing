@@ -8,6 +8,11 @@ on:
         type: boolean
         required: true
         default: false
+      publish_github:
+        description: "Publish to Github?"
+        type: boolean
+        required: true
+        default: true
       run_checks:
         description: "Run checks?"
         type: boolean
@@ -75,7 +80,13 @@ jobs:
         with:
           path: dist
 
-      - name: Publish to PyPI - Unit Testing
+      - name: Python Semantic Release
+        if: ${{ github.ref == 'refs/heads/main' && !inputs.dry_run && inputs.publish_github }}
+        uses: python-semantic-release/python-semantic-release@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to PyPI
         if: ${{ !inputs.dry_run && inputs.publish_pypi }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
