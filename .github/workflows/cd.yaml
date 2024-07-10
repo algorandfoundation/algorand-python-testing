@@ -1,6 +1,16 @@
 name: Continuous Delivery of Algorand Python Testing package
 
 on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "scripts/**"
+      - "examples/**"
+      - "tests/**"
+
   workflow_dispatch:
     inputs:
       publish_pypi:
@@ -44,6 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           token: ${{ secrets.RELEASE_GITHUB_TOKEN }}
 
       - name: Install hatch
@@ -73,21 +84,19 @@ jobs:
       - name: Run tests (examples)
         run: hatch run examples:tests
 
-      - name: Create Unit Testing Wheel
-        run: hatch build
-
       - uses: actions/upload-artifact@v4 # upload artifacts so they are retained on the job
         with:
           path: dist
 
       - name: Python Semantic Release
-        if: ${{ github.ref == 'refs/heads/main' && !inputs.dry_run && inputs.publish_github }}
+        if: ${{ github.ref == 'refs/heads/main' && !inputs.dry_run && !inputs.publish_github }}
         uses: python-semantic-release/python-semantic-release@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.RELEASE_GITHUB_TOKEN }}
+          prerelease: ${{ !inputs.publish_github }}
 
       - name: Publish to PyPI
-        if: ${{ github.ref == 'refs/heads/main' && !inputs.dry_run && inputs.publish_pypi }}
+        if: ${{ !inputs.dry_run }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist

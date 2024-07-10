@@ -11,6 +11,7 @@ from algopy import (
     Txn,
     UInt64,
     itxn,
+    op,
     subroutine,
 )
 from algopy.arc4 import (
@@ -62,7 +63,9 @@ class ZkWhitelistContract(py.ARC4Contract):
         # The verifier expects public inputs to be in the curve field, but an
         # Algorand address might represent a number larger than the field
         # modulus, so to be safe we take the address modulo the field modulus
-        address_mod = Bytes32.from_bytes((py.BigUInt.from_bytes(address.bytes) % curve_mod).bytes)
+        address_mod = Bytes32.from_bytes(
+            (py.BigUInt.from_bytes(address.bytes) % curve_mod).bytes or op.bzero(32)
+        )
 
         # Verify the proof by calling the deposit verifier app
         verified = verify_proof(
