@@ -64,7 +64,7 @@ class ZkWhitelistContract(py.ARC4Contract):
         # Algorand address might represent a number larger than the field
         # modulus, so to be safe we take the address modulo the field modulus
         address_mod = Bytes32.from_bytes(
-            (py.BigUInt.from_bytes(address.bytes) % curve_mod).bytes or op.bzero(32)
+            (py.BigUInt.from_bytes(address.bytes) % curve_mod).bytes | op.bzero(32)
         )
 
         # Verify the proof by calling the deposit verifier app
