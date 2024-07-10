@@ -87,7 +87,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to PyPI
-        if: ${{ !inputs.dry_run && inputs.publish_pypi }}
+        if: ${{ github.ref == 'refs/heads/main' && !inputs.dry_run && inputs.publish_pypi }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist
