@@ -1047,6 +1047,11 @@ class AlgopyTestContext:
 
         return new_txn
 
+    def does_box_exist(self, name: algopy.Bytes | bytes) -> bool:
+        """retrun true if the box with the given name exists."""
+        name_bytes = name if isinstance(name, bytes) else name.value
+        return name_bytes in self._boxes
+
     def get_box(self, name: algopy.Bytes | bytes) -> algopy.Bytes:
         """Get the content of a box."""
         import algopy
@@ -1170,7 +1175,6 @@ class AlgopyTestContext:
         self._app_id = iter(range(1, 2**64))
 
 
-#
 _var: ContextVar[AlgopyTestContext] = ContextVar("_var")
 
 

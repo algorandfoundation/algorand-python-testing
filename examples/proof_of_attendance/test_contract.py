@@ -27,21 +27,25 @@ def test_init(context: AlgopyTestContext) -> None:
     assert contract.max_attendees == max_attendees
 
 
+@pytest.mark.parametrize("confirm_attendance", ["confirm_attendance", "confirm_attendance_v2"])
 def test_confirm_attendance(
     context: AlgopyTestContext,
+    confirm_attendance: str,
 ) -> None:
     # Arrange
     contract = ProofOfAttendance()
     contract.max_attendees = context.any_uint64(1, 100)
 
     # Act
-    contract.confirm_attendance()
+    confirm = getattr(contract, confirm_attendance)
+    confirm()
 
     # Assert
     assert context.get_box(context.default_creator.bytes) == algopy.op.itob(1)
 
 
-def test_claim_poa(context: AlgopyTestContext) -> None:
+@pytest.mark.parametrize("claim_poa", ["claim_poa", "claim_poa_v2"])
+def test_claim_poa(context: AlgopyTestContext, claim_poa: str) -> None:
     # Arrange
     contract = ProofOfAttendance()
     dummy_poa = context.any_asset()
@@ -57,7 +61,8 @@ def test_claim_poa(context: AlgopyTestContext) -> None:
     context.set_box(context.default_creator.bytes, algopy.op.itob(dummy_poa.id))
 
     # Act
-    contract.claim_poa(opt_in_txn)
+    claim = getattr(contract, claim_poa)
+    claim(opt_in_txn)
 
     # Assert
     axfer_itxn = context.get_submitted_itxn_group(-1).asset_transfer(0)
