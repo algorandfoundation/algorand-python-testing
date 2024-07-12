@@ -27,7 +27,15 @@ def test_init(context: AlgopyTestContext) -> None:
     assert contract.max_attendees == max_attendees
 
 
-@pytest.mark.parametrize("confirm_attendance", ["confirm_attendance", "confirm_attendance_v2"])
+@pytest.mark.parametrize(
+    "confirm_attendance",
+    [
+        "confirm_attendance",
+        "confirm_attendance_with_box",
+        "confirm_attendance_with_box_ref",
+        "confirm_attendance_with_box_map",
+    ],
+)
 def test_confirm_attendance(
     context: AlgopyTestContext,
     confirm_attendance: str,
@@ -44,7 +52,15 @@ def test_confirm_attendance(
     assert context.get_box(context.default_creator.bytes) == algopy.op.itob(1)
 
 
-@pytest.mark.parametrize("claim_poa", ["claim_poa", "claim_poa_v2"])
+@pytest.mark.parametrize(
+    "claim_poa",
+    [
+        "claim_poa",
+        "claim_poa_with_box",
+        "claim_poa_with_box_ref",
+        "claim_poa_with_box_map",
+    ],
+)
 def test_claim_poa(context: AlgopyTestContext, claim_poa: str) -> None:
     # Arrange
     contract = ProofOfAttendance()

@@ -1,4 +1,4 @@
-from algopy_testing.box import Box
+from algopy_testing.box import Box, BoxMap, BoxRef
 from algopy_testing.decorators.subroutine import subroutine
 from algopy_testing.enums import OnCompleteAction, TransactionType
 from algopy_testing.models import (
@@ -57,4 +57,6 @@ __all__ = [
     "uenumerate",
     "urange",
     "Box",
+    "BoxRef",
+    "BoxMap",
 ]
