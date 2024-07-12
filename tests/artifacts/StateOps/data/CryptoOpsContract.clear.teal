@@ -1,0 +1,7 @@
+#pragma version 10
+
+tests.artifacts.StateOps.contract.CryptoOpsContract.clear_state_program:
+    // tests/artifacts/StateOps/contract.py:4
+    // class CryptoOpsContract(ARC4Contract):
+    int 1
+    return

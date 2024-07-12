@@ -27,14 +27,12 @@ def compile_contract(folder: Path) -> None:
         "hatch",
         "run",
         "puyapy",
-        "--log-level",
-        "debug",
         str(contract_path),
         "--out-dir",
         "data",
     ]
     subprocess.run(
-        compile_cmd,  # noqa: S603
+        compile_cmd,
         check=True,
         env=ENV_WITH_NO_COLOR,
         encoding="utf-8",
@@ -56,7 +54,7 @@ def generate_client(folder: Path) -> None:
         str(client_path),
     ]
     subprocess.run(
-        generate_cmd,  # noqa: S603
+        generate_cmd,
         check=True,
         env=ENV_WITH_NO_COLOR,
         encoding="utf-8",

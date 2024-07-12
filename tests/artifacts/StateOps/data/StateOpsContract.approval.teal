@@ -1,0 +1,655 @@
+#pragma version 10
+
+tests.artifacts.StateOps.contract.StateOpsContract.approval_program:
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@18
+    method "verify_asset_holding_get(account,asset)uint64"
+    method "verify_asset_frozen_get(account,asset)bool"
+    method "verify_asset_params_get_total(asset)uint64"
+    method "verify_asset_params_get_decimals(asset)uint64"
+    method "verify_asset_params_get_default_frozen(asset)bool"
+    method "verify_asset_params_get_unit_name(asset)byte[]"
+    method "verify_asset_params_get_name(asset)byte[]"
+    method "verify_asset_params_get_url(asset)byte[]"
+    method "verify_asset_params_get_metadata_hash(asset)byte[]"
+    method "verify_asset_params_get_manager(asset)byte[]"
+    method "verify_asset_params_get_reserve(asset)byte[]"
+    method "verify_asset_params_get_freeze(asset)byte[]"
+    method "verify_asset_params_get_clawback(asset)byte[]"
+    method "verify_asset_params_get_creator(asset)byte[]"
+    txna ApplicationArgs 0
+    match main_verify_asset_holding_get_route@2 main_verify_asset_frozen_get_route@3 main_verify_asset_params_get_total_route@4 main_verify_asset_params_get_decimals_route@5 main_verify_asset_params_get_default_frozen_route@6 main_verify_asset_params_get_unit_name_route@7 main_verify_asset_params_get_name_route@8 main_verify_asset_params_get_url_route@9 main_verify_asset_params_get_metadata_hash_route@10 main_verify_asset_params_get_manager_route@11 main_verify_asset_params_get_reserve_route@12 main_verify_asset_params_get_freeze_route@13 main_verify_asset_params_get_clawback_route@14 main_verify_asset_params_get_creator_route@15
+    err // reject transaction
+
+main_verify_asset_holding_get_route@2:
+    // tests/artifacts/StateOps/contract.py:5
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    txna ApplicationArgs 2
+    btoi
+    txnas Assets
+    // tests/artifacts/StateOps/contract.py:5
+    // @arc4.abimethod()
+    callsub verify_asset_holding_get
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_asset_frozen_get_route@3:
+    // tests/artifacts/StateOps/contract.py:10
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    txna ApplicationArgs 2
+    btoi
+    txnas Assets
+    // tests/artifacts/StateOps/contract.py:10
+    // @arc4.abimethod()
+    callsub verify_asset_frozen_get
+    byte 0x00
+    int 0
+    uncover 2
+    setbit
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_asset_params_get_total_route@4:
+    // tests/artifacts/StateOps/contract.py:15
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    // tests/artifacts/StateOps/contract.py:15
+    // @arc4.abimethod()
+    callsub verify_asset_params_get_total
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_asset_params_get_decimals_route@5:
+    // tests/artifacts/StateOps/contract.py:20
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    // tests/artifacts/StateOps/contract.py:20
+    // @arc4.abimethod()
+    callsub verify_asset_params_get_decimals
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_asset_params_get_default_frozen_route@6:
+    // tests/artifacts/StateOps/contract.py:25
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    // tests/artifacts/StateOps/contract.py:25
+    // @arc4.abimethod()
+    callsub verify_asset_params_get_default_frozen
+    byte 0x00
+    int 0
+    uncover 2
+    setbit
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_asset_params_get_unit_name_route@7:
+    // tests/artifacts/StateOps/contract.py:30
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    // tests/artifacts/StateOps/contract.py:30
+    // @arc4.abimethod()
+    callsub verify_asset_params_get_unit_name
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_asset_params_get_name_route@8:
+    // tests/artifacts/StateOps/contract.py:35
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    // tests/artifacts/StateOps/contract.py:35
+    // @arc4.abimethod()
+    callsub verify_asset_params_get_name
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_asset_params_get_url_route@9:
+    // tests/artifacts/StateOps/contract.py:40
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    // tests/artifacts/StateOps/contract.py:40
+    // @arc4.abimethod()
+    callsub verify_asset_params_get_url
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_asset_params_get_metadata_hash_route@10:
+    // tests/artifacts/StateOps/contract.py:45
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    // tests/artifacts/StateOps/contract.py:45
+    // @arc4.abimethod()
+    callsub verify_asset_params_get_metadata_hash
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_asset_params_get_manager_route@11:
+    // tests/artifacts/StateOps/contract.py:50
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    // tests/artifacts/StateOps/contract.py:50
+    // @arc4.abimethod()
+    callsub verify_asset_params_get_manager
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_asset_params_get_reserve_route@12:
+    // tests/artifacts/StateOps/contract.py:55
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    // tests/artifacts/StateOps/contract.py:55
+    // @arc4.abimethod()
+    callsub verify_asset_params_get_reserve
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_asset_params_get_freeze_route@13:
+    // tests/artifacts/StateOps/contract.py:60
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    // tests/artifacts/StateOps/contract.py:60
+    // @arc4.abimethod()
+    callsub verify_asset_params_get_freeze
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_asset_params_get_clawback_route@14:
+    // tests/artifacts/StateOps/contract.py:65
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    // tests/artifacts/StateOps/contract.py:65
+    // @arc4.abimethod()
+    callsub verify_asset_params_get_clawback
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_asset_params_get_creator_route@15:
+    // tests/artifacts/StateOps/contract.py:70
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Assets
+    // tests/artifacts/StateOps/contract.py:70
+    // @arc4.abimethod()
+    callsub verify_asset_params_get_creator
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_bare_routing@18:
+    // tests/artifacts/StateOps/contract.py:4
+    // class StateOpsContract(ARC4Contract):
+    txn OnCompletion
+    !
+    assert // reject transaction
+    txn ApplicationID
+    !
+    assert // is creating
+    int 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateOpsContract.verify_asset_holding_get(a: bytes, b: uint64) -> uint64:
+verify_asset_holding_get:
+    // tests/artifacts/StateOps/contract.py:5-6
+    // @arc4.abimethod()
+    // def verify_asset_holding_get(self, a: Account, b: Asset) -> UInt64:
+    proto 2 1
+    // tests/artifacts/StateOps/contract.py:7
+    // balance, _val = op.AssetHoldingGet.asset_balance(a, b)
+    frame_dig -2
+    frame_dig -1
+    asset_holding_get AssetBalance
+    pop
+    // tests/artifacts/StateOps/contract.py:8
+    // return balance
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateOpsContract.verify_asset_frozen_get(a: bytes, b: uint64) -> uint64:
+verify_asset_frozen_get:
+    // tests/artifacts/StateOps/contract.py:10-11
+    // @arc4.abimethod()
+    // def verify_asset_frozen_get(self, a: Account, b: Asset) -> bool:
+    proto 2 1
+    // tests/artifacts/StateOps/contract.py:12
+    // frozen, _val = op.AssetHoldingGet.asset_frozen(a, b)
+    frame_dig -2
+    frame_dig -1
+    asset_holding_get AssetFrozen
+    pop
+    // tests/artifacts/StateOps/contract.py:13
+    // return frozen
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateOpsContract.verify_asset_params_get_total(a: uint64) -> uint64:
+verify_asset_params_get_total:
+    // tests/artifacts/StateOps/contract.py:15-16
+    // @arc4.abimethod()
+    // def verify_asset_params_get_total(self, a: Asset) -> UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:17
+    // total, _val = op.AssetParamsGet.asset_total(a)
+    frame_dig -1
+    asset_params_get AssetTotal
+    pop
+    // tests/artifacts/StateOps/contract.py:18
+    // return total
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateOpsContract.verify_asset_params_get_decimals(a: uint64) -> uint64:
+verify_asset_params_get_decimals:
+    // tests/artifacts/StateOps/contract.py:20-21
+    // @arc4.abimethod()
+    // def verify_asset_params_get_decimals(self, a: Asset) -> UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:22
+    // decimals, _val = op.AssetParamsGet.asset_decimals(a)
+    frame_dig -1
+    asset_params_get AssetDecimals
+    pop
+    // tests/artifacts/StateOps/contract.py:23
+    // return decimals
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateOpsContract.verify_asset_params_get_default_frozen(a: uint64) -> uint64:
+verify_asset_params_get_default_frozen:
+    // tests/artifacts/StateOps/contract.py:25-26
+    // @arc4.abimethod()
+    // def verify_asset_params_get_default_frozen(self, a: Asset) -> bool:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:27
+    // default_frozen, _val = op.AssetParamsGet.asset_default_frozen(a)
+    frame_dig -1
+    asset_params_get AssetDefaultFrozen
+    pop
+    // tests/artifacts/StateOps/contract.py:28
+    // return default_frozen
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateOpsContract.verify_asset_params_get_unit_name(a: uint64) -> bytes:
+verify_asset_params_get_unit_name:
+    // tests/artifacts/StateOps/contract.py:30-31
+    // @arc4.abimethod()
+    // def verify_asset_params_get_unit_name(self, a: Asset) -> Bytes:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:32
+    // unit_name, _val = op.AssetParamsGet.asset_unit_name(a)
+    frame_dig -1
+    asset_params_get AssetUnitName
+    pop
+    // tests/artifacts/StateOps/contract.py:33
+    // return unit_name
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateOpsContract.verify_asset_params_get_name(a: uint64) -> bytes:
+verify_asset_params_get_name:
+    // tests/artifacts/StateOps/contract.py:35-36
+    // @arc4.abimethod()
+    // def verify_asset_params_get_name(self, a: Asset) -> Bytes:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:37
+    // name, _val = op.AssetParamsGet.asset_name(a)
+    frame_dig -1
+    asset_params_get AssetName
+    pop
+    // tests/artifacts/StateOps/contract.py:38
+    // return name
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateOpsContract.verify_asset_params_get_url(a: uint64) -> bytes:
+verify_asset_params_get_url:
+    // tests/artifacts/StateOps/contract.py:40-41
+    // @arc4.abimethod()
+    // def verify_asset_params_get_url(self, a: Asset) -> Bytes:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:42
+    // url, _val = op.AssetParamsGet.asset_url(a)
+    frame_dig -1
+    asset_params_get AssetURL
+    pop
+    // tests/artifacts/StateOps/contract.py:43
+    // return url
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateOpsContract.verify_asset_params_get_metadata_hash(a: uint64) -> bytes:
+verify_asset_params_get_metadata_hash:
+    // tests/artifacts/StateOps/contract.py:45-46
+    // @arc4.abimethod()
+    // def verify_asset_params_get_metadata_hash(self, a: Asset) -> Bytes:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:47
+    // metadata_hash, _val = op.AssetParamsGet.asset_metadata_hash(a)
+    frame_dig -1
+    asset_params_get AssetMetadataHash
+    pop
+    // tests/artifacts/StateOps/contract.py:48
+    // return metadata_hash
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateOpsContract.verify_asset_params_get_manager(a: uint64) -> bytes:
+verify_asset_params_get_manager:
+    // tests/artifacts/StateOps/contract.py:50-51
+    // @arc4.abimethod()
+    // def verify_asset_params_get_manager(self, a: Asset) -> Bytes:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:52
+    // manager, _val = op.AssetParamsGet.asset_manager(a)
+    frame_dig -1
+    asset_params_get AssetManager
+    pop
+    // tests/artifacts/StateOps/contract.py:53
+    // return manager.bytes
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateOpsContract.verify_asset_params_get_reserve(a: uint64) -> bytes:
+verify_asset_params_get_reserve:
+    // tests/artifacts/StateOps/contract.py:55-56
+    // @arc4.abimethod()
+    // def verify_asset_params_get_reserve(self, a: Asset) -> Bytes:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:57
+    // reserve, _val = op.AssetParamsGet.asset_reserve(a)
+    frame_dig -1
+    asset_params_get AssetReserve
+    pop
+    // tests/artifacts/StateOps/contract.py:58
+    // return reserve.bytes
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateOpsContract.verify_asset_params_get_freeze(a: uint64) -> bytes:
+verify_asset_params_get_freeze:
+    // tests/artifacts/StateOps/contract.py:60-61
+    // @arc4.abimethod()
+    // def verify_asset_params_get_freeze(self, a: Asset) -> Bytes:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:62
+    // freeze, _val = op.AssetParamsGet.asset_freeze(a)
+    frame_dig -1
+    asset_params_get AssetFreeze
+    pop
+    // tests/artifacts/StateOps/contract.py:63
+    // return freeze.bytes
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateOpsContract.verify_asset_params_get_clawback(a: uint64) -> bytes:
+verify_asset_params_get_clawback:
+    // tests/artifacts/StateOps/contract.py:65-66
+    // @arc4.abimethod()
+    // def verify_asset_params_get_clawback(self, a: Asset) -> Bytes:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:67
+    // clawback, _val = op.AssetParamsGet.asset_clawback(a)
+    frame_dig -1
+    asset_params_get AssetClawback
+    pop
+    // tests/artifacts/StateOps/contract.py:68
+    // return clawback.bytes
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateOpsContract.verify_asset_params_get_creator(a: uint64) -> bytes:
+verify_asset_params_get_creator:
+    // tests/artifacts/StateOps/contract.py:70-71
+    // @arc4.abimethod()
+    // def verify_asset_params_get_creator(self, a: Asset) -> Bytes:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:72
+    // creator, _val = op.AssetParamsGet.asset_creator(a)
+    frame_dig -1
+    asset_params_get AssetCreator
+    pop
+    // tests/artifacts/StateOps/contract.py:73
+    // return creator.bytes
+    retsub

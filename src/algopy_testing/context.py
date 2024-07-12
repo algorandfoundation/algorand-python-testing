@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import secrets
 import string
+from collections import ChainMap
 from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass
@@ -659,7 +660,22 @@ class AlgopyTestContext:
             raise ValueError("Asset with such ID already exists in testing context!")
 
         new_asset = algopy.Asset(asset_id or next(self._asset_id))
-        self._asset_data[int(new_asset.id)] = AssetFields(**asset_fields)
+        default_asset_fields = {
+            "total": self.any_uint64(),
+            "decimals": self.any_uint64(1, 6),
+            "default_frozen": False,
+            "unit_name": self.any_bytes(4),
+            "name": self.any_bytes(50),
+            "url": self.any_bytes(10),
+            "metadata_hash": self.any_bytes(32),
+            "manager": self.any_account(),
+            "freeze": self.any_account(),
+            "clawback": self.any_account(),
+            "creator": self.any_account(),
+            "reserve": self.any_account(),
+        }
+        merged_fields = dict(ChainMap(asset_fields, default_asset_fields))  # type: ignore[arg-type]
+        self._asset_data[int(new_asset.id)] = AssetFields(**merged_fields)  # type: ignore[typeddict-item]
         return new_asset
 
     def any_application(  # type: ignore[misc]
@@ -929,7 +945,8 @@ class AlgopyTestContext:
         }
         new_txn = algopy.gtxn.ApplicationCallTransaction(NULL_GTXN_GROUP_INDEX)
 
-        for key, value in {**kwargs, **dynamic_params}.items():
+        merged_params = dict(ChainMap(kwargs, dynamic_params))
+        for key, value in merged_params.items():
             setattr(new_txn, key, value)
 
         self.set_scratch_space(new_txn.txn_id, scratch_space or {})
@@ -1170,7 +1187,6 @@ class AlgopyTestContext:
         self._app_id = iter(range(1, 2**64))
 
 
-#
 _var: ContextVar[AlgopyTestContext] = ContextVar("_var")
 
 

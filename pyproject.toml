@@ -228,7 +228,7 @@ ignore = [
     "RET503",  # false negatives when involving typing.Never, covered by mypy anyway
     "RET504",
     "RET505",  # stylistic choices for readability
-    "S101",    # allow asserts
+    "S101",    # allow asserts    
 ]
 unfixable = [
     "F841", # don't delete unused local variables automatically
@@ -238,6 +238,7 @@ unfixable = [
     "PT", # no pytest rules
 ]
 "scripts/**/*.py" = ["T201"]
+"scripts/refresh_test_artifacts.py" = ["S603"]
 
 [tool.ruff.lint.flake8-annotations]
 allow-star-arg-any = true

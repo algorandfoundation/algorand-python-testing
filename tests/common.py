@@ -1,8 +1,11 @@
+import math
+import random
 import secrets
 import typing
 from pathlib import Path
 
-from algokit_utils import ApplicationClient, get_localnet_default_account
+import algosdk
+from algokit_utils import Account, ApplicationClient, get_localnet_default_account
 from algosdk.v2client.algod import AlgodClient
 
 
@@ -54,3 +57,44 @@ def create_avm_invoker(app_spec: Path, algod_client: AlgodClient) -> AVMInvoker:
     )
 
     return AVMInvoker(client)
+
+
+def generate_test_asset(algod_client: AlgodClient, sender: Account, total: int | None) -> int:
+    if total is None:
+        total = math.floor(random.random() * 100) + 20  # noqa: S311
+
+    decimals = 0
+    asset_name = (
+        f"ASA ${math.floor(random.random() * 100) + 1}_"  # noqa: S311
+        f"${math.floor(random.random() * 100) + 1}_${total}"  # noqa: S311
+    )
+
+    params = algod_client.suggested_params()
+
+    txn = algosdk.transaction.AssetConfigTxn(
+        sender=sender.address,
+        sp=params,
+        total=total * 10**decimals,
+        decimals=decimals,
+        default_frozen=False,
+        unit_name="",
+        asset_name=asset_name,
+        manager=sender.address,
+        reserve=sender.address,
+        freeze=sender.address,
+        clawback=sender.address,
+        url="https://algorand.co",
+        metadata_hash=None,
+        note=None,
+        lease=None,
+        rekey_to=None,
+    )  # type: ignore[no-untyped-call, unused-ignore]
+
+    signed_transaction = txn.sign(sender.private_key)  # type: ignore[no-untyped-call, unused-ignore]
+    algod_client.send_transaction(signed_transaction)
+    ptx = algod_client.pending_transaction_info(txn.get_txid())  # type: ignore[no-untyped-call, unused-ignore]
+
+    if isinstance(ptx, dict) and "asset-index" in ptx and isinstance(ptx["asset-index"], int):
+        return ptx["asset-index"]
+    else:
+        raise ValueError("Unexpected response from pending_transaction_info")

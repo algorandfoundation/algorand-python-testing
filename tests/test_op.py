@@ -8,8 +8,9 @@ import ecdsa  # type: ignore  # noqa: PGH003
 import ecdsa.util  # type: ignore  # noqa: PGH003
 import nacl.signing
 import pytest
+from algokit_utils import get_localnet_default_account
 from algopy_testing import op
-from algopy_testing.context import algopy_testing_context
+from algopy_testing.context import AlgopyTestContext, algopy_testing_context
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.uint64 import UInt64
 from algosdk.v2client.algod import AlgodClient
@@ -17,10 +18,12 @@ from Cryptodome.Hash import keccak
 from ecdsa import SECP256k1, SigningKey, curves
 from pytest_mock import MockerFixture
 
-from tests.common import AVMInvoker, create_avm_invoker
+from tests.artifacts.StateOps.contract import StateOpsContract
+from tests.common import AVMInvoker, create_avm_invoker, generate_test_asset
 
 ARTIFACTS_DIR = Path(__file__).parent / "artifacts"
-APP_SPEC = ARTIFACTS_DIR / "CryptoOps" / "data" / "CryptoOpsContract.arc32.json"
+CRYPTO_OPS_APP_SPEC = ARTIFACTS_DIR / "CryptoOps" / "data" / "CryptoOpsContract.arc32.json"
+STATE_OPS_APP_SPEC = ARTIFACTS_DIR / "StateOps" / "data" / "StateOpsContract.arc32.json"
 
 MAX_ARG_LEN = 2048
 MAX_BYTES_SIZE = 4096
@@ -46,9 +49,21 @@ def _generate_ecdsa_test_data(curve: curves.Curve) -> dict[str, typing.Any]:
     }
 
 
+@pytest.fixture()
+def context() -> typing.Generator[AlgopyTestContext, None, None]:
+    with algopy_testing_context() as ctx:
+        yield ctx
+        ctx.reset()
+
+
 @pytest.fixture(scope="module")
 def get_crypto_ops_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    return create_avm_invoker(APP_SPEC, algod_client)
+    return create_avm_invoker(CRYPTO_OPS_APP_SPEC, algod_client)
+
+
+@pytest.fixture(scope="module")
+def get_state_ops_avm_result(algod_client: AlgodClient) -> AVMInvoker:
+    return create_avm_invoker(STATE_OPS_APP_SPEC, algod_client)
 
 
 @pytest.mark.parametrize(
@@ -318,3 +333,159 @@ def test_verify_vrf_verify(
     mocked_result = run_mocked_vrf_verify()
 
     assert avm_result == mocked_result
+
+
+def test_asset_holding_get(
+    algod_client: AlgodClient, get_state_ops_avm_result: AVMInvoker, context: AlgopyTestContext
+) -> None:
+    dummy_account_a = get_localnet_default_account(algod_client)
+    expected_balance = 100
+    dummy_asset = generate_test_asset(algod_client, dummy_account_a, expected_balance)
+    sp = algod_client.suggested_params()
+    sp.fee = 1000
+
+    avm_asset_balance = get_state_ops_avm_result(
+        "verify_asset_holding_get",
+        a=dummy_account_a.address,
+        b=dummy_asset,
+        suggested_params=sp,
+    )
+    avm_frozen_balance = get_state_ops_avm_result(
+        "verify_asset_frozen_get",
+        a=dummy_account_a.address,
+        b=dummy_asset,
+        suggested_params=sp,
+    )
+
+    mock_asset = context.any_asset()
+    mock_account = context.any_account(
+        opted_asset_balances={mock_asset.id: algopy.UInt64(expected_balance)}
+    )
+    mock_contract = StateOpsContract()
+    mock_asset_balance = mock_contract.verify_asset_holding_get(mock_account, mock_asset)
+    assert mock_asset_balance == avm_asset_balance == expected_balance
+    mock_frozen_balance = mock_contract.verify_asset_frozen_get(mock_account, mock_asset)
+    assert mock_frozen_balance == avm_frozen_balance is False
+
+
+def test_asset_params_get(
+    algod_client: AlgodClient, get_state_ops_avm_result: AVMInvoker, context: AlgopyTestContext
+) -> None:
+    dummy_account_a = get_localnet_default_account(algod_client)
+    expected_balance = 100
+    dummy_asset = generate_test_asset(algod_client, dummy_account_a, expected_balance)
+    sp = algod_client.suggested_params()
+    sp.fee = 1000
+
+    mock_asset = context.any_asset(
+        total=algopy.UInt64(expected_balance), decimals=algopy.UInt64(0)
+    )
+    mock_contract = StateOpsContract()
+
+    # Test total
+    avm_total = get_state_ops_avm_result(
+        "verify_asset_params_get_total",
+        a=dummy_asset,
+        suggested_params=sp,
+    )
+    mock_total = mock_contract.verify_asset_params_get_total(mock_asset)
+    assert mock_total == avm_total == expected_balance
+
+    # Test decimals
+    avm_decimals = get_state_ops_avm_result(
+        "verify_asset_params_get_decimals",
+        a=dummy_asset,
+        suggested_params=sp,
+    )
+    mock_decimals = mock_contract.verify_asset_params_get_decimals(mock_asset)
+    assert mock_decimals == avm_decimals
+
+    # Test default frozen
+    avm_default_frozen = get_state_ops_avm_result(
+        "verify_asset_params_get_default_frozen",
+        a=dummy_asset,
+        suggested_params=sp,
+    )
+    mock_default_frozen = mock_contract.verify_asset_params_get_default_frozen(mock_asset)
+    assert mock_default_frozen == avm_default_frozen
+
+    # # Test unit name
+    # avm_unit_name = get_state_ops_avm_result(
+    #     "verify_asset_params_get_unit_name",
+    #     a=dummy_asset,
+    #     suggested_params=sp,
+    # )
+    # mock_unit_name = mock_contract.verify_asset_params_get_unit_name(mock_asset)
+    # assert mock_unit_name == avm_unit_name
+
+    # # Test name
+    # avm_name = get_state_ops_avm_result(
+    #     "verify_asset_params_get_name",
+    #     a=dummy_asset,
+    #     suggested_params=sp,
+    # )
+    # mock_name = mock_contract.verify_asset_params_get_name(mock_asset)
+    # assert mock_name == avm_name
+
+    # # Test URL
+    # avm_url = get_state_ops_avm_result(
+    #     "verify_asset_params_get_url",
+    #     a=dummy_asset,
+    #     suggested_params=sp,
+    # )
+    # mock_url = mock_contract.verify_asset_params_get_url(mock_asset)
+    # assert mock_url == avm_url
+
+    # # Test metadata hash
+    # avm_metadata_hash = get_state_ops_avm_result(
+    #     "verify_asset_params_get_metadata_hash",
+    #     a=dummy_asset,
+    #     suggested_params=sp,
+    # )
+    # mock_metadata_hash = mock_contract.verify_asset_params_get_metadata_hash(mock_asset)
+    # assert mock_metadata_hash == avm_metadata_hash
+
+    # # Test manager
+    # avm_manager = get_state_ops_avm_result(
+    #     "verify_asset_params_get_manager",
+    #     a=dummy_asset,
+    #     suggested_params=sp,
+    # )
+    # mock_manager = mock_contract.verify_asset_params_get_manager(mock_asset)
+    # assert mock_manager == avm_manager
+
+    # # Test reserve
+    # avm_reserve = get_state_ops_avm_result(
+    #     "verify_asset_params_get_reserve",
+    #     a=dummy_asset,
+    #     suggested_params=sp,
+    # )
+    # mock_reserve = mock_contract.verify_asset_params_get_reserve(mock_asset)
+    # assert mock_reserve == avm_reserve
+
+    # # Test freeze
+    # avm_freeze = get_state_ops_avm_result(
+    #     "verify_asset_params_get_freeze",
+    #     a=dummy_asset,
+    #     suggested_params=sp,
+    # )
+    # mock_freeze = mock_contract.verify_asset_params_get_freeze(mock_asset)
+    # assert mock_freeze == avm_freeze
+
+    # # Test clawback
+    # avm_clawback = get_state_ops_avm_result(
+    #     "verify_asset_params_get_clawback",
+    #     a=dummy_asset,
+    #     suggested_params=sp,
+    # )
+    # mock_clawback = mock_contract.verify_asset_params_get_clawback(mock_asset)
+    # assert mock_clawback == avm_clawback
+
+    # # Test creator
+    # avm_creator = get_state_ops_avm_result(
+    #     "verify_asset_params_get_creator",
+    #     a=dummy_asset,
+    #     suggested_params=sp,
+    # )
+    # mock_creator = mock_contract.verify_asset_params_get_creator(mock_asset)
+    # assert mock_creator == avm_creator

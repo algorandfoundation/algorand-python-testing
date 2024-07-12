@@ -866,13 +866,13 @@ class _AssetParamsGet:
             if not active_txn:
                 raise ValueError("No active transaction found to reference asset")
 
-            asset_id = a.value if isinstance(a, (algopy.Asset)) else int(a)
-            asset_data = active_txn.assets[asset_id]
+            asset_id = int(a.id) if isinstance(a, (algopy.Asset)) else int(a)
+            asset_data = context.get_asset(asset_id)
 
             if asset_data is None:
                 return None, False
 
-            param = "config_" + name
+            param = name.replace("asset_", "")
             value = getattr(asset_data, param, None)
             return value, True
 
@@ -955,12 +955,81 @@ class AssetHoldingGet:
 
 
 class _AppParamsGet:
-    def __getattr__(self, name: str) -> Any:
-        raise NotImplementedError(
-            f"AppParamsGet.{name} is currently not available as a native "
-            "`algorand-python-testing` type. Use your own preferred testing "
-            "framework of choice to mock the behaviour."
-        )
+    @staticmethod
+    def _get_app_param_from_ctx(
+        index: algopy.Application | algopy.UInt64 | int, param: str
+    ) -> tuple[Any, bool]:
+        from algopy_testing import get_test_context
+
+        context = get_test_context()
+
+        if not context:
+            raise ValueError(
+                "Test context is not initialized! Use `with algopy_testing_context()` "
+                "to access the context manager."
+            )
+
+        try:
+            application = context.get_application_data()[int(index)]
+        except IndexError:
+            return None, False
+
+        try:
+            response = getattr(application, param)
+        except AttributeError:
+            return None, False
+        else:
+            return response, True
+
+    @staticmethod
+    def app_approval_program(
+        a: algopy.Application | algopy.UInt64 | int, /
+    ) -> tuple[algopy.Bytes, bool]:
+        return _AppParamsGet._get_app_param_from_ctx(a, "approval_program")
+
+    @staticmethod
+    def app_clear_state_program(
+        a: algopy.Application | algopy.UInt64 | int, /
+    ) -> tuple[algopy.Bytes, bool]:
+        return _AppParamsGet._get_app_param_from_ctx(a, "clear_state_program")
+
+    @staticmethod
+    def app_global_num_uint(
+        a: algopy.Application | algopy.UInt64 | int, /
+    ) -> tuple[algopy.UInt64, bool]:
+        return _AppParamsGet._get_app_param_from_ctx(a, "global_num_uint")
+
+    @staticmethod
+    def app_global_num_byte_slice(
+        a: algopy.Application | algopy.UInt64 | int, /
+    ) -> tuple[algopy.UInt64, bool]:
+        return _AppParamsGet._get_app_param_from_ctx(a, "global_num_byte_slice")
+
+    @staticmethod
+    def app_local_num_uint(
+        a: algopy.Application | algopy.UInt64 | int, /
+    ) -> tuple[algopy.UInt64, bool]:
+        return _AppParamsGet._get_app_param_from_ctx(a, "local_num_uint")
+
+    @staticmethod
+    def app_local_num_byte_slice(
+        a: algopy.Application | algopy.UInt64 | int, /
+    ) -> tuple[algopy.UInt64, bool]:
+        return _AppParamsGet._get_app_param_from_ctx(a, "local_num_byte_slice")
+
+    @staticmethod
+    def app_extra_program_pages(
+        a: algopy.Application | algopy.UInt64 | int, /
+    ) -> tuple[algopy.UInt64, bool]:
+        return _AppParamsGet._get_app_param_from_ctx(a, "extra_program_pages")
+
+    @staticmethod
+    def app_creator(a: algopy.Application | algopy.UInt64 | int, /) -> tuple[algopy.Account, bool]:
+        return _AppParamsGet._get_app_param_from_ctx(a, "creator")
+
+    @staticmethod
+    def app_address(a: algopy.Application | algopy.UInt64 | int, /) -> tuple[algopy.Account, bool]:
+        return _AppParamsGet._get_app_param_from_ctx(a, "address")
 
 
 AppParamsGet = _AppParamsGet()
