@@ -1076,12 +1076,14 @@ class AlgopyTestContext:
             self._lsigs[lsig] = lsig.func
         return lsig.func()
 
-    def clear_box(self, name: algopy.Bytes | bytes) -> None:
+    def clear_box(self, name: algopy.Bytes | bytes) -> bool:
         """Clear the content of a box."""
 
         name_bytes = name if isinstance(name, bytes) else name.value
         if name_bytes in self._boxes:
             del self._boxes[name_bytes]
+            return True
+        return False
 
     def clear_all_boxes(self) -> None:
         """Clear all boxes."""

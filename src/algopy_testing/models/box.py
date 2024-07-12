@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from algopy_testing.constants import MAX_BOX_SIZE
 from algopy_testing.context import get_test_context
 
 if TYPE_CHECKING:
@@ -16,7 +17,7 @@ class Box:
         context = get_test_context()
         name_bytes = a.value if isinstance(a, algopy.Bytes) else a
         size = int(b)
-        if not name_bytes or size > 32768:
+        if not name_bytes or size > MAX_BOX_SIZE:
             raise ValueError("Invalid box name or size")
         if context.get_box(name_bytes):
             return False
@@ -106,7 +107,7 @@ class Box:
         context = get_test_context()
         name_bytes = a.value if isinstance(a, algopy.Bytes) else a
         new_size = int(b)
-        if not name_bytes or new_size > 32768:
+        if not name_bytes or new_size > MAX_BOX_SIZE:
             raise ValueError("Invalid box name or size")
         box_content = context.get_box(name_bytes)
         if not box_content:
