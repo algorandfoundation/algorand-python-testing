@@ -1048,7 +1048,7 @@ class AlgopyTestContext:
         return new_txn
 
     def does_box_exist(self, name: algopy.Bytes | bytes) -> bool:
-        """retrun true if the box with the given name exists."""
+        """return true if the box with the given name exists."""
         name_bytes = name if isinstance(name, bytes) else name.value
         return name_bytes in self._boxes
 
