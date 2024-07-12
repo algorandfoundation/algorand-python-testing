@@ -29,7 +29,7 @@ class Box(typing.Generic[_TValue]):
         self._type = type_
 
         # if key parameter is empty string, generate a random 32 bytes for key
-        if isinstance(key, str) and key == "":
+        if not bool(key):
             self._key = algopy.Bytes(secrets.token_bytes(32))
         else:
             self._key = (
