@@ -59,15 +59,33 @@ def create_avm_invoker(app_spec: Path, algod_client: AlgodClient) -> AVMInvoker:
     return AVMInvoker(client)
 
 
-def generate_test_asset(algod_client: AlgodClient, sender: Account, total: int | None) -> int:
+def generate_test_asset(  # noqa: PLR0913
+    *,
+    algod_client: AlgodClient,
+    sender: Account,
+    total: int | None = None,
+    decimals: int = 0,
+    default_frozen: bool = False,
+    unit_name: str = "",
+    asset_name: str | None = None,
+    manager: str | None = None,
+    reserve: str | None = None,
+    freeze: str | None = None,
+    clawback: str | None = None,
+    url: str = "https://algorand.co",
+    metadata_hash: bytes | None = None,
+    note: bytes | None = None,
+    lease: bytes | None = None,
+    rekey_to: str | None = None,
+) -> int:
     if total is None:
         total = math.floor(random.random() * 100) + 20  # noqa: S311
 
-    decimals = 0
-    asset_name = (
-        f"ASA ${math.floor(random.random() * 100) + 1}_"  # noqa: S311
-        f"${math.floor(random.random() * 100) + 1}_${total}"  # noqa: S311
-    )
+    if asset_name is None:
+        asset_name = (
+            f"ASA ${math.floor(random.random() * 100) + 1}_"  # noqa: S311
+            f"${math.floor(random.random() * 100) + 1}_${total}"  # noqa: S311
+        )
 
     params = algod_client.suggested_params()
 
@@ -76,18 +94,19 @@ def generate_test_asset(algod_client: AlgodClient, sender: Account, total: int |
         sp=params,
         total=total * 10**decimals,
         decimals=decimals,
-        default_frozen=False,
-        unit_name="",
+        default_frozen=default_frozen,
+        unit_name=unit_name,
         asset_name=asset_name,
-        manager=sender.address,
-        reserve=sender.address,
-        freeze=sender.address,
-        clawback=sender.address,
-        url="https://algorand.co",
-        metadata_hash=None,
-        note=None,
-        lease=None,
-        rekey_to=None,
+        manager=manager,
+        reserve=reserve,
+        freeze=freeze,
+        clawback=clawback,
+        url=url,
+        metadata_hash=metadata_hash,
+        note=note or _random_note(),
+        lease=lease,
+        strict_empty_address_check=False,
+        rekey_to=rekey_to,
     )  # type: ignore[no-untyped-call, unused-ignore]
 
     signed_transaction = txn.sign(sender.private_key)  # type: ignore[no-untyped-call, unused-ignore]

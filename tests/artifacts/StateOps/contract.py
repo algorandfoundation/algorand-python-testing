@@ -1,4 +1,4 @@
-from algopy import Account, ARC4Contract, Asset, Bytes, UInt64, arc4, op
+from algopy import Account, Application, ARC4Contract, Asset, Bytes, UInt64, arc4, op
 
 
 class StateOpsContract(ARC4Contract):
@@ -71,3 +71,48 @@ class StateOpsContract(ARC4Contract):
     def verify_asset_params_get_creator(self, a: Asset) -> Bytes:
         creator, _val = op.AssetParamsGet.asset_creator(a)
         return creator.bytes
+
+    @arc4.abimethod()
+    def verify_app_params_app_approval_program(self, a: Application) -> Bytes:
+        approval_program, _val = op.AppParamsGet.app_approval_program(a)
+        return approval_program
+
+    @arc4.abimethod()
+    def verify_app_params_app_clear_state_program(self, a: Application) -> Bytes:
+        clear_state_program, _val = op.AppParamsGet.app_clear_state_program(a)
+        return clear_state_program
+
+    @arc4.abimethod()
+    def verify_app_params_app_global_num_uint(self, a: Application) -> UInt64:
+        global_num_uint, _val = op.AppParamsGet.app_global_num_uint(a)
+        return global_num_uint
+
+    @arc4.abimethod()
+    def verify_app_params_app_global_num_byte_slice(self, a: Application) -> UInt64:
+        global_num_byte_slice, _val = op.AppParamsGet.app_global_num_byte_slice(a)
+        return global_num_byte_slice
+
+    @arc4.abimethod()
+    def verify_app_params_app_local_num_uint(self, a: Application) -> UInt64:
+        local_num_uint, _val = op.AppParamsGet.app_local_num_uint(a)
+        return local_num_uint
+
+    @arc4.abimethod()
+    def verify_app_params_app_local_num_byte_slice(self, a: Application) -> UInt64:
+        local_num_byte_slice, _val = op.AppParamsGet.app_local_num_byte_slice(a)
+        return local_num_byte_slice
+
+    @arc4.abimethod()
+    def verify_app_params_app_extra_program_pages(self, a: Application) -> UInt64:
+        extra_program_pages, _val = op.AppParamsGet.app_extra_program_pages(a)
+        return extra_program_pages
+
+    @arc4.abimethod()
+    def verify_app_params_app_creator(self, a: Application) -> Bytes:
+        creator, _val = op.AppParamsGet.app_creator(a)
+        return creator.bytes
+
+    @arc4.abimethod()
+    def verify_app_params_app_address(self, a: Application) -> Bytes:
+        address, _val = op.AppParamsGet.app_address(a)
+        return address.bytes

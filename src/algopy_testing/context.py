@@ -665,14 +665,14 @@ class AlgopyTestContext:
             "decimals": self.any_uint64(1, 6),
             "default_frozen": False,
             "unit_name": self.any_bytes(4),
-            "name": self.any_bytes(50),
+            "name": self.any_bytes(32),
             "url": self.any_bytes(10),
             "metadata_hash": self.any_bytes(32),
-            "manager": self.any_account(),
-            "freeze": self.any_account(),
-            "clawback": self.any_account(),
+            "manager": algopy.Account(algosdk.constants.ZERO_ADDRESS),
+            "freeze": algopy.Account(algosdk.constants.ZERO_ADDRESS),
+            "clawback": algopy.Account(algosdk.constants.ZERO_ADDRESS),
             "creator": self.any_account(),
-            "reserve": self.any_account(),
+            "reserve": algopy.Account(algosdk.constants.ZERO_ADDRESS),
         }
         merged_fields = dict(ChainMap(asset_fields, default_asset_fields))  # type: ignore[arg-type]
         self._asset_data[int(new_asset.id)] = AssetFields(**merged_fields)  # type: ignore[typeddict-item]
