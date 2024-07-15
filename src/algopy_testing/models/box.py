@@ -48,7 +48,8 @@ class Box:
         box_content = context.get_box(name_bytes)
         if not box_content:
             raise ValueError("Box does not exist")
-        return box_content[start : start + length]
+        result = box_content[start : start + length]
+        return algopy.Bytes(result)
 
     @staticmethod
     def get(a: algopy.Bytes | bytes, /) -> tuple[algopy.Bytes, bool]:
@@ -56,8 +57,9 @@ class Box:
 
         context = get_test_context()
         name_bytes = a.value if isinstance(a, algopy.Bytes) else a
-        box_content = context.get_box(name_bytes)
-        return box_content, bool(box_content)
+        box_content = algopy.Bytes(context.get_box(name_bytes))
+        box_exists = context.does_box_exist(name_bytes)
+        return box_content, box_exists
 
     @staticmethod
     def length(a: algopy.Bytes | bytes, /) -> tuple[algopy.UInt64, bool]:
@@ -66,7 +68,8 @@ class Box:
         context = get_test_context()
         name_bytes = a.value if isinstance(a, algopy.Bytes) else a
         box_content = context.get_box(name_bytes)
-        return algopy.UInt64(len(box_content)), bool(box_content)
+        box_exists = context.does_box_exist(name_bytes)
+        return algopy.UInt64(len(box_content)), box_exists
 
     @staticmethod
     def put(a: algopy.Bytes | bytes, b: algopy.Bytes | bytes, /) -> None:
@@ -78,7 +81,7 @@ class Box:
         existing_content = context.get_box(name_bytes)
         if existing_content and len(existing_content) != len(content):
             raise ValueError("New content length does not match existing box length")
-        context.set_box(name_bytes, content)
+        context.set_box(name_bytes, algopy.Bytes(content))
 
     @staticmethod
     def replace(

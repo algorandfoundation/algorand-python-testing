@@ -106,7 +106,7 @@ class Box(typing.Generic[_TValue]):
             raise ValueError("Box has not been created")
         return algopy.UInt64(len(context.get_box(self._key)))
 
-    def _cast_to_type(self, value: algopy.Bytes) -> _TValue:
+    def _cast_to_type(self, value: bytes) -> _TValue:
         """
         assuming _TValue to be one of the followings:
             - algopy.UInt64
@@ -121,7 +121,7 @@ class Box(typing.Generic[_TValue]):
             return self._type.from_bytes(value)  # type: ignore[attr-defined, no-any-return]
         elif self._type is algopy.UInt64:
             return algopy.op.btoi(value)  # type: ignore[return-value]
-        return value  # type: ignore[return-value]
+        return algopy.Bytes(value)  # type: ignore[return-value]
 
     def _cast_to_bytes(self, value: _TValue) -> algopy.Bytes:
         """
@@ -184,10 +184,10 @@ class BoxRef:
         if size_int > MAX_BOX_SIZE:
             raise ValueError(f"Box size cannot exceed {MAX_BOX_SIZE}")
 
-        box_content, box_exists = self.maybe()
+        box_content, box_exists = self._maybe()
         if box_exists and len(box_content) != size_int:
             raise ValueError("Box already exists with a different size")
-        if not box_exists:
+        if box_exists:
             return False
         context = get_test_context()
         context.set_box(self._key, b"\x00" * size_int)
@@ -211,15 +211,17 @@ class BoxRef:
         :arg start_index: The offset to start extracting bytes from
         :arg length: The number of bytes to extract
         """
+        import algopy
 
-        box_content, box_exists = self.maybe()
+        box_content, box_exists = self._maybe()
         start_int = int(start_index)
         length_int = int(length)
         if not box_exists:
             raise ValueError("Box does not exist")
         if (start_int + length_int) > len(box_content):
             raise ValueError("Index out of bounds")
-        return box_content[start_int : start_int + length_int]
+        result = box_content[start_int : start_int + length_int]
+        return algopy.Bytes(result)
 
     def resize(self, new_size: algopy.UInt64 | int) -> None:
         """
@@ -232,10 +234,10 @@ class BoxRef:
         new_size_int = int(new_size)
 
         if new_size_int > MAX_BOX_SIZE:
-            raise ValueError("Invalid box size")
-        box_content, box_exists = self.maybe()
+            raise ValueError(f"Box size cannot exceed {MAX_BOX_SIZE}")
+        box_content, box_exists = self._maybe()
         if not box_exists:
-            raise ValueError("Box does not exist")
+            raise ValueError("Box has not been created")
         if new_size_int > len(box_content):
             updated_content = box_content + b"\x00" * (new_size_int - len(box_content))
         else:
@@ -251,9 +253,9 @@ class BoxRef:
         :arg value: The bytes to be written
         """
         context = get_test_context()
-        box_content, box_exists = self.maybe()
+        box_content, box_exists = self._maybe()
         if not box_exists:
-            raise ValueError("Box does not exist")
+            raise ValueError("Box has not been created")
         start = int(start_index)
         length = len(value)
         if (start + length) > len(box_content):
@@ -282,14 +284,14 @@ class BoxRef:
         import algopy
 
         context = get_test_context()
-        box_content, box_exists = self.maybe()
+        box_content, box_exists = self._maybe()
 
         start = int(start_index)
         delete_count = int(length)
         insert_content = value.value if isinstance(value, algopy.Bytes) else value
 
         if not box_exists:
-            raise ValueError("Box does not exist")
+            raise ValueError("Box has not been created")
 
         if start > len(box_content):
             raise ValueError("Start index exceeds box size")
@@ -320,9 +322,9 @@ class BoxRef:
         """
         import algopy
 
-        box_content, box_exists = self.maybe()
+        box_content, box_exists = self._maybe()
         default_bytes = default if isinstance(default, algopy.Bytes) else algopy.Bytes(default)
-        return default_bytes if not box_exists else box_content
+        return default_bytes if not box_exists else algopy.Bytes(box_content)
 
     def put(self, value: algopy.Bytes | bytes) -> None:
         """
@@ -331,19 +333,27 @@ class BoxRef:
 
         :arg value: The value to write to the box
         """
+        import algopy
 
-        box_content, box_exists = self.maybe()
+        box_content, box_exists = self._maybe()
         if box_exists and len(box_content) != len(value):
             raise ValueError("Box already exists with a different size")
 
         context = get_test_context()
-        context.set_box(self._key, value)
+        content = value if isinstance(value, algopy.Bytes) else algopy.Bytes(value)
+        context.set_box(self._key, content)
 
     def maybe(self) -> tuple[algopy.Bytes, bool]:
         """
         Retrieve the contents of the box if it exists, and return a boolean indicating if the box
         exists.
         """
+        import algopy
+
+        box_content, box_exists = self._maybe()
+        return (algopy.Bytes(box_content), box_exists)
+
+    def _maybe(self) -> tuple[bytes, bool]:
         context = get_test_context()
         box_exists = context.does_box_exist(self._key)
         box_content = context.get_box(self._key)
@@ -356,7 +366,7 @@ class BoxRef:
         """
         import algopy
 
-        box_content, box_exists = self.maybe()
+        box_content, box_exists = self._maybe()
         if not box_exists:
             raise ValueError("Box has not been created")
         return algopy.UInt64(len(box_content))
@@ -463,6 +473,7 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
 
         :arg key: The key of the box to get
         """
+        import algopy
 
         context = get_test_context()
         key_bytes = self._full_key(key)
@@ -470,12 +481,12 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         if not box_exists:
             raise ValueError("Box has not been created")
         box_content_bytes = context.get_box(key_bytes)
-        return box_content_bytes.length
+        return algopy.UInt64(len(box_content_bytes))
 
     def _full_key(self, key: _TKey) -> algopy.Bytes:
         return self._key_prefix + self._cast_to_bytes(key)
 
-    def _cast_to_value_type(self, value: algopy.Bytes) -> _TValue:
+    def _cast_to_value_type(self, value: bytes) -> _TValue:
         """
         assuming _TValue to be one of the followings:
             - algopy.UInt64
@@ -490,7 +501,7 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
             return self._value_type.from_bytes(value)  # type: ignore[attr-defined, no-any-return]
         elif self._value_type is algopy.UInt64:
             return algopy.op.btoi(value)  # type: ignore[return-value]
-        return value  # type: ignore[return-value]
+        return algopy.Bytes(value)  # type: ignore[return-value]
 
     def _cast_to_bytes(self, value: _TValue | _TKey) -> algopy.Bytes:
         """

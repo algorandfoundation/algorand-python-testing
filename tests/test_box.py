@@ -12,6 +12,8 @@ from algopy_testing.primitives.string import String
 from algopy_testing.primitives.uint64 import UInt64
 from algopy_testing.utils import as_bytes, as_string
 
+BOX_NOT_CREATED_ERROR = "Box has not been created"
+
 
 @pytest.fixture()
 def context() -> Generator[AlgopyTestContext, None, None]:
@@ -31,7 +33,7 @@ def context() -> Generator[AlgopyTestContext, None, None]:
         (arc4.DynamicArray, b""),
     ],
 )
-def test_box_init_without_key(
+def test_init_without_key(
     context: AlgopyTestContext,  # noqa: ARG001
     value_type: type,
     key: bytes | str | Bytes | String,
@@ -39,10 +41,10 @@ def test_box_init_without_key(
     box = Box(value_type, key=key)  # type: ignore[var-annotated]
     assert not bool(box)
     assert len(box.key) > 0
-    with pytest.raises(ValueError, match="Box has not been created"):
+    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
         _ = box.value
 
-    with pytest.raises(ValueError, match="Box has not been created"):
+    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
         _ = box.length
 
 
@@ -57,7 +59,7 @@ def test_box_init_without_key(
         (arc4.DynamicArray, b"Key"),
     ],
 )
-def test_box_init_with_key(
+def test_init_with_key(
     context: AlgopyTestContext,  # noqa: ARG001
     value_type: type,
     key: bytes | str | Bytes | String,
@@ -71,10 +73,10 @@ def test_box_init_with_key(
     )
     assert box.key == key_bytes
 
-    with pytest.raises(ValueError, match="Box has not been created"):
+    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
         _ = box.value
 
-    with pytest.raises(ValueError, match="Box has not been created"):
+    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
         _ = box.length
 
 
@@ -89,7 +91,7 @@ def test_box_init_with_key(
         (arc4.DynamicArray[arc4.UInt64], arc4.DynamicArray(*[arc4.UInt64(100), arc4.UInt64(200)])),
     ],
 )
-def test_box_value_setter(
+def test_value_setter(
     context: AlgopyTestContext,  # noqa: ARG001
     value_type: type,
     value: typing.Any,
@@ -117,7 +119,7 @@ def test_box_value_setter(
         (arc4.DynamicArray[arc4.UInt64], arc4.DynamicArray(*[arc4.UInt64(100), arc4.UInt64(200)])),
     ],
 )
-def test_box_value_deleter(
+def test_value_deleter(
     context: AlgopyTestContext,  # noqa: ARG001
     value_type: type,
     value: typing.Any,
@@ -129,7 +131,7 @@ def test_box_value_deleter(
     del box.value
     assert not bool(box)
 
-    with pytest.raises(ValueError, match="Box has not been created"):
+    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
         _ = box.value
 
     op_box_content, op_box_exists = algopy.op.Box.get(key)
@@ -148,7 +150,7 @@ def test_box_value_deleter(
         (arc4.DynamicArray[arc4.UInt64], arc4.DynamicArray(*[arc4.UInt64(100), arc4.UInt64(200)])),
     ],
 )
-def test_box_maybe(
+def test_maybe(
     context: AlgopyTestContext,  # noqa: ARG001
     value_type: type,
     value: typing.Any,
@@ -177,7 +179,7 @@ def test_box_maybe(
         (arc4.DynamicArray[arc4.UInt64], arc4.DynamicArray(*[arc4.UInt64(100), arc4.UInt64(200)])),
     ],
 )
-def test_box_maybe_when_value_does_not_exist(
+def test_maybe_when_box_does_not_exist(
     context: AlgopyTestContext,  # noqa: ARG001
     value_type: type,
     value: typing.Any,
