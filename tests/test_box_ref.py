@@ -13,6 +13,11 @@ TEST_BOX_KEY = b"test_key"
 BOX_NOT_CREATED_ERROR = "Box has not been created"
 
 
+class ATestContract(algopy.Contract):
+    def __init__(self) -> None:
+        self.uint_64_box_ref = algopy.BoxRef()
+
+
 @pytest.fixture()
 def context() -> Generator[AlgopyTestContext, None, None]:
     with algopy_testing_context() as ctx:
@@ -20,24 +25,11 @@ def context() -> Generator[AlgopyTestContext, None, None]:
         ctx.reset()
 
 
-@pytest.mark.parametrize(
-    "key",
-    [
-        "",
-        b"",
-        Bytes(),
-        String(),
-    ],
-)
 def test_init_without_key(
     context: AlgopyTestContext,  # noqa: ARG001
-    key: bytes | str | Bytes | String,
 ) -> None:
-    box = BoxRef(key=key)
-    assert not bool(box)
-
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
-        _ = box.length
+    contract = ATestContract()
+    assert contract.uint_64_box_ref.key == b"uint_64_box_ref"
 
 
 @pytest.mark.parametrize(

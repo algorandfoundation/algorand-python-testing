@@ -15,6 +15,11 @@ from algopy_testing.utils import as_bytes, as_string
 BOX_NOT_CREATED_ERROR = "Box has not been created"
 
 
+class ATestContract(algopy.Contract):
+    def __init__(self) -> None:
+        self.uint_64_box = algopy.Box(algopy.UInt64)
+
+
 @pytest.fixture()
 def context() -> Generator[AlgopyTestContext, None, None]:
     with algopy_testing_context() as ctx:
@@ -22,30 +27,11 @@ def context() -> Generator[AlgopyTestContext, None, None]:
         ctx.reset()
 
 
-@pytest.mark.parametrize(
-    ("value_type", "key"),
-    [
-        (UInt64, ""),
-        (Bytes, b""),
-        (String, Bytes()),
-        (BigUInt, String()),
-        (arc4.String, ""),
-        (arc4.DynamicArray, b""),
-    ],
-)
 def test_init_without_key(
     context: AlgopyTestContext,  # noqa: ARG001
-    value_type: type,
-    key: bytes | str | Bytes | String,
 ) -> None:
-    box = Box(value_type, key=key)  # type: ignore[var-annotated]
-    assert not bool(box)
-    assert len(box.key) > 0
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
-        _ = box.value
-
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
-        _ = box.length
+    contract = ATestContract()
+    assert contract.uint_64_box.key == b"uint_64_box"
 
 
 @pytest.mark.parametrize(

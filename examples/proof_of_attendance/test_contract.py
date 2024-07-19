@@ -28,17 +28,18 @@ def test_init(context: AlgopyTestContext) -> None:
 
 
 @pytest.mark.parametrize(
-    "confirm_attendance",
+    ("confirm_attendance", "key_prefix"),
     [
-        "confirm_attendance",
-        "confirm_attendance_with_box",
-        "confirm_attendance_with_box_ref",
-        "confirm_attendance_with_box_map",
+        ("confirm_attendance", b""),
+        ("confirm_attendance_with_box", b""),
+        ("confirm_attendance_with_box_ref", b""),
+        ("confirm_attendance_with_box_map", b"box_map"),
     ],
 )
 def test_confirm_attendance(
     context: AlgopyTestContext,
     confirm_attendance: str,
+    key_prefix: bytes,
 ) -> None:
     # Arrange
     contract = ProofOfAttendance()
@@ -49,19 +50,23 @@ def test_confirm_attendance(
     confirm()
 
     # Assert
-    assert context.get_box(context.default_creator.bytes) == algopy.op.itob(1)
+    assert context.get_box(key_prefix + context.default_creator.bytes) == algopy.op.itob(1)
 
 
 @pytest.mark.parametrize(
-    "claim_poa",
+    ("claim_poa", "key_prefix"),
     [
-        "claim_poa",
-        "claim_poa_with_box",
-        "claim_poa_with_box_ref",
-        "claim_poa_with_box_map",
+        ("claim_poa", b""),
+        ("claim_poa_with_box", b""),
+        ("claim_poa_with_box_ref", b""),
+        ("claim_poa_with_box_map", b"box_map"),
     ],
 )
-def test_claim_poa(context: AlgopyTestContext, claim_poa: str) -> None:
+def test_claim_poa(
+    context: AlgopyTestContext,
+    claim_poa: str,
+    key_prefix: bytes,
+) -> None:
     # Arrange
     contract = ProofOfAttendance()
     dummy_poa = context.any_asset()
@@ -74,7 +79,7 @@ def test_claim_poa(context: AlgopyTestContext, claim_poa: str) -> None:
         fee=algopy.UInt64(0),
         asset_amount=algopy.UInt64(0),
     )
-    context.set_box(context.default_creator.bytes, algopy.op.itob(dummy_poa.id))
+    context.set_box(key_prefix + context.default_creator.bytes, algopy.op.itob(dummy_poa.id))
 
     # Act
     claim = getattr(contract, claim_poa)

@@ -69,6 +69,17 @@ class Contract(metaclass=_ContractMeta):
             return wrapper
         return attr
 
+    def __setattr__(self, name: str, value: Any) -> None:
+        import algopy
+
+        match value:
+            case algopy.Box() | algopy.BoxRef():
+                value._key = algopy.String(name).bytes
+            case algopy.BoxMap():
+                value._key_prefix = algopy.String(name).bytes
+
+        super().__setattr__(name, value)
+
 
 class ARC4Contract(Contract):
     @final

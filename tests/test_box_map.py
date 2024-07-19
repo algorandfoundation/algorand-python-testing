@@ -15,6 +15,11 @@ from algopy_testing.utils import as_bytes, as_string
 BOX_NOT_CREATED_ERROR = "Box has not been created"
 
 
+class ATestContract(algopy.Contract):
+    def __init__(self) -> None:
+        self.uint_64_box_map = algopy.BoxMap(algopy.UInt64, algopy.Bytes)
+
+
 @pytest.fixture()
 def context() -> Generator[AlgopyTestContext, None, None]:
     with algopy_testing_context() as ctx:
@@ -22,30 +27,11 @@ def context() -> Generator[AlgopyTestContext, None, None]:
         ctx.reset()
 
 
-@pytest.mark.parametrize(
-    ("key_type", "value_type", "key_prefix"),
-    [
-        (Bytes, UInt64, ""),
-        (String, Bytes, b""),
-        (BigUInt, String, Bytes()),
-        (arc4.String, BigUInt, String()),
-        (UInt64, arc4.String, ""),
-        (String, arc4.DynamicArray, b""),
-    ],
-)
 def test_init_without_key_prefix(
     context: AlgopyTestContext,  # noqa: ARG001
-    key_type: type,
-    value_type: type,
-    key_prefix: bytes | str | Bytes | String,
 ) -> None:
-    box = BoxMap(key_type, value_type, key_prefix=key_prefix)  # type: ignore[var-annotated]
-    assert len(box.key_prefix) == 0
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
-        _ = box[key_type()]
-
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
-        _ = box.length(key_type())
+    contract = ATestContract()
+    assert contract.uint_64_box_map.key_prefix == b"uint_64_box_map"
 
 
 @pytest.mark.parametrize(
@@ -85,7 +71,7 @@ def test_init_with_key_prefix(
 @pytest.mark.parametrize(
     ("key_type", "value_type", "key", "value"),
     [
-        (Bytes, UInt64, b"abc", UInt64(100)),
+        (Bytes, UInt64, Bytes(b"abc"), UInt64(100)),
         (String, Bytes, String("def"), Bytes(b"Test")),
         (BigUInt, String, BigUInt(123), String("Test")),
         (arc4.String, BigUInt, arc4.String("ghi"), BigUInt(100)),
@@ -122,7 +108,7 @@ def test_value_setter(
 @pytest.mark.parametrize(
     ("key_type", "value_type", "key", "value"),
     [
-        (Bytes, UInt64, b"abc", UInt64(100)),
+        (Bytes, UInt64, Bytes(b"abc"), UInt64(100)),
         (String, Bytes, String("def"), Bytes(b"Test")),
         (BigUInt, String, BigUInt(123), String("Test")),
         (arc4.String, BigUInt, arc4.String("ghi"), BigUInt(100)),
@@ -161,7 +147,7 @@ def test_value_deleter(
 @pytest.mark.parametrize(
     ("key_type", "value_type", "key", "value"),
     [
-        (Bytes, UInt64, b"abc", UInt64(100)),
+        (Bytes, UInt64, Bytes(b"abc"), UInt64(100)),
         (String, Bytes, String("def"), Bytes(b"Test")),
         (BigUInt, String, BigUInt(123), String("Test")),
         (arc4.String, BigUInt, arc4.String("ghi"), BigUInt(100)),
@@ -200,7 +186,7 @@ def test_maybe(
 @pytest.mark.parametrize(
     ("key_type", "value_type", "key", "value"),
     [
-        (Bytes, UInt64, b"abc", UInt64(100)),
+        (Bytes, UInt64, Bytes(b"abc"), UInt64(100)),
         (String, Bytes, String("def"), Bytes(b"Test")),
         (BigUInt, String, BigUInt(123), String("Test")),
         (arc4.String, BigUInt, arc4.String("ghi"), BigUInt(100)),

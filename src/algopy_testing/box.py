@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import secrets
 import typing
 
 from algopy_testing.constants import MAX_BOX_SIZE
@@ -28,15 +27,11 @@ class Box(typing.Generic[_TValue]):
 
         self._type = type_
 
-        # if key parameter is empty string, generate a random 32 bytes for key
-        if not bool(key):
-            self._key = algopy.Bytes(secrets.token_bytes(32))
-        else:
-            self._key = (
-                algopy.String(as_string(key)).bytes
-                if isinstance(key, str | algopy.String)
-                else algopy.Bytes(as_bytes(key))
-            )
+        self._key = (
+            algopy.String(as_string(key)).bytes
+            if isinstance(key, str | algopy.String)
+            else algopy.Bytes(as_bytes(key))
+        )
 
     def __bool__(self) -> bool:
         """
@@ -44,33 +39,35 @@ class Box(typing.Generic[_TValue]):
         of the box
         """
         context = get_test_context()
-        return context.does_box_exist(self._key)
+        return context.does_box_exist(self.key)
 
     @property
     def key(self) -> algopy.Bytes:
         """Provides access to the raw storage key"""
+        if not self._key:
+            raise ValueError("Box key is empty")
         return self._key
 
     @property
     def value(self) -> _TValue:
         """Retrieve the contents of the box. Fails if the box has not been created."""
         context = get_test_context()
-        if not context.does_box_exist(self._key):
+        if not context.does_box_exist(self.key):
             raise ValueError("Box has not been created")
-        return self._cast_to_type(context.get_box(self._key))
+        return _cast_to_value_type(self._type, context.get_box(self.key))
 
     @value.setter
     def value(self, value: _TValue) -> None:
         """Write _value_ to the box. Creates the box if it does not exist."""
         context = get_test_context()
-        bytes_value = self._cast_to_bytes(value)
-        context.set_box(self._key, bytes_value)
+        bytes_value = _cast_to_bytes(value)
+        context.set_box(self.key, bytes_value)
 
     @value.deleter
     def value(self) -> None:
         """Delete the box"""
         context = get_test_context()
-        context.clear_box(self._key)
+        context.clear_box(self.key)
 
     def get(self, *, default: _TValue) -> _TValue:
         """
@@ -89,10 +86,10 @@ class Box(typing.Generic[_TValue]):
 
         """
         context = get_test_context()
-        box_exists = context.does_box_exist(self._key)
-        box_content_bytes = context.get_box(self._key)
-        box_content = self._cast_to_type(box_content_bytes)
-        return (box_content, box_exists)
+        box_exists = context.does_box_exist(self.key)
+        box_content_bytes = context.get_box(self.key)
+        box_content = _cast_to_value_type(self._type, box_content_bytes)
+        return box_content, box_exists
 
     @property
     def length(self) -> algopy.UInt64:
@@ -102,44 +99,9 @@ class Box(typing.Generic[_TValue]):
         import algopy
 
         context = get_test_context()
-        if not context.does_box_exist(self._key):
+        if not context.does_box_exist(self.key):
             raise ValueError("Box has not been created")
-        return algopy.UInt64(len(context.get_box(self._key)))
-
-    def _cast_to_type(self, value: bytes) -> _TValue:
-        """
-        assuming _TValue to be one of the followings:
-            - algopy.UInt64
-            - algopy.Bytes
-            - algopy_testing.BytesBacked
-                - any type with `from_bytes` class method and `bytes` property
-                - .e.g algopy.String, algopy.Address, algopy.arc4.DynamicArray etc.
-        """
-        import algopy
-
-        if hasattr(self._type, "from_bytes"):
-            return self._type.from_bytes(value)  # type: ignore[attr-defined, no-any-return]
-        elif self._type is algopy.UInt64:
-            return algopy.op.btoi(value)  # type: ignore[return-value]
-        return algopy.Bytes(value)  # type: ignore[return-value]
-
-    def _cast_to_bytes(self, value: _TValue) -> algopy.Bytes:
-        """
-        assuming _TValue to be one of the followings:
-            - algopy.UInt64
-            - algopy.Bytes
-            - algopy_testing.BytesBacked
-                - any type with `from_bytes` class method and `bytes` property
-                - .e.g algopy.String, algopy.Address, algopy.arc4.DynamicArray etc.
-        """
-
-        import algopy
-
-        if hasattr(value, "bytes"):
-            return typing.cast(algopy.Bytes, value.bytes)
-        elif isinstance(value, algopy.UInt64):
-            return algopy.op.itob(value)
-        return typing.cast(algopy.Bytes, value)
+        return algopy.UInt64(len(context.get_box(self.key)))
 
 
 class BoxRef:
@@ -152,24 +114,23 @@ class BoxRef:
     def __init__(self, /, *, key: bytes | str | algopy.Bytes | algopy.String = "") -> None:
         import algopy
 
-        # if key parameter is empty string, generate a random 32 bytes for key
-        if isinstance(key, str) and key == "":
-            self._key = algopy.Bytes(secrets.token_bytes(32))
-        else:
-            self._key = (
-                algopy.String(as_string(key)).bytes
-                if isinstance(key, str | algopy.String)
-                else algopy.Bytes(as_bytes(key))
-            )
+        self._key = (
+            algopy.String(as_string(key)).bytes
+            if isinstance(key, str | algopy.String)
+            else algopy.Bytes(as_bytes(key))
+        )
 
     def __bool__(self) -> bool:
         """Returns True if the box has a value set, regardless of the truthiness of that value"""
         context = get_test_context()
-        return context.does_box_exist(self._key)
+        return context.does_box_exist(self.key)
 
     @property
     def key(self) -> algopy.Bytes:
         """Provides access to the raw storage key"""
+        if not self._key:
+            raise ValueError("Box key is empty")
+
         return self._key
 
     def create(self, *, size: algopy.UInt64 | int) -> bool:
@@ -190,7 +151,7 @@ class BoxRef:
         if box_exists:
             return False
         context = get_test_context()
-        context.set_box(self._key, b"\x00" * size_int)
+        context.set_box(self.key, b"\x00" * size_int)
         return True
 
     def delete(self) -> bool:
@@ -198,7 +159,7 @@ class BoxRef:
         Deletes the box if it exists and returns a value indicating if the box existed
         """
         context = get_test_context()
-        return context.clear_box(self._key)
+        return context.clear_box(self.key)
 
     def extract(
         self, start_index: algopy.UInt64 | int, length: algopy.UInt64 | int
@@ -242,7 +203,7 @@ class BoxRef:
             updated_content = box_content + b"\x00" * (new_size_int - len(box_content))
         else:
             updated_content = box_content[:new_size_int]
-        context.set_box(self._key, updated_content)
+        context.set_box(self.key, updated_content)
 
     def replace(self, start_index: algopy.UInt64 | int, value: algopy.Bytes | bytes) -> None:
         """
@@ -261,7 +222,7 @@ class BoxRef:
         if (start + length) > len(box_content):
             raise ValueError("Replacement content exceeds box size")
         updated_content = box_content[:start] + value + box_content[start + length :]
-        context.set_box(self._key, updated_content)
+        context.set_box(self.key, updated_content)
 
     def splice(
         self,
@@ -311,7 +272,7 @@ class BoxRef:
             new_content += b"\x00" * (len(box_content) - len(new_content))
 
         # Update the box with the new content
-        context.set_box(self._key, new_content)
+        context.set_box(self.key, new_content)
 
     def get(self, *, default: algopy.Bytes | bytes) -> algopy.Bytes:
         """
@@ -341,7 +302,7 @@ class BoxRef:
 
         context = get_test_context()
         content = value if isinstance(value, algopy.Bytes) else algopy.Bytes(value)
-        context.set_box(self._key, content)
+        context.set_box(self.key, content)
 
     def maybe(self) -> tuple[algopy.Bytes, bool]:
         """
@@ -351,13 +312,13 @@ class BoxRef:
         import algopy
 
         box_content, box_exists = self._maybe()
-        return (algopy.Bytes(box_content), box_exists)
+        return algopy.Bytes(box_content), box_exists
 
     def _maybe(self) -> tuple[bytes, bool]:
         context = get_test_context()
-        box_exists = context.does_box_exist(self._key)
-        box_content = context.get_box(self._key)
-        return (box_content, box_exists)
+        box_exists = context.does_box_exist(self.key)
+        box_content = context.get_box(self.key)
+        return box_content, box_exists
 
     @property
     def length(self) -> algopy.UInt64:
@@ -409,6 +370,8 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
     @property
     def key_prefix(self) -> algopy.Bytes:
         """Provides access to the raw storage key-prefix"""
+        if not self._key_prefix:
+            raise ValueError("Box key prefix is empty")
         return self._key_prefix
 
     def __getitem__(self, key: _TKey) -> _TValue:
@@ -424,7 +387,7 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         """Write _value_ to a keyed box. Creates the box if it does not exist"""
         context = get_test_context()
         key_bytes = self._full_key(key)
-        bytes_value = self._cast_to_bytes(value)
+        bytes_value = _cast_to_bytes(value)
         context.set_box(key_bytes, bytes_value)
 
     def __delitem__(self, key: _TKey) -> None:
@@ -464,8 +427,8 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         key_bytes = self._full_key(key)
         box_exists = context.does_box_exist(key_bytes)
         box_content_bytes = context.get_box(key_bytes)
-        box_content = self._cast_to_value_type(box_content_bytes)
-        return (box_content, box_exists)
+        box_content = _cast_to_value_type(self._value_type, box_content_bytes)
+        return box_content, box_exists
 
     def length(self, key: _TKey) -> algopy.UInt64:
         """
@@ -484,39 +447,70 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         return algopy.UInt64(len(box_content_bytes))
 
     def _full_key(self, key: _TKey) -> algopy.Bytes:
-        return self._key_prefix + self._cast_to_bytes(key)
+        return self.key_prefix + _cast_to_bytes(key)
 
-    def _cast_to_value_type(self, value: bytes) -> _TValue:
-        """
-        assuming _TValue to be one of the followings:
-            - algopy.UInt64
-            - algopy.Bytes
-            - algopy_testing.BytesBacked
-                - any type with `from_bytes` class method and `bytes` property
-                - .e.g algopy.String, algopy.Address, algopy.arc4.DynamicArray etc.
-        """
-        import algopy
 
-        if hasattr(self._value_type, "from_bytes"):
-            return self._value_type.from_bytes(value)  # type: ignore[attr-defined, no-any-return]
-        elif self._value_type is algopy.UInt64:
-            return algopy.op.btoi(value)  # type: ignore[return-value]
+def _cast_to_value_type(t: type[_TValue], value: bytes) -> _TValue:
+    """
+    assuming _TValue to be one of the followings:
+        - bool,
+        - algopy.Bytes,
+        - algopy.UInt64
+        - algopy.Asset,
+        - algopy.Application,
+        - algopy.UInt64 enums
+        - algopy.arc4.Struct
+        - algopy_testing.BytesBacked
+            - any type with `from_bytes` class method and `bytes` property
+            - .e.g algopy.String, algopy.Address, algopy.arc4.DynamicArray etc.
+    """
+    import algopy
+
+    context = get_test_context()
+
+    if t is bool:
+        return algopy.op.btoi(value) == 1  # type: ignore[return-value]
+    elif t is algopy.Bytes:
         return algopy.Bytes(value)  # type: ignore[return-value]
+    elif t is algopy.UInt64:
+        return algopy.op.btoi(value)  # type: ignore[return-value]
+    elif t is algopy.Asset:
+        asset_id = algopy.op.btoi(value)
+        return context.get_asset(asset_id)  # type: ignore[return-value]
+    elif t is algopy.Application:
+        application_id = algopy.op.btoi(value)
+        return context.get_application(application_id)  # type: ignore[return-value]
+    elif hasattr(t, "from_bytes"):
+        return t.from_bytes(value)  # type: ignore[attr-defined, no-any-return]
 
-    def _cast_to_bytes(self, value: _TValue | _TKey) -> algopy.Bytes:
-        """
-        assuming _TValue and _TKey to be one of the followings:
-            - algopy.UInt64
-            - algopy.Bytes
-            - algopy_testing.BytesBacked
-                - any type with `from_bytes` class method and `bytes` property
-                - .e.g algopy.String, algopy.Address, algopy.arc4.DynamicArray etc.
-        """
+    raise ValueError(f"Unsupported type: {t}")
 
-        import algopy
 
-        if hasattr(value, "bytes"):
-            return typing.cast(algopy.Bytes, value.bytes)
-        elif isinstance(value, algopy.UInt64):
-            return algopy.op.itob(value)
-        return typing.cast(algopy.Bytes, value)
+def _cast_to_bytes(value: _TValue) -> algopy.Bytes:
+    """
+    assuming _TValue to be one of the followings:
+        - bool,
+        - algopy.Bytes,
+        - algopy.UInt64
+        - algopy.Asset,
+        - algopy.Application,
+        - algopy.UInt64 enums
+        - algopy.arc4.Struct
+        - algopy_testing.BytesBacked
+            - any type with `from_bytes` class method and `bytes` property
+            - .e.g algopy.String, algopy.Address, algopy.arc4.DynamicArray etc.
+    """
+    import algopy
+
+    if isinstance(value, bool):
+        return algopy.op.itob(1 if value else 0)
+    elif isinstance(value, algopy.Bytes):
+        return value
+    elif isinstance(value, algopy.UInt64):
+        return algopy.op.itob(value)
+    elif isinstance(value, algopy.Asset | algopy.Application):
+        return algopy.op.itob(value.id)
+    elif hasattr(value, "bytes"):
+        return typing.cast(algopy.Bytes, value.bytes)
+
+    raise ValueError(f"Unsupported type: {type(value)}")

@@ -6,6 +6,7 @@ class ProofOfAttendance(algopy.ARC4Contract):
         self.max_attendees = algopy.UInt64(30)
         self.asset_url = algopy.String("ipfs://QmW5vERkgeJJtSY1YQdcWU6gsHCZCyLFtM1oT9uyy2WGm8")
         self.total_attendees = algopy.UInt64(0)
+        self.box_map = algopy.BoxMap(algopy.Bytes, algopy.UInt64)
 
     @algopy.arc4.abimethod(create="require")
     def init(self, max_attendees: algopy.UInt64) -> None:
@@ -57,11 +58,10 @@ class ProofOfAttendance(algopy.ARC4Contract):
         minted_asset = self._mint_poa(algopy.Txn.sender)
         self.total_attendees += 1
 
-        box_map = algopy.BoxMap(type(algopy.Txn.sender.bytes), algopy.UInt64)
-        has_claimed = algopy.Txn.sender.bytes in box_map
+        has_claimed = algopy.Txn.sender.bytes in self.box_map
         assert not has_claimed, "Already claimed POA"
 
-        box_map[algopy.Txn.sender.bytes] = minted_asset.id
+        self.box_map[algopy.Txn.sender.bytes] = minted_asset.id
 
     @algopy.arc4.abimethod(readonly=True)
     def get_poa_id(self) -> algopy.UInt64:
@@ -85,8 +85,7 @@ class ProofOfAttendance(algopy.ARC4Contract):
 
     @algopy.arc4.abimethod(readonly=True)
     def get_poa_id_with_box_map(self) -> algopy.UInt64:
-        box_map = algopy.BoxMap(type(algopy.Txn.sender.bytes), algopy.UInt64)
-        poa_id, exists = box_map.maybe(algopy.Txn.sender.bytes)
+        poa_id, exists = self.box_map.maybe(algopy.Txn.sender.bytes)
         assert exists, "POA not found"
         return poa_id
 
@@ -151,8 +150,7 @@ class ProofOfAttendance(algopy.ARC4Contract):
 
     @algopy.arc4.abimethod()
     def claim_poa_with_box_map(self, opt_in_txn: algopy.gtxn.AssetTransferTransaction) -> None:
-        box_map = algopy.BoxMap(type(algopy.Txn.sender.bytes), algopy.UInt64)
-        poa_id, exists = box_map.maybe(algopy.Txn.sender.bytes)
+        poa_id, exists = self.box_map.maybe(algopy.Txn.sender.bytes)
         assert exists, "POA not found, attendance validation failed!"
         assert opt_in_txn.xfer_asset.id == poa_id, "POA ID mismatch"
         assert opt_in_txn.fee == algopy.UInt64(0), "We got you covered for free!"
