@@ -72,11 +72,12 @@ class Contract(metaclass=_ContractMeta):
     def __setattr__(self, name: str, value: Any) -> None:
         import algopy
 
+        name_bytes = algopy.String(name).bytes
         match value:
-            case algopy.Box() | algopy.BoxRef():
-                value._key = algopy.String(name).bytes
+            case algopy.Box() | algopy.BoxRef() | algopy.GlobalState() | algopy.LocalState():
+                value._key = name_bytes
             case algopy.BoxMap():
-                value._key_prefix = algopy.String(name).bytes
+                value._key_prefix = name_bytes
 
         super().__setattr__(name, value)
 
