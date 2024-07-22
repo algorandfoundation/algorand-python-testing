@@ -46,7 +46,7 @@ def test_init_with_key(
     key: bytes | str | Bytes | String,
 ) -> None:
     box = BoxRef(key=key)
-    assert not bool(box)
+    assert not box
     assert len(box.key) > 0
 
     key_bytes = (
@@ -99,7 +99,7 @@ def test_delete(
 
     box_existed = box.delete()
     assert box_existed
-    assert not bool(box)
+    assert not box
 
     with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
         _ = box.length
@@ -248,11 +248,11 @@ def test_maybe_when_box_does_not_exist(
     box.delete()
 
     box_content, box_exists = box.maybe()
-    assert not bool(box_content)
+    assert not box_content
     assert not box_exists
 
     op_box_content, op_box_exists = algopy.op.Box.get(key)
-    assert not bool(op_box_content)
+    assert not op_box_content
     assert not op_box_exists
 
 

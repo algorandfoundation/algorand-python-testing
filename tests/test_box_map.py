@@ -141,7 +141,7 @@ def test_value_deleter(
 
     op_box_content, op_box_exists = algopy.op.Box.get(full_key)
     assert not op_box_exists
-    assert not bool(op_box_content)
+    assert not op_box_content
 
 
 @pytest.mark.parametrize(
@@ -213,14 +213,14 @@ def test_maybe_when_box_does_not_exists(
     del box[key]
 
     box_content, box_exists = box.maybe(key)
-    assert not bool(box_content)
+    assert not box_content
     assert not box_exists
 
     full_key = box._full_key(key)
 
     op_box_content, op_box_exists = algopy.op.Box.get(full_key)
     assert not op_box_exists
-    assert not bool(op_box_content)
+    assert not op_box_content
 
 
 def _assert_box_content_equality(

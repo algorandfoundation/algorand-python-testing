@@ -51,7 +51,7 @@ def test_init_with_key(
     key: bytes | str | Bytes | String,
 ) -> None:
     box = Box(value_type, key=key)  # type: ignore[var-annotated]
-    assert not bool(box)
+    assert not box
     assert len(box.key) > 0
 
     key_bytes = (
@@ -115,14 +115,14 @@ def test_value_deleter(
     box.value = value
 
     del box.value
-    assert not bool(box)
+    assert not box
 
     with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
         _ = box.value
 
     op_box_content, op_box_exists = algopy.op.Box.get(key)
     assert not op_box_exists
-    assert not bool(op_box_content)
+    assert not op_box_content
 
 
 @pytest.mark.parametrize(
@@ -177,11 +177,11 @@ def test_maybe_when_box_does_not_exist(
     del box.value
 
     box_content, box_exists = box.maybe()
-    assert not bool(box_content)
+    assert not box_content
     assert not box_exists
 
     op_box_content, op_box_exists = algopy.op.Box.get(key)
-    assert not bool(op_box_content)
+    assert not op_box_content
     assert not op_box_exists
 
 
