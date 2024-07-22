@@ -232,9 +232,35 @@ To be documented...
 
 ### Boxes
 
-To be documented...
+The higher-level Boxes interface, introduced in version 2.1.0, along with all low-level Box 'op' calls, are available.
 
-> NOTE: Higher level Boxes interface introduce in v2.1.0 is not supported yet, however all low level Box 'op' calls are available.
+```py
+import algopy
+
+# Check and mark the sender's POA claim in the Box by their address
+# to prevent duplicates using low-level Box 'op' calls.
+_id, has_claimed = algopy.op.Box.get(algopy.Txn.sender.bytes)
+assert not has_claimed, "Already claimed POA"
+algopy.op.Box.put(algopy.Txn.sender.bytes, algopy.op.itob(minted_asset.id))
+
+# Utilizing the higher-level 'Box' interface for an alternative implementation.
+box = algopy.Box(algopy.UInt64, key=algopy.Txn.sender.bytes)
+has_claimed = bool(box)
+assert not has_claimed, "Already claimed POA"
+box.value = minted_asset.id
+
+# Utilizing the higher-level 'BoxRef' interface for an alternative implementation.
+box_ref = algopy.BoxRef(key=algopy.Txn.sender.bytes)
+has_claimed = bool(box_ref)
+assert not has_claimed, "Already claimed POA"
+box_ref.put(algopy.op.itob(minted_asset.id))
+
+# Utilizing the higher-level 'BoxMap' interface for an alternative implementation.
+box_map = algopy.BoxMap(algopy.Bytes, algopy.UInt64, key_prefix="box_map")
+has_claimed = algopy.Txn.sender.bytes in self.box_map
+assert not has_claimed, "Already claimed POA"
+self.box_map[algopy.Txn.sender.bytes] = minted_asset.id
+```
 
 ## Smart Signatures
 
