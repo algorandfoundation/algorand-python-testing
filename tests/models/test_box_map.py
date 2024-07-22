@@ -61,10 +61,10 @@ def test_init_with_key_prefix(
     )
     assert box.key_prefix == key_prefix_bytes
 
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
+    with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         _ = box[key_type()]
 
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
+    with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         _ = box.length(key_type())
 
 
@@ -134,7 +134,7 @@ def test_value_deleter(
 
     del box[key]
 
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
+    with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         _ = box[key]
 
     full_key = box._full_key(key)

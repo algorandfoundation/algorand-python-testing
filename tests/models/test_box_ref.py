@@ -54,7 +54,7 @@ def test_init_with_key(
     )
     assert box.key == key_bytes
 
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
+    with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         _ = box.length
 
 
@@ -101,13 +101,13 @@ def test_delete(
     assert box_existed
     assert not box
 
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
+    with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         _ = box.length
 
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
+    with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         box.resize(10)
 
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
+    with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         box.replace(0, b"\x11")
 
     assert not box.delete()
@@ -191,7 +191,7 @@ def test_replace_when_box_does_not_exists(
 ) -> None:
     box = BoxRef(key=TEST_BOX_KEY)
 
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
+    with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         box.replace(0, b"\x11")
 
 
@@ -377,7 +377,7 @@ def test_splice_when_box_does_not_exist(
 ) -> None:
     box = BoxRef(key=TEST_BOX_KEY)
 
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
+    with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         box.splice(0, 1, b"\x11")
 
 

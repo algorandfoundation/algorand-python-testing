@@ -59,10 +59,10 @@ def test_init_with_key(
     )
     assert box.key == key_bytes
 
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
+    with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         _ = box.value
 
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
+    with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         _ = box.length
 
 
@@ -117,7 +117,7 @@ def test_value_deleter(
     del box.value
     assert not box
 
-    with pytest.raises(ValueError, match=BOX_NOT_CREATED_ERROR):
+    with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         _ = box.value
 
     op_box_content, op_box_exists = algopy.op.Box.get(key)

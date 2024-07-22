@@ -1063,7 +1063,7 @@ class Box:
         length = int(c)
         box_content = context.get_box(name_bytes)
         if not box_content:
-            raise ValueError("Box does not exist")
+            raise RuntimeError("Box does not exist")
         result = box_content[start : start + length]
         return algopy.Bytes(result)
 
@@ -1111,7 +1111,7 @@ class Box:
         new_content = c.value if isinstance(c, algopy.Bytes) else c
         box_content = context.get_box(name_bytes)
         if not box_content:
-            raise ValueError("Box does not exist")
+            raise RuntimeError("Box does not exist")
         if start + len(new_content) > len(box_content):
             raise ValueError("Replacement content exceeds box size")
         updated_content = (
@@ -1130,7 +1130,7 @@ class Box:
             raise ValueError("Invalid box name or size")
         box_content = context.get_box(name_bytes)
         if not box_content:
-            raise ValueError("Box does not exist")
+            raise RuntimeError("Box does not exist")
         if new_size > len(box_content):
             updated_content = box_content + b"\x00" * (new_size - len(box_content))
         else:
@@ -1155,7 +1155,7 @@ class Box:
         box_content = context.get_box(name_bytes)
 
         if not box_content:
-            raise ValueError("Box does not exist")
+            raise RuntimeError("Box does not exist")
 
         if start > len(box_content):
             raise ValueError("Start index exceeds box size")

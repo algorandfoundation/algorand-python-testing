@@ -45,7 +45,7 @@ class Box(typing.Generic[_TValue]):
     def key(self) -> algopy.Bytes:
         """Provides access to the raw storage key"""
         if not self._key:
-            raise ValueError("Box key is empty")
+            raise RuntimeError("Box key is empty")
         return self._key
 
     @property
@@ -53,7 +53,7 @@ class Box(typing.Generic[_TValue]):
         """Retrieve the contents of the box. Fails if the box has not been created."""
         context = get_test_context()
         if not context.does_box_exist(self.key):
-            raise ValueError("Box has not been created")
+            raise RuntimeError("Box has not been created")
         return _cast_to_value_type(self._type, context.get_box(self.key))
 
     @value.setter
@@ -100,7 +100,7 @@ class Box(typing.Generic[_TValue]):
 
         context = get_test_context()
         if not context.does_box_exist(self.key):
-            raise ValueError("Box has not been created")
+            raise RuntimeError("Box has not been created")
         return algopy.UInt64(len(context.get_box(self.key)))
 
 
@@ -129,7 +129,7 @@ class BoxRef:
     def key(self) -> algopy.Bytes:
         """Provides access to the raw storage key"""
         if not self._key:
-            raise ValueError("Box key is empty")
+            raise RuntimeError("Box key is empty")
 
         return self._key
 
@@ -178,7 +178,7 @@ class BoxRef:
         start_int = int(start_index)
         length_int = int(length)
         if not box_exists:
-            raise ValueError("Box does not exist")
+            raise RuntimeError("Box has not been created")
         if (start_int + length_int) > len(box_content):
             raise ValueError("Index out of bounds")
         result = box_content[start_int : start_int + length_int]
@@ -198,7 +198,7 @@ class BoxRef:
             raise ValueError(f"Box size cannot exceed {MAX_BOX_SIZE}")
         box_content, box_exists = self._maybe()
         if not box_exists:
-            raise ValueError("Box has not been created")
+            raise RuntimeError("Box has not been created")
         if new_size_int > len(box_content):
             updated_content = box_content + b"\x00" * (new_size_int - len(box_content))
         else:
@@ -216,7 +216,7 @@ class BoxRef:
         context = get_test_context()
         box_content, box_exists = self._maybe()
         if not box_exists:
-            raise ValueError("Box has not been created")
+            raise RuntimeError("Box has not been created")
         start = int(start_index)
         length = len(value)
         if (start + length) > len(box_content):
@@ -252,7 +252,7 @@ class BoxRef:
         insert_content = value.value if isinstance(value, algopy.Bytes) else value
 
         if not box_exists:
-            raise ValueError("Box has not been created")
+            raise RuntimeError("Box has not been created")
 
         if start > len(box_content):
             raise ValueError("Start index exceeds box size")
@@ -329,7 +329,7 @@ class BoxRef:
 
         box_content, box_exists = self._maybe()
         if not box_exists:
-            raise ValueError("Box has not been created")
+            raise RuntimeError("Box has not been created")
         return algopy.UInt64(len(box_content))
 
 
@@ -371,7 +371,7 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
     def key_prefix(self) -> algopy.Bytes:
         """Provides access to the raw storage key-prefix"""
         if not self._key_prefix:
-            raise ValueError("Box key prefix is empty")
+            raise RuntimeError("Box key prefix is empty")
         return self._key_prefix
 
     def __getitem__(self, key: _TKey) -> _TValue:
@@ -380,7 +380,7 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         """
         box_content, box_exists = self.maybe(key)
         if not box_exists:
-            raise ValueError("Box has not been created")
+            raise RuntimeError("Box has not been created")
         return box_content
 
     def __setitem__(self, key: _TKey, value: _TValue) -> None:
@@ -442,7 +442,7 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         key_bytes = self._full_key(key)
         box_exists = context.does_box_exist(key_bytes)
         if not box_exists:
-            raise ValueError("Box has not been created")
+            raise RuntimeError("Box has not been created")
         box_content_bytes = context.get_box(key_bytes)
         return algopy.UInt64(len(box_content_bytes))
 
