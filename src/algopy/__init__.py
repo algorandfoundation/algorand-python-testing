@@ -1,4 +1,3 @@
-from algopy_testing.box import Box, BoxMap, BoxRef
 from algopy_testing.decorators.subroutine import subroutine
 from algopy_testing.enums import OnCompleteAction, TransactionType
 from algopy_testing.models import (
@@ -18,6 +17,7 @@ from algopy_testing.models import (
     uenumerate,
     urange,
 )
+from algopy_testing.models.box import Box, BoxMap, BoxRef
 from algopy_testing.primitives import BigUInt, Bytes, String, UInt64
 from algopy_testing.protocols import BytesBacked
 from algopy_testing.state import GlobalState, LocalState

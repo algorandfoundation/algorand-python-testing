@@ -2,9 +2,9 @@ from collections.abc import Generator
 
 import algopy
 import pytest
-from algopy_testing.box import BoxRef
 from algopy_testing.constants import MAX_BOX_SIZE, MAX_BYTES_SIZE
 from algopy_testing.context import AlgopyTestContext, algopy_testing_context
+from algopy_testing.models.box import BoxRef
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.string import String
 from algopy_testing.utils import as_bytes, as_string
