@@ -11,9 +11,11 @@ from algopy_testing.models import (
     GTxn,
     ITxn,
     LogicSig,
+    StateTotals,
     TemplateVar,
     Txn,
     logicsig,
+    uenumerate,
     urange,
 )
 from algopy_testing.primitives import BigUInt, Bytes, String, UInt64
