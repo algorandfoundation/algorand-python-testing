@@ -3,6 +3,9 @@ from __future__ import annotations
 import typing
 from typing import cast, overload
 
+if typing.TYPE_CHECKING:
+    import algopy
+
 _T = typing.TypeVar("_T")
 
 
@@ -35,6 +38,8 @@ class GlobalState(typing.Generic[_T]):
         key: bytes | str = "",
         description: str = "",
     ) -> None:
+        import algopy
+
         if isinstance(type_or_value, type):
             self.type_ = type_or_value
             self._value: _T | None = None
@@ -42,8 +47,20 @@ class GlobalState(typing.Generic[_T]):
             self.type_ = type(type_or_value)
             self._value = type_or_value
 
-        self.key = key
+        match key:
+            case bytes(key):
+                self._key = algopy.Bytes(key)
+            case str(key):
+                self._key = algopy.String(key).bytes
+            case _:
+                raise ValueError("Key must be bytes or str")
+
         self.description = description
+
+    @property
+    def key(self) -> algopy.Bytes:
+        """Provides access to the raw storage key"""
+        return self._key
 
     @property
     def value(self) -> _T:
