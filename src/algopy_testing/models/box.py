@@ -450,7 +450,7 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         return self.key_prefix + _cast_to_bytes(key)
 
 
-def _cast_to_value_type(t: type[_TValue], value: bytes) -> _TValue:
+def _cast_to_value_type(t: type[_TValue], value: bytes) -> _TValue:  # noqa: PLR0911
     """
     assuming _TValue to be one of the followings:
         - bool,
@@ -474,6 +474,10 @@ def _cast_to_value_type(t: type[_TValue], value: bytes) -> _TValue:
         return algopy.Bytes(value)  # type: ignore[return-value]
     elif t is algopy.UInt64:
         return algopy.op.btoi(value)  # type: ignore[return-value]
+    elif t is algopy.OnCompleteAction:
+        return algopy.OnCompleteAction(algopy.op.btoi(value).value)  # type: ignore[return-value]
+    elif t is algopy.TransactionType:
+        return algopy.TransactionType(algopy.op.btoi(value).value)  # type: ignore[return-value]
     elif t is algopy.Asset:
         asset_id = algopy.op.btoi(value)
         return context.get_asset(asset_id)  # type: ignore[return-value]
