@@ -15,22 +15,7 @@ class StateTotals:
     local_bytes: int | None = None
 
 
-class _ContractMeta(type):
-    def __call__(cls, *args: Any, **kwargs: dict[str, Any]) -> object:
-        from algopy import Contract
-
-        from algopy_testing.context import get_test_context
-
-        context = get_test_context()
-        instance = super().__call__(*args, **kwargs)
-
-        if context and isinstance(instance, Contract):
-            context._add_contract(instance)
-
-        return instance
-
-
-class Contract(metaclass=_ContractMeta):
+class Contract:
     """Base class for an Algorand Smart Contract"""
 
     _name: str
@@ -50,6 +35,17 @@ class Contract(metaclass=_ContractMeta):
         cls._scratch_slots = scratch_slots
         cls._state_totals = state_totals
 
+    def _get_local_states(self) -> dict[str, algopy.LocalState[Any]]:
+        import algopy
+
+        local_states = {
+            name: value
+            for name, value in vars(self).items()
+            if isinstance(value, algopy.LocalState)
+        }
+
+        return local_states
+
     def approval_program(self) -> algopy.UInt64 | bool:
         raise NotImplementedError("`approval_program` is not implemented.")
 
@@ -60,6 +56,11 @@ class Contract(metaclass=_ContractMeta):
         return hash(self._name)
 
     def __getattribute__(self, name: str) -> Any:
+        from algopy_testing.context import get_test_context
+
+        context = get_test_context()
+        context.set_active_contract(self)
+
         attr = super().__getattribute__(name)
         if callable(attr):
 

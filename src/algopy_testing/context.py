@@ -270,10 +270,12 @@ class AlgopyTestContext:
     ) -> None:
         import algopy
 
-        self._asset_id = iter(range(1, 2**64))
-        self._app_id = iter(range(1, 2**64))
+        self._asset_id = iter(range(1001, 2**64))
+        self._app_id = iter(range(1001, 2**64))
 
+        self._active_contract: algopy.Contract | algopy.ARC4Contract | None = None
         self._contracts: list[algopy.Contract | algopy.ARC4Contract] = []
+        self._app_id_to_contract: dict[int, algopy.Contract | algopy.ARC4Contract] = {}
         self._txn_fields: TxnFields = {}
         self._gtxns: list[algopy.gtxn.TransactionBase] = []
         self._active_transaction_index: int | None = None
@@ -289,6 +291,7 @@ class AlgopyTestContext:
         self._boxes: dict[bytes, algopy.Bytes] = {}
         self._lsigs: dict[algopy.LogicSig, Callable[[], algopy.UInt64 | bool]] = {}
         self._active_lsig_args: Sequence[algopy.Bytes] = []
+        self._account_data: dict[str, AccountContextData] = {}
 
         self.default_creator = default_creator or algopy.Account(
             algosdk.account.generate_account()[1]
@@ -297,11 +300,6 @@ class AlgopyTestContext:
         default_application_id = next(self._app_id)
         default_application_address = algosdk.logic.get_application_address(default_application_id)
 
-        self.default_application = default_application or self.any_application(
-            id=default_application_id,
-            address=algopy.Account(default_application_address),
-        )
-
         self._global_fields: GlobalFields = {
             "min_txn_fee": algopy.UInt64(algosdk.constants.MIN_TXN_FEE),
             "min_balance": algopy.UInt64(DEFAULT_ACCOUNT_MIN_BALANCE),
@@ -309,17 +307,20 @@ class AlgopyTestContext:
             "zero_address": algopy.Account(algosdk.constants.ZERO_ADDRESS),
             "creator_address": self.default_creator,
             "current_application_address": algopy.Account(default_application_address),
-            "current_application_id": self.default_application,
+            "current_application_id": algopy.Application(default_application_id),
             "asset_create_min_balance": algopy.UInt64(DEFAULT_ASSET_CREATE_MIN_BALANCE),
             "asset_opt_in_min_balance": algopy.UInt64(DEFAULT_ASSET_OPT_IN_MIN_BALANCE),
             "genesis_hash": algopy.Bytes(DEFAULT_GLOBAL_GENESIS_HASH),
         }
 
-        self._account_data: dict[str, AccountContextData] = {
-            str(self.default_creator): AccountContextData(
-                fields=AccountFields(), opted_asset_balances={}, opted_apps={}
-            )
-        }
+        self._account_data[str(self.default_creator)] = AccountContextData(
+            fields=AccountFields(), opted_asset_balances={}, opted_apps={}
+        )
+
+        self.default_application = default_application or self.any_application(
+            id=default_application_id,
+            address=algopy.Account(default_application_address),
+        )
 
     def patch_global_fields(self, **global_fields: Unpack[GlobalFields]) -> None:
         """
@@ -368,7 +369,31 @@ class AlgopyTestContext:
 
         self._scratch_spaces[str(txn)] = new_scratch_space
 
+    def set_active_contract(self, contract: algopy.Contract | algopy.ARC4Contract) -> None:
+        """
+        Set the active contract for the current context. By default, invoked automatically
+        as part of invocation of any app calls against instances
+        of Contract or ARC4Contract classes.
+
+        Args:
+            contract (algopy.Contract | algopy.ARC4Contract): The contract to set as active.
+
+        Returns:
+            None
+        """
+        self._active_contract = contract
+
     def set_template_var(self, name: str, value: Any) -> None:
+        """
+        Set a template variable for the current context.
+
+        Args:
+            name (str): The name of the template variable.
+            value (Any): The value to assign to the template variable.
+
+        Returns:
+            None
+        """
         self._template_vars[name] = value
 
     def get_account(self, address: str) -> algopy.Account:
@@ -414,15 +439,6 @@ class AlgopyTestContext:
             dict[int, ApplicationFields]: The application data.
         """
         return self._application_data
-
-    def get_contracts(self) -> list[algopy.Contract | algopy.ARC4Contract]:
-        """
-        Retrieve all contracts.
-
-        Returns:
-            list[algopy.Contract | algopy.ARC4Contract]: The contracts.
-        """
-        return self._contracts
 
     def update_account(self, address: str, **account_fields: Unpack[AccountFields]) -> None:
         """
@@ -527,18 +543,6 @@ class AlgopyTestContext:
             raise ValueError("Application not found in testing context!")
 
         self._application_data[app_id].update(application_fields)
-
-    def _add_contract(
-        self,
-        contract: algopy.Contract | algopy.ARC4Contract,
-    ) -> None:
-        """
-        Add a contract to the context.
-
-        Args:
-            contract (algopy.Contract | algopy.ARC4Contract): The contract to add.
-        """
-        self._contracts.append(contract)
 
     def _append_inner_transaction_group(
         self,
@@ -671,7 +675,7 @@ class AlgopyTestContext:
             "manager": algopy.Account(algosdk.constants.ZERO_ADDRESS),
             "freeze": algopy.Account(algosdk.constants.ZERO_ADDRESS),
             "clawback": algopy.Account(algosdk.constants.ZERO_ADDRESS),
-            "creator": self.any_account(),
+            "creator": self.default_creator,
             "reserve": algopy.Account(algosdk.constants.ZERO_ADDRESS),
         }
         merged_fields = dict(ChainMap(asset_fields, default_asset_fields))  # type: ignore[arg-type]
@@ -682,6 +686,7 @@ class AlgopyTestContext:
         self,
         id: int | None = None,
         address: algopy.Account | None = None,
+        contract: algopy.Contract | algopy.ARC4Contract | None = None,
         **application_fields: Unpack[ApplicationFields],
     ) -> algopy.Application:
         """
@@ -701,11 +706,29 @@ class AlgopyTestContext:
         new_app_id = id if id is not None else next(self._app_id)
         new_app = algopy.Application(new_app_id)
 
-        if address is None:
-            address = algopy.Account(algosdk.logic.get_application_address(new_app_id))
+        # Set sensible defaults
+        default_app_fields = {
+            "approval_program": self.any_bytes(64),
+            "clear_state_program": self.any_bytes(32),
+            "global_num_uint": algopy.UInt64(0),
+            "global_num_bytes": algopy.UInt64(0),
+            "local_num_uint": algopy.UInt64(0),
+            "local_num_bytes": algopy.UInt64(0),
+            "extra_program_pages": algopy.UInt64(0),
+            "creator": self.default_creator,
+            "address": address
+            or algopy.Account(algosdk.logic.get_application_address(new_app_id)),
+        }
 
-        app_fields = ApplicationFields(address=address, **application_fields)  # type: ignore[typeddict-item]
+        # Merge provided fields with defaults, prioritizing provided fields
+        merged_fields = dict(ChainMap(application_fields, default_app_fields))
+
+        app_fields = ApplicationFields(**merged_fields)  # type: ignore[typeddict-item]
         self._application_data[int(new_app.id)] = app_fields
+
+        if contract:
+            self._app_id_to_contract[int(new_app.id)] = contract
+
         return new_app
 
     def add_application_logs(
@@ -1135,12 +1158,6 @@ class AlgopyTestContext:
         """
         self._application_logs.clear()
 
-    def clear_contracts(self) -> None:
-        """
-        Clear all contracts.
-        """
-        self._contracts.clear()
-
     def clear_scratch_spaces(self) -> None:
         """
         Clear all scratch spaces.
@@ -1153,6 +1170,12 @@ class AlgopyTestContext:
         """
         self._active_transaction_index = None
 
+    def clear_active_contract(self) -> None:
+        """
+        Clear the active contract.
+        """
+        self._active_contract = None
+
     def clear(self) -> None:
         """
         Clear all data, including accounts, applications, assets, inner transactions,
@@ -1164,9 +1187,9 @@ class AlgopyTestContext:
         self.clear_inner_transaction_groups()
         self.clear_transaction_group()
         self.clear_application_logs()
-        self.clear_contracts()
         self.clear_scratch_spaces()
         self.clear_active_transaction_index()
+        self.clear_active_contract()
 
     def reset(self) -> None:
         """
@@ -1175,7 +1198,6 @@ class AlgopyTestContext:
         self._account_data = {}
         self._application_data = {}
         self._asset_data = {}
-        self._contracts = []
         self._active_transaction_index = None
         self._scratch_spaces = {}
         self._inner_transaction_groups = []

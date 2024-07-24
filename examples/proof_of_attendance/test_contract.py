@@ -38,7 +38,7 @@ def test_confirm_attendance(
     contract.confirm_attendance()
 
     # Assert
-    assert context.get_box(context.default_creator.bytes) == algopy.op.itob(1)
+    assert context.get_box(context.default_creator.bytes) == algopy.op.itob(1001)
 
 
 def test_claim_poa(context: AlgopyTestContext) -> None:

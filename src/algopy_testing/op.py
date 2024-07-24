@@ -957,8 +957,10 @@ class AssetHoldingGet:
 class _AppParamsGet:
     @staticmethod
     def _get_app_param_from_ctx(
-        index: algopy.Application | algopy.UInt64 | int, param: str
+        a: algopy.Application | algopy.UInt64 | int, param: str
     ) -> tuple[Any, bool]:
+        import algopy
+
         from algopy_testing import get_test_context
 
         context = get_test_context()
@@ -969,17 +971,18 @@ class _AppParamsGet:
                 "to access the context manager."
             )
 
-        try:
-            application = context.get_application_data()[int(index)]
-        except IndexError:
+        active_txn = context.get_active_transaction()
+        if not active_txn:
+            raise ValueError("No active transaction found to reference application")
+
+        app_id = int(a.id) if isinstance(a, algopy.Application) else int(a)
+        app_data = context.get_application(app_id)
+
+        if app_data is None:
             return None, False
 
-        try:
-            response = getattr(application, param)
-        except AttributeError:
-            return None, False
-        else:
-            return response, True
+        value = getattr(app_data, param, None)
+        return value, True
 
     @staticmethod
     def app_approval_program(
@@ -1036,12 +1039,158 @@ AppParamsGet = _AppParamsGet()
 
 
 class _AppLocal:
-    def __getattr__(self, name: str) -> Any:
-        raise NotImplementedError(
-            f"AppLocal.{name} is currently not available as a native "
-            "`algorand-python-testing` type. Use your own preferred testing "
-            "framework of choice to mock the behaviour."
-        )
+    @staticmethod
+    def get_bytes(
+        a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
+    ) -> algopy.Bytes:
+        import algopy
+
+        from algopy_testing import get_test_context
+
+        test_context = get_test_context()
+
+        if not test_context:
+            raise ValueError("Test context is not initialized!")
+        if not test_context._active_contract:
+            raise ValueError(
+                "No active contract found to reference local state. Ensure you accessing contract "
+                "class instance via Python intepreter and within test context."
+            )
+        local_states = test_context._active_contract._get_local_states()
+
+        local_state_key = b.value.decode() if isinstance(b, Bytes) else b.decode()
+        local_state = local_states.get(local_state_key, None)
+        if local_state is None:
+            raise ValueError(f"Local state with key {local_state_key} not found")
+        return algopy.Bytes(local_state.get(a))
+
+    @staticmethod
+    def get_uint64(
+        a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
+    ) -> algopy.UInt64:
+        import algopy
+
+        from algopy_testing import get_test_context
+
+        test_context = get_test_context()
+
+        if not test_context:
+            raise ValueError("Test context is not initialized!")
+        if not test_context._active_contract:
+            raise ValueError(
+                "No active contract found to reference local state. Ensure you accessing contract "
+                "class instance via Python intepreter and within test context."
+            )
+        local_states = test_context._active_contract._get_local_states()
+
+        local_state_key = b.value.decode() if isinstance(b, Bytes) else b.decode()
+        local_state = local_states.get(local_state_key, None)
+        if local_state is None:
+            raise ValueError(f"Local state with key {local_state_key} not found")
+        return algopy.UInt64(local_state.get(a))
+
+    @staticmethod
+    def get_ex_bytes(
+        a: algopy.Account | algopy.UInt64 | int,
+        b: algopy.Application | algopy.UInt64 | int,
+        c: algopy.Bytes | bytes,
+        /,
+    ) -> tuple[algopy.Bytes, bool]:
+        import algopy
+
+        from algopy_testing import get_test_context
+
+        test_context = get_test_context()
+        if not test_context:
+            raise ValueError("Test context is not initialized!")
+
+        app_id = int(b.id) if isinstance(b, algopy.Application) else int(b)
+        contract = test_context._app_id_to_contract.get(app_id, None)
+        if contract is None:
+            raise ValueError(f"Contract with app id {b} not found")
+
+        local_states = contract._get_local_states()
+        local_state_key = c.value.decode() if isinstance(c, Bytes) else c.decode()
+        local_state = local_states.get(local_state_key, None)
+
+        if local_state is None:
+            return algopy.Bytes(b""), False
+        return local_state.get(a, b""), True
+
+    @staticmethod
+    def get_ex_uint64(
+        a: algopy.Account | algopy.UInt64 | int,
+        b: algopy.Application | algopy.UInt64 | int,
+        c: algopy.Bytes | bytes,
+        /,
+    ) -> tuple[algopy.UInt64, bool]:
+        import algopy
+
+        from algopy_testing import get_test_context
+
+        test_context = get_test_context()
+        if not test_context:
+            raise ValueError("Test context is not initialized!")
+
+        app_id = int(b.id) if isinstance(b, algopy.Application) else int(b)
+        contract = test_context._app_id_to_contract.get(app_id, None)
+        if contract is None:
+            raise ValueError(f"Contract with app id {b} not found")
+
+        local_states = contract._get_local_states()
+        local_state_key = c.value.decode() if isinstance(c, Bytes) else c.decode()
+        local_state = local_states.get(local_state_key, None)
+
+        if local_state is None:
+            return algopy.UInt64(0), False
+        return local_state.get(a, 0), True
+
+    @staticmethod
+    def delete(a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /) -> None:
+        from algopy_testing import get_test_context
+
+        test_context = get_test_context()
+        if not test_context:
+            raise ValueError("Test context is not initialized!")
+        if not test_context._active_contract:
+            raise ValueError(
+                "No active contract found to reference local state. Ensure you accessing contract "
+                "class instance via Python intepreter and within test context."
+            )
+
+        local_states = test_context._active_contract._get_local_states()
+
+        local_state_key = b.value.decode() if isinstance(b, Bytes) else b.decode()
+        local_state = local_states.get(local_state_key, None)
+        if local_state is None:
+            raise ValueError(f"Local state with key {local_state_key} not found")
+        del local_state[a]
+
+    @staticmethod
+    def put(
+        a: algopy.Account | algopy.UInt64 | int,
+        b: algopy.Bytes | bytes,
+        c: algopy.Bytes | algopy.UInt64 | bytes | int,
+        /,
+    ) -> None:
+        from algopy_testing import get_test_context
+
+        test_context = get_test_context()
+
+        if not test_context:
+            raise ValueError("Test context is not initialized!")
+        if not test_context._active_contract:
+            raise ValueError(
+                "No active contract found to reference local state. Ensure you accessing contract "
+                "class instance via Python intepreter and within test context."
+            )
+        local_states = test_context._active_contract._get_local_states()
+
+        local_state_key = b.value.decode() if isinstance(b, Bytes) else b.decode()
+        local_state = local_states.get(local_state_key, None)
+        if local_state is None:
+            raise ValueError(f"Local state with key {local_state_key} not found")
+        local_state[a] = c
 
 
 AppLocal = _AppLocal()

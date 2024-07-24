@@ -116,7 +116,6 @@ def test_context_clearing() -> None:
             context.get_submitted_itxn_group(0)
         assert len(context.get_transaction_group()) == 0
         assert len(context._application_logs) == 0
-        assert len(context._contracts) == 0
         assert len(context._scratch_spaces) == 0
         assert context._active_transaction_index is None
 
@@ -137,7 +136,6 @@ def test_context_reset() -> None:
             context.get_submitted_itxn_group(0)
         assert len(context.get_transaction_group()) == 0
         assert len(context._application_logs) == 0
-        assert len(context._contracts) == 0
         assert len(context._scratch_spaces) == 0
         assert context._active_transaction_index is None
         assert next(context._asset_id) == 1
