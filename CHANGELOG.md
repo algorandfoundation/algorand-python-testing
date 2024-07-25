@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.2.2-beta.4 (2024-07-25)
+
+### Ci
+
+* ci: improve cd pipeline to ensure dist is cleaned up before build done by semantic release (#7) ([`6c02d0b`](https://github.com/algorandfoundation/algorand-python-testing/commit/6c02d0b5f08106ac39125f9b1fbbb84203c27bf6))
+
 ## v0.2.2-beta.3 (2024-07-25)
 
 ### Ci
@@ -9,6 +15,12 @@
 * ci: tweaking conditional to not perform publish to pypi if no release was generated
 
 * chore: tweaking patch tags ([`842f9b5`](https://github.com/algorandfoundation/algorand-python-testing/commit/842f9b55d3bc491f6f32ed3b132a9422b6b7f987))
+
+### Unknown
+
+* 0.2.2-beta.3
+
+[skip ci] ([`0919c42`](https://github.com/algorandfoundation/algorand-python-testing/commit/0919c42e160f76c49c2c8a02acc05a658bbd3fb5))
 
 ## v0.2.2-beta.2 (2024-07-25)
 
