@@ -24,7 +24,10 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | Application                                                  | Emulated              |
 | subroutine                                                   | Emulated              |
 | Global                                                       | Emulated              |
+| op.Box.\*                                                    | Emulated              |
 | Box                                                          | Emulated              |
+| BoxRef                                                       | Emulated              |
+| BoxMap                                                       | Emulated              |
 | Block                                                        | Emulated              |
 | logicsig                                                     | Emulated              |
 | log                                                          | Emulated              |

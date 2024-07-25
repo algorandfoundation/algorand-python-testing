@@ -293,7 +293,7 @@ class AlgopyTestContext:
         self._scratch_spaces: dict[str, list[algopy.Bytes | algopy.UInt64 | bytes | int]] = {}
         self._template_vars: dict[str, Any] = template_vars or {}
         self._blocks: dict[int, dict[str, int]] = {}
-        self._boxes: dict[bytes, algopy.Bytes] = {}
+        self._boxes: dict[bytes, bytes] = {}
         self._lsigs: dict[algopy.LogicSig, Callable[[], algopy.UInt64 | bool]] = {}
         self._active_lsig_args: Sequence[algopy.Bytes] = []
         self._account_data: dict[str, AccountContextData] = {}
@@ -1096,20 +1096,23 @@ class AlgopyTestContext:
 
         return new_txn
 
-    def get_box(self, name: algopy.Bytes | bytes) -> algopy.Bytes:
+    def does_box_exist(self, name: algopy.Bytes | bytes) -> bool:
+        """return true if the box with the given name exists."""
+        name_bytes = name if isinstance(name, bytes) else name.value
+        return name_bytes in self._boxes
+
+    def get_box(self, name: algopy.Bytes | bytes) -> bytes:
         """Get the content of a box."""
-        import algopy
 
         name_bytes = name if isinstance(name, bytes) else name.value
-        return self._boxes.get(name_bytes, algopy.Bytes(b""))
+        return self._boxes.get(name_bytes, b"")
 
     def set_box(self, name: algopy.Bytes | bytes, content: algopy.Bytes | bytes) -> None:
         """Set the content of a box."""
-        import algopy
 
         name_bytes = name if isinstance(name, bytes) else name.value
         content_bytes = content if isinstance(content, bytes) else content.value
-        self._boxes[name_bytes] = algopy.Bytes(content_bytes)
+        self._boxes[name_bytes] = content_bytes
 
     def execute_logicsig(
         self, lsig: algopy.LogicSig, lsig_args: Sequence[algopy.Bytes] | None = None
@@ -1120,12 +1123,14 @@ class AlgopyTestContext:
             self._lsigs[lsig] = lsig.func
         return lsig.func()
 
-    def clear_box(self, name: algopy.Bytes | bytes) -> None:
+    def clear_box(self, name: algopy.Bytes | bytes) -> bool:
         """Clear the content of a box."""
 
         name_bytes = name if isinstance(name, bytes) else name.value
         if name_bytes in self._boxes:
             del self._boxes[name_bytes]
+            return True
+        return False
 
     def clear_all_boxes(self) -> None:
         """Clear all boxes."""

@@ -27,21 +27,46 @@ def test_init(context: AlgopyTestContext) -> None:
     assert contract.max_attendees == max_attendees
 
 
+@pytest.mark.parametrize(
+    ("confirm_attendance", "key_prefix"),
+    [
+        ("confirm_attendance", b""),
+        ("confirm_attendance_with_box", b""),
+        ("confirm_attendance_with_box_ref", b""),
+        ("confirm_attendance_with_box_map", b"box_map"),
+    ],
+)
 def test_confirm_attendance(
     context: AlgopyTestContext,
+    confirm_attendance: str,
+    key_prefix: bytes,
 ) -> None:
     # Arrange
     contract = ProofOfAttendance()
     contract.max_attendees = context.any_uint64(1, 100)
 
     # Act
-    contract.confirm_attendance()
+    confirm = getattr(contract, confirm_attendance)
+    confirm()
 
     # Assert
-    assert context.get_box(context.default_creator.bytes) == algopy.op.itob(1001)
+    assert context.get_box(key_prefix + context.default_creator.bytes) == algopy.op.itob(1001)
 
 
-def test_claim_poa(context: AlgopyTestContext) -> None:
+@pytest.mark.parametrize(
+    ("claim_poa", "key_prefix"),
+    [
+        ("claim_poa", b""),
+        ("claim_poa_with_box", b""),
+        ("claim_poa_with_box_ref", b""),
+        ("claim_poa_with_box_map", b"box_map"),
+    ],
+)
+def test_claim_poa(
+    context: AlgopyTestContext,
+    claim_poa: str,
+    key_prefix: bytes,
+) -> None:
     # Arrange
     contract = ProofOfAttendance()
     dummy_poa = context.any_asset()
@@ -54,10 +79,11 @@ def test_claim_poa(context: AlgopyTestContext) -> None:
         fee=algopy.UInt64(0),
         asset_amount=algopy.UInt64(0),
     )
-    context.set_box(context.default_creator.bytes, algopy.op.itob(dummy_poa.id))
+    context.set_box(key_prefix + context.default_creator.bytes, algopy.op.itob(dummy_poa.id))
 
     # Act
-    contract.claim_poa(opt_in_txn)
+    claim = getattr(contract, claim_poa)
+    claim(opt_in_txn)
 
     # Assert
     axfer_itxn = context.get_submitted_itxn_group(-1).asset_transfer(0)

@@ -10,11 +10,14 @@ from algopy_testing.models import (
     GTxn,
     ITxn,
     LogicSig,
+    StateTotals,
     TemplateVar,
     Txn,
     logicsig,
+    uenumerate,
     urange,
 )
+from algopy_testing.models.box import Box, BoxMap, BoxRef
 from algopy_testing.primitives import BigUInt, Bytes, String, UInt64
 from algopy_testing.protocols import BytesBacked
 from algopy_testing.state import GlobalState, LocalState
@@ -55,4 +58,7 @@ __all__ = [
     "subroutine",
     "uenumerate",
     "urange",
+    "Box",
+    "BoxRef",
+    "BoxMap",
 ]
