@@ -847,6 +847,58 @@ def app_opted_in(
     return app_id in account_data.opted_apps
 
 
+class _AcctParamsGet:
+    def __getattr__(
+        self, name: str
+    ) -> typing.Callable[[algopy.Account | algopy.UInt64 | int], tuple[typing.Any, bool]]:
+        def get_account_param(a: algopy.Account | algopy.UInt64 | int) -> tuple[typing.Any, bool]:
+            import algopy
+
+            from algopy_testing.context import get_test_context
+
+            context = get_test_context()
+            if not context:
+                raise ValueError(
+                    "Test context is not initialized! Use `with algopy_testing_context()` to "
+                    "access the context manager."
+                )
+
+            active_txn = context.get_active_transaction()
+            if not active_txn:
+                raise ValueError("No active transaction found to reference asset")
+
+            account_data = None
+
+            if isinstance(a, (algopy.Account)):
+                account_data = context.get_account(str(a))
+            elif isinstance(a, (algopy.UInt64 | int)):
+                try:
+                    active_txn = context.get_active_transaction()
+                    assert (
+                        active_txn is not None
+                    ), "No active transaction found to reference account"
+                    account_data = active_txn.accounts[int(a)]
+                except KeyError:
+                    account_data = None
+            else:
+                raise TypeError(f"Invalid type for account parameter: {type(a)}")
+
+            if account_data is None:
+                return None, False
+
+            param = name.removeprefix("acct_")
+            value = getattr(account_data, param, None)
+            return value, True
+
+        if name.startswith("acct_"):
+            return get_account_param
+        else:
+            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+
+AcctParamsGet = _AcctParamsGet()
+
+
 class _AssetParamsGet:
     def __getattr__(
         self, name: str
@@ -886,9 +938,9 @@ class _AssetParamsGet:
 AssetParamsGet = _AssetParamsGet()
 
 
-class AssetHoldingGet:
-    @staticmethod
+class _AssetHoldingGet:
     def _get_asset_holding(
+        self,
         account: algopy.Account | algopy.UInt64 | int,
         asset: algopy.Asset | algopy.UInt64 | int,
         field: str,
@@ -938,27 +990,27 @@ class AssetHoldingGet:
         else:
             raise ValueError(f"Invalid asset holding field: {field}")
 
-    @staticmethod
     def asset_balance(
-        a: algopy.Account | algopy.UInt64 | int, b: algopy.Asset | algopy.UInt64 | int, /
+        self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Asset | algopy.UInt64 | int, /
     ) -> tuple[algopy.UInt64, bool]:
         import algopy
 
-        balance, exists = AssetHoldingGet._get_asset_holding(a, b, "balance")
+        balance, exists = self._get_asset_holding(a, b, "balance")
         return algopy.UInt64(balance) if exists else algopy.UInt64(0), exists
 
-    @staticmethod
     def asset_frozen(
-        a: algopy.Account | algopy.UInt64 | int, b: algopy.Asset | algopy.UInt64 | int, /
+        self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Asset | algopy.UInt64 | int, /
     ) -> tuple[bool, bool]:
-        frozen, exists = AssetHoldingGet._get_asset_holding(a, b, "frozen")
+        frozen, exists = self._get_asset_holding(a, b, "frozen")
         return bool(frozen), exists
 
 
+AssetHoldingGet = _AssetHoldingGet()
+
+
 class _AppParamsGet:
-    @staticmethod
     def _get_app_param_from_ctx(
-        a: algopy.Application | algopy.UInt64 | int, param: str
+        self, a: algopy.Application | algopy.UInt64 | int, param: str
     ) -> tuple[Any, bool]:
         import algopy
 
@@ -985,63 +1037,57 @@ class _AppParamsGet:
         value = getattr(app_data, param, None)
         return value, True
 
-    @staticmethod
     def app_approval_program(
-        a: algopy.Application | algopy.UInt64 | int, /
+        self, a: algopy.Application | algopy.UInt64 | int, /
     ) -> tuple[algopy.Bytes, bool]:
-        return _AppParamsGet._get_app_param_from_ctx(a, "approval_program")
+        return self._get_app_param_from_ctx(a, "approval_program")
 
-    @staticmethod
     def app_clear_state_program(
-        a: algopy.Application | algopy.UInt64 | int, /
+        self, a: algopy.Application | algopy.UInt64 | int, /
     ) -> tuple[algopy.Bytes, bool]:
-        return _AppParamsGet._get_app_param_from_ctx(a, "clear_state_program")
+        return self._get_app_param_from_ctx(a, "clear_state_program")
 
-    @staticmethod
     def app_global_num_uint(
-        a: algopy.Application | algopy.UInt64 | int, /
+        self, a: algopy.Application | algopy.UInt64 | int, /
     ) -> tuple[algopy.UInt64, bool]:
-        return _AppParamsGet._get_app_param_from_ctx(a, "global_num_uint")
+        return self._get_app_param_from_ctx(a, "global_num_uint")
 
-    @staticmethod
     def app_global_num_byte_slice(
-        a: algopy.Application | algopy.UInt64 | int, /
+        self, a: algopy.Application | algopy.UInt64 | int, /
     ) -> tuple[algopy.UInt64, bool]:
-        return _AppParamsGet._get_app_param_from_ctx(a, "global_num_byte_slice")
+        return self._get_app_param_from_ctx(a, "global_num_byte_slice")
 
-    @staticmethod
     def app_local_num_uint(
-        a: algopy.Application | algopy.UInt64 | int, /
+        self, a: algopy.Application | algopy.UInt64 | int, /
     ) -> tuple[algopy.UInt64, bool]:
-        return _AppParamsGet._get_app_param_from_ctx(a, "local_num_uint")
+        return self._get_app_param_from_ctx(a, "local_num_uint")
 
-    @staticmethod
     def app_local_num_byte_slice(
-        a: algopy.Application | algopy.UInt64 | int, /
+        self, a: algopy.Application | algopy.UInt64 | int, /
     ) -> tuple[algopy.UInt64, bool]:
-        return _AppParamsGet._get_app_param_from_ctx(a, "local_num_byte_slice")
+        return self._get_app_param_from_ctx(a, "local_num_byte_slice")
 
-    @staticmethod
     def app_extra_program_pages(
-        a: algopy.Application | algopy.UInt64 | int, /
+        self, a: algopy.Application | algopy.UInt64 | int, /
     ) -> tuple[algopy.UInt64, bool]:
-        return _AppParamsGet._get_app_param_from_ctx(a, "extra_program_pages")
+        return self._get_app_param_from_ctx(a, "extra_program_pages")
 
-    @staticmethod
-    def app_creator(a: algopy.Application | algopy.UInt64 | int, /) -> tuple[algopy.Account, bool]:
-        return _AppParamsGet._get_app_param_from_ctx(a, "creator")
+    def app_creator(
+        self, a: algopy.Application | algopy.UInt64 | int, /
+    ) -> tuple[algopy.Account, bool]:
+        return self._get_app_param_from_ctx(a, "creator")
 
-    @staticmethod
-    def app_address(a: algopy.Application | algopy.UInt64 | int, /) -> tuple[algopy.Account, bool]:
-        return _AppParamsGet._get_app_param_from_ctx(a, "address")
+    def app_address(
+        self, a: algopy.Application | algopy.UInt64 | int, /
+    ) -> tuple[algopy.Account, bool]:
+        return self._get_app_param_from_ctx(a, "address")
 
 
 AppParamsGet = _AppParamsGet()
 
 
 class _AppLocal:
-    @staticmethod
-    def _get_local_state(key: str) -> algopy.LocalState[Any]:
+    def _get_local_state(self, key: bytes) -> algopy.LocalState[Any]:
         from algopy_testing import get_test_context
 
         test_context = get_test_context()
@@ -1051,17 +1097,16 @@ class _AppLocal:
         local_states = test_context._active_contract._get_local_states()
         local_state = local_states.get(key)
         if local_state is None:
-            raise ValueError(f"Local state with key {key} not found")
+            raise ValueError(f"Local state with key {key.decode()} not found")
         return local_state
 
-    @staticmethod
-    def _get_key(b: algopy.Bytes | bytes) -> str:
+    def _get_key(self, b: algopy.Bytes | bytes) -> bytes:
         import algopy
 
-        return b.value.decode() if isinstance(b, algopy.Bytes) else b.decode()
+        return b.value if isinstance(b, algopy.Bytes) else b
 
-    @staticmethod
     def _get_contract(
+        self,
         b: algopy.Application | algopy.UInt64 | int,
     ) -> algopy.Contract | algopy.ARC4Contract:
         import algopy
@@ -1078,32 +1123,30 @@ class _AppLocal:
             raise ValueError(f"Contract with app id {b} not found")
         return contract
 
-    @staticmethod
     def get_bytes(
-        a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
+        self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
     ) -> algopy.Bytes:
         import algopy
 
-        local_state = _AppLocal._get_local_state(_AppLocal._get_key(b))
         try:
-            return algopy.Bytes(local_state.get(a))
-        except AttributeError:
+            local_state = self._get_local_state(self._get_key(b)).get(a, 0)
+            return algopy.Bytes(local_state) if local_state else algopy.UInt64(0)  # type: ignore[return-value]
+        except (AttributeError, KeyError):
             return algopy.UInt64(0)  # type: ignore[return-value]
 
-    @staticmethod
     def get_uint64(
-        a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
+        self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
     ) -> algopy.UInt64:
         import algopy
 
-        local_state = _AppLocal._get_local_state(_AppLocal._get_key(b))
         try:
+            local_state = self._get_local_state(self._get_key(b))
             return algopy.UInt64(local_state.get(a))
-        except AttributeError:
+        except (AttributeError, KeyError):
             return algopy.UInt64(0)
 
-    @staticmethod
     def get_ex_bytes(
+        self,
         a: algopy.Account | algopy.UInt64 | int,
         b: algopy.Application | algopy.UInt64 | int,
         c: algopy.Bytes | bytes,
@@ -1111,17 +1154,17 @@ class _AppLocal:
     ) -> tuple[algopy.Bytes, bool]:
         import algopy
 
-        contract = _AppLocal._get_contract(b)
+        contract = self._get_contract(b)
         local_states = contract._get_local_states()
-        local_state = local_states.get(_AppLocal._get_key(c))
+        local_state = local_states.get(self._get_key(c))
         return (
             (algopy.Bytes(local_state.get(a, b"")), True)
             if local_state
             else (algopy.Bytes(b""), False)
         )
 
-    @staticmethod
     def get_ex_uint64(
+        self,
         a: algopy.Account | algopy.UInt64 | int,
         b: algopy.Application | algopy.UInt64 | int,
         c: algopy.Bytes | bytes,
@@ -1129,28 +1172,27 @@ class _AppLocal:
     ) -> tuple[algopy.UInt64, bool]:
         import algopy
 
-        contract = _AppLocal._get_contract(b)
+        contract = self._get_contract(b)
         local_states = contract._get_local_states()
-        local_state = local_states.get(_AppLocal._get_key(c))
+        local_state = local_states.get(self._get_key(c))
         return (
             (algopy.UInt64(local_state.get(a, 0)), True)
             if local_state
             else (algopy.UInt64(0), False)
         )
 
-    @staticmethod
-    def delete(a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /) -> None:
-        local_state = _AppLocal._get_local_state(_AppLocal._get_key(b))
+    def delete(self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /) -> None:
+        local_state = self._get_local_state(self._get_key(b))
         del local_state[a]
 
-    @staticmethod
     def put(
+        self,
         a: algopy.Account | algopy.UInt64 | int,
         b: algopy.Bytes | bytes,
         c: algopy.Bytes | algopy.UInt64 | bytes | int,
         /,
     ) -> None:
-        local_state = _AppLocal._get_local_state(_AppLocal._get_key(b))
+        local_state = self._get_local_state(self._get_key(b))
         local_state[a] = c
 
 
@@ -1158,8 +1200,7 @@ AppLocal = _AppLocal()
 
 
 class _AppGlobal:
-    @staticmethod
-    def _get_global_state(key: str) -> algopy.GlobalState[Any]:
+    def _get_global_state(self, key: bytes) -> algopy.GlobalState[Any]:
         from algopy_testing import get_test_context
 
         test_context = get_test_context()
@@ -1171,14 +1212,13 @@ class _AppGlobal:
             raise ValueError("No global state found on active contract instance")
         return global_states[key]
 
-    @staticmethod
-    def _get_key(b: algopy.Bytes | bytes) -> str:
+    def _get_key(self, b: algopy.Bytes | bytes) -> bytes:
         import algopy
 
-        return b.value.decode() if isinstance(b, algopy.Bytes) else b.decode()
+        return b.value if isinstance(b, algopy.Bytes) else b
 
-    @staticmethod
     def _get_contract(
+        self,
         b: algopy.Application | algopy.UInt64 | int,
     ) -> algopy.Contract | algopy.ARC4Contract:
         import algopy
@@ -1195,77 +1235,66 @@ class _AppGlobal:
             raise ValueError(f"Contract with app id {b} not found")
         return contract
 
-    @staticmethod
-    def get_bytes(b: algopy.Bytes | bytes, /) -> algopy.Bytes:
+    def get_bytes(self, b: algopy.Bytes | bytes, /) -> algopy.Bytes:
         import algopy
 
-        global_state = _AppGlobal._get_global_state(_AppGlobal._get_key(b))
         try:
+            global_state = self._get_global_state(self._get_key(b))
             return algopy.Bytes(global_state.get(b))
-        except AttributeError:
+        except (AttributeError, KeyError):
             return algopy.UInt64(0)  # type: ignore[return-value]
 
-    @staticmethod
-    def get_uint64(b: algopy.Bytes | bytes, /) -> algopy.UInt64:
+    def get_uint64(self, b: algopy.Bytes | bytes, /) -> algopy.UInt64:
         import algopy
 
-        global_state = _AppGlobal._get_global_state(_AppGlobal._get_key(b))
         try:
+            global_state = self._get_global_state(self._get_key(b))
             return algopy.UInt64(global_state.get(b))
-        except AttributeError:
+        except (AttributeError, KeyError):
             return algopy.UInt64(0)
 
-    @staticmethod
     def get_ex_bytes(
-        a: algopy.Application | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
+        self, a: algopy.Application | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
     ) -> tuple[algopy.Bytes, bool]:
         import algopy
 
-        contract = _AppGlobal._get_contract(a)
-        global_state = contract._get_global_state()
-        value = global_state.get(_AppGlobal._get_key(b))
+        contract = self._get_contract(a)
+        global_states = contract._get_global_states()
+        global_state = global_states.get(self._get_key(b))
+        value = (
+            global_state
+            if not isinstance(global_state, algopy.GlobalState)
+            else global_state.value
+        )
         return (algopy.Bytes(value), True) if value is not None else (algopy.Bytes(b""), False)
 
-    @staticmethod
     def get_ex_uint64(
-        a: algopy.Application | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
+        self, a: algopy.Application | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
     ) -> tuple[algopy.UInt64, bool]:
         import algopy
 
-        contract = _AppGlobal._get_contract(a)
+        contract = self._get_contract(a)
         global_state = contract._get_global_state()
-        value = global_state.get(_AppGlobal._get_key(b))
+        value = global_state.get(self._get_key(b))
         return (algopy.UInt64(value), True) if value is not None else (algopy.UInt64(0), False)
 
-    @staticmethod
-    def delete(b: algopy.Bytes | bytes, /) -> None:
+    def delete(self, b: algopy.Bytes | bytes, /) -> None:
         from algopy_testing import get_test_context
 
         test_context = get_test_context()
         if not test_context or not test_context._active_contract:
             raise ValueError("No active contract or test context found.")
 
-        delattr(test_context._active_contract, _AppGlobal._get_key(b))
+        delattr(test_context._active_contract, self._get_key(b).decode("utf-8"))
 
-    @staticmethod
-    def put(a: algopy.Bytes | bytes, b: algopy.Bytes | algopy.UInt64 | bytes | int, /) -> None:
-        global_state = _AppGlobal._get_global_state(_AppGlobal._get_key(a))
+    def put(
+        self, a: algopy.Bytes | bytes, b: algopy.Bytes | algopy.UInt64 | bytes | int, /
+    ) -> None:
+        global_state = self._get_global_state(self._get_key(a))
         global_state.value = b
 
 
 AppGlobal = _AppGlobal()
-
-
-class _AcctParamsGet:
-    def __getattr__(self, name: str) -> Any:
-        raise NotImplementedError(
-            f"AcctParamsGet.{name} is currently not available as a native "
-            "`algorand-python-testing` type. Use your own preferred testing "
-            "framework of choice to mock the behaviour."
-        )
-
-
-AcctParamsGet = _AcctParamsGet()
 
 
 def arg(a: UInt64 | int, /) -> Bytes:

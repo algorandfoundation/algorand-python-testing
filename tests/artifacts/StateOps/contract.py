@@ -1,3 +1,4 @@
+import algopy
 from algopy import (
     Account,
     Application,
@@ -11,6 +12,68 @@ from algopy import (
     arc4,
     op,
 )
+
+
+class StateAcctParamsGet(ARC4Contract):
+    @arc4.abimethod()
+    def verify_acct_balance(self, a: algopy.Account) -> algopy.UInt64:
+        balance, _val = op.AcctParamsGet.acct_balance(a)
+        return balance
+
+    @arc4.abimethod()
+    def verify_acct_min_balance(self, a: algopy.Account) -> algopy.UInt64:
+        min_balance, _val = op.AcctParamsGet.acct_min_balance(a)
+        return min_balance
+
+    @arc4.abimethod()
+    def verify_acct_auth_addr(self, a: algopy.Account) -> algopy.Bytes:
+        auth_addr, _val = op.AcctParamsGet.acct_auth_addr(a)
+        return auth_addr.bytes
+
+    @arc4.abimethod()
+    def verify_acct_total_num_uint(self, a: algopy.Account) -> algopy.UInt64:
+        total_num_uint, _val = op.AcctParamsGet.acct_total_num_uint(a)
+        return total_num_uint
+
+    @arc4.abimethod()
+    def verify_acct_total_num_byte_slice(self, a: algopy.Account) -> algopy.UInt64:
+        total_num_byte_slice, _val = op.AcctParamsGet.acct_total_num_byte_slice(a)
+        return total_num_byte_slice
+
+    @arc4.abimethod()
+    def verify_acct_total_extra_app_pages(self, a: algopy.Account) -> algopy.UInt64:
+        total_extra_app_pages, _val = op.AcctParamsGet.acct_total_extra_app_pages(a)
+        return total_extra_app_pages
+
+    @arc4.abimethod()
+    def verify_acct_total_apps_created(self, a: algopy.Account) -> algopy.UInt64:
+        total_apps_created, _val = op.AcctParamsGet.acct_total_apps_created(a)
+        return total_apps_created
+
+    @arc4.abimethod()
+    def verify_acct_total_apps_opted_in(self, a: algopy.Account) -> algopy.UInt64:
+        total_apps_opted_in, _val = op.AcctParamsGet.acct_total_apps_opted_in(a)
+        return total_apps_opted_in
+
+    @arc4.abimethod()
+    def verify_acct_total_assets_created(self, a: algopy.Account) -> algopy.UInt64:
+        total_assets_created, _val = op.AcctParamsGet.acct_total_assets_created(a)
+        return total_assets_created
+
+    @arc4.abimethod()
+    def verify_acct_total_assets(self, a: algopy.Account) -> algopy.UInt64:
+        total_assets, _val = op.AcctParamsGet.acct_total_assets(a)
+        return total_assets
+
+    @arc4.abimethod()
+    def verify_acct_total_boxes(self, a: algopy.Account) -> algopy.UInt64:
+        total_boxes, _val = op.AcctParamsGet.acct_total_boxes(a)
+        return total_boxes
+
+    @arc4.abimethod()
+    def verify_acct_total_box_bytes(self, a: algopy.Account) -> algopy.UInt64:
+        total_box_bytes, _val = op.AcctParamsGet.acct_total_box_bytes(a)
+        return total_box_bytes
 
 
 class StateAssetHoldingContract(ARC4Contract):
@@ -202,9 +265,23 @@ class StateAppLocalContract(ARC4Contract):
         op.AppLocal.put(a, b, c)
 
 
+class StateAppGlobalExContract(ARC4Contract):
+    def __init__(self) -> None:
+        self.global_uint64 = GlobalState(
+            UInt64(2),
+            key="global_uint64",
+        )
+        self.global_bytes = GlobalState(
+            Bytes(b"dummy_bytes"),
+            key="global_bytes",
+        )
+        self.global_uint64_explicit = algopy.UInt64(2)
+        self.global_bytes_explicit = algopy.Bytes(b"dummy_bytes")
+
+
 class StateAppGlobalContract(ARC4Contract):
     def __init__(self) -> None:
-        self.global_uint64 = LocalState(
+        self.global_uint64 = GlobalState(
             UInt64,
             key="global_uint64",
         )

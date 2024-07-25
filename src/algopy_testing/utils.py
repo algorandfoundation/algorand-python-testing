@@ -229,9 +229,10 @@ def abi_type_name_for_arg(  # noqa: PLR0912, C901, PLR0911
     if is_instance(arg, algopy.arc4.DynamicArray):
         return f"{abi_type_name_for_arg(arg=arg[0], # type: ignore[index]
                                         is_return_type=is_return_type)}[]"
-    if isinstance(arg, tuple):
-        return f"({','.join(abi_type_name_for_arg(arg=a,
-                                                  is_return_type=is_return_type) for a in arg)})"
+    if isinstance(arg, tuple) or typing.get_origin(arg) is tuple:
+        return f"({','.join(abi_type_name_for_arg(arg=a, is_return_type=is_return_type)
+                            for a in get_args(arg))})"
+
     raise ValueError(f"Unsupported type {type(arg)}")
 
 

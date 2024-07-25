@@ -1,7 +1,7 @@
 #pragma version 10
 
 tests.artifacts.StateOps.contract.StateAppParamsContract.approval_program:
-    // tests/artifacts/StateOps/contract.py:90
+    // tests/artifacts/StateOps/contract.py:153
     // class StateAppParamsContract(ARC4Contract):
     txn NumAppArgs
     bz main_bare_routing@13
@@ -19,19 +19,19 @@ tests.artifacts.StateOps.contract.StateAppParamsContract.approval_program:
     err // reject transaction
 
 main_verify_app_params_get_approval_program_route@2:
-    // tests/artifacts/StateOps/contract.py:91
+    // tests/artifacts/StateOps/contract.py:154
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:90
+    // tests/artifacts/StateOps/contract.py:153
     // class StateAppParamsContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
     txnas Applications
-    // tests/artifacts/StateOps/contract.py:91
+    // tests/artifacts/StateOps/contract.py:154
     // @arc4.abimethod()
     callsub verify_app_params_get_approval_program
     dup
@@ -48,19 +48,19 @@ main_verify_app_params_get_approval_program_route@2:
     return
 
 main_verify_app_params_get_clear_state_program_route@3:
-    // tests/artifacts/StateOps/contract.py:96
+    // tests/artifacts/StateOps/contract.py:159
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:90
+    // tests/artifacts/StateOps/contract.py:153
     // class StateAppParamsContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
     txnas Applications
-    // tests/artifacts/StateOps/contract.py:96
+    // tests/artifacts/StateOps/contract.py:159
     // @arc4.abimethod()
     callsub verify_app_params_get_clear_state_program
     dup
@@ -77,19 +77,19 @@ main_verify_app_params_get_clear_state_program_route@3:
     return
 
 main_verify_app_params_get_global_num_uint_route@4:
-    // tests/artifacts/StateOps/contract.py:101
+    // tests/artifacts/StateOps/contract.py:164
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:90
+    // tests/artifacts/StateOps/contract.py:153
     // class StateAppParamsContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
     txnas Applications
-    // tests/artifacts/StateOps/contract.py:101
+    // tests/artifacts/StateOps/contract.py:164
     // @arc4.abimethod()
     callsub verify_app_params_get_global_num_uint
     itob
@@ -101,19 +101,19 @@ main_verify_app_params_get_global_num_uint_route@4:
     return
 
 main_verify_app_params_get_global_num_byte_slice_route@5:
-    // tests/artifacts/StateOps/contract.py:106
+    // tests/artifacts/StateOps/contract.py:169
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:90
+    // tests/artifacts/StateOps/contract.py:153
     // class StateAppParamsContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
     txnas Applications
-    // tests/artifacts/StateOps/contract.py:106
+    // tests/artifacts/StateOps/contract.py:169
     // @arc4.abimethod()
     callsub verify_app_params_get_global_num_byte_slice
     itob
@@ -125,19 +125,19 @@ main_verify_app_params_get_global_num_byte_slice_route@5:
     return
 
 main_verify_app_params_get_local_num_uint_route@6:
-    // tests/artifacts/StateOps/contract.py:111
+    // tests/artifacts/StateOps/contract.py:174
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:90
+    // tests/artifacts/StateOps/contract.py:153
     // class StateAppParamsContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
     txnas Applications
-    // tests/artifacts/StateOps/contract.py:111
+    // tests/artifacts/StateOps/contract.py:174
     // @arc4.abimethod()
     callsub verify_app_params_get_local_num_uint
     itob
@@ -149,19 +149,19 @@ main_verify_app_params_get_local_num_uint_route@6:
     return
 
 main_verify_app_params_get_local_num_byte_slice_route@7:
-    // tests/artifacts/StateOps/contract.py:116
+    // tests/artifacts/StateOps/contract.py:179
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:90
+    // tests/artifacts/StateOps/contract.py:153
     // class StateAppParamsContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
     txnas Applications
-    // tests/artifacts/StateOps/contract.py:116
+    // tests/artifacts/StateOps/contract.py:179
     // @arc4.abimethod()
     callsub verify_app_params_get_local_num_byte_slice
     itob
@@ -173,19 +173,19 @@ main_verify_app_params_get_local_num_byte_slice_route@7:
     return
 
 main_verify_app_params_get_extra_program_pages_route@8:
-    // tests/artifacts/StateOps/contract.py:121
+    // tests/artifacts/StateOps/contract.py:184
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:90
+    // tests/artifacts/StateOps/contract.py:153
     // class StateAppParamsContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
     txnas Applications
-    // tests/artifacts/StateOps/contract.py:121
+    // tests/artifacts/StateOps/contract.py:184
     // @arc4.abimethod()
     callsub verify_app_params_get_extra_program_pages
     itob
@@ -197,19 +197,19 @@ main_verify_app_params_get_extra_program_pages_route@8:
     return
 
 main_verify_app_params_get_creator_route@9:
-    // tests/artifacts/StateOps/contract.py:126
+    // tests/artifacts/StateOps/contract.py:189
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:90
+    // tests/artifacts/StateOps/contract.py:153
     // class StateAppParamsContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
     txnas Applications
-    // tests/artifacts/StateOps/contract.py:126
+    // tests/artifacts/StateOps/contract.py:189
     // @arc4.abimethod()
     callsub verify_app_params_get_creator
     dup
@@ -226,19 +226,19 @@ main_verify_app_params_get_creator_route@9:
     return
 
 main_verify_app_params_get_address_route@10:
-    // tests/artifacts/StateOps/contract.py:131
+    // tests/artifacts/StateOps/contract.py:194
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:90
+    // tests/artifacts/StateOps/contract.py:153
     // class StateAppParamsContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
     txnas Applications
-    // tests/artifacts/StateOps/contract.py:131
+    // tests/artifacts/StateOps/contract.py:194
     // @arc4.abimethod()
     callsub verify_app_params_get_address
     dup
@@ -255,7 +255,7 @@ main_verify_app_params_get_address_route@10:
     return
 
 main_bare_routing@13:
-    // tests/artifacts/StateOps/contract.py:90
+    // tests/artifacts/StateOps/contract.py:153
     // class StateAppParamsContract(ARC4Contract):
     txn OnCompletion
     !
@@ -269,143 +269,143 @@ main_bare_routing@13:
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_approval_program(a: uint64) -> bytes:
 verify_app_params_get_approval_program:
-    // tests/artifacts/StateOps/contract.py:91-92
+    // tests/artifacts/StateOps/contract.py:154-155
     // @arc4.abimethod()
     // def verify_app_params_get_approval_program(self, a: Application) -> Bytes:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:93
+    // tests/artifacts/StateOps/contract.py:156
     // approval_program, _val = op.AppParamsGet.app_approval_program(a)
     frame_dig -1
     app_params_get AppApprovalProgram
     pop
-    // tests/artifacts/StateOps/contract.py:94
+    // tests/artifacts/StateOps/contract.py:157
     // return approval_program
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_clear_state_program(a: uint64) -> bytes:
 verify_app_params_get_clear_state_program:
-    // tests/artifacts/StateOps/contract.py:96-97
+    // tests/artifacts/StateOps/contract.py:159-160
     // @arc4.abimethod()
     // def verify_app_params_get_clear_state_program(self, a: Application) -> Bytes:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:98
+    // tests/artifacts/StateOps/contract.py:161
     // clear_state_program, _val = op.AppParamsGet.app_clear_state_program(a)
     frame_dig -1
     app_params_get AppClearStateProgram
     pop
-    // tests/artifacts/StateOps/contract.py:99
+    // tests/artifacts/StateOps/contract.py:162
     // return clear_state_program
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_global_num_uint(a: uint64) -> uint64:
 verify_app_params_get_global_num_uint:
-    // tests/artifacts/StateOps/contract.py:101-102
+    // tests/artifacts/StateOps/contract.py:164-165
     // @arc4.abimethod()
     // def verify_app_params_get_global_num_uint(self, a: Application) -> UInt64:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:103
+    // tests/artifacts/StateOps/contract.py:166
     // global_num_uint, _val = op.AppParamsGet.app_global_num_uint(a)
     frame_dig -1
     app_params_get AppGlobalNumUint
     pop
-    // tests/artifacts/StateOps/contract.py:104
+    // tests/artifacts/StateOps/contract.py:167
     // return global_num_uint
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_global_num_byte_slice(a: uint64) -> uint64:
 verify_app_params_get_global_num_byte_slice:
-    // tests/artifacts/StateOps/contract.py:106-107
+    // tests/artifacts/StateOps/contract.py:169-170
     // @arc4.abimethod()
     // def verify_app_params_get_global_num_byte_slice(self, a: Application) -> UInt64:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:108
+    // tests/artifacts/StateOps/contract.py:171
     // global_num_byte_slice, _val = op.AppParamsGet.app_global_num_byte_slice(a)
     frame_dig -1
     app_params_get AppGlobalNumByteSlice
     pop
-    // tests/artifacts/StateOps/contract.py:109
+    // tests/artifacts/StateOps/contract.py:172
     // return global_num_byte_slice
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_local_num_uint(a: uint64) -> uint64:
 verify_app_params_get_local_num_uint:
-    // tests/artifacts/StateOps/contract.py:111-112
+    // tests/artifacts/StateOps/contract.py:174-175
     // @arc4.abimethod()
     // def verify_app_params_get_local_num_uint(self, a: Application) -> UInt64:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:113
+    // tests/artifacts/StateOps/contract.py:176
     // local_num_uint, _val = op.AppParamsGet.app_local_num_uint(a)
     frame_dig -1
     app_params_get AppLocalNumUint
     pop
-    // tests/artifacts/StateOps/contract.py:114
+    // tests/artifacts/StateOps/contract.py:177
     // return local_num_uint
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_local_num_byte_slice(a: uint64) -> uint64:
 verify_app_params_get_local_num_byte_slice:
-    // tests/artifacts/StateOps/contract.py:116-117
+    // tests/artifacts/StateOps/contract.py:179-180
     // @arc4.abimethod()
     // def verify_app_params_get_local_num_byte_slice(self, a: Application) -> UInt64:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:118
+    // tests/artifacts/StateOps/contract.py:181
     // local_num_byte_slice, _val = op.AppParamsGet.app_local_num_byte_slice(a)
     frame_dig -1
     app_params_get AppLocalNumByteSlice
     pop
-    // tests/artifacts/StateOps/contract.py:119
+    // tests/artifacts/StateOps/contract.py:182
     // return local_num_byte_slice
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_extra_program_pages(a: uint64) -> uint64:
 verify_app_params_get_extra_program_pages:
-    // tests/artifacts/StateOps/contract.py:121-122
+    // tests/artifacts/StateOps/contract.py:184-185
     // @arc4.abimethod()
     // def verify_app_params_get_extra_program_pages(self, a: Application) -> UInt64:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:123
+    // tests/artifacts/StateOps/contract.py:186
     // extra_program_pages, _val = op.AppParamsGet.app_extra_program_pages(a)
     frame_dig -1
     app_params_get AppExtraProgramPages
     pop
-    // tests/artifacts/StateOps/contract.py:124
+    // tests/artifacts/StateOps/contract.py:187
     // return extra_program_pages
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_creator(a: uint64) -> bytes:
 verify_app_params_get_creator:
-    // tests/artifacts/StateOps/contract.py:126-127
+    // tests/artifacts/StateOps/contract.py:189-190
     // @arc4.abimethod()
     // def verify_app_params_get_creator(self, a: Application) -> Bytes:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:128
+    // tests/artifacts/StateOps/contract.py:191
     // creator, _val = op.AppParamsGet.app_creator(a)
     frame_dig -1
     app_params_get AppCreator
     pop
-    // tests/artifacts/StateOps/contract.py:129
+    // tests/artifacts/StateOps/contract.py:192
     // return creator.bytes
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_address(a: uint64) -> bytes:
 verify_app_params_get_address:
-    // tests/artifacts/StateOps/contract.py:131-132
+    // tests/artifacts/StateOps/contract.py:194-195
     // @arc4.abimethod()
     // def verify_app_params_get_address(self, a: Application) -> Bytes:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:133
+    // tests/artifacts/StateOps/contract.py:196
     // address, _val = op.AppParamsGet.app_address(a)
     frame_dig -1
     app_params_get AppAddress
     pop
-    // tests/artifacts/StateOps/contract.py:134
+    // tests/artifacts/StateOps/contract.py:197
     // return address.bytes
     retsub

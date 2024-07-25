@@ -21,6 +21,7 @@ from pytest_mock import MockerFixture
 
 from tests.artifacts.StateOps.contract import (
     StateAppGlobalContract,
+    StateAppGlobalExContract,
     StateAppLocalContract,
     StateAppLocalExContract,
     StateAppParamsContract,
@@ -32,12 +33,14 @@ from tests.common import AVMInvoker, create_avm_invoker, generate_test_asset
 ARTIFACTS_DIR = Path(__file__).parent / "artifacts"
 CRYPTO_OPS_APP_SPEC = ARTIFACTS_DIR / "CryptoOps" / "data" / "CryptoOpsContract.arc32.json"
 STATE_OPS_APP_SPEC_ROOT = ARTIFACTS_DIR / "StateOps" / "data"
+STATE_OPS_ACCT_PARAMS_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAcctParamsGetContract.arc32.json"
 STATE_OPS_ASSET_HOLDING_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAssetHoldingContract.arc32.json"
 STATE_OPS_ASSET_PARAMS_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAssetParamsContract.arc32.json"
 STATE_OPS_APP_PARAMS_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppParamsContract.arc32.json"
 STATE_OPS_APP_LOCAL_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppLocalContract.arc32.json"
 STATE_OPS_APP_LOCAL_EX_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppLocalExContract.arc32.json"
 STATE_OPS_APP_GLOBAL_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppGlobalContract.arc32.json"
+STATE_OPS_APP_GLOBAL_EX_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppGlobalExContract.arc32.json"
 
 MAX_ARG_LEN = 2048
 MAX_BYTES_SIZE = 4096
@@ -93,6 +96,11 @@ def get_state_app_local_avm_result(algod_client: AlgodClient) -> AVMInvoker:
 @pytest.fixture(scope="module")
 def get_state_app_global_avm_result(algod_client: AlgodClient) -> AVMInvoker:
     return create_avm_invoker(STATE_OPS_APP_GLOBAL_SPEC, algod_client)
+
+
+@pytest.fixture(scope="module")
+def get_state_app_global_ex_avm_result(algod_client: AlgodClient) -> AVMInvoker:
+    return create_avm_invoker(STATE_OPS_APP_GLOBAL_EX_SPEC, algod_client)
 
 
 @pytest.fixture(scope="module")
@@ -605,9 +613,7 @@ def test_app_local_put_get_and_delete(  # noqa: PLR0913
             )
             == 0
         )
-    assert getattr(contract, get_method)(a=localnet_creator, b=Bytes(key)) == (
-        b"" if isinstance(value, bytes) else 0
-    )
+    assert getattr(contract, get_method)(a=localnet_creator, b=Bytes(key)) == 0
 
 
 def test_app_local_ex_get(
@@ -648,8 +654,7 @@ def test_app_local_ex_get(
         ("verify_put_uint64", b"global_uint64", 42, 42),
     ],
 )
-def test_app_global_put_get_and_delete(  # noqa: PLR0913
-    localnet_creator: algopy.Account,
+def test_app_global_put_get_and_delete(
     get_state_app_global_avm_result: AVMInvoker,
     method_name: str,
     key: bytes,
@@ -699,6 +704,27 @@ def test_app_global_put_get_and_delete(  # noqa: PLR0913
             )
             == 0
         )
-    assert getattr(contract, get_method)(a=localnet_creator, b=Bytes(key)) == (
-        b"" if isinstance(value, bytes) else 0
+    assert getattr(contract, get_method)(a=Bytes(key)) == 0
+
+
+def test_app_global_ex_get(
+    context: AlgopyTestContext,
+    get_state_app_global_avm_result: AVMInvoker,
+    get_state_app_global_ex_avm_result: AVMInvoker,
+) -> None:
+    mock_secondary_contract = StateAppGlobalExContract()
+    mock_secondary_app = context.get_application_for_contract(mock_secondary_contract)
+    assert mock_secondary_app.global_num_uints == 2
+    assert mock_secondary_app.global_num_bytes == 2
+
+    avm_result = get_state_app_global_avm_result(
+        "verify_get_ex_bytes",
+        a=get_state_app_global_ex_avm_result.client.app_id,
+        b=b"global_bytes_explicit",
     )
+    contract = StateAppGlobalContract()
+    mock_result = contract.verify_get_ex_bytes(
+        a=mock_secondary_app, b=algopy.Bytes(b"global_bytes_explicit")
+    )
+    assert avm_result[0] == list(mock_result[0].value)  # type: ignore[index]
+    assert avm_result[1] == mock_result[1]  # type: ignore[index]

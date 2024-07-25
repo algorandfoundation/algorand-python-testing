@@ -61,44 +61,57 @@ class Contract(metaclass=_ContractMeta):
         cls._scratch_slots = scratch_slots
         cls._state_totals = state_totals
 
-    def _get_local_states(self) -> dict[str, algopy.LocalState[Any]]:
+    def _get_local_states(self) -> dict[bytes, algopy.LocalState[Any]]:
         import algopy
 
         local_states = {
-            name: value
-            for name, value in vars(self).items()
-            if isinstance(value, algopy.LocalState)
+            attribute._key.value: attribute
+            for _, attribute in vars(self).items()
+            if isinstance(attribute, algopy.LocalState)
         }
 
         return local_states
 
-    def _get_global_states(self) -> dict[str, algopy.GlobalState[Any]]:
+    def _get_global_states(self) -> dict[bytes, algopy.GlobalState[Any]]:
         import algopy
 
-        global_states = {
-            name: value
-            for name, value in vars(self).items()
-            if isinstance(value, algopy.GlobalState)
-        }
+        global_states = {}
+        for key, attribute in vars(self).items():
+            if not isinstance(attribute, algopy.LocalState) and not callable(attribute):
+                if isinstance(attribute, algopy.GlobalState):
+                    global_states[attribute._key.value] = attribute
+                else:
+                    global_states[key.encode()] = attribute
 
         return global_states
 
     def _count_state_types(
-        self, states: dict[str, algopy.GlobalState[Any]] | dict[str, algopy.LocalState[Any]]
+        self, states: dict[bytes, algopy.GlobalState[Any]] | dict[bytes, algopy.LocalState[Any]]
     ) -> tuple[int, int]:
         import algopy
 
-        uint_count = sum(1 for state in states.values() if is_instance(state.type_, algopy.UInt64))
+        uint_count = sum(
+            1
+            for state in states.values()
+            if is_instance(
+                (
+                    state.type_
+                    if is_instance(state, (algopy.GlobalState | algopy.LocalState))
+                    else state
+                ),
+                algopy.UInt64 | algopy.arc4.UIntN | algopy.arc4.BigUIntN,
+            )
+        )
         bytes_count = len(states) - uint_count
         return uint_count, bytes_count
 
     def _get_global_state_totals(
-        self, global_states: dict[str, algopy.GlobalState[Any]] | None = None
+        self, global_states: dict[bytes, algopy.GlobalState[Any]] | None = None
     ) -> tuple[int, int]:
         return self._count_state_types(global_states or self._get_global_states())
 
     def _get_local_state_totals(
-        self, local_states: dict[str, algopy.LocalState[Any]] | None = None
+        self, local_states: dict[bytes, algopy.LocalState[Any]] | None = None
     ) -> tuple[int, int]:
         return self._count_state_types(local_states or self._get_local_states())
 
@@ -107,11 +120,6 @@ class Contract(metaclass=_ContractMeta):
 
     def clear_state_program(self) -> algopy.UInt64 | bool:
         raise NotImplementedError("`clear_state_program` is not implemented.")
-
-    def __hash__(self) -> int:
-        # TODO: verify whether its needed
-        # TODO: If needed, ensure dunder equals is implemented as well
-        return hash(self._name + str(self._scratch_slots) + str(self._state_totals))
 
     def __getattribute__(self, name: str) -> Any:
         from algopy_testing.context import get_test_context
