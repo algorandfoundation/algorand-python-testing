@@ -80,6 +80,7 @@ jobs:
           path: dist
 
       - name: Python Semantic Release
+        id: semantic-release
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: python-semantic-release/python-semantic-release@master
         with:
@@ -88,7 +89,7 @@ jobs:
           root_options: $DRY_RUN
 
       - name: Publish to PyPI
-        if: ${{ !inputs.dry_run }}
+        if: ${{ !inputs.dry_run && steps.semantic-release.outputs.released == 'true' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist
