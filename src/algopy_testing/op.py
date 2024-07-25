@@ -872,7 +872,7 @@ class _AssetParamsGet:
             if asset_data is None:
                 return None, False
 
-            param = name.replace("asset_", "")
+            param = name.removeprefix("asset_")
             value = getattr(asset_data, param, None)
             return value, True
 
