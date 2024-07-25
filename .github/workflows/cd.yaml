@@ -67,17 +67,13 @@ jobs:
         run: hatch run examples:check
 
       - name: Check wheels can be built
-        run: hatch build
+        run: hatch build && hatch run cicd:clean_dist
 
       - name: Run tests (codebase)
         run: hatch run tests
 
       - name: Run tests (examples)
         run: hatch run examples:tests
-
-      - uses: actions/upload-artifact@v4 # upload artifacts so they are retained on the job
-        with:
-          path: dist
 
       - name: Python Semantic Release
         id: semantic-release
@@ -93,3 +89,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist
+
+      - uses: actions/upload-artifact@v4 # upload artifacts so they are retained on the job
+        with:
+          path: dist

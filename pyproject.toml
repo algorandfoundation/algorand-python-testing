@@ -116,6 +116,7 @@ dependencies = [
 localnet_start = [
     "algokit localnet start",
 ]
+clean_dist = "rm -rf dist"
 
 # docs environment
 [tool.hatch.envs.docs]
