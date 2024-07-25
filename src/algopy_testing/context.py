@@ -59,6 +59,11 @@ if TYPE_CHECKING:
 
 T = TypeVar("T")
 
+ALWAYS_APPROVE_TEAL_PROGRAM = (
+    b"\x09"  # pragma version 9
+    b"\x81\x01"  # pushint 1
+)
+
 
 @dataclass
 class AccountContextData:
@@ -358,6 +363,14 @@ class AlgopyTestContext:
             )
 
         self._txn_fields.update(txn_fields)
+
+    def get_application_for_contract(
+        self, contract: algopy.Contract | algopy.ARC4Contract
+    ) -> algopy.Application:
+        for app_id, app_contract in self._app_id_to_contract.items():
+            if app_contract == contract:
+                return self.get_application(app_id)
+        raise ValueError("Contract not found in testing context!")
 
     def set_scratch_space(
         self, txn: str, scratch_space: dict[int, algopy.Bytes | algopy.UInt64 | bytes | int]
@@ -686,7 +699,6 @@ class AlgopyTestContext:
         self,
         id: int | None = None,
         address: algopy.Account | None = None,
-        contract: algopy.Contract | algopy.ARC4Contract | None = None,
         **application_fields: Unpack[ApplicationFields],
     ) -> algopy.Application:
         """
@@ -708,8 +720,8 @@ class AlgopyTestContext:
 
         # Set sensible defaults
         default_app_fields = {
-            "approval_program": self.any_bytes(64),
-            "clear_state_program": self.any_bytes(32),
+            "approval_program": ALWAYS_APPROVE_TEAL_PROGRAM,
+            "clear_state_program": ALWAYS_APPROVE_TEAL_PROGRAM,
             "global_num_uint": algopy.UInt64(0),
             "global_num_bytes": algopy.UInt64(0),
             "local_num_uint": algopy.UInt64(0),
@@ -725,9 +737,6 @@ class AlgopyTestContext:
 
         app_fields = ApplicationFields(**merged_fields)  # type: ignore[typeddict-item]
         self._application_data[int(new_app.id)] = app_fields
-
-        if contract:
-            self._app_id_to_contract[int(new_app.id)] = contract
 
         return new_app
 

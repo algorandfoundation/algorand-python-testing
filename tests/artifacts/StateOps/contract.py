@@ -5,6 +5,7 @@ from algopy import (
     Asset,
     Bytes,
     Global,
+    GlobalState,
     LocalState,
     UInt64,
     arc4,
@@ -193,5 +194,52 @@ class StateAppLocalContract(ARC4Contract):
         op.AppLocal.delete(a, b)
 
     @arc4.abimethod()
-    def verify_put(self, a: Account, b: Bytes, c: Bytes) -> None:
+    def verify_put_uint64(self, a: Account, b: Bytes, c: UInt64) -> None:
         op.AppLocal.put(a, b, c)
+
+    @arc4.abimethod()
+    def verify_put_bytes(self, a: Account, b: Bytes, c: Bytes) -> None:
+        op.AppLocal.put(a, b, c)
+
+
+class StateAppGlobalContract(ARC4Contract):
+    def __init__(self) -> None:
+        self.global_uint64 = LocalState(
+            UInt64,
+            key="global_uint64",
+        )
+
+        self.global_bytes = GlobalState(
+            Bytes,
+            key="global_bytes",
+        )
+
+    @arc4.abimethod()
+    def verify_get_bytes(self, a: Bytes) -> Bytes:
+        value = op.AppGlobal.get_bytes(a)
+        return value
+
+    @arc4.abimethod()
+    def verify_get_uint64(self, a: Bytes) -> UInt64:
+        value = op.AppGlobal.get_uint64(a)
+        return value
+
+    @arc4.abimethod()
+    def verify_get_ex_bytes(self, a: Application, b: Bytes) -> tuple[Bytes, bool]:
+        return op.AppGlobal.get_ex_bytes(a, b)
+
+    @arc4.abimethod()
+    def verify_get_ex_uint64(self, a: Application, b: Bytes) -> tuple[UInt64, bool]:
+        return op.AppGlobal.get_ex_uint64(a, b)
+
+    @arc4.abimethod()
+    def verify_delete(self, a: Bytes) -> None:
+        op.AppGlobal.delete(a)
+
+    @arc4.abimethod()
+    def verify_put_uint64(self, a: Bytes, b: UInt64) -> None:
+        op.AppGlobal.put(a, b)
+
+    @arc4.abimethod()
+    def verify_put_bytes(self, a: Bytes, b: Bytes) -> None:
+        op.AppGlobal.put(a, b)
