@@ -490,12 +490,13 @@ def test_asset_params_get(
 
     avm_result = get_state_asset_params_avm_result(method_name, a=dummy_asset, suggested_params=sp)
     mock_result = getattr(mock_contract, method_name)(mock_asset)
+    mock_result_by_index = getattr(mock_contract, method_name)(0)
 
     expected = expected_value(dummy_account) if callable(expected_value) else expected_value
     expected = (
         algopy.Account().bytes if str(expected) == algosdk.constants.ZERO_ADDRESS else expected
     )
-    assert mock_result == avm_result == expected
+    assert mock_result == mock_result_by_index == avm_result == expected
 
 
 @pytest.mark.parametrize(
@@ -540,11 +541,13 @@ def test_app_params_get(
 
         sp = algod_client.suggested_params()
         sp.fee = 1000
+        sp.flat_fee = True
 
         avm_result = get_state_app_params_avm_result(method_name, a=app_id, suggested_params=sp)
         mock_result = getattr(mock_contract, method_name)(app)
+        mock_result_by_index = getattr(mock_contract, method_name)(0)
 
-        assert avm_result == mock_result
+        assert avm_result == mock_result == mock_result_by_index
         if expected_value is not None:
             assert avm_result == expected_value
 
@@ -599,16 +602,17 @@ def test_acct_params_get(
     avm_result = get_state_acct_params_avm_result(
         method_name, a=dummy_account.address, suggested_params=sp
     )
+
+    mock_result = getattr(mock_contract, method_name)(mock_account)
+    mock_result_by_index = getattr(mock_contract, method_name)(0)
+
     if method_name == "verify_acct_balance":
-        mock_result = getattr(mock_contract, method_name)(mock_account)
         assert mock_result == 100_100_000  # assert it returns the value set in test context
         mock_result = avm_result
-    else:
-        mock_result = getattr(mock_contract, method_name)(mock_account)
 
-    assert mock_result == avm_result
+    assert mock_result == avm_result == mock_result_by_index
 
-    if expected_value:
+    if expected_value is not None:
         assert mock_result == expected_value
 
 

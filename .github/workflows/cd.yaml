@@ -58,7 +58,7 @@ jobs:
           cache: "pip"
 
       - name: Start LocalNet
-        run: hatch run cicd:localnet_start
+        run: pipx install algokit && algokit localnet start
 
       - name: Check pre-commits
         run: hatch run check

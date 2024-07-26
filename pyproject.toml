@@ -110,12 +110,7 @@ fix_examples = [ 'black examples', 'ruff check --fix examples']
 [tool.hatch.envs.cicd]
 path = ".venv.cicd"
 dependencies = [
-    "algokit",
     "python-semantic-release>=9.8.5",
-]
-[tool.hatch.envs.cicd.scripts]
-localnet_start = [
-    "algokit localnet start",
 ]
 
 # docs environment

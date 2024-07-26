@@ -877,9 +877,13 @@ class _AcctParamsGet:
                     assert (
                         active_txn is not None
                     ), "No active transaction found to reference account"
-                    account_data = active_txn.accounts[int(a)]
+                    account_data = active_txn.accounts(a)
                 except KeyError:
                     account_data = None
+                except IndexError as e:
+                    raise ValueError(
+                        f"Invalid account index for accounts in active transaction: {a}"
+                    ) from e
             else:
                 raise TypeError(f"Invalid type for account parameter: {type(a)}")
 
@@ -919,7 +923,13 @@ class _AssetParamsGet:
             if not active_txn:
                 raise ValueError("No active transaction found to reference asset")
 
-            asset_id = int(a.id) if isinstance(a, (algopy.Asset)) else int(a)
+            is_index = isinstance(a, (algopy.UInt64 | int)) and int(a) < 1001
+            try:
+                asset_id = active_txn.assets(a).id if is_index else getattr(a, "id", a)
+            except IndexError as e:
+                raise ValueError(
+                    f"Invalid asset index for assets in active transaction: {a}"
+                ) from e
             asset_data = context.get_asset(asset_id)
 
             if asset_data is None:
@@ -1028,8 +1038,12 @@ class _AppParamsGet:
         if not active_txn:
             raise ValueError("No active transaction found to reference application")
 
-        app_id = int(a.id) if isinstance(a, algopy.Application) else int(a)
-        app_data = context.get_application(app_id)
+        is_index = isinstance(a, (algopy.UInt64 | int)) and int(a) < 1001
+        try:
+            app_id = active_txn.apps(a).id if is_index else getattr(a, "id", a)
+        except IndexError as e:
+            raise ValueError(f"Invalid app index for apps in active transaction: {a}") from e
+        app_data = context.get_application(int(app_id))
 
         if app_data is None:
             return None, False
