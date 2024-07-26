@@ -29,6 +29,9 @@ jobs:
       - name: Check pre-commits (examples)
         run: hatch run examples:check
 
+      - name: Validate examples folder
+        run: hatch run validate_examples
+
       - name: Check wheels can be built
         run: hatch build
 

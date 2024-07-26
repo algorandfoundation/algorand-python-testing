@@ -44,6 +44,20 @@ class Application:
                 "the context manager."
             )
         if int(self.id) not in context._application_data:
+            # check if its not 0 (which means its not
+            # instantiated/opted-in yet, and instantiated directly
+            # without invoking any_application).
+            if self.id == 0:
+                # Handle dunder methods specially
+                if name.startswith("__") and name.endswith("__"):
+                    return getattr(type(self), name)
+                # For non-dunder attributes, check in __dict__
+                if name in self.__dict__:
+                    return self.__dict__[name]
+                raise AttributeError(
+                    f"'{self.__class__.__name__}' object has no attribute '{name}'"
+                )
+
             raise ValueError(
                 "`algopy.Application` is not present in the test context! "
                 "Use `context.add_application()` or `context.any_application()` to add the "

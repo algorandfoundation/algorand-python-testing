@@ -5,7 +5,13 @@ import typing
 from pathlib import Path
 
 import algosdk
-from algokit_utils import Account, ApplicationClient, get_localnet_default_account
+from algokit_utils import (
+    Account,
+    ApplicationClient,
+    EnsureBalanceParameters,
+    ensure_funded,
+    get_localnet_default_account,
+)
 from algosdk.v2client.algod import AlgodClient
 
 
@@ -117,3 +123,17 @@ def generate_test_asset(  # noqa: PLR0913
         return ptx["asset-index"]
     else:
         raise ValueError("Unexpected response from pending_transaction_info")
+
+
+def generate_test_account(algod_client: AlgodClient) -> Account:
+    raw_account = algosdk.account.generate_account()
+    account = Account(private_key=raw_account[0], address=raw_account[1])
+
+    ensure_funded(
+        algod_client,
+        EnsureBalanceParameters(
+            account_to_fund=account, min_spending_balance_micro_algos=int(100e6)
+        ),
+    )
+
+    return account

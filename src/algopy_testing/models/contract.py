@@ -99,7 +99,11 @@ class Contract(metaclass=_ContractMeta):
                     if is_instance(state, (algopy.GlobalState | algopy.LocalState))
                     else state
                 ),
-                algopy.UInt64 | algopy.arc4.UIntN | algopy.arc4.BigUIntN,
+                algopy.UInt64
+                | algopy.arc4.UIntN
+                | algopy.arc4.BigUIntN
+                | algopy.Asset
+                | algopy.Application,
             )
         )
         bytes_count = len(states) - uint_count

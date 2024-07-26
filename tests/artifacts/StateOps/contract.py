@@ -14,7 +14,7 @@ from algopy import (
 )
 
 
-class StateAcctParamsGet(ARC4Contract):
+class StateAcctParamsGetContract(ARC4Contract):
     @arc4.abimethod()
     def verify_acct_balance(self, a: algopy.Account) -> algopy.UInt64:
         balance, _val = op.AcctParamsGet.acct_balance(a)

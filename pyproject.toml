@@ -68,6 +68,7 @@ COVERAGE_CORE = "sysmon"
 
 [tool.hatch.envs.default.scripts]
 refresh_test_artifacts = "python scripts/refresh_test_artifacts.py"
+validate_examples = "python scripts/validate_examples.py"
 check_stubs_cov = "python scripts/check_stubs_cov.py"
 pre_commit = [
     "hatch run lint:fix",
@@ -239,6 +240,7 @@ unfixable = [
 ]
 "scripts/**/*.py" = ["T201"]
 "scripts/refresh_test_artifacts.py" = ["S603"]
+"scripts/validate_examples.py" = ["S603"]
 
 [tool.ruff.lint.flake8-annotations]
 allow-star-arg-any = true

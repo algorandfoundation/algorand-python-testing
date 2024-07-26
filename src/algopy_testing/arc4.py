@@ -1142,7 +1142,10 @@ class _ABICall:
         **kwargs: typing.Any,
     ) -> typing.Any:
         # Implement the actual abi_call logic here
-        raise NotImplementedError("abi_call is not implemented")
+        raise NotImplementedError(
+            "'abi_call' is not available in test context. "
+            "Mock using your preferred testing framework."
+        )
 
     def __getitem__(
         self, return_type: type[_TABIResult_co]
@@ -1203,7 +1206,6 @@ def emit(event: str | Struct, /, *args: _TABIArg) -> None:
 
     if isinstance(event, str):
         arg_types = "(" + ",".join(abi_type_name_for_arg(arg=arg) for arg in args) + ")"
-
         if event.find("(") == -1:
             event += arg_types
         elif event.find(arg_types) == -1:

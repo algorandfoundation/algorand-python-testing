@@ -20,6 +20,7 @@ from ecdsa import SECP256k1, SigningKey, curves
 from pytest_mock import MockerFixture
 
 from tests.artifacts.StateOps.contract import (
+    StateAcctParamsGetContract,
     StateAppGlobalContract,
     StateAppGlobalExContract,
     StateAppLocalContract,
@@ -28,7 +29,7 @@ from tests.artifacts.StateOps.contract import (
     StateAssetHoldingContract,
     StateAssetParamsContract,
 )
-from tests.common import AVMInvoker, create_avm_invoker, generate_test_asset
+from tests.common import AVMInvoker, create_avm_invoker, generate_test_account, generate_test_asset
 
 ARTIFACTS_DIR = Path(__file__).parent / "artifacts"
 CRYPTO_OPS_APP_SPEC = ARTIFACTS_DIR / "CryptoOps" / "data" / "CryptoOpsContract.arc32.json"
@@ -116,6 +117,11 @@ def get_state_asset_holding_avm_result(algod_client: AlgodClient) -> AVMInvoker:
 @pytest.fixture(scope="module")
 def get_state_asset_params_avm_result(algod_client: AlgodClient) -> AVMInvoker:
     return create_avm_invoker(STATE_OPS_ASSET_PARAMS_SPEC, algod_client)
+
+
+@pytest.fixture(scope="module")
+def get_state_acct_params_avm_result(algod_client: AlgodClient) -> AVMInvoker:
+    return create_avm_invoker(STATE_OPS_ACCT_PARAMS_SPEC, algod_client)
 
 
 @pytest.mark.parametrize(
@@ -541,6 +547,69 @@ def test_app_params_get(
         assert avm_result == mock_result
         if expected_value is not None:
             assert avm_result == expected_value
+
+
+@pytest.mark.parametrize(
+    ("method_name", "expected_value"),
+    [
+        ("verify_acct_balance", 100_100_000),
+        ("verify_acct_min_balance", 100_000),
+        ("verify_acct_auth_addr", algosdk.encoding.decode_address(algosdk.constants.ZERO_ADDRESS)),
+        ("verify_acct_total_num_uint", 0),
+        ("verify_acct_total_num_byte_slice", 0),
+        ("verify_acct_total_extra_app_pages", 0),
+        ("verify_acct_total_apps_created", 0),
+        ("verify_acct_total_apps_opted_in", 0),
+        ("verify_acct_total_assets_created", 0),
+        ("verify_acct_total_assets", 0),
+        ("verify_acct_total_boxes", 0),
+        ("verify_acct_total_box_bytes", 0),
+    ],
+)
+def test_acct_params_get(
+    algod_client: AlgodClient,
+    get_state_acct_params_avm_result: AVMInvoker,
+    context: AlgopyTestContext,
+    method_name: str,
+    expected_value: int | bytes | bool | str | None,
+) -> None:
+    dummy_account = generate_test_account(algod_client)
+
+    mock_account = context.any_account(
+        balance=algopy.UInt64(100_100_000),
+        min_balance=algopy.UInt64(100_000),
+        auth_address=algopy.Account(algosdk.constants.ZERO_ADDRESS),
+        total_num_uint=algopy.UInt64(0),
+        total_num_byte_slice=algopy.UInt64(0),
+        total_extra_app_pages=algopy.UInt64(0),
+        total_apps_created=algopy.UInt64(0),
+        total_apps_opted_in=algopy.UInt64(0),
+        total_assets_created=algopy.UInt64(0),
+        total_assets=algopy.UInt64(0),
+        total_boxes=algopy.UInt64(0),
+        total_box_bytes=algopy.UInt64(0),
+    )
+
+    sp = algod_client.suggested_params()
+    sp.fee = 1000
+    sp.flat_fee = True
+
+    mock_contract = StateAcctParamsGetContract()
+
+    avm_result = get_state_acct_params_avm_result(
+        method_name, a=dummy_account.address, suggested_params=sp
+    )
+    if method_name == "verify_acct_balance":
+        mock_result = getattr(mock_contract, method_name)(mock_account)
+        assert mock_result == 100_100_000  # assert it returns the value set in test context
+        mock_result = avm_result
+    else:
+        mock_result = getattr(mock_contract, method_name)(mock_account)
+
+    assert mock_result == avm_result
+
+    if expected_value:
+        assert mock_result == expected_value
 
 
 @pytest.mark.usefixtures("context")

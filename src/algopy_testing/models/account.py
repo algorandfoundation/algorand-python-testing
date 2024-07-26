@@ -20,7 +20,7 @@ class AccountFields(TypedDict, total=False):
     min_balance: algopy.UInt64
     auth_address: algopy.Account
     total_num_uint: algopy.UInt64
-    total_num_byte_slice: algopy.Bytes
+    total_num_byte_slice: algopy.UInt64
     total_extra_app_pages: algopy.UInt64
     total_apps_created: algopy.UInt64
     total_apps_opted_in: algopy.UInt64
@@ -90,11 +90,29 @@ class Account:
             )
 
         if str(self) not in context._account_data:
+            # check if its not 0 (which means its not
+            # instantiated yet, and instantiated directly
+            # without invoking any_account).
+            if str(self) == algosdk.constants.ZERO_ADDRESS:
+                # Handle dunder methods specially
+                if name.startswith("__") and name.endswith("__"):
+                    return getattr(type(self), name)
+                # For non-dunder attributes, check in __dict__
+                if name in self.__dict__:
+                    return self.__dict__[name]
+                raise AttributeError(
+                    f"'{self.__class__.__name__}' object has no attribute '{name}'"
+                )
+
             raise ValueError(
                 "`algopy.Account` is not present in the test context! "
                 "Use `context.add_account()` or `context.any_account()` to add the account "
                 "to your test setup."
             )
+
+        # When accessing via AcctParamsGet, passed key differ from the one defined on account model
+        # hence the mapping
+        name = name if name != "auth_addr" else "auth_address"
 
         return_value = context._account_data[str(self)].fields.get(name)
         if return_value is None:
