@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "algorand-python-testing"
-version = "0.2.2-beta.2"
+version = "0.2.2-beta.4"
 description = 'Algorand Python testing library'
 readme = "README.md"
 requires-python = ">=3.12"
@@ -112,6 +112,8 @@ path = ".venv.cicd"
 dependencies = [
     "python-semantic-release>=9.8.5",
 ]
+[tool.hatch.envs.cicd.scripts]
+clean_dist = "rm -rf dist"
 
 # docs environment
 [tool.hatch.envs.docs]
@@ -285,7 +287,7 @@ prerelease = false
 [tool.semantic_release.commit_parser_options]
 allowed_tags = ["build", "chore", "ci", "docs", "feat", "fix", "perf", "style", "refactor", "test"]
 minor_tags = ["feat"]
-patch_tags = ["fix", "perf", "docs"]
+patch_tags = ["fix", "perf", "docs", "chore", "ci", "refactor"]
 
 [tool.semantic_release.publish]
 dist_glob_patterns = ["dist/*.whl"] # order here is important to ensure compiler wheel is published first
