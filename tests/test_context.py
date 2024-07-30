@@ -34,10 +34,10 @@ def test_account_management() -> None:
     with algopy_testing_context() as context:
         address: str = algosdk.account.generate_account()[1]
         account = context.any_account(address=address, balance=UInt64(1000))
-        assert context.get_account(str(account)).balance == 1000
+        assert context.get_account(account.public_key).balance == 1000
 
-        context.update_account(str(account), balance=UInt64(2000))
-        assert context.get_account(str(account)).balance == 2000
+        context.update_account(account.public_key, balance=UInt64(2000))
+        assert context.get_account(account.public_key).balance == 2000
 
         with pytest.raises(ValueError, match="Account not found"):
             context.update_account("invalid_address", balance=UInt64(2000))

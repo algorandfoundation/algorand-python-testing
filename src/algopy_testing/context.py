@@ -318,7 +318,7 @@ class AlgopyTestContext:
             "genesis_hash": algopy.Bytes(DEFAULT_GLOBAL_GENESIS_HASH),
         }
 
-        self._account_data[str(self.default_creator)] = AccountContextData(
+        self._account_data[self.default_creator.public_key] = AccountContextData(
             fields=AccountFields(), opted_asset_balances={}, opted_apps={}
         )
 
@@ -485,7 +485,7 @@ class AlgopyTestContext:
         """
 
         response = self._account_data.get(
-            str(account),
+            account.public_key,
             AccountContextData(fields=AccountFields(), opted_asset_balances={}, opted_apps={}),
         ).opted_asset_balances.get(asset_id, None)
 
@@ -870,22 +870,22 @@ class AlgopyTestContext:
 
     def get_active_transaction(
         self,
-    ) -> algopy.gtxn.Transaction | None:
+    ) -> algopy.gtxn.Transaction:
         """
-        Retrieve the active transaction of a specified type.
-
-        Args:
-            _txn_type (type[T]): The type of the active transaction.
+        Retrieve the active transaction.
 
         Returns:
-            T | None: The active transaction if it exists, otherwise None.
+            algopy.gtxn.Transaction | None: The active transaction if it exists, otherwise None.
+
+        Raises:
+            ValueError: If no active transaction is found.
         """
         import algopy
 
         if self._active_transaction_index is None:
-            return None
+            raise ValueError("No active transaction found")
         active_txn = self._gtxns[self._active_transaction_index]
-        return cast(algopy.gtxn.Transaction, active_txn) if active_txn else None
+        return cast(algopy.gtxn.Transaction, active_txn)
 
     def any_uint64(self, min_value: int = 0, max_value: int = MAX_UINT64) -> algopy.UInt64:
         """
@@ -1227,6 +1227,13 @@ _var: ContextVar[AlgopyTestContext] = ContextVar("_var")
 
 
 def get_test_context() -> AlgopyTestContext:
+    result = _var.get()
+    if result is None:
+        raise ValueError("Test context not found in current context!")
+    return result
+
+
+def maybe_test_context() -> AlgopyTestContext | None:
     return _var.get()
 
 

@@ -77,7 +77,9 @@ class Contract(metaclass=_ContractMeta):
 
         global_states = {}
         for key, attribute in vars(self).items():
-            if not isinstance(attribute, algopy.LocalState) and not callable(attribute):
+            if not isinstance(
+                attribute, algopy.LocalState | algopy.Box | algopy.BoxMap | algopy.BoxRef
+            ) and not callable(attribute):
                 if isinstance(attribute, algopy.GlobalState):
                     global_states[attribute._key.value] = attribute
                 else:
@@ -99,11 +101,7 @@ class Contract(metaclass=_ContractMeta):
                     if is_instance(state, (algopy.GlobalState | algopy.LocalState))
                     else state
                 ),
-                algopy.UInt64
-                | algopy.arc4.UIntN
-                | algopy.arc4.BigUIntN
-                | algopy.Asset
-                | algopy.Application,
+                algopy.UInt64 | algopy.Asset | algopy.Application | bool,
             )
         )
         bytes_count = len(states) - uint_count
@@ -128,14 +126,16 @@ class Contract(metaclass=_ContractMeta):
     def __getattribute__(self, name: str) -> Any:
         from algopy_testing.context import get_test_context
 
-        context = get_test_context()
-        context.set_active_contract(self)
-
         attr = super().__getattribute__(name)
         if callable(attr):
 
             def wrapper(*args: Any, **kwargs: dict[str, Any]) -> Any:
-                return attr(*args, **kwargs)
+                context = get_test_context()
+                context.set_active_contract(self)
+                try:
+                    return attr(*args, **kwargs)
+                finally:
+                    context.clear_active_contract()
 
             return wrapper
         return attr

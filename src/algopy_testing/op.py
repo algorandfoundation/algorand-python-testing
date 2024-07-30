@@ -37,7 +37,14 @@ from algopy_testing.models.txn import Txn
 from algopy_testing.primitives.biguint import BigUInt
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.uint64 import UInt64
-from algopy_testing.utils import as_bytes, as_int, as_int8, as_int64, as_int512, int_to_bytes
+from algopy_testing.utils import (
+    as_bytes,
+    as_int,
+    as_int8,
+    as_int64,
+    as_int512,
+    int_to_bytes,
+)
 
 if TYPE_CHECKING:
     import algopy
@@ -590,8 +597,6 @@ class Scratch:
 
         context = get_test_context()
         active_txn = context.get_active_transaction()
-        if not active_txn:
-            raise ValueError("No active transaction found to reference scratch space")
 
         slot_content = context._scratch_spaces[str(active_txn.txn_id)][a]
         match slot_content:
@@ -610,8 +615,6 @@ class Scratch:
 
         context = get_test_context()
         active_txn = context.get_active_transaction()
-        if not active_txn:
-            raise ValueError("No active transaction found to reference scratch space")
 
         slot_content = context._scratch_spaces[str(active_txn.txn_id)][a]
         match slot_content:
@@ -630,8 +633,6 @@ class Scratch:
 
         context = get_test_context()
         active_txn = context.get_active_transaction()
-        if not active_txn:
-            raise ValueError("No active transaction found to reference scratch space")
 
         context._scratch_spaces[str(active_txn.txn_id)][a] = b
 
@@ -739,8 +740,6 @@ def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
         )
 
     active_txn = context.get_active_transaction()
-    if not active_txn:
-        raise ValueError("No active transaction found to reference account")
 
     if isinstance(a, algopy.Account):
         account = a
@@ -756,7 +755,7 @@ def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     else:
         raise TypeError("Invalid type for account parameter")
 
-    account_data = context._account_data.get(str(account))
+    account_data = context._account_data.get(account.public_key)
     if not account_data:
         raise ValueError(f"Account {account} not found in testing context!")
 
@@ -782,8 +781,6 @@ def min_balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
         raise ValueError("Test context is not initialized!")
 
     active_txn = context.get_active_transaction()
-    if not active_txn:
-        raise ValueError("No active transaction found to reference account")
 
     if isinstance(a, algopy.Account):
         account = a
@@ -799,7 +796,7 @@ def min_balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     else:
         raise TypeError("Invalid type for account parameter")
 
-    account_data = context._account_data.get(str(account))
+    account_data = context._account_data.get(account.public_key)
     if not account_data:
         raise ValueError(f"Account {account} not found in testing context!")
 
@@ -822,9 +819,6 @@ def app_opted_in(
     context = get_test_context()
     active_txn = context.get_active_transaction()
 
-    if not active_txn:
-        raise ValueError("No active transaction found to reference account")
-
     # Resolve account
     if isinstance(a, (algopy.UInt64 | int)):
         index = int(a)
@@ -840,7 +834,7 @@ def app_opted_in(
         app_id = b.id
 
     # Check if account is opted in to the application
-    account_data = context._account_data.get(str(account))
+    account_data = context._account_data.get(account.public_key)
     if not account_data:
         return False
 
@@ -850,8 +844,12 @@ def app_opted_in(
 class _AcctParamsGet:
     def __getattr__(
         self, name: str
-    ) -> typing.Callable[[algopy.Account | algopy.UInt64 | int], tuple[typing.Any, bool]]:
-        def get_account_param(a: algopy.Account | algopy.UInt64 | int) -> tuple[typing.Any, bool]:
+    ) -> typing.Callable[
+        [algopy.Account | algopy.UInt64 | int], tuple[algopy.UInt64 | algopy.Account, bool]
+    ]:
+        def get_account_param(
+            a: algopy.Account | algopy.UInt64 | int,
+        ) -> tuple[algopy.UInt64 | algopy.Account, bool]:
             import algopy
 
             from algopy_testing.context import get_test_context
@@ -864,22 +862,15 @@ class _AcctParamsGet:
                 )
 
             active_txn = context.get_active_transaction()
-            if not active_txn:
-                raise ValueError("No active transaction found to reference asset")
 
             account_data = None
 
             if isinstance(a, (algopy.Account)):
-                account_data = context.get_account(str(a))
+                account_data = context.get_account(a.public_key)
             elif isinstance(a, (algopy.UInt64 | int)):
+                active_txn = context.get_active_transaction()
                 try:
-                    active_txn = context.get_active_transaction()
-                    assert (
-                        active_txn is not None
-                    ), "No active transaction found to reference account"
                     account_data = active_txn.accounts(a)
-                except KeyError:
-                    account_data = None
                 except IndexError as e:
                     raise ValueError(
                         f"Invalid account index for accounts in active transaction: {a}"
@@ -888,11 +879,11 @@ class _AcctParamsGet:
                 raise TypeError(f"Invalid type for account parameter: {type(a)}")
 
             if account_data is None:
-                return None, False
+                return UInt64(0), False
 
             param = name.removeprefix("acct_")
             value = getattr(account_data, param, None)
-            return value, True
+            return value, True  # type: ignore[return-value]
 
         if name.startswith("acct_"):
             return get_account_param
@@ -933,7 +924,7 @@ class _AssetParamsGet:
             asset_data = context.get_asset(asset_id)
 
             if asset_data is None:
-                return None, False
+                return algopy.UInt64(0), False
 
             param = name.removeprefix("asset_")
             value = getattr(asset_data, param, None)
@@ -967,8 +958,6 @@ class _AssetHoldingGet:
             )
 
         active_txn = context.get_active_transaction()
-        if not active_txn:
-            raise ValueError("No active transaction found to reference account or asset")
 
         # Resolve account
         if isinstance(account, (algopy.UInt64 | int)):
@@ -982,20 +971,21 @@ class _AssetHoldingGet:
         else:
             asset_id = asset.id
 
-        account_data = context._account_data.get(str(account))
+        assert isinstance(account, algopy.Account)
+        account_data = context._account_data.get(account.public_key)
         if not account_data:
-            return None, False
+            return algopy.UInt64(0), False
 
         asset_balance = account_data.opted_asset_balances.get(asset_id)
         if asset_balance is None:
-            return None, False
+            return algopy.UInt64(0), False
 
         if field == "balance":
             return asset_balance, True
         elif field == "frozen":
             asset_data = context._asset_data.get(int(asset_id))
             if not asset_data:
-                return None, False
+                return algopy.UInt64(0), False
             return asset_data["default_frozen"], True
         else:
             raise ValueError(f"Invalid asset holding field: {field}")
@@ -1006,7 +996,7 @@ class _AssetHoldingGet:
         import algopy
 
         balance, exists = self._get_asset_holding(a, b, "balance")
-        return algopy.UInt64(balance) if exists else algopy.UInt64(0), exists
+        return algopy.UInt64(balance if exists else 0), exists
 
     def asset_frozen(
         self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Asset | algopy.UInt64 | int, /
@@ -1035,8 +1025,6 @@ class _AppParamsGet:
             )
 
         active_txn = context.get_active_transaction()
-        if not active_txn:
-            raise ValueError("No active transaction found to reference application")
 
         is_index = isinstance(a, (algopy.UInt64 | int)) and int(a) < 1001
         try:
@@ -1046,7 +1034,7 @@ class _AppParamsGet:
         app_data = context.get_application(int(app_id))
 
         if app_data is None:
-            return None, False
+            return algopy.UInt64(0), False
 
         value = getattr(app_data, param, None)
         return value, True
@@ -1111,13 +1099,19 @@ class _AppLocal:
         local_states = test_context._active_contract._get_local_states()
         local_state = local_states.get(key)
         if local_state is None:
-            raise ValueError(f"Local state with key {key.decode()} not found")
+            key_repr = key.decode("utf-8", errors="backslashreplace")
+            raise ValueError(f"Local state with key {key_repr!r} not found")
         return local_state
 
     def _get_key(self, b: algopy.Bytes | bytes) -> bytes:
         import algopy
 
         return b.value if isinstance(b, algopy.Bytes) else b
+
+    def _parse_local_state_value(self, value: Any) -> Any:
+        if hasattr(value, "bytes"):
+            return value.bytes
+        return value
 
     def _get_contract(
         self,
@@ -1143,9 +1137,10 @@ class _AppLocal:
         import algopy
 
         try:
-            local_state = self._get_local_state(self._get_key(b)).get(a, 0)
-            return algopy.Bytes(local_state) if local_state else algopy.UInt64(0)  # type: ignore[return-value]
-        except (AttributeError, KeyError):
+            key = self._get_key(b)
+            local_state = self._get_local_state(key)[a]
+            return algopy.Bytes(self._parse_local_state_value(local_state))
+        except (ValueError, KeyError):
             return algopy.UInt64(0)  # type: ignore[return-value]
 
     def get_uint64(
@@ -1156,7 +1151,7 @@ class _AppLocal:
         try:
             local_state = self._get_local_state(self._get_key(b))
             return algopy.UInt64(local_state.get(a))
-        except (AttributeError, KeyError):
+        except (ValueError, KeyError):
             return algopy.UInt64(0)
 
     def get_ex_bytes(
@@ -1171,11 +1166,11 @@ class _AppLocal:
         contract = self._get_contract(b)
         local_states = contract._get_local_states()
         local_state = local_states.get(self._get_key(c))
-        return (
-            (algopy.Bytes(local_state.get(a, b"")), True)
-            if local_state
-            else (algopy.Bytes(b""), False)
-        )
+
+        if local_state and a in local_state and local_state[a] is not None:
+            return algopy.Bytes(self._parse_local_state_value(local_state[a])), True
+        else:
+            return algopy.Bytes(b""), False
 
     def get_ex_uint64(
         self,
@@ -1189,11 +1184,11 @@ class _AppLocal:
         contract = self._get_contract(b)
         local_states = contract._get_local_states()
         local_state = local_states.get(self._get_key(c))
-        return (
-            (algopy.UInt64(local_state.get(a, 0)), True)
-            if local_state
-            else (algopy.UInt64(0), False)
-        )
+
+        if local_state and a in local_state:
+            return algopy.UInt64(local_state[a]), True
+        else:
+            return algopy.UInt64(0), False
 
     def delete(self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /) -> None:
         local_state = self._get_local_state(self._get_key(b))
@@ -1249,13 +1244,18 @@ class _AppGlobal:
             raise ValueError(f"Contract with app id {b} not found")
         return contract
 
+    def _parse_global_state_value(self, value: Any) -> Any:
+        if hasattr(value, "bytes"):
+            return value.bytes
+        return value
+
     def get_bytes(self, b: algopy.Bytes | bytes, /) -> algopy.Bytes:
         import algopy
 
         try:
             global_state = self._get_global_state(self._get_key(b))
-            return algopy.Bytes(global_state.get(b))
-        except (AttributeError, KeyError):
+            return algopy.Bytes(self._parse_global_state_value(global_state.get(b)))
+        except (ValueError, KeyError):
             return algopy.UInt64(0)  # type: ignore[return-value]
 
     def get_uint64(self, b: algopy.Bytes | bytes, /) -> algopy.UInt64:
@@ -1264,7 +1264,7 @@ class _AppGlobal:
         try:
             global_state = self._get_global_state(self._get_key(b))
             return algopy.UInt64(global_state.get(b))
-        except (AttributeError, KeyError):
+        except (ValueError, KeyError):
             return algopy.UInt64(0)
 
     def get_ex_bytes(
@@ -1275,7 +1275,7 @@ class _AppGlobal:
         contract = self._get_contract(a)
         global_states = contract._get_global_states()
         global_state = global_states.get(self._get_key(b))
-        value = (
+        value = self._parse_global_state_value(
             global_state
             if not isinstance(global_state, algopy.GlobalState)
             else global_state.value

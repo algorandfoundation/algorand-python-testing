@@ -79,6 +79,10 @@ class Account:
     def bytes(self) -> Bytes:
         return Bytes(self._public_key)
 
+    @property
+    def public_key(self) -> str:
+        return algosdk.encoding.encode_address(self._public_key)  # type: ignore[no-any-return]
+
     def __getattr__(self, name: str) -> object:
         from algopy_testing.context import get_test_context
 

@@ -4,7 +4,7 @@ from algopy_testing.protocols import BytesBacked
 from algopy_testing.utils import int_to_bytes
 
 
-def log(  # noqa: C901, PLR0912
+def log(  # noqa: C901
     *args: UInt64 | Bytes | BytesBacked | str | bytes | int,
     sep: Bytes | bytes | str = b"",
 ) -> None:
@@ -43,8 +43,6 @@ def log(  # noqa: C901, PLR0912
         separator = sep
 
     active_txn = context.get_active_transaction()
-    if not active_txn:
-        raise ValueError("Cannot emit events outside of application call context!")
     if active_txn.type != algopy.TransactionType.ApplicationCall:
         raise ValueError("Cannot emit events outside of application call context!")
     if not active_txn.app_id:

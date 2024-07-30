@@ -209,10 +209,18 @@ class StateAppLocalExContract(ARC4Contract):
             key="local_bytes",
         )
 
+        self.local_arc4_bytes = LocalState(
+            algopy.arc4.DynamicBytes,
+            key="local_arc4_bytes",
+        )
+
     @arc4.abimethod(allow_actions=["OptIn"])
     def opt_in(self) -> None:
         self.local_bytes[Global.creator_address] = Bytes(b"dummy_bytes_from_external_contract")
         self.local_uint64[Global.creator_address] = UInt64(99)
+        self.local_arc4_bytes[Global.creator_address] = algopy.arc4.DynamicBytes(
+            b"dummy_arc4_bytes"
+        )
 
 
 class StateAppLocalContract(ARC4Contract):
@@ -277,6 +285,10 @@ class StateAppGlobalExContract(ARC4Contract):
         )
         self.global_uint64_explicit = algopy.UInt64(2)
         self.global_bytes_explicit = algopy.Bytes(b"dummy_bytes")
+        self.global_arc4_bytes = GlobalState(
+            algopy.arc4.DynamicBytes(b"dummy_arc4_bytes"), key="global_arc4_bytes"
+        )
+        self.global_arc4_bytes_explicit = algopy.arc4.DynamicBytes(b"dummy_arc4_bytes")
 
 
 class StateAppGlobalContract(ARC4Contract):

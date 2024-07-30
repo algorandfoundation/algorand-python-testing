@@ -640,7 +640,7 @@ def test_app_local_put_get_and_delete(  # noqa: PLR0913
     # Put operation
     get_state_app_local_avm_result(
         method_name,
-        a=str(localnet_creator),
+        a=localnet_creator.public_key,
         b=key,
         c=value,
     )
@@ -655,7 +655,7 @@ def test_app_local_put_get_and_delete(  # noqa: PLR0913
     get_method = "verify_get_bytes" if isinstance(value, bytes) else "verify_get_uint64"
     avm_result = get_state_app_local_avm_result(
         get_method,
-        a=str(localnet_creator),
+        a=localnet_creator.public_key,
         b=key,
     )
     mock_result = getattr(contract, get_method)(a=localnet_creator, b=Bytes(key))
@@ -664,7 +664,7 @@ def test_app_local_put_get_and_delete(  # noqa: PLR0913
     # Delete operation
     get_state_app_local_avm_result(
         "verify_delete",
-        a=str(localnet_creator),
+        a=localnet_creator.public_key,
         b=key,
     )
     contract.verify_delete(a=localnet_creator, b=Bytes(key))
@@ -674,14 +674,14 @@ def test_app_local_put_get_and_delete(  # noqa: PLR0913
         with pytest.raises(LogicError):
             get_state_app_local_avm_result(
                 get_method,
-                a=str(localnet_creator),
+                a=localnet_creator.public_key,
                 b=key,
             )
     else:
         assert (
             get_state_app_local_avm_result(
                 get_method,
-                a=str(localnet_creator),
+                a=localnet_creator.public_key,
                 b=key,
             )
             == 0
@@ -698,14 +698,14 @@ def test_app_local_ex_get(
     mock_secondary_contract = StateAppLocalExContract()
     mock_secondary_app = context.get_application_for_contract(mock_secondary_contract)
     assert mock_secondary_app.local_num_uints == 1
-    assert mock_secondary_app.local_num_bytes == 1
+    assert mock_secondary_app.local_num_bytes == 2
 
     with contextlib.suppress(algosdk.error.AlgodHTTPError):
         get_state_app_local_ex_avm_result.client.opt_in("opt_in")
         get_state_app_local_avm_result.client.opt_in("opt_in")
     avm_result = get_state_app_local_avm_result(
         "verify_get_ex_bytes",
-        a=str(localnet_creator),
+        a=localnet_creator.public_key,
         b=get_state_app_local_ex_avm_result.client.app_id,
         c=b"local_bytes",
     )
@@ -717,6 +717,36 @@ def test_app_local_ex_get(
         a=localnet_creator, b=mock_secondary_app, c=algopy.Bytes(b"local_bytes")
     )
     assert avm_result == mock_result == b"dummy_bytes_from_external_contract"
+
+
+def test_app_local_ex_get_arc4(
+    context: AlgopyTestContext,
+    localnet_creator: algopy.Account,
+    get_state_app_local_avm_result: AVMInvoker,
+    get_state_app_local_ex_avm_result: AVMInvoker,
+) -> None:
+    mock_secondary_contract = StateAppLocalExContract()
+    mock_secondary_app = context.get_application_for_contract(mock_secondary_contract)
+    assert mock_secondary_app.local_num_uints == 1
+    assert mock_secondary_app.local_num_bytes == 2
+
+    with contextlib.suppress(algosdk.error.AlgodHTTPError):
+        get_state_app_local_ex_avm_result.client.opt_in("opt_in")
+        get_state_app_local_avm_result.client.opt_in("opt_in")
+    avm_result = get_state_app_local_avm_result(
+        "verify_get_ex_bytes",
+        a=localnet_creator.public_key,
+        b=get_state_app_local_ex_avm_result.client.app_id,
+        c=b"local_arc4_bytes",
+    )
+    contract = StateAppLocalContract()
+    mock_secondary_contract.local_arc4_bytes[localnet_creator] = algopy.arc4.DynamicBytes(
+        b"dummy_arc4_bytes"
+    )
+    mock_result = contract.verify_get_ex_bytes(
+        a=localnet_creator, b=mock_secondary_app, c=algopy.Bytes(b"local_arc4_bytes")
+    )
+    assert avm_result == mock_result == algopy.arc4.DynamicBytes(b"dummy_arc4_bytes").bytes
 
 
 @pytest.mark.usefixtures("context")
@@ -788,7 +818,7 @@ def test_app_global_ex_get(
     mock_secondary_contract = StateAppGlobalExContract()
     mock_secondary_app = context.get_application_for_contract(mock_secondary_contract)
     assert mock_secondary_app.global_num_uints == 2
-    assert mock_secondary_app.global_num_bytes == 2
+    assert mock_secondary_app.global_num_bytes == 4
 
     avm_result = get_state_app_global_avm_result(
         "verify_get_ex_bytes",
@@ -798,6 +828,37 @@ def test_app_global_ex_get(
     contract = StateAppGlobalContract()
     mock_result = contract.verify_get_ex_bytes(
         a=mock_secondary_app, b=algopy.Bytes(b"global_bytes_explicit")
+    )
+    assert avm_result[0] == list(mock_result[0].value)  # type: ignore[index]
+    assert avm_result[1] == mock_result[1]  # type: ignore[index]
+
+
+@pytest.mark.parametrize(
+    ("key_name"),
+    [
+        b"global_arc4_bytes_explicit",
+        b"global_arc4_bytes",
+    ],
+)
+def test_app_global_ex_get_arc4(
+    context: AlgopyTestContext,
+    get_state_app_global_avm_result: AVMInvoker,
+    get_state_app_global_ex_avm_result: AVMInvoker,
+    key_name: str,
+) -> None:
+    mock_secondary_contract = StateAppGlobalExContract()
+    mock_secondary_app = context.get_application_for_contract(mock_secondary_contract)
+    assert mock_secondary_app.global_num_uints == 2
+    assert mock_secondary_app.global_num_bytes == 4
+
+    avm_result = get_state_app_global_avm_result(
+        "verify_get_ex_bytes",
+        a=get_state_app_global_ex_avm_result.client.app_id,
+        b=key_name,
+    )
+    contract = StateAppGlobalContract()
+    mock_result = contract.verify_get_ex_bytes(
+        a=mock_secondary_app, b=algopy.Bytes(b"global_arc4_bytes_explicit")
     )
     assert avm_result[0] == list(mock_result[0].value)  # type: ignore[index]
     assert avm_result[1] == mock_result[1]  # type: ignore[index]

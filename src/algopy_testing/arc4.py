@@ -1197,8 +1197,6 @@ def emit(event: str | Struct, /, *args: _TABIArg) -> None:
     context = get_test_context()
     active_txn = context.get_active_transaction()
 
-    if not active_txn:
-        raise ValueError("Cannot emit events outside of application call context!")
     if active_txn.type != algopy.TransactionType.ApplicationCall:
         raise ValueError("Cannot emit events outside of application call context!")
     if not active_txn.app_id:
