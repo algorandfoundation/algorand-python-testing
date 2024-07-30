@@ -52,6 +52,10 @@ def test_log(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
         n=n.bytes.value,
     )
 
+    context.set_transaction_group(
+        [context.any_payment_transaction()],
+        active_transaction_index=0,
+    )
     with pytest.raises(
         ValueError, match="Cannot emit events outside of application call context!"
     ):

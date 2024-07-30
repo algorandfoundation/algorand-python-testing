@@ -759,7 +759,9 @@ class AlgopyTestContext:
         raw_app_id = (
             int(app_id)
             if isinstance(app_id, algopy.UInt64)
-            else int(app_id.id) if isinstance(app_id, algopy.Application) else app_id
+            else int(app_id.id)
+            if isinstance(app_id, algopy.Application)
+            else app_id
         )
 
         if isinstance(logs, bytes):
