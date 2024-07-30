@@ -1,10 +1,28 @@
 # CHANGELOG
 
+## v0.2.2-beta.5 (2024-07-30)
+
+### Documentation
+
+* docs: patch urls in README.md (#9)
+
+* chore: patch urls in README.md
+
+* ci: relaxing rules around paths-ignore
+
+* docs: patching old namespace name in readme ([`eddf612`](https://github.com/algorandfoundation/algorand-python-testing/commit/eddf612b177a2acddf15d58be3f375e99fb6564b))
+
 ## v0.2.2-beta.4 (2024-07-25)
 
 ### Ci
 
 * ci: improve cd pipeline to ensure dist is cleaned up before build done by semantic release (#7) ([`6c02d0b`](https://github.com/algorandfoundation/algorand-python-testing/commit/6c02d0b5f08106ac39125f9b1fbbb84203c27bf6))
+
+### Unknown
+
+* 0.2.2-beta.4
+
+[skip ci] ([`01e0adb`](https://github.com/algorandfoundation/algorand-python-testing/commit/01e0adbe68c7c2de1668b90ef4e19844dec0326a))
 
 ## v0.2.2-beta.3 (2024-07-25)
 
