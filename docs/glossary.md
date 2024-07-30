@@ -1,0 +1,8 @@
+# Glossary
+
+| Term                               | Definition                                                                                                                                                                                                                         |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Test Context**                   | A context manager that provides a simulated Algorand environment for testing Python smart contracts.                                                                                                                               |
+| **Algorand Virtual Machine (AVM)** | The AVM is the runtime environment for Algorand smart contracts.                                                                                                                                                                   |
+| **Operational codes**              | AVM instructions that are executed directly by the AVM, provided by `algopy` stubs and emulated/implemented or mocked by `algorand-python-testing`.                                                                                |
+| **Anonymous variables**            | Helper methods that generate randomized values for testing when the value of the tested type is not needed. Represented by instance methods on the context manager, prefixed with `any_*` (or `arc.any_*` in case of ARC 4 types). |

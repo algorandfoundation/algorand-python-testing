@@ -146,3 +146,6 @@ def _as_biguint(value: object) -> BigUInt:
 def _int_to_bytes(x: int, pad_to: int | None = None) -> bytes:
     x = as_int(x, max=None)
     return int_to_bytes(x, pad_to=pad_to)
+
+
+__all__ = ["BigUInt"]

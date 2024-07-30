@@ -17,9 +17,14 @@ author = "Algorand Foundation"
 extensions = [
     "sphinx.ext.githubpages",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
     "sphinx_copybutton",
     "myst_parser",
 ]
+
+napoleon_google_docstring = True
+napoleon_use_param = False
+napoleon_use_ivar = True
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]

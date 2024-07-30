@@ -8,9 +8,6 @@ from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass
 
-# Define the union type
-from typing import TYPE_CHECKING, Any, TypeVar, Unpack, cast, overload
-
 import algosdk
 
 import algopy_testing
@@ -36,7 +33,7 @@ from algopy_testing.models.global_values import GlobalFields
 from algopy_testing.models.txn import TxnFields
 from algopy_testing.utils import generate_random_int
 
-if TYPE_CHECKING:
+if typing.TYPE_CHECKING:
     from collections.abc import Callable, Generator, Sequence
 
     import algopy
@@ -65,7 +62,7 @@ if TYPE_CHECKING:
     )
 
 
-T = TypeVar("T")
+T = typing.TypeVar("T")
 
 
 @dataclass
@@ -184,10 +181,10 @@ class ITxnLoader:
 
 
 class ITxnGroupLoader:
-    @overload
+    @typing.overload
     def __getitem__(self, index: int) -> ITxnLoader: ...
 
-    @overload
+    @typing.overload
     def __getitem__(self, index: slice) -> list[ITxnLoader]: ...
 
     def __getitem__(self, index: int | slice) -> ITxnLoader | list[ITxnLoader]:
@@ -476,7 +473,7 @@ class AlgopyTestContext:
         self._constructing_inner_transaction_group: list[InnerTransactionResultType] = []
         self._constructing_inner_transaction: InnerTransactionResultType | None = None
         self._scratch_spaces: dict[str, list[algopy.Bytes | algopy.UInt64 | bytes | int]] = {}
-        self._template_vars: dict[str, Any] = template_vars or {}
+        self._template_vars: dict[str, typing.Any] = template_vars or {}
         self._blocks: dict[int, dict[str, int]] = {}
         self._boxes: dict[bytes, bytes] = {}
         self._lsigs: dict[algopy.LogicSig, Callable[[], algopy.UInt64 | bool]] = {}
@@ -526,7 +523,7 @@ class AlgopyTestContext:
 
         self._global_fields.update(global_fields)
 
-    def patch_txn_fields(self, **txn_fields: Unpack[TxnFields]) -> None:
+    def patch_txn_fields(self, **txn_fields: typing.Unpack[TxnFields]) -> None:
         """
         Patch 'algopy.Txn' fields in the test context.
 
@@ -579,13 +576,13 @@ class AlgopyTestContext:
         self._global_fields["current_application_address"] = app.address
         self._global_fields["current_application_id"] = app
 
-    def set_template_var(self, name: str, value: Any) -> None:
+    def set_template_var(self, name: str, value: typing.Any) -> None:
         """
         Set a template variable for the current context.
 
         Args:
             name (str): The name of the template variable.
-            value (Any): The value to assign to the template variable.
+            value (typing.Any): The value to assign to the template variable.
 
         Returns:
             None
@@ -631,7 +628,7 @@ class AlgopyTestContext:
         """
         return self._application_data
 
-    def update_account(self, address: str, **account_fields: Unpack[AccountFields]) -> None:
+    def update_account(self, address: str, **account_fields: typing.Unpack[AccountFields]) -> None:
         """
         Update an existing account.
 
@@ -682,7 +679,7 @@ class AlgopyTestContext:
 
         return algopy.Asset(asset_id)
 
-    def update_asset(self, asset_id: int, **asset_fields: Unpack[AssetFields]) -> None:
+    def update_asset(self, asset_id: int, **asset_fields: typing.Unpack[AssetFields]) -> None:
         """
         Update an existing asset.
 
@@ -715,7 +712,7 @@ class AlgopyTestContext:
         return algopy.Application(app_id)
 
     def update_application(
-        self, app_id: int, **application_fields: Unpack[ApplicationFields]
+        self, app_id: int, **application_fields: typing.Unpack[ApplicationFields]
     ) -> None:
         """
         Update an existing application.
@@ -741,7 +738,9 @@ class AlgopyTestContext:
         """
         import algopy.itxn
 
-        self._inner_transaction_groups.append(cast(list[algopy.itxn.InnerTransactionResult], itxn))
+        self._inner_transaction_groups.append(
+            typing.cast(list[algopy.itxn.InnerTransactionResult], itxn)
+        )
 
     def get_submitted_itxn_groups(self) -> list[Sequence[InnerTransactionResultType]]:
         """
@@ -836,7 +835,7 @@ class AlgopyTestContext:
         return new_account
 
     def any_asset(
-        self, asset_id: int | None = None, **asset_fields: Unpack[AssetFields]
+        self, asset_id: int | None = None, **asset_fields: typing.Unpack[AssetFields]
     ) -> algopy.Asset:
         """
         Generate and add a new asset with a unique ID.
@@ -873,7 +872,7 @@ class AlgopyTestContext:
         self,
         id: int | None = None,
         address: algopy.Account | None = None,
-        **application_fields: Unpack[ApplicationFields],
+        **application_fields: typing.Unpack[ApplicationFields],
     ) -> algopy.Application:
         """
         Generate and add a new application with a unique ID.
@@ -1077,18 +1076,17 @@ class AlgopyTestContext:
         return typing.cast(algopy.gtxn.Transaction, active_txn)
 
     def any_uint64(self, min_value: int = 0, max_value: int = MAX_UINT64) -> algopy.UInt64:
-        """
-        Generate a random UInt64 value within a specified range.
+        """Generate a random UInt64 value within a specified range.
 
         Args:
-            min_value (int, optional): Minimum value. Defaults to 0.
-            max_value (int, optional): Maximum value. Defaults to MAX_UINT64.
+            min_value: Minimum value (default: 0).
+            max_value: Maximum value (default: MAX_UINT64).
 
         Returns:
-            algopy.UInt64: The randomly generated UInt64 value.
+            A random UInt64 value.
 
         Raises:
-            ValueError: If `max_value` exceeds MAX_UINT64 or `min_value` exceeds `max_value`.
+            ValueError: If max_value > MAX_UINT64 or min_value > max_value.
         """
         import algopy
 
@@ -1100,22 +1098,26 @@ class AlgopyTestContext:
         return algopy.UInt64(generate_random_int(min_value, max_value))
 
     def any_bytes(self, length: int = MAX_BYTES_SIZE) -> algopy.Bytes:
-        """
-        Generate a random byte sequence of a specified length.
+        """Generate random byte sequence.
 
         Args:
-            length (int, optional): Length of the byte sequence. Defaults to MAX_BYTES_SIZE.
+            length: Byte sequence length. Defaults to MAX_BYTES_SIZE.
 
         Returns:
-            algopy.Bytes: The randomly generated byte sequence.
+            Random algopy.Bytes of specified length.
         """
         import algopy
 
         return algopy.Bytes(secrets.token_bytes(length))
 
     def any_string(self, length: int = MAX_BYTES_SIZE) -> algopy.String:
-        """
-        Generate a random string of a specified length.
+        """Generate a random string.
+
+        Args:
+            length: Length of the string. Defaults to MAX_BYTES_SIZE.
+
+        Returns:
+            A random algopy.String of specified length.
         """
         import algopy
 
@@ -1133,13 +1135,13 @@ class AlgopyTestContext:
         approval_program_pages: Sequence[algopy.Bytes] = (),
         clear_state_program_pages: Sequence[algopy.Bytes] = (),
         scratch_space: dict[int, algopy.Bytes | algopy.UInt64 | int | bytes] | None = None,
-        **kwargs: Unpack[_ApplicationCallFields],
+        **kwargs: typing.Unpack[_ApplicationCallFields],
     ) -> algopy.gtxn.ApplicationCallTransaction:
         """
         Generate a new application call transaction with specified fields.
 
         Args:
-            **kwargs (Unpack[ApplicationCallFields]): Fields to be set in the transaction.
+            **kwargs (typing.Unpack[ApplicationCallFields]): Fields to be set in the transaction.
 
         Returns:
             algopy.gtxn.ApplicationCallTransaction: The newly generated application
@@ -1174,13 +1176,13 @@ class AlgopyTestContext:
         return new_txn
 
     def any_asset_transfer_transaction(
-        self, **kwargs: Unpack[AssetTransferFields]
+        self, **kwargs: typing.Unpack[AssetTransferFields]
     ) -> algopy.gtxn.AssetTransferTransaction:
         """
         Generate a new asset transfer transaction with specified fields.
 
         Args:
-            **kwargs (Unpack[AssetTransferFields]): Fields to be set in the transaction.
+            **kwargs (typing.Unpack[AssetTransferFields]): Fields to be set in the transaction.
 
         Returns:
             algopy.gtxn.AssetTransferTransaction: The newly generated asset transfer transaction.
@@ -1195,13 +1197,13 @@ class AlgopyTestContext:
         return new_txn
 
     def any_payment_transaction(
-        self, **kwargs: Unpack[PaymentFields]
+        self, **kwargs: typing.Unpack[PaymentFields]
     ) -> algopy.gtxn.PaymentTransaction:
         """
         Generate a new payment transaction with specified fields.
 
         Args:
-            **kwargs (Unpack[PaymentFields]): Fields to be set in the transaction.
+            **kwargs (typing.Unpack[PaymentFields]): Fields to be set in the transaction.
 
         Returns:
             algopy.gtxn.PaymentTransaction: The newly generated payment transaction.
@@ -1216,7 +1218,7 @@ class AlgopyTestContext:
         return new_txn
 
     def any_asset_config_transaction(
-        self, **kwargs: Unpack[AssetConfigFields]
+        self, **kwargs: typing.Unpack[AssetConfigFields]
     ) -> algopy.gtxn.AssetConfigTransaction:
         """
         Generate a new ACFG transaction with specified fields.
@@ -1231,7 +1233,7 @@ class AlgopyTestContext:
         return new_txn
 
     def any_key_registration_transaction(
-        self, **kwargs: Unpack[KeyRegistrationFields]
+        self, **kwargs: typing.Unpack[KeyRegistrationFields]
     ) -> algopy.gtxn.KeyRegistrationTransaction:
         """
         Generate a new key registration transaction with specified fields.
@@ -1246,7 +1248,7 @@ class AlgopyTestContext:
         return new_txn
 
     def any_asset_freeze_transaction(
-        self, **kwargs: Unpack[AssetFreezeFields]
+        self, **kwargs: typing.Unpack[AssetFreezeFields]
     ) -> algopy.gtxn.AssetFreezeTransaction:
         """
         Generate a new asset freeze transaction with specified fields.
@@ -1263,14 +1265,14 @@ class AlgopyTestContext:
     def any_transaction(  # type: ignore[misc]
         self,
         type: algopy.TransactionType,  # noqa: A002
-        **kwargs: Unpack[TransactionFields],
+        **kwargs: typing.Unpack[TransactionFields],
     ) -> algopy.gtxn.Transaction:
         """
         Generate a new transaction with specified fields.
 
         Args:
             type (algopy.TransactionType): Transaction type.
-            **kwargs (Unpack[TransactionFields]): Fields to be set in the transaction.
+            **kwargs (typing.Unpack[TransactionFields]): Fields to be set in the transaction.
 
         Returns:
             algopy.gtxn.Transaction: The newly generated transaction.
@@ -1430,6 +1432,10 @@ class AlgopyTestContext:
         self._application_logs = {}
         self._asset_id = iter(range(1, 2**64))
         self._app_id = iter(range(1, 2**64))
+        self._boxes = {}
+        self._blocks = {}
+        self._lsigs = {}
+        self._template_vars = {}
 
 
 _var: ContextVar[AlgopyTestContext] = ContextVar("_var")

@@ -51,3 +51,6 @@ def log(  # noqa: C901
         app_id=active_txn.app_id(),
         logs=separator.join(logs),
     )
+
+
+__all__ = ["log"]

@@ -88,3 +88,6 @@ class GlobalState(typing.Generic[_T]):
 
     def maybe(self) -> tuple[_T | None, bool]:
         return self._value, self._value is not None
+
+
+__all__ = ["GlobalState"]
