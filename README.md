@@ -13,7 +13,7 @@
 
 Algorand Python Testing is a companion package to [Algorand Python](https://github.com/algorandfoundation/puya) that enables efficient unit testing of Algorand Python smart contracts in an offline environment. It emulates key AVM behaviors without requiring a network connection, offering fast and reliable testing capabilities with a familiar Pythonic interface.
 
-[Documentation](https://algorandfoundation.github.io/algopy_testing/index.html) | [Algorand Python Documentation](https://algorandfoundation.github.io/puya/)
+[Documentation](https://algorandfoundation.github.io/algorand-python-testing/) | [Algorand Python Documentation](https://algorandfoundation.github.io/puya/)
 
 ## Quick start
 
@@ -40,7 +40,7 @@ Alternatively, if you want to start from scratch:
 
 5. Run your tests using your preferred Python testing framework (e.g., pytest, unittest)
 
-For more detailed information, check out the [full documentation](https://algorandfoundation.github.io/algopy_testing).
+For more detailed information, check out the [full documentation](https://algorandfoundation.github.io/algorand-python-testing/).
 
 ## Features
 
@@ -51,7 +51,7 @@ For more detailed information, check out the [full documentation](https://algora
 
 ## Examples
 
-For detailed examples showcasing various testing scenarios, refer to the [examples section](https://algorandfoundation.github.io/algopy_testing/examples.html) in the documentation.
+For detailed examples showcasing various testing scenarios, refer to the [examples section](https://algorandfoundation.github.io/algorand-python-testing/examples.html) in the documentation.
 
 ## Contributing
 
