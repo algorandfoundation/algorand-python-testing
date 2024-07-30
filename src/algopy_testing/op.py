@@ -733,12 +733,6 @@ def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     from algopy_testing.context import get_test_context
 
     context = get_test_context()
-    if not context:
-        raise ValueError(
-            "Test context is not initialized! Use `with algopy_testing_context()` to access "
-            "the context manager."
-        )
-
     active_txn = context.get_active_transaction()
 
     if isinstance(a, algopy.Account):
@@ -777,9 +771,6 @@ def min_balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     from algopy_testing.context import get_test_context
 
     context = get_test_context()
-    if not context:
-        raise ValueError("Test context is not initialized!")
-
     active_txn = context.get_active_transaction()
 
     if isinstance(a, algopy.Account):
@@ -855,12 +846,6 @@ class _AcctParamsGet:
             from algopy_testing.context import get_test_context
 
             context = get_test_context()
-            if not context:
-                raise ValueError(
-                    "Test context is not initialized! Use `with algopy_testing_context()` to "
-                    "access the context manager."
-                )
-
             active_txn = context.get_active_transaction()
 
             account_data = None
@@ -904,16 +889,7 @@ class _AssetParamsGet:
             from algopy_testing.context import get_test_context
 
             context = get_test_context()
-            if not context:
-                raise ValueError(
-                    "Test context is not initialized! Use `with algopy_testing_context()` to "
-                    "access the context manager."
-                )
-
             active_txn = context.get_active_transaction()
-            if not active_txn:
-                raise ValueError("No active transaction found to reference asset")
-
             is_index = isinstance(a, (algopy.UInt64 | int)) and int(a) < 1001
             try:
                 asset_id = active_txn.assets(a).id if is_index else getattr(a, "id", a)
@@ -951,12 +927,6 @@ class _AssetHoldingGet:
         from algopy_testing.context import get_test_context
 
         context = get_test_context()
-        if not context:
-            raise ValueError(
-                "Test context is not initialized! Use `with algopy_testing_context()` to access "
-                "the context manager."
-            )
-
         active_txn = context.get_active_transaction()
 
         # Resolve account
@@ -1017,12 +987,6 @@ class _AppParamsGet:
         from algopy_testing import get_test_context
 
         context = get_test_context()
-
-        if not context:
-            raise ValueError(
-                "Test context is not initialized! Use `with algopy_testing_context()` "
-                "to access the context manager."
-            )
 
         active_txn = context.get_active_transaction()
 
@@ -1122,8 +1086,6 @@ class _AppLocal:
         from algopy_testing import get_test_context
 
         test_context = get_test_context()
-        if not test_context:
-            raise ValueError("Test context is not initialized!")
 
         app_id = int(b.id) if isinstance(b, algopy.Application) else int(b)
         contract = test_context._app_id_to_contract.get(app_id)
@@ -1213,8 +1175,11 @@ class _AppGlobal:
         from algopy_testing import get_test_context
 
         test_context = get_test_context()
-        if not test_context or not test_context._active_contract:
-            raise ValueError("No active contract or test context found.")
+        if not test_context._active_contract:
+            raise ValueError(
+                "No active contract found in test context. Make sure you are calling an contract "
+                "method inside a test context."
+            )
 
         global_states = test_context._active_contract._get_global_states()
         if global_states is None:
@@ -1235,8 +1200,6 @@ class _AppGlobal:
         from algopy_testing import get_test_context
 
         test_context = get_test_context()
-        if not test_context:
-            raise ValueError("Test context is not initialized!")
 
         app_id = int(b.id) if isinstance(b, algopy.Application) else int(b)
         contract = test_context._app_id_to_contract.get(app_id)

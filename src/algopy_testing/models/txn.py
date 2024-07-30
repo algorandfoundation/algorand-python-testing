@@ -90,11 +90,6 @@ class _Txn:
         from algopy_testing.context import get_test_context
 
         context = get_test_context()
-        if not context:
-            raise ValueError(
-                "Test context is not initialized! Use `with algopy_testing_context()` to access "
-                "the context manager."
-            )
         active_txn = context.get_active_transaction()
         if name in context._txn_fields and context._txn_fields[name] is not None:  # type: ignore[literal-required]
             return context._txn_fields[name]  # type: ignore[literal-required]

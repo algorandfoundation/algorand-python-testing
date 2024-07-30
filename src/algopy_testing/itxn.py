@@ -67,10 +67,6 @@ class _BaseInnerTransaction:
         import algopy
 
         context = get_test_context()
-
-        if not context:
-            raise RuntimeError("No test context found")
-
         result = _create_inner_transaction_result(self)
 
         if not result:

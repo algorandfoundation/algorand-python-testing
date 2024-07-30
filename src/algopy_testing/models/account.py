@@ -87,12 +87,6 @@ class Account:
         from algopy_testing.context import get_test_context
 
         context = get_test_context()
-        if not context:
-            raise ValueError(
-                "Test context is not initialized! Use `with algopy_testing_context()` to access "
-                "the context manager."
-            )
-
         if str(self) not in context._account_data:
             # check if its not 0 (which means its not
             # instantiated yet, and instantiated directly

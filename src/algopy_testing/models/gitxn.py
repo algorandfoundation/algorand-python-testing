@@ -7,11 +7,6 @@ class _GITxn:
         from algopy_testing.context import get_test_context
 
         context = get_test_context()
-        if not context:
-            raise ValueError(
-                "Test context is not initialized! Use `with algopy_testing_context()` to access "
-                "the context manager."
-            )
         if not context._inner_transaction_groups:
             raise ValueError(
                 "No inner transaction found in the context! Use `with algopy_testing_context()` "

@@ -191,7 +191,7 @@ def abimethod(  # noqa: PLR0913
             from algopy_testing import get_test_context
 
             context = get_test_context()
-            if context is None or context._active_transaction_index is not None:
+            if context._active_transaction_index is not None:
                 return fn(*args, **kwargs)
 
             _extract_and_append_txn_to_context(context, args[1:], kwargs, fn)

@@ -44,12 +44,6 @@ class _Global:
         from algopy_testing.context import get_test_context
 
         context = get_test_context()
-        if not context:
-            raise ValueError(
-                "Test context is not initialized! Use `with algopy_testing_context()` to access "
-                "the context manager."
-            )
-
         if name == "latest_timestamp" and context._global_fields.get(name) is None:
             return algopy.UInt64(int(time.time()))
 

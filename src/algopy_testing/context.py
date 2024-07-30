@@ -759,9 +759,7 @@ class AlgopyTestContext:
         raw_app_id = (
             int(app_id)
             if isinstance(app_id, algopy.UInt64)
-            else int(app_id.id)
-            if isinstance(app_id, algopy.Application)
-            else app_id
+            else int(app_id.id) if isinstance(app_id, algopy.Application) else app_id
         )
 
         if isinstance(logs, bytes):
@@ -1231,12 +1229,11 @@ _var: ContextVar[AlgopyTestContext] = ContextVar("_var")
 def get_test_context() -> AlgopyTestContext:
     result = _var.get()
     if result is None:
-        raise ValueError("Test context not found in current context!")
+        raise ValueError(
+            "Test context is not initialized! Use `with algopy_testing_context()` to "
+            "access the context manager."
+        )
     return result
-
-
-def maybe_test_context() -> AlgopyTestContext | None:
-    return _var.get()
 
 
 @contextmanager
