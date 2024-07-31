@@ -2,6 +2,7 @@ from algopy_testing.models.account import Account
 from algopy_testing.models.application import Application
 from algopy_testing.models.asset import Asset
 from algopy_testing.models.block import Block
+from algopy_testing.models.box import Box, BoxMap, BoxRef
 from algopy_testing.models.contract import ARC4Contract, Contract, StateTotals
 from algopy_testing.models.global_values import Global
 from algopy_testing.models.gtxn import GTxn
@@ -17,6 +18,9 @@ __all__ = [
     "Application",
     "Asset",
     "Block",
+    "Box",
+    "BoxMap",
+    "BoxRef",
     "Contract",
     "Global",
     "GTxn",
