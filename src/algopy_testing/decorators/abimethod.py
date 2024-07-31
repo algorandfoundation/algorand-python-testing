@@ -31,12 +31,7 @@ def _generate_arc4_signature(
 ) -> algopy.Bytes:
     import algopy
 
-    args_without_txns = [
-        arg
-        for arg in args
-        if not isinstance(arg, algopy.gtxn.TransactionBase)  # type: ignore[arg-type, unused-ignore]
-    ]
-    arg_types = [algosdk.abi.Argument(abi_type_name_for_arg(arg=arg)) for arg in args_without_txns]
+    arg_types = [algosdk.abi.Argument(abi_type_name_for_arg(arg=arg)) for arg in args]
     return_type = algosdk.abi.Returns(
         abi_return_type_annotation_for_arg(fn.__annotations__.get("return"))
     )
@@ -47,6 +42,7 @@ def _generate_arc4_signature(
 def _extract_refs_from_args(
     args: tuple[typing.Any, ...], kwargs: dict[str, typing.Any], ref_type: type
 ) -> list[typing.Any]:
+    # TODO: split this into multiple functions, one per ref_type?
     import algopy
 
     refs: list[typing.Any] = []
@@ -133,6 +129,8 @@ def _extract_and_append_txn_to_context(
                     _generate_arc4_signature(fn, args),
                     *_extract_refs_from_args(args, kwargs, algopy.Bytes),
                 ],
+                # TODO: approval and clear programs should not come from args
+                #       might be best to leave these unset by default?
                 approval_program_pages=_extract_refs_from_args(args, kwargs, algopy.Bytes),
                 clear_state_program_pages=_extract_refs_from_args(args, kwargs, algopy.Bytes),
             ),
@@ -170,9 +168,9 @@ def abimethod(
 def abimethod(  # noqa: PLR0913
     fn: typing.Callable[_P, _R] | None = None,
     *,
-    name: str | None = None,  # noqa: ARG001
-    create: typing.Literal["allow", "require", "disallow"] = "disallow",  # noqa: ARG001
-    allow_actions: typing.Sequence[  # noqa: ARG001
+    name: str | None = None,
+    create: typing.Literal["allow", "require", "disallow"] = "disallow",
+    allow_actions: typing.Sequence[
         algopy.OnCompleteAction
         | typing.Literal[
             "NoOp",
@@ -182,23 +180,30 @@ def abimethod(  # noqa: PLR0913
             "DeleteApplication",
         ]
     ] = ("NoOp",),
-    readonly: bool = False,  # noqa: ARG001
-    default_args: typing.Mapping[str, str | object] | None = None,  # noqa: ARG001
+    readonly: bool = False,
+    default_args: typing.Mapping[str, str | object] | None = None,
 ) -> typing.Callable[[typing.Callable[_P, _R]], typing.Callable[_P, _R]] | typing.Callable[_P, _R]:
-    def decorator(fn: typing.Callable[_P, _R]) -> typing.Callable[_P, _R]:
-        @functools.wraps(fn)
-        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
-            from algopy_testing import get_test_context
+    # TODO: ARC4 signature should be derived here
+    #       then possibly store on the context, or fn itself?
+    if fn is None:
+        return functools.partial(
+            abimethod,
+            name=name,
+            create=create,
+            allow_actions=allow_actions,
+            readonly=readonly,
+            default_args=default_args,
+        )
 
-            context = get_test_context()
-            if context._active_transaction_index is not None:
-                return fn(*args, **kwargs)
+    @functools.wraps(fn)
+    def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
+        from algopy_testing import get_test_context
 
-            _extract_and_append_txn_to_context(context, args[1:], kwargs, fn)
+        context = get_test_context()
+        if context._active_transaction_index is not None:
             return fn(*args, **kwargs)
 
-        return wrapper
+        _extract_and_append_txn_to_context(context, args[1:], kwargs, fn)
+        return fn(*args, **kwargs)
 
-    if fn is not None:
-        return decorator(fn)
-    return decorator
+    return wrapper
