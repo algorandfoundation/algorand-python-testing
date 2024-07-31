@@ -16,6 +16,11 @@ from algopy_testing.constants import MAX_BYTES_SIZE, MAX_UINT8, MAX_UINT16, MAX_
 if TYPE_CHECKING:
     import algopy
 
+ALWAYS_APPROVE_TEAL_PROGRAM = (
+    b"\x09"  # pragma version 9
+    b"\x81\x01"  # pushint 1
+)
+
 
 def generate_random_int(min_value: int, max_value: int) -> int:
     return secrets.randbelow(max_value - min_value + 1) + min_value

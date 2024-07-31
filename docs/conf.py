@@ -20,6 +20,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
     "myst_parser",
+    "sphinx.ext.napoleon",
     "autodoc2",  # Add this line
 ]
 
@@ -72,10 +73,9 @@ autodoc2_packages = [
     },
 ]
 autodoc2_render_plugin = "myst"
-# autodoc2_module_all_regexes = [r"algopy_testing.*"]
 autodoc2_hidden_objects = [
     "private",  # single-underscore methods, e.g. _private
-    # "undoc",
+    "undoc",
 ]
 add_module_names = False
 autodoc2_index_template = None

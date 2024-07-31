@@ -324,8 +324,6 @@ from algopy import arc4
 string_value = arc4.String("Hello, Algorand!")
 ```
 
-Certainly! I'll explain the `execute_logicsig` method from the `AlgopyTestContext` class and expand the documentation for smart signatures. Here's an updated version of the smart signatures section in the usage documentation:
-
 ## Smart Signatures (Logic Signatures)
 
 Smart signatures, also known as logic signatures or LogicSigs, are programs that can be used to sign transactions. The Algorand Python Testing framework provides support for testing these programs.
