@@ -81,6 +81,7 @@ class Contract(metaclass=_ContractMeta):
             else:
                 local_bytes += 1
 
+        # TODO: add tests for state overrides
         # apply any cls specific overrides
         cls_state_totals = self._state_totals or StateTotals()
         if cls_state_totals.global_uints is not None:
