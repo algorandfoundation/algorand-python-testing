@@ -20,6 +20,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
     "myst_parser",
+    "autodoc2",  # Add this line
 ]
 
 napoleon_google_docstring = True
@@ -61,3 +62,20 @@ myst_enable_extensions = [
     "colon_fence",
     "fieldlist",
 ]
+
+# Add autodoc2 configuration
+autodoc2_packages = [
+    {
+        "path": "../src/algopy_testing",
+        "module": "algopy_testing",
+        "auto_mode": False,
+    },
+]
+autodoc2_render_plugin = "myst"
+# autodoc2_module_all_regexes = [r"algopy_testing.*"]
+autodoc2_hidden_objects = [
+    "private",  # single-underscore methods, e.g. _private
+    # "undoc",
+]
+add_module_names = False
+autodoc2_index_template = None

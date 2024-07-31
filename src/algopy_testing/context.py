@@ -68,19 +68,6 @@ T = typing.TypeVar("T")
 @dataclass
 class ContractContextData:
     """
-    Stores contract-related information.
-
-    Attributes:
-        contract (algopy.Contract | algopy.ARC4Contract): Contract instance.
-        app_id (algopy.UInt64): Application ID.
-    """
-
-    contract: algopy.Contract | algopy.ARC4Contract
-    app_id: algopy.UInt64
-
-
-class ITxnLoader:
-    """
     Stores inner transaction references.
     """
 
@@ -182,16 +169,18 @@ class ITxnLoader:
 
 class ITxnGroupLoader:
     @typing.overload
-    def __getitem__(self, index: int) -> ITxnLoader: ...
+    def __getitem__(self, index: int) -> _ITxnLoader: ...
 
     @typing.overload
-    def __getitem__(self, index: slice) -> list[ITxnLoader]: ...
+    def __getitem__(self, index: slice) -> list[_ITxnLoader]: ...
 
-    def __getitem__(self, index: int | slice) -> ITxnLoader | list[ITxnLoader]:
+    def __getitem__(self, index: int | slice) -> _ITxnLoader | list[_ITxnLoader]:
         if isinstance(index, int):
-            return ITxnLoader(self._inner_txn_group[index])
+            return _ITxnLoader(self._inner_txn_group[index])
         elif isinstance(index, slice):
-            return [ITxnLoader(self._inner_txn_group[i]) for i in range(*index.indices(len(self)))]
+            return [
+                _ITxnLoader(self._inner_txn_group[i]) for i in range(*index.indices(len(self)))
+            ]
         else:
             raise TypeError("Index must be int or slice")
 
@@ -215,7 +204,7 @@ class ITxnGroupLoader:
     def payment(self, index: int) -> algopy.itxn.PaymentInnerTransaction:
         import algopy
 
-        return ITxnLoader(self._get_itxn(index, algopy.itxn.PaymentInnerTransaction)).payment
+        return _ITxnLoader(self._get_itxn(index, algopy.itxn.PaymentInnerTransaction)).payment
 
     def asset_config(self, index: int) -> algopy.itxn.AssetConfigInnerTransaction:
         import algopy
@@ -606,7 +595,7 @@ class AlgopyTestContext:
         Retrieve all account data.
 
         Returns:
-            dict[str, AccountContextData]: The account data.
+            dict[str, _AccountContextData]: The account data.
         """
         return self._account_data
 
@@ -771,13 +760,13 @@ class AlgopyTestContext:
             raise ValueError(f"No inner transaction group available at index {index}!") from err
 
     @property
-    def last_submitted_itxn(self) -> ITxnLoader:
+    def last_submitted_itxn(self) -> _ITxnLoader:
         """
         Retrieve the last submitted inner transaction from the
         last inner transaction group (if both exist).
 
         Returns:
-            ITxnLoader: The last submitted inner transaction loader.
+            _ITxnLoader: The last submitted inner transaction loader.
 
         Raises:
             ValueError: If no inner transactions exist in the last inner transaction group.
@@ -788,7 +777,7 @@ class AlgopyTestContext:
 
         try:
             last_itxn = self._inner_transaction_groups[-1][-1]
-            return ITxnLoader(last_itxn)
+            return _ITxnLoader(last_itxn)
         except IndexError as err:
             raise ValueError("No inner transactions in the last inner transaction group!") from err
 
@@ -824,7 +813,7 @@ class AlgopyTestContext:
         new_account_address = address or algosdk.account.generate_account()[1]
         new_account = algopy.Account(new_account_address)
         new_account_fields = AccountFields(**account_fields)
-        new_account_data = AccountContextData(
+        new_account_data = _AccountContextData(
             fields=new_account_fields,
             opted_asset_balances=opted_asset_balances or {},
             opted_apps={app.id: app for app in opted_apps},

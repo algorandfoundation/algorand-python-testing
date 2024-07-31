@@ -113,4 +113,5 @@ usage
 examples
 coverage
 glossary
+api
 ```
