@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, get_args
 import algosdk
 import algosdk.transaction
 
-from algopy_testing import arc4
+import algopy_testing
 from algopy_testing.constants import MAX_BYTES_SIZE, MAX_UINT8, MAX_UINT16, MAX_UINT64, MAX_UINT512
 
 if TYPE_CHECKING:
@@ -26,20 +26,17 @@ def as_int(value: object, *, max: int | None) -> int:  # noqa: A002
         ValueError: If not 0 <= `value` <= max
     """
 
-    from algopy_testing.primitives.biguint import BigUInt
-    from algopy_testing.primitives.uint64 import UInt64
-
     match value:
         case int(int_value):
             pass
-        case UInt64(value=int_value):
+        case algopy_testing.UInt64(value=int_value):
             pass
-        case BigUInt(value=int_value):
+        case algopy_testing.BigUInt(value=int_value):
             pass
-        case arc4.UIntN():
-            int_value = value.native.value
-        case arc4.BigUIntN():
-            int_value = value.native.value
+        case algopy_testing.arc4.UIntN(native=native):
+            int_value = native.value
+        case algopy_testing.arc4.BigUIntN(native=native):
+            int_value = native.value
         # TODO: add arc4 numerics
         case _:
             raise TypeError(f"value must be a numeric type, not {type(value).__name__!r}")
@@ -74,12 +71,11 @@ def as_bytes(value: object, *, max_size: int = MAX_BYTES_SIZE) -> bytes:
         TypeError: If `value` is not a bytes type
         ValueError: If not 0 <= `len(value)` <= max_size
     """
-    from algopy_testing.primitives.bytes import Bytes
 
     match value:
         case bytes(bytes_value):
             pass
-        case Bytes(value=bytes_value):
+        case algopy_testing.Bytes(value=bytes_value):
             pass
         case _:
             raise TypeError(f"value must be a bytes or Bytes type, not {type(value).__name__!r}")
@@ -89,13 +85,11 @@ def as_bytes(value: object, *, max_size: int = MAX_BYTES_SIZE) -> bytes:
 
 
 def as_string(value: object) -> str:
-    from algopy_testing.primitives.string import String
-
     match value:
-        case str(string_value) | String(value=string_value):
+        case str(string_value) | algopy_testing.String(value=string_value):
             return string_value
-        case arc4.String():
-            return value.native.value
+        case algopy_testing.arc4.String(native=native):
+            return native.value
         case _:
             raise TypeError(f"value must be a string or String type, not {type(value).__name__!r}")
 
@@ -137,35 +131,33 @@ class _TransactionStrType(enum.StrEnum):
 
 @functools.cache
 def txn_type_to_bytes(txn_type: int) -> algopy.Bytes:
-    import algopy
-
     match txn_type:
-        case algopy.TransactionType.Payment:
+        case algopy_testing.TransactionType.Payment:
             result = _TransactionStrType.PAYMENT
-        case algopy.TransactionType.KeyRegistration:
+        case algopy_testing.TransactionType.KeyRegistration:
             result = _TransactionStrType.KEYREG
-        case algopy.TransactionType.AssetConfig:
+        case algopy_testing.TransactionType.AssetConfig:
             result = _TransactionStrType.ASSETCONFIG
-        case algopy.TransactionType.AssetTransfer:
+        case algopy_testing.TransactionType.AssetTransfer:
             result = _TransactionStrType.ASSETTRANSFER
-        case algopy.TransactionType.AssetFreeze:
+        case algopy_testing.TransactionType.AssetFreeze:
             result = _TransactionStrType.ASSETFREEZE
-        case algopy.TransactionType.ApplicationCall:
+        case algopy_testing.TransactionType.ApplicationCall:
             result = _TransactionStrType.APPCALL
         case _:
             raise ValueError(f"invalid transaction type: {txn_type}")
 
-    return algopy.Bytes(bytes(result, encoding="utf-8"))
+    return algopy_testing.Bytes(bytes(result, encoding="utf-8"))
 
 
 def is_instance(obj: object, class_or_tuple: type | UnionType) -> bool:
     if isinstance(class_or_tuple, UnionType):
         return any(is_instance(obj, arg) for arg in get_args(class_or_tuple))
 
-    if isinstance(obj, typing._ProtocolMeta):  # type: ignore[type-check, unused-ignore]
+    if isinstance(obj, typing._ProtocolMeta):
         return (
             f"{obj.__module__}.{obj.__name__}"
-            == f"{class_or_tuple.__module__}.{class_or_tuple.__name__}"  # type: ignore[union-attr, unused-ignore]
+            == f"{class_or_tuple.__module__}.{class_or_tuple.__name__}"
         )
 
     # Manual comparison by module and name
@@ -174,7 +166,7 @@ def is_instance(obj: object, class_or_tuple: type | UnionType) -> bool:
         and hasattr(obj, "__name__")
         and (
             obj.__module__,
-            obj.__name__,  # type: ignore[attr-defined, unused-ignore]
+            obj.__name__,
         )
         == (
             class_or_tuple.__module__,
@@ -193,48 +185,73 @@ def abi_type_name_for_arg(  # noqa: PLR0912, C901, PLR0911
     Returns the ABI type name for the given argument. Especially convenient for use with
     algosdk to generate method signatures
     """
-    import algopy
+    # TODO: abi_return_type_annotation_for_arg use this with a type rather than an instance
+    #       add tests to ensure this still returns the correct value for complex ARC4 types
+    #       e.g. arc4.Tuple[arc4.DynamicArray[arc4.DynamicArray[arc4.UInt64]],
+    #                       arc4.StaticArray[arc4.UInt64, typing.Literal[3]]]
 
-    if is_instance(arg, algopy.arc4.String | algopy.String | str):
+    if is_instance(arg, algopy_testing.arc4.String | algopy_testing.String | str):
         return "string"
-    if is_instance(arg, algopy.arc4.Bool | bool):
+    if is_instance(arg, algopy_testing.arc4.Bool | bool):
         return "bool"
-    if is_instance(arg, algopy.BigUInt):
+    if is_instance(arg, algopy_testing.BigUInt):
         return "uint512"
-    if is_instance(arg, algopy.UInt64):
+    if is_instance(arg, algopy_testing.UInt64):
         return "uint64"
     if isinstance(arg, int):
         return "uint64" if arg <= MAX_UINT64 else "uint512"
-    if is_instance(arg, algopy.Bytes | bytes):
+    if is_instance(arg, algopy_testing.Bytes | bytes):
         return "byte[]"
-    if is_instance(arg, algopy.arc4.Address):
+    if is_instance(arg, algopy_testing.arc4.Address):
         return "address"
-    if is_instance(arg, algopy.Asset):
-        return "uint64" if is_return_type else "asset"
-    if is_instance(arg, algopy.Account):
-        return "uint64" if is_return_type else "account"
-    if is_instance(arg, algopy.Application):
-        return "uint64" if is_return_type else "application"
-    if is_instance(arg, algopy.arc4.UIntN):
+    if is_instance(arg, algopy_testing.Asset):
+        if is_return_type:
+            raise TypeError("Asset cannot be used as an arc4 return type")
+        return "asset"
+    if is_instance(arg, algopy_testing.Account):
+        if is_return_type:
+            raise TypeError("Account cannot be used as an arc4 return type")
+        return "account"
+    if is_instance(arg, algopy_testing.Application):
+        if is_return_type:
+            raise TypeError("Application cannot be used as an arc4 return type")
+        return "application"
+    if is_instance(arg, algopy_testing.arc4.UIntN):
         return "uint" + str(arg._bit_size)  # type: ignore[attr-defined]
-    if is_instance(arg, algopy.arc4.BigUIntN):
+    if is_instance(arg, algopy_testing.arc4.BigUIntN):
         return "uint" + str(arg._bit_size)  # type: ignore[attr-defined]
-    if is_instance(arg, algopy.arc4.UFixedNxM):
+    if is_instance(arg, algopy_testing.arc4.UFixedNxM):
         return f"ufixed{arg._n}x{arg._m}"  # type: ignore[attr-defined]
-    if is_instance(arg, algopy.arc4.BigUFixedNxM):
+    if is_instance(arg, algopy_testing.arc4.BigUFixedNxM):
         return f"ufixed{arg._n}x{arg._m}"  # type: ignore[attr-defined]
-    if is_instance(arg, algopy.arc4.StaticArray):
-        return f"{abi_type_name_for_arg(arg=arg[0],    # type: ignore[index]
-                                        is_return_type=is_return_type)}[{arg.length.value}]"  # type: ignore[attr-defined]
-    if is_instance(arg, algopy.arc4.DynamicArray):
-        return f"{abi_type_name_for_arg(arg=arg[0], # type: ignore[index]
-                                        is_return_type=is_return_type)}[]"
+    if is_instance(arg, algopy_testing.arc4.StaticArray):
+        arr_type = abi_type_name_for_arg(arg=arg[0], is_return_type=is_return_type)  # type: ignore[index]
+        return f"{arr_type}[{arg.length.value}]"  # type: ignore[attr-defined]
+    if is_instance(arg, algopy_testing.arc4.DynamicArray):
+        arr_type = abi_type_name_for_arg(arg=arg[0], is_return_type=is_return_type)  # type: ignore[index]
+        return f"{arr_type}[]"
+    if is_instance(arg, algopy_testing.gtxn.AssetConfigTransaction):
+        return algosdk.constants.ASSETCONFIG_TXN
+    if is_instance(arg, algopy_testing.gtxn.AssetFreezeTransaction):
+        return algosdk.constants.ASSETFREEZE_TXN
+    if is_instance(arg, algopy_testing.gtxn.AssetTransferTransaction):
+        return algosdk.constants.ASSETTRANSFER_TXN
+    if is_instance(arg, algopy_testing.gtxn.PaymentTransaction):
+        return algosdk.constants.PAYMENT_TXN
+    if is_instance(arg, algopy_testing.gtxn.KeyRegistrationTransaction):
+        return algosdk.constants.KEYREG_TXN
+    if is_instance(arg, algopy_testing.gtxn.ApplicationCallTransaction):
+        return algosdk.constants.APPCALL_TXN
+    if is_instance(arg, algopy_testing.gtxn.Transaction):
+        return "txn"
     if isinstance(arg, tuple):
-        return f"({','.join(abi_type_name_for_arg(arg=a,
-                                                  is_return_type=is_return_type) for a in arg)})"
+        tuple_types = [abi_type_name_for_arg(arg=a, is_return_type=is_return_type) for a in arg]
+        return f"({','.join(tuple_types)})"
     if typing.get_origin(arg) is tuple:
-        return f"({','.join(abi_type_name_for_arg(arg=a, is_return_type=is_return_type)
-                            for a in get_args(arg))})"
+        tuple_types = [
+            abi_type_name_for_arg(arg=a, is_return_type=is_return_type) for a in get_args(arg)
+        ]
+        return f"({','.join(tuple_types)})"
 
     raise ValueError(f"Unsupported type {type(arg)}")
 
