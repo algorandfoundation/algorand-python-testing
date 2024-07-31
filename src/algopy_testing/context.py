@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import secrets
 import string
+import typing
 from collections import ChainMap
 from contextlib import contextmanager
 from contextvars import ContextVar
@@ -266,7 +267,151 @@ class ITxnGroupLoader:
 
 
 @dataclass
+class ARC4Factory:
+    def __init__(self, *, context: AlgopyTestContext) -> None:
+        self._context = context
+
+    def any_address(self) -> algopy.arc4.Address:
+        """Generate a random Algorand address.
+
+        Returns:
+            algopy.arc4.Address: A new, random Algorand address.
+        """
+        import algopy
+
+        return algopy.arc4.Address(algosdk.account.generate_account()[1])
+
+    def any_uint_n(
+        self, n: typing.Literal[8, 16, 32, 64] | None = None
+    ) -> algopy.arc4.UIntN[typing.Literal[8, 16, 32, 64]]:
+        """Generate a random unsigned integer of size `n` bits.
+
+        Args:
+            n (int): The number of bits for the unsigned integer. Can be 8, 16, 32 or 64.
+
+        Returns:
+            algopy.arc4.UIntN: A new, random unsigned integer of size `n` bits.
+
+        Raises:
+            ValueError: If n is not within the valid range.
+        """
+        import random
+
+        import algopy
+
+        allowed_n = [8, 16, 32, 64]
+        n = n or random.choice(allowed_n)  # type: ignore[arg-type]  # noqa: S311
+
+        if n not in allowed_n:
+            raise ValueError(
+                "n must be 8, 16, 32 or 64. For custom sizes, declare a custom type alias. For "
+                "example: UInt24 = algopy.arc4.UIntN[24]"
+            )
+
+        # Use type annotation to create the correct UIntN type
+        custom_uintn = getattr(algopy.arc4, f"UInt{n}")
+
+        # Generate a random value within the range of the UIntN
+        max_value = (1 << n) - 1
+        random_value = random.randint(0, max_value)  # noqa: S311
+
+        return custom_uintn(random_value)  # type: ignore[no-any-return]
+
+    def any_biguint_n(
+        self, n: typing.Literal[128, 256, 512] | None = None
+    ) -> algopy.arc4.BigUIntN[typing.Literal[128, 256, 512]]:
+        """Generate a random unsigned integer of size `n` bits.
+
+        Args:
+            n (int): The number of bits for the unsigned integer. Can be 128, 256 or 512.
+
+        Returns:
+            algopy.arc4.UIntN: A new, random unsigned integer of size `n` bits.
+
+        Raises:
+            ValueError: If n is not within the valid range.
+        """
+        import random
+
+        import algopy
+
+        allowed_n = [128, 256, 512]
+        n = n or random.choice(allowed_n)  # type: ignore[arg-type]  # noqa: S311
+
+        if n not in allowed_n:
+            raise ValueError(
+                "n must be 128, 256 or 512. For custom sizes, declare a custom type alias. For "
+                "example: BigUInt256 = algopy.arc4.BigUIntN[256]"
+            )
+
+        # Use type annotation to create the correct UIntN type
+        custom_uintn = getattr(algopy.arc4, f"UInt{n}")
+
+        # Generate a random value within the range of the UIntN
+        max_value = (1 << n) - 1
+        random_value = random.randint(0, max_value)  # noqa: S311
+
+        return custom_uintn(random_value)  # type: ignore[no-any-return]
+
+    def any_dynamic_bytes(self, n: int) -> algopy.arc4.DynamicBytes:
+        """Generate a random dynamic bytes of size `n` bits.
+
+        Args:
+            n (int): The number of bits for the dynamic bytes. Must be a multiple of 8, otherwise
+                the last byte will be truncated.
+
+        Returns:
+            algopy.arc4.DynamicBytes: A new, random dynamic bytes of size `n` bits.
+        """
+        import secrets
+
+        import algopy
+
+        # rounding up
+        num_bytes = (n + 7) // 8
+        random_bytes = secrets.token_bytes(num_bytes)
+
+        # trim to exact bit length if necessary
+        if n % 8 != 0:
+            last_byte = random_bytes[-1]
+            mask = (1 << (n % 8)) - 1
+            random_bytes = random_bytes[:-1] + bytes([last_byte & mask])
+
+        return algopy.arc4.DynamicBytes(random_bytes)
+
+    def any_string(self, n: int) -> algopy.arc4.String:
+        """Generate a random string of size `n` bits.
+
+        Args:
+            n (int): The number of bits for the string.
+
+        Returns:
+            algopy.arc4.String: A new, random string of size `n` bits.
+        """
+        import secrets
+        import string
+
+        import algopy
+
+        # Calculate the number of characters needed (rounding up)
+        num_chars = (n + 7) // 8
+
+        # Generate random string
+        random_string = "".join(secrets.choice(string.printable) for _ in range(num_chars))
+
+        # Trim to exact bit length if necessary
+        if n % 8 != 0:
+            last_char = ord(random_string[-1])
+            mask = (1 << (n % 8)) - 1
+            random_string = random_string[:-1] + chr(last_char & mask)
+
+        return algopy.arc4.String(random_string)
+
+
+@dataclass
 class AlgopyTestContext:
+    _arc4: ARC4Factory
+
     def __init__(
         self,
         *,
@@ -323,10 +468,16 @@ class AlgopyTestContext:
             fields=AccountFields(), opted_asset_balances={}, opted_apps={}
         )
 
+        self._arc4 = ARC4Factory(context=self)
+
         self.default_application = default_application or self.any_application(
             id=default_application_id,
             address=algopy.Account(default_application_address),
         )
+
+    @property
+    def arc4(self) -> ARC4Factory:
+        return self._arc4
 
     def patch_global_fields(self, **global_fields: Unpack[GlobalFields]) -> None:
         """
@@ -770,7 +921,9 @@ class AlgopyTestContext:
         raw_app_id = (
             int(app_id)
             if isinstance(app_id, algopy.UInt64)
-            else int(app_id.id) if isinstance(app_id, algopy.Application) else app_id
+            else int(app_id.id)
+            if isinstance(app_id, algopy.Application)
+            else app_id
         )
 
         if isinstance(logs, bytes):
