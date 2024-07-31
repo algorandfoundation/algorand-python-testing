@@ -715,6 +715,12 @@ class AlgopyTestContext:
             algopy.Application: The newly generated application.
         """
         new_app_id = id if id is not None else next(self._app_id)
+
+        if new_app_id in self._application_data:
+            raise ValueError(
+                f"Application id {new_app_id} has already been configured in test context!"
+            )
+
         new_app = algopy_testing.Application(new_app_id)
 
         # Set sensible defaults
