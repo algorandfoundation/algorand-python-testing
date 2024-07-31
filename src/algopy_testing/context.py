@@ -921,9 +921,7 @@ class AlgopyTestContext:
         raw_app_id = (
             int(app_id)
             if isinstance(app_id, algopy.UInt64)
-            else int(app_id.id)
-            if isinstance(app_id, algopy.Application)
-            else app_id
+            else int(app_id.id) if isinstance(app_id, algopy.Application) else app_id
         )
 
         if isinstance(logs, bytes):
@@ -1049,7 +1047,7 @@ class AlgopyTestContext:
         if self._active_transaction_index is None:
             raise ValueError("No active transaction found")
         active_txn = self._gtxns[self._active_transaction_index]
-        return cast(algopy.gtxn.Transaction, active_txn)
+        return typing.cast(algopy.gtxn.Transaction, active_txn)
 
     def any_uint64(self, min_value: int = 0, max_value: int = MAX_UINT64) -> algopy.UInt64:
         """
