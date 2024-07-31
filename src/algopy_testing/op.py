@@ -1021,7 +1021,7 @@ class _AppParamsGet:
     def app_global_num_byte_slice(
         self, a: algopy.Application | algopy.UInt64 | int, /
     ) -> tuple[algopy.UInt64, bool]:
-        return self._get_app_param_from_ctx(a, "global_num_byte_slice")
+        return self._get_app_param_from_ctx(a, "global_num_bytes")
 
     def app_local_num_uint(
         self, a: algopy.Application | algopy.UInt64 | int, /
@@ -1031,7 +1031,7 @@ class _AppParamsGet:
     def app_local_num_byte_slice(
         self, a: algopy.Application | algopy.UInt64 | int, /
     ) -> tuple[algopy.UInt64, bool]:
-        return self._get_app_param_from_ctx(a, "local_num_byte_slice")
+        return self._get_app_param_from_ctx(a, "local_num_bytes")
 
     def app_extra_program_pages(
         self, a: algopy.Application | algopy.UInt64 | int, /

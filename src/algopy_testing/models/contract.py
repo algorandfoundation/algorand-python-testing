@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, final
 
-from algopy_testing.utils import is_instance
+import algopy_testing
 
 if TYPE_CHECKING:
     import algopy
@@ -17,25 +17,28 @@ class StateTotals:
     local_bytes: int | None = None
 
 
+@dataclass
+class _StateTotals:
+    global_uints: int
+    global_bytes: int
+    local_uints: int
+    local_bytes: int
+
+
 class _ContractMeta(type):
     def __call__(cls, *args: Any, **kwargs: dict[str, Any]) -> object:
-        from algopy import Contract
-
-        from algopy_testing.context import get_test_context
-
-        context = get_test_context()
+        context = algopy_testing.get_test_context()
         instance = super().__call__(*args, **kwargs)
 
         if context and isinstance(instance, Contract):
-            global_num_uint, global_num_bytes = instance._get_global_state_totals()
-            local_num_uint, local_num_bytes = instance._get_local_state_totals()
+            state_totals = instance._get_state_totals()
             context._app_id_to_contract[
                 int(
                     context.any_application(
-                        global_num_bytes=global_num_bytes,
-                        global_num_uints=global_num_uint,
-                        local_num_bytes=local_num_bytes,
-                        local_num_uints=local_num_uint,
+                        global_num_bytes=algopy_testing.UInt64(state_totals.global_bytes),
+                        global_num_uint=algopy_testing.UInt64(state_totals.global_uints),
+                        local_num_bytes=algopy_testing.UInt64(state_totals.local_bytes),
+                        local_num_uint=algopy_testing.UInt64(state_totals.local_uints),
                     ).id
                 )
             ] = instance
@@ -61,61 +64,66 @@ class Contract(metaclass=_ContractMeta):
         cls._scratch_slots = scratch_slots
         cls._state_totals = state_totals
 
-    def _get_local_states(self) -> dict[bytes, algopy.LocalState[Any]]:
-        import algopy
+    def _get_state_totals(self) -> _StateTotals:
+        global_bytes = global_uints = local_bytes = local_uints = 0
+        for value in self._get_global_states().values():
+            if isinstance(value, algopy_testing.GlobalState):
+                type_ = value.type_
+            else:
+                type_ = type(value)
+            if _is_uint64_backed_type(type_):
+                global_uints += 1
+            else:
+                global_bytes += 1
+        for local_state in self._get_local_states().values():
+            if _is_uint64_backed_type(local_state.type_):
+                local_uints += 1
+            else:
+                local_bytes += 1
 
+        # apply any cls specific overrides
+        cls_state_totals = self._state_totals or StateTotals()
+        if cls_state_totals.global_uints is not None:
+            global_uints = cls_state_totals.global_uints
+        if cls_state_totals.global_bytes is not None:
+            global_bytes = cls_state_totals.global_bytes
+        if cls_state_totals.local_uints is not None:
+            local_uints = cls_state_totals.local_uints
+        if cls_state_totals.local_bytes is not None:
+            local_bytes = cls_state_totals.local_bytes
+        return _StateTotals(
+            global_uints=global_uints,
+            global_bytes=global_bytes,
+            local_uints=local_uints,
+            local_bytes=local_bytes,
+        )
+
+    def _get_local_states(self) -> dict[bytes, algopy.LocalState[Any]]:
         local_states = {
             attribute._key.value: attribute
             for _, attribute in vars(self).items()
-            if isinstance(attribute, algopy.LocalState)
+            if isinstance(attribute, algopy_testing.LocalState)
         }
 
         return local_states
 
     def _get_global_states(self) -> dict[bytes, algopy.GlobalState[Any]]:
-        import algopy
-
         global_states = {}
         for key, attribute in vars(self).items():
-            if not isinstance(
-                attribute, algopy.LocalState | algopy.Box | algopy.BoxMap | algopy.BoxRef
-            ) and not callable(attribute):
-                if isinstance(attribute, algopy.GlobalState):
-                    global_states[attribute._key.value] = attribute
-                else:
-                    global_states[key.encode()] = attribute
+            if isinstance(
+                attribute,
+                algopy_testing.LocalState
+                | algopy_testing.Box
+                | algopy_testing.BoxMap
+                | algopy_testing.BoxRef,
+            ) or callable(attribute):
+                pass
+            if isinstance(attribute, algopy_testing.GlobalState):
+                global_states[attribute._key.value] = attribute
+            else:
+                global_states[key.encode()] = algopy_testing.GlobalState(attribute, key=key)
 
         return global_states
-
-    def _count_state_types(
-        self, states: dict[bytes, algopy.GlobalState[Any]] | dict[bytes, algopy.LocalState[Any]]
-    ) -> tuple[int, int]:
-        import algopy
-
-        uint_count = sum(
-            1
-            for state in states.values()
-            if is_instance(
-                (
-                    state.type_
-                    if is_instance(state, (algopy.GlobalState | algopy.LocalState))
-                    else state
-                ),
-                algopy.UInt64 | algopy.Asset | algopy.Application | bool,
-            )
-        )
-        bytes_count = len(states) - uint_count
-        return uint_count, bytes_count
-
-    def _get_global_state_totals(
-        self, global_states: dict[bytes, algopy.GlobalState[Any]] | None = None
-    ) -> tuple[int, int]:
-        return self._count_state_types(global_states or self._get_global_states())
-
-    def _get_local_state_totals(
-        self, local_states: dict[bytes, algopy.LocalState[Any]] | None = None
-    ) -> tuple[int, int]:
-        return self._count_state_types(local_states or self._get_local_states())
 
     def approval_program(self) -> algopy.UInt64 | bool:
         raise NotImplementedError("`approval_program` is not implemented.")
@@ -124,13 +132,11 @@ class Contract(metaclass=_ContractMeta):
         raise NotImplementedError("`clear_state_program` is not implemented.")
 
     def __getattribute__(self, name: str) -> Any:
-        from algopy_testing.context import get_test_context
-
         attr = super().__getattribute__(name)
         if callable(attr):
 
             def wrapper(*args: Any, **kwargs: dict[str, Any]) -> Any:
-                context = get_test_context()
+                context = algopy_testing.get_test_context()
                 context.set_active_contract(self)
                 try:
                     return attr(*args, **kwargs)
@@ -141,13 +147,16 @@ class Contract(metaclass=_ContractMeta):
         return attr
 
     def __setattr__(self, name: str, value: Any) -> None:
-        import algopy
-
-        name_bytes = algopy.String(name).bytes
+        name_bytes = algopy_testing.String(name).bytes
         match value:
-            case algopy.Box() | algopy.BoxRef() | algopy.GlobalState() | algopy.LocalState():
+            case (
+                algopy_testing.Box()
+                | algopy_testing.BoxRef()
+                | algopy_testing.GlobalState()
+                | algopy_testing.LocalState()
+            ):
                 value._key = name_bytes
-            case algopy.BoxMap():
+            case algopy_testing.BoxMap():
                 value._key_prefix = name_bytes
 
         super().__setattr__(name, value)
@@ -163,3 +172,9 @@ class ARC4Contract(Contract):
 
     def clear_state_program(self) -> algopy.UInt64 | bool:
         return True
+
+
+def _is_uint64_backed_type(typ: type) -> bool:
+    return issubclass(
+        typ, algopy_testing.UInt64 | algopy_testing.Application | algopy_testing.Asset | bool
+    )

@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, Unpack, cast, overload
 
 import algosdk
 
+import algopy_testing
 from algopy_testing.constants import (
     ARC4_RETURN_PREFIX,
     DEFAULT_ACCOUNT_MIN_BALANCE,
@@ -24,7 +25,6 @@ from algopy_testing.constants import (
 )
 from algopy_testing.gtxn import NULL_GTXN_GROUP_INDEX
 from algopy_testing.models.account import AccountFields
-from algopy_testing.models.application import ApplicationFields
 from algopy_testing.models.asset import AssetFields
 from algopy_testing.models.global_values import GlobalFields
 from algopy_testing.models.txn import TxnFields
@@ -39,6 +39,7 @@ if TYPE_CHECKING:
         PaymentFields,
         TransactionFields,
     )
+    from algopy_testing.models.application import ApplicationFields
     from algopy_testing.models.transactions import (
         AssetConfigFields,
         AssetFreezeFields,
@@ -713,29 +714,33 @@ class AlgopyTestContext:
         Returns:
             algopy.Application: The newly generated application.
         """
-        import algopy
-
         new_app_id = id if id is not None else next(self._app_id)
-        new_app = algopy.Application(new_app_id)
+        new_app = algopy_testing.Application(new_app_id)
 
         # Set sensible defaults
-        default_app_fields = {
-            "approval_program": ALWAYS_APPROVE_TEAL_PROGRAM,
-            "clear_state_program": ALWAYS_APPROVE_TEAL_PROGRAM,
-            "global_num_uint": algopy.UInt64(0),
-            "global_num_bytes": algopy.UInt64(0),
-            "local_num_uint": algopy.UInt64(0),
-            "local_num_bytes": algopy.UInt64(0),
-            "extra_program_pages": algopy.UInt64(0),
+        app_fields: ApplicationFields = {
+            "approval_program": algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM),
+            "clear_state_program": algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM),
+            "global_num_uint": algopy_testing.UInt64(0),
+            "global_num_bytes": algopy_testing.UInt64(0),
+            "local_num_uint": algopy_testing.UInt64(0),
+            "local_num_bytes": algopy_testing.UInt64(0),
+            "extra_program_pages": algopy_testing.UInt64(0),
             "creator": self.default_creator,
             "address": address
-            or algopy.Account(algosdk.logic.get_application_address(new_app_id)),
+            or algopy_testing.Account(algosdk.logic.get_application_address(new_app_id)),
         }
 
         # Merge provided fields with defaults, prioritizing provided fields
-        merged_fields = dict(ChainMap(application_fields, default_app_fields))
+        for field, value in application_fields.items():
+            try:
+                default_value = app_fields[field]  # type: ignore[literal-required]
+            except KeyError:
+                raise ValueError(f"invalid field: {field!r}") from None
+            if not issubclass(type(value), type(default_value)):
+                raise TypeError(f"incorrect type for {field!r}")
+            app_fields[field] = value  # type: ignore[literal-required]
 
-        app_fields = ApplicationFields(**merged_fields)  # type: ignore[typeddict-item]
         self._application_data[int(new_app.id)] = app_fields
 
         return new_app

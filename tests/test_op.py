@@ -3,6 +3,7 @@ import typing
 from pathlib import Path
 
 import algopy
+import algopy_testing
 import algosdk
 import coincurve
 import ecdsa  # type: ignore  # noqa: PGH003
@@ -530,9 +531,9 @@ def test_app_params_get(
                 b"\n\x81\x01C"
             ),  # copied from expected 'clear' bytes snapshot from localnet
             global_num_uint=UInt64(0),
-            global_num_byte_slice=UInt64(0),
+            global_num_bytes=UInt64(0),
             local_num_uint=UInt64(0),
-            local_num_byte_slice=UInt64(0),
+            local_num_bytes=UInt64(0),
             extra_program_pages=UInt64(0),
             creator=algopy.Account(get_localnet_default_account(algod_client).address),
         )
@@ -625,7 +626,7 @@ def test_acct_params_get(
     ],
 )
 def test_app_local_put_get_and_delete(  # noqa: PLR0913
-    localnet_creator: algopy.Account,
+    localnet_creator: algopy_testing.Account,
     get_state_app_local_avm_result: AVMInvoker,
     method_name: str,
     key: bytes,
@@ -691,13 +692,13 @@ def test_app_local_put_get_and_delete(  # noqa: PLR0913
 
 def test_app_local_ex_get(
     context: AlgopyTestContext,
-    localnet_creator: algopy.Account,
+    localnet_creator: algopy_testing.Account,
     get_state_app_local_avm_result: AVMInvoker,
     get_state_app_local_ex_avm_result: AVMInvoker,
 ) -> None:
     mock_secondary_contract = StateAppLocalExContract()
     mock_secondary_app = context.get_application_for_contract(mock_secondary_contract)
-    assert mock_secondary_app.local_num_uints == 1
+    assert mock_secondary_app.local_num_uint == 1
     assert mock_secondary_app.local_num_bytes == 2
 
     with contextlib.suppress(algosdk.error.AlgodHTTPError):
@@ -721,13 +722,13 @@ def test_app_local_ex_get(
 
 def test_app_local_ex_get_arc4(
     context: AlgopyTestContext,
-    localnet_creator: algopy.Account,
+    localnet_creator: algopy_testing.Account,
     get_state_app_local_avm_result: AVMInvoker,
     get_state_app_local_ex_avm_result: AVMInvoker,
 ) -> None:
     mock_secondary_contract = StateAppLocalExContract()
     mock_secondary_app = context.get_application_for_contract(mock_secondary_contract)
-    assert mock_secondary_app.local_num_uints == 1
+    assert mock_secondary_app.local_num_uint == 1
     assert mock_secondary_app.local_num_bytes == 2
 
     with contextlib.suppress(algosdk.error.AlgodHTTPError):
@@ -817,7 +818,7 @@ def test_app_global_ex_get(
 ) -> None:
     mock_secondary_contract = StateAppGlobalExContract()
     mock_secondary_app = context.get_application_for_contract(mock_secondary_contract)
-    assert mock_secondary_app.global_num_uints == 2
+    assert mock_secondary_app.global_num_uint == 2
     assert mock_secondary_app.global_num_bytes == 4
 
     avm_result = get_state_app_global_avm_result(
@@ -848,7 +849,7 @@ def test_app_global_ex_get_arc4(
 ) -> None:
     mock_secondary_contract = StateAppGlobalExContract()
     mock_secondary_app = context.get_application_for_contract(mock_secondary_contract)
-    assert mock_secondary_app.global_num_uints == 2
+    assert mock_secondary_app.global_num_uint == 2
     assert mock_secondary_app.global_num_bytes == 4
 
     avm_result = get_state_app_global_avm_result(
