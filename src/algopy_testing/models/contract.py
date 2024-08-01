@@ -32,16 +32,13 @@ class _ContractMeta(type):
 
         if context and isinstance(instance, Contract):
             state_totals = instance._get_state_totals()
-            context._app_id_to_contract[
-                int(
-                    context.any_application(
-                        global_num_bytes=algopy_testing.UInt64(state_totals.global_bytes),
-                        global_num_uint=algopy_testing.UInt64(state_totals.global_uints),
-                        local_num_bytes=algopy_testing.UInt64(state_totals.local_bytes),
-                        local_num_uint=algopy_testing.UInt64(state_totals.local_uints),
-                    ).id
-                )
-            ] = instance
+            app_ref = context.any_application(
+                global_num_bytes=algopy_testing.UInt64(state_totals.global_bytes),
+                global_num_uint=algopy_testing.UInt64(state_totals.global_uints),
+                local_num_bytes=algopy_testing.UInt64(state_totals.local_bytes),
+                local_num_uint=algopy_testing.UInt64(state_totals.local_uints),
+            )
+            context._app_id_to_contract[int(app_ref.id)] = instance
 
         return instance
 
@@ -99,7 +96,7 @@ class Contract(metaclass=_ContractMeta):
             local_bytes=local_bytes,
         )
 
-    def _get_local_states(self) -> dict[bytes, algopy.LocalState[Any]]:
+    def _get_local_states(self) -> dict[bytes, algopy_testing.LocalState[Any]]:
         local_states = {
             attribute._key.value: attribute
             for _, attribute in vars(self).items()
@@ -108,7 +105,7 @@ class Contract(metaclass=_ContractMeta):
 
         return local_states
 
-    def _get_global_states(self) -> dict[bytes, algopy.GlobalState[Any]]:
+    def _get_global_states(self) -> dict[bytes, algopy_testing.GlobalState[Any]]:
         global_states = {}
         for key, attribute in vars(self).items():
             if isinstance(
