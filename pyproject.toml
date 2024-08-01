@@ -134,10 +134,12 @@ type = "virtual"
 path = ".venv.examples"
 python = "3.12"
 dev-mode = true
-detached = true
+skip-install = false
+post-install-commands = [
+  "hatch run examples:reload_algopy_testing",
+]
 dependencies = [
     "algorand-python>=1.2",
-    "algorand-python-testing @ {root:uri}",
     "pytest>=7.4",
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
@@ -149,6 +151,7 @@ dependencies = [
 
 [tool.hatch.envs.examples.scripts]
 tests = "pytest examples"
+reload_algopy_testing = "pip install --no-cache-dir -U -e {root:uri}"
 pre_commit = [
     "hatch run lint:fix_examples",
     "hatch run mypy examples",
