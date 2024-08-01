@@ -17,6 +17,10 @@ if TYPE_CHECKING:
     import algopy
 
 
+def generate_random_int(min_value: int, max_value: int) -> int:
+    return secrets.randbelow(max_value - min_value + 1) + min_value
+
+
 def as_int(value: object, *, max: int | None) -> int:  # noqa: A002
     """
     Returns the underlying int value for any numeric type up to UInt512

@@ -2,11 +2,14 @@ import algosdk
 import pytest
 from algopy import Bytes, TransactionType, UInt64
 from algopy_testing import arc4
+from algopy_testing.constants import MAX_UINT8, MAX_UINT16, MAX_UINT32, MAX_UINT64, MAX_UINT512
 from algopy_testing.context import AlgopyTestContext, algopy_testing_context, get_test_context
 from algopy_testing.itxn import PaymentInnerTransaction
 
 from tests.artifacts.Arc4InnerTxns.contract import Arc4InnerTxnsContract
 from tests.artifacts.GlobalStateValidator.contract import GlobalStateValidator
+
+_ARC4_PREFIX_LEN = 2
 
 
 def test_patch_global_fields() -> None:
@@ -193,3 +196,52 @@ def test_misc_global_state_access() -> None:
     with algopy_testing_context() as _:
         contract = GlobalStateValidator()
         contract.validate_g_args(arc4.UInt64(1), arc4.String("TestAsset"))
+
+
+@pytest.mark.parametrize(
+    ("method", "type_", "min_val", "max_val"),
+    [
+        ("any_uint8", arc4.UInt8, 0, MAX_UINT8),
+        ("any_uint16", arc4.UInt16, 0, MAX_UINT16),
+        ("any_uint32", arc4.UInt32, 0, MAX_UINT32),
+        ("any_uint64", arc4.UInt64, 0, MAX_UINT64),
+        ("any_biguint128", arc4.UInt128, 0, (1 << 128) - 1),
+        ("any_biguint256", arc4.UInt256, 0, (1 << 256) - 1),
+        ("any_biguint512", arc4.UInt512, 0, MAX_UINT512),
+    ],
+)
+def test_arc4_uint_methods(method: str, type_: type, min_val: int, max_val: int) -> None:
+    with algopy_testing_context() as context:
+        func = getattr(context.arc4, method)
+        value = func(min_val, max_val)
+        assert isinstance(value, type_)
+        assert min_val <= value.native <= max_val  # type: ignore[attr-defined]
+
+        with pytest.raises(ValueError):  # noqa: PT011
+            func(max_val + 1)
+
+
+def test_arc4_any_address() -> None:
+    with algopy_testing_context() as context:
+        address = context.arc4.any_address()
+        assert isinstance(address, arc4.Address)
+        assert len(address.bytes) == 32
+
+
+@pytest.mark.parametrize(
+    ("method", "type_", "bit_length", "expected_length"),
+    [
+        ("any_dynamic_bytes", arc4.DynamicBytes, 64, 8),
+        ("any_dynamic_bytes", arc4.DynamicBytes, 20, 3),
+        ("any_string", arc4.String, 32, 4),
+        ("any_string", arc4.String, 20, 3),
+    ],
+)
+def test_arc4_variable_length_methods(
+    method: str, type_: type, bit_length: int, expected_length: int
+) -> None:
+    with algopy_testing_context() as context:
+        func = getattr(context.arc4, method)
+        value = func(bit_length)
+        assert isinstance(value, type_)
+        assert len(value.bytes) == expected_length + _ARC4_PREFIX_LEN  # type: ignore[attr-defined]

@@ -23,13 +23,18 @@ from algopy_testing.constants import (
     DEFAULT_GLOBAL_GENESIS_HASH,
     DEFAULT_MAX_TXN_LIFE,
     MAX_BYTES_SIZE,
+    MAX_UINT8,
+    MAX_UINT16,
+    MAX_UINT32,
     MAX_UINT64,
+    MAX_UINT512,
 )
 from algopy_testing.gtxn import NULL_GTXN_GROUP_INDEX
 from algopy_testing.models.account import AccountContextData, AccountFields, get_empty_account
 from algopy_testing.models.asset import AssetFields
 from algopy_testing.models.global_values import GlobalFields
 from algopy_testing.models.txn import TxnFields
+from algopy_testing.utils import generate_random_int
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Generator, Sequence
@@ -261,77 +266,130 @@ class ARC4Factory:
 
         return algopy.arc4.Address(algosdk.account.generate_account()[1])
 
-    def any_uint_n(
-        self, n: typing.Literal[8, 16, 32, 64] | None = None
-    ) -> algopy.arc4.UIntN[typing.Literal[8, 16, 32, 64]]:
-        """Generate a random unsigned integer of size `n` bits.
+    def any_uint8(self, min_value: int = 0, max_value: int = MAX_UINT8) -> algopy.arc4.UInt8:
+        """Generate a random UInt8 within the specified range.
 
         Args:
-            n (int): The number of bits for the unsigned integer. Can be 8, 16, 32 or 64.
+            min_value (int): Minimum value (inclusive). Defaults to 0.
+            max_value (int): Maximum value (inclusive). Defaults to MAX_UINT8.
 
         Returns:
-            algopy.arc4.UIntN: A new, random unsigned integer of size `n` bits.
+            algopy.arc4.UInt8: A random UInt8 value.
 
         Raises:
-            ValueError: If n is not within the valid range.
+            AssertionError: If values are out of UInt8 range.
         """
-        import random
-
         import algopy
 
-        allowed_n = [8, 16, 32, 64]
-        n = n or random.choice(allowed_n)  # type: ignore[arg-type]  # noqa: S311
+        return algopy.arc4.UInt8(generate_random_int(min_value, max_value))
 
-        if n not in allowed_n:
-            raise ValueError(
-                "n must be 8, 16, 32 or 64. For custom sizes, declare a custom type alias. For "
-                "example: UInt24 = algopy.arc4.UIntN[24]"
-            )
-
-        # Use type annotation to create the correct UIntN type
-        custom_uintn = getattr(algopy.arc4, f"UInt{n}")
-
-        # Generate a random value within the range of the UIntN
-        max_value = (1 << n) - 1
-        random_value = random.randint(0, max_value)  # noqa: S311
-
-        return custom_uintn(random_value)  # type: ignore[no-any-return]
-
-    def any_biguint_n(
-        self, n: typing.Literal[128, 256, 512] | None = None
-    ) -> algopy.arc4.BigUIntN[typing.Literal[128, 256, 512]]:
-        """Generate a random unsigned integer of size `n` bits.
+    def any_uint16(self, min_value: int = 0, max_value: int = MAX_UINT16) -> algopy.arc4.UInt16:
+        """Generate a random UInt16 within the specified range.
 
         Args:
-            n (int): The number of bits for the unsigned integer. Can be 128, 256 or 512.
+            min_value (int): Minimum value (inclusive). Defaults to 0.
+            max_value (int): Maximum value (inclusive). Defaults to MAX_UINT16.
 
         Returns:
-            algopy.arc4.UIntN: A new, random unsigned integer of size `n` bits.
+            algopy.arc4.UInt16: A random UInt16 value.
 
         Raises:
-            ValueError: If n is not within the valid range.
+            AssertionError: If values are out of UInt16 range.
         """
-        import random
-
         import algopy
 
-        allowed_n = [128, 256, 512]
-        n = n or random.choice(allowed_n)  # type: ignore[arg-type]  # noqa: S311
+        return algopy.arc4.UInt16(generate_random_int(min_value, max_value))
 
-        if n not in allowed_n:
-            raise ValueError(
-                "n must be 128, 256 or 512. For custom sizes, declare a custom type alias. For "
-                "example: BigUInt256 = algopy.arc4.BigUIntN[256]"
-            )
+    def any_uint32(self, min_value: int = 0, max_value: int = MAX_UINT32) -> algopy.arc4.UInt32:
+        """Generate a random UInt32 within the specified range.
 
-        # Use type annotation to create the correct UIntN type
-        custom_uintn = getattr(algopy.arc4, f"UInt{n}")
+        Args:
+            min_value (int): Minimum value (inclusive). Defaults to 0.
+            max_value (int): Maximum value (inclusive). Defaults to MAX_UINT32.
 
-        # Generate a random value within the range of the UIntN
-        max_value = (1 << n) - 1
-        random_value = random.randint(0, max_value)  # noqa: S311
+        Returns:
+            algopy.arc4.UInt32: A random UInt32 value.
 
-        return custom_uintn(random_value)  # type: ignore[no-any-return]
+        Raises:
+            AssertionError: If values are out of UInt32 range.
+        """
+        import algopy
+
+        return algopy.arc4.UInt32(generate_random_int(min_value, max_value))
+
+    def any_uint64(self, min_value: int = 0, max_value: int = MAX_UINT64) -> algopy.arc4.UInt64:
+        """Generate a random UInt64 within the specified range.
+
+        Args:
+            min_value (int): Minimum value (inclusive). Defaults to 0.
+            max_value (int): Maximum value (inclusive). Defaults to MAX_UINT64.
+
+        Returns:
+            algopy.arc4.UInt64: A random UInt64 value.
+
+        Raises:
+            AssertionError: If values are out of UInt64 range.
+        """
+        import algopy
+
+        return algopy.arc4.UInt64(generate_random_int(min_value, max_value))
+
+    def any_biguint128(
+        self, min_value: int = 0, max_value: int = (1 << 128) - 1
+    ) -> algopy.arc4.UInt128:
+        """Generate a random UInt128 within the specified range.
+
+        Args:
+            min_value (int): Minimum value (inclusive). Defaults to 0.
+            max_value (int): Maximum value (inclusive). Defaults to (2^128 - 1).
+
+        Returns:
+            algopy.arc4.UInt128: A random UInt128 value.
+
+        Raises:
+            AssertionError: If values are out of UInt128 range.
+        """
+        import algopy
+
+        return algopy.arc4.UInt128(generate_random_int(min_value, max_value))
+
+    def any_biguint256(
+        self, min_value: int = 0, max_value: int = (1 << 256) - 1
+    ) -> algopy.arc4.UInt256:
+        """Generate a random UInt256 within the specified range.
+
+        Args:
+            min_value (int): Minimum value (inclusive). Defaults to 0.
+            max_value (int): Maximum value (inclusive). Defaults to (2^256 - 1).
+
+        Returns:
+            algopy.arc4.UInt256: A random UInt256 value.
+
+        Raises:
+            AssertionError: If values are out of UInt256 range.
+        """
+        import algopy
+
+        return algopy.arc4.UInt256(generate_random_int(min_value, max_value))
+
+    def any_biguint512(
+        self, min_value: int = 0, max_value: int = MAX_UINT512
+    ) -> algopy.arc4.UInt512:
+        """Generate a random UInt512 within the specified range.
+
+        Args:
+            min_value (int): Minimum value (inclusive). Defaults to 0.
+            max_value (int): Maximum value (inclusive). Defaults to MAX_UINT512.
+
+        Returns:
+            algopy.arc4.UInt512: A random UInt512 value.
+
+        Raises:
+            AssertionError: If values are out of UInt512 range.
+        """
+        import algopy
+
+        return algopy.arc4.UInt512(generate_random_int(min_value, max_value))
 
     def any_dynamic_bytes(self, n: int) -> algopy.arc4.DynamicBytes:
         """Generate a random dynamic bytes of size `n` bits.
@@ -885,7 +943,9 @@ class AlgopyTestContext:
         raw_app_id = (
             int(app_id)
             if isinstance(app_id, algopy.UInt64)
-            else int(app_id.id) if isinstance(app_id, algopy.Application) else app_id
+            else int(app_id.id)
+            if isinstance(app_id, algopy.Application)
+            else app_id
         )
 
         if isinstance(logs, bytes):
@@ -1039,8 +1099,7 @@ class AlgopyTestContext:
         if min_value > max_value:
             raise ValueError("min_value must be less than or equal to max_value")
 
-        random_value = secrets.randbelow(max_value - min_value) + min_value
-        return algopy.UInt64(random_value)
+        return algopy.UInt64(generate_random_int(min_value, max_value))
 
     def any_bytes(self, length: int = MAX_BYTES_SIZE) -> algopy.Bytes:
         """
