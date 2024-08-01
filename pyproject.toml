@@ -133,7 +133,7 @@ build = "sphinx-build docs docs/_build -W --keep-going -n -E"
 type = "virtual"
 path = ".venv.examples"
 python = "3.12"
-dev-mode= true
+dev-mode = true
 detached = true
 dependencies = [
     "algorand-python>=1.2",
@@ -290,7 +290,7 @@ minor_tags = ["feat"]
 patch_tags = ["fix", "perf", "docs", "chore", "ci", "refactor"]
 
 [tool.semantic_release.publish]
-dist_glob_patterns = ["dist/*.whl"] # order here is important to ensure compiler wheel is published first
+dist_glob_patterns = ["dist/*.whl"]
 upload_to_vcs_release = true
 
 [tool.semantic_release.remote.token]
