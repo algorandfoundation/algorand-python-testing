@@ -346,9 +346,10 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         value_type: type[_TValue],
         /,
         *,
-        key_prefix: bytes | str | algopy.Bytes | algopy.String = "",
+        key_prefix: bytes | str | algopy.Bytes | algopy.String | None = None,
     ) -> None:
-        """Declare a box map.
+        """
+        Declare a box map.
 
         :arg key_type: The type of the keys
         :arg value_type: The type of the values
@@ -357,21 +358,24 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
                          this argument is optional and defaults to the member variable name,
                          and if a custom value is supplied it must be static.
         """
-        import algopy
-
         self._key_type = key_type
         self._value_type = value_type
-        self._key_prefix = (
-            algopy.String(as_string(key_prefix)).bytes
-            if isinstance(key_prefix, str | algopy.String)
-            else algopy.Bytes(as_bytes(key_prefix))
-        )
+        match key_prefix:
+            case None:
+                self._key_prefix = None
+            case bytes(key) | algopy_testing.Bytes(value=key):
+                self._key_prefix = algopy_testing.Bytes(key)
+            case str(key_str) | algopy_testing.String(value=key_str):
+                self._key_prefix = algopy_testing.Bytes(key_str.encode("utf8"))
+            case _:
+                typing.assert_never(key_prefix)
 
     @property
     def key_prefix(self) -> algopy.Bytes:
         """Provides access to the raw storage key-prefix"""
-        if not self._key_prefix:
-            raise RuntimeError("Box key prefix is empty")
+        # empty bytes is a valid key prefix, so check for None explicitly
+        if self._key_prefix is None:
+            raise RuntimeError("Box key prefix is not defined")
         return self._key_prefix
 
     def __getitem__(self, key: _TKey) -> _TValue:

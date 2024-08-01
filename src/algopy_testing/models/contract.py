@@ -151,13 +151,11 @@ class Contract(metaclass=_ContractMeta):
         name_bytes = algopy_testing.String(name).bytes
         match value:
             case (
-                (
-                    algopy_testing.Box()
-                    | algopy_testing.BoxRef()
-                    | algopy_testing.GlobalState()
-                    | algopy_testing.LocalState()
-                ) as state
-            ) if state._key is None:
+                algopy_testing.Box()
+                | algopy_testing.BoxRef()
+                | algopy_testing.GlobalState()
+                | algopy_testing.LocalState()
+            ) as state if not state._key:
                 value._key = name_bytes
             case algopy_testing.BoxMap() as state if state._key_prefix is None:
                 value._key_prefix = name_bytes
