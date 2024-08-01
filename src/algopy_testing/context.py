@@ -424,9 +424,11 @@ class AlgopyTestContext:
         self._asset_id = iter(range(1001, 2**64))
         self._app_id = iter(range(1001, 2**64))
 
-        self._active_contract: algopy.Contract | algopy.ARC4Contract | None = None
-        self._contracts: list[algopy.Contract | algopy.ARC4Contract] = []
-        self._app_id_to_contract: dict[int, algopy.Contract | algopy.ARC4Contract] = {}
+        self._active_contract: algopy_testing.Contract | algopy_testing.ARC4Contract | None = None
+        self._contracts: list[algopy_testing.Contract | algopy_testing.ARC4Contract] = []
+        self._app_id_to_contract: dict[
+            int, algopy_testing.Contract | algopy_testing.ARC4Contract
+        ] = {}
         self._txn_fields: TxnFields = {}
         self._gtxns: list[algopy.gtxn.TransactionBase] = []
         self._active_transaction_index: int | None = None
