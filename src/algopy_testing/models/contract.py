@@ -157,9 +157,9 @@ class Contract(metaclass=_ContractMeta):
                     | algopy_testing.GlobalState()
                     | algopy_testing.LocalState()
                 ) as state
-            ) if not state._key:
+            ) if state._key is None:
                 value._key = name_bytes
-            case algopy_testing.BoxMap() as state if not state._key_prefix:
+            case algopy_testing.BoxMap() as state if state._key_prefix is None:
                 value._key_prefix = name_bytes
 
         super().__setattr__(name, value)
