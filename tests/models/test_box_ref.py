@@ -13,7 +13,7 @@ TEST_BOX_KEY = b"test_key"
 BOX_NOT_CREATED_ERROR = "Box has not been created"
 
 
-class ATestContract(algopy.Contract):
+class ATestContract(algopy.ARC4Contract):
     def __init__(self) -> None:
         self.uint_64_box_ref = algopy.BoxRef()
 
