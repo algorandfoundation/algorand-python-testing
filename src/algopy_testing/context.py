@@ -943,9 +943,7 @@ class AlgopyTestContext:
         raw_app_id = (
             int(app_id)
             if isinstance(app_id, algopy.UInt64)
-            else int(app_id.id)
-            if isinstance(app_id, algopy.Application)
-            else app_id
+            else int(app_id.id) if isinstance(app_id, algopy.Application) else app_id
         )
 
         if isinstance(logs, bytes):
@@ -1380,6 +1378,23 @@ class AlgopyTestContext:
         """
         self._active_contract = None
 
+    def clear_boxes(self) -> None:
+        """Clear all boxes."""
+        self._boxes.clear()
+
+    def clear_blocks(self) -> None:
+        """Clear all blocks."""
+        self._blocks.clear()
+
+    def clear_lsigs(self) -> None:
+        """Clear all logic signatures."""
+        self._lsigs.clear()
+        self._active_lsig_args = []
+
+    def clear_template_vars(self) -> None:
+        """Clear all template variables."""
+        self._template_vars.clear()
+
     def clear(self) -> None:
         """
         Clear all data, including accounts, applications, assets, inner transactions,
@@ -1394,6 +1409,10 @@ class AlgopyTestContext:
         self.clear_scratch_spaces()
         self.clear_active_transaction_index()
         self.clear_active_contract()
+        self.clear_boxes()
+        self.clear_blocks()
+        self.clear_lsigs()
+        self.clear_template_vars()
 
     def reset(self) -> None:
         """
