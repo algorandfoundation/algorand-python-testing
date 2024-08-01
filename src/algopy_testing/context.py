@@ -68,25 +68,7 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 
 
-@dataclass
-class ContractContextData:
-    """
-    Stores contract-related information.
-
-    Attributes:
-        contract (algopy.Contract | algopy.ARC4Contract): Contract instance.
-        app_id (algopy.UInt64): Application ID.
-    """
-
-    contract: algopy.Contract | algopy.ARC4Contract
-    app_id: algopy.UInt64
-
-
 class ITxnLoader:
-    """
-    Stores inner transaction references.
-    """
-
     def __init__(self, inner_txn: InnerTransactionResultType):
         self._inner_txn = inner_txn
 
@@ -253,7 +235,17 @@ class ITxnGroupLoader:
 
 @dataclass
 class ARC4Factory:
+    """
+    Factory for generating ARC4-compliant test data.
+    """
+
     def __init__(self, *, context: AlgopyTestContext) -> None:
+        """
+        Initializes the ARC4Factory with the given testing context.
+
+        Args:
+            context (AlgopyTestContext): The testing context for generating test data.
+        """
         self._context = context
 
     def any_address(self) -> algopy.arc4.Address:
@@ -448,6 +440,23 @@ class ARC4Factory:
 
 @dataclass
 class AlgopyTestContext:
+    """
+    Manages the testing context for Algorand Python SDK (algopy) applications.
+
+    This class provides methods and properties to simulate various aspects of the
+    Algorand blockchain environment, including accounts, assets, applications,
+    transactions, and global state. It allows for easy setup and manipulation of
+    test scenarios for algopy-based smart contracts and applications.
+
+    Attributes:
+        _arc4 (ARC4Factory): Factory for generating ARC4-compliant test data.
+
+    ```{note}
+        This class is typically used within a context manager provided by
+        the `algopy_testing_context()` function.
+    ```
+    """
+
     _arc4: ARC4Factory
 
     def __init__(
