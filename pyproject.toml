@@ -117,6 +117,10 @@ clean_dist = "rm -rf dist"
 
 # docs environment
 [tool.hatch.envs.docs]
+detached = true
+path = ".venv.docs"
+type = "virtual"
+python = "3.12"
 dependencies = [
     "sphinx>=7.2.6",
     "furo>=2024.1.29",

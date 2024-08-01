@@ -21,7 +21,7 @@ def test_my_contract():
 
 The context manager provides an `AlgopyTestContext` object, giving you access to various methods for interacting with the simulated environment.
 
-## Primitive Types
+## AVM Types
 
 These types are available directly under the `algopy` namespace. They represent the basic AVM primitive types and can be instantiated as such:
 
@@ -78,10 +78,6 @@ from algopy import BigUInt
 # Arbitrary-precision unsigned integer
 biguint_value = BigUInt(100)
 ```
-
-## Complex Types
-
-These types represent base AVM complex types such as assets, accounts, and transactions. They are available under the `algopy` namespace.
 
 ### Asset
 
@@ -240,35 +236,6 @@ generic_txn = ctx.any_transaction(
 )
 ```
 
-## State Management
-
-### Global
-
-Patch `Global` fields to define the global state of the simulated blockchain:
-
-```python
-ctx.patch_global_fields(latest_timestamp=algopy.UInt64(1000))
-```
-
-### Boxes
-
-The framework supports both low-level Box 'op' calls and a higher-level Boxes interface.
-
-```python
-import algopy
-
-# Low-level Box 'op' calls
-_id, has_claimed = algopy.op.Box.get(algopy.Txn.sender.bytes)
-assert not has_claimed, "Already claimed POA"
-algopy.op.Box.put(algopy.Txn.sender.bytes, algopy.op.itob(minted_asset.id))
-
-# Higher-level 'Box' interface
-box = algopy.Box(algopy.UInt64, key=algopy.Txn.sender.bytes)
-has_claimed = bool(box)
-assert not has_claimed, "Already claimed POA"
-box.value = minted_asset.id
-```
-
 ## ARC4 Types
 
 These types are available under the `algopy.arc4` namespace. Refer to the [ARC4 specification](https://arc.algorand.foundation/ARCs/arc-0004) for more details.
@@ -324,7 +291,9 @@ from algopy import arc4
 string_value = arc4.String("Hello, Algorand!")
 ```
 
-## Smart Signatures (Logic Signatures)
+## State Management
+
+## Smart Signatures
 
 Smart signatures, also known as logic signatures or LogicSigs, are programs that can be used to sign transactions. The Algorand Python Testing framework provides support for testing these programs.
 
@@ -366,7 +335,7 @@ The method returns the result of executing the logic signature, which can be eit
 -   If it returns `1`, it's interpreted as `True` (approval).
 -   Any other non-zero value is returned as a `UInt64`.
 
-## Operational (op) codes
+## Opcodes
 
 ### Cryptographic Operations
 
