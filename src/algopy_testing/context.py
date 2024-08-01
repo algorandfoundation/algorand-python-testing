@@ -1102,12 +1102,12 @@ class AlgopyTestContext:
     def any_application_call_transaction(  # type: ignore[misc] # noqa: PLR0913
         self,
         app_id: algopy.Application,
-        app_args: Sequence[algopy.Bytes] = [],
-        accounts: Sequence[algopy.Account] = [],
-        assets: Sequence[algopy.Asset] = [],
-        apps: Sequence[algopy.Application] = [],
-        approval_program_pages: Sequence[algopy.Bytes] = [],
-        clear_state_program_pages: Sequence[algopy.Bytes] = [],
+        app_args: Sequence[algopy.Bytes] = (),
+        accounts: Sequence[algopy.Account] = (),
+        assets: Sequence[algopy.Asset] = (),
+        apps: Sequence[algopy.Application] = (),
+        approval_program_pages: Sequence[algopy.Bytes] = (),
+        clear_state_program_pages: Sequence[algopy.Bytes] = (),
         scratch_space: dict[int, algopy.Bytes | algopy.UInt64 | int | bytes] | None = None,
         **kwargs: Unpack[_ApplicationCallFields],
     ) -> algopy.gtxn.ApplicationCallTransaction:
