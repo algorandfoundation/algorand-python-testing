@@ -39,7 +39,7 @@ def test_account_management() -> None:
         context.update_account(account.public_key, balance=UInt64(2000))
         assert context.get_account(account.public_key).balance == 2000
 
-        with pytest.raises(ValueError, match="Account not found"):
+        with pytest.raises(AssertionError, match="Invalid Algorand address"):
             context.update_account("invalid_address", balance=UInt64(2000))
 
 

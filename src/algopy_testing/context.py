@@ -26,7 +26,7 @@ from algopy_testing.constants import (
     MAX_UINT64,
 )
 from algopy_testing.gtxn import NULL_GTXN_GROUP_INDEX
-from algopy_testing.models.account import AccountContextData, AccountFields
+from algopy_testing.models.account import AccountContextData, AccountFields, get_empty_account
 from algopy_testing.models.asset import AssetFields
 from algopy_testing.models.global_values import GlobalFields
 from algopy_testing.models.txn import TxnFields
@@ -425,11 +425,12 @@ class AlgopyTestContext:
         self._active_lsig_args: Sequence[algopy.Bytes] = []
         # using defaultdict here because there should be an AccountContextData for any
         # account, it defaults to an account with no balance
-        self._account_data = defaultdict[str, AccountContextData](AccountContextData)
+        self._account_data = defaultdict[str, AccountContextData](get_empty_account)
 
-        self.default_creator = default_creator or algopy.Account(
+        self.default_creator: algopy.Account = default_creator or algopy.Account(
             algosdk.account.generate_account()[1]
         )
+        self._account_data[self.default_creator.public_key] = get_empty_account()
 
         self._global_fields: GlobalFields = {
             "min_txn_fee": algopy.UInt64(algosdk.constants.MIN_TXN_FEE),
@@ -543,12 +544,7 @@ class AlgopyTestContext:
         Returns:
             algopy.Account: The account associated with the address.
         """
-        import algopy
-
-        if address not in self._account_data:
-            raise ValueError("Account not found in testing context!")
-
-        return algopy.Account(address)
+        return algopy_testing.Account(address)
 
     def get_account_data(self) -> dict[str, AccountContextData]:
         """
@@ -588,10 +584,7 @@ class AlgopyTestContext:
         Raises:
             TypeError: If the provided object is not an instance of `Account`.
         """
-
-        if address not in self._account_data:
-            raise ValueError("Account not found")
-
+        _assert_address_is_valid(address)
         self._account_data[address].fields.update(account_fields)
 
     def get_opted_asset_balance(
@@ -608,10 +601,7 @@ class AlgopyTestContext:
             algopy.UInt64 | None: The opted asset balance or None if not opted in.
         """
 
-        response = self._account_data.get(
-            account.public_key,
-            AccountContextData(fields=AccountFields(), opted_asset_balances={}, opted_apps={}),
-        ).opted_asset_balances.get(asset_id, None)
+        response = self._account_data[account.public_key].opted_asset_balances.get(asset_id, None)
 
         return response
 
@@ -760,10 +750,10 @@ class AlgopyTestContext:
         """
         import algopy
 
-        # TODO: ensure passed fields are valid names and types
-        if address and not algosdk.encoding.is_valid_address(address):
-            raise ValueError("Invalid Algorand address supplied!")
+        if address is not None:
+            _assert_address_is_valid(address)
 
+        # TODO: ensure passed fields are valid names and types
         if address in self._account_data:
             raise ValueError(
                 "Account with such address already exists in testing context! "
@@ -1391,3 +1381,7 @@ def algopy_testing_context(
         yield _var.get()
     finally:
         _var.reset(token)
+
+
+def _assert_address_is_valid(address: str) -> None:
+    assert algosdk.encoding.is_valid_address(address), "Invalid Algorand address supplied!"

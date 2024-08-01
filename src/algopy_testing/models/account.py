@@ -31,6 +31,26 @@ class AccountFields(typing.TypedDict, total=False):
     total_box_bytes: algopy.UInt64
 
 
+def get_empty_account() -> AccountContextData:
+    zero = algopy_testing.UInt64(0)
+    return AccountContextData(
+        fields={
+            "balance": zero,
+            "min_balance": zero,
+            "auth_address": algopy_testing.Account(),
+            "total_num_uint": zero,
+            "total_num_byte_slice": zero,
+            "total_extra_app_pages": zero,
+            "total_apps_created": zero,
+            "total_apps_opted_in": zero,
+            "total_assets_created": zero,
+            "total_assets": zero,
+            "total_boxes": zero,
+            "total_box_bytes": zero,
+        }
+    )
+
+
 @dataclasses.dataclass
 class AccountContextData:
     """

@@ -901,11 +901,11 @@ class _AcctParamsGet:
         ) -> tuple[algopy.UInt64 | algopy.Account, bool]:
             context = get_test_context()
             if isinstance(a, algopy_testing.Account):
-                account_data = context.get_account(a.public_key)
+                account = context.get_account(a.public_key)
             elif isinstance(a, algopy_testing.UInt64 | int):
                 active_txn = context.get_active_transaction()
                 try:
-                    account_data = active_txn.accounts(a)
+                    account = active_txn.accounts(a)
                 except IndexError as e:
                     raise ValueError(
                         f"Invalid account index for accounts in active transaction: {a}"
@@ -913,17 +913,14 @@ class _AcctParamsGet:
             else:
                 raise TypeError(f"Invalid type for account parameter: {type(a)}")
 
-            if account_data is None:
-                return UInt64(0), False
-
             param = name.removeprefix("acct_")
-            value = getattr(account_data, param, None)
-            return value, True  # type: ignore[return-value]
+            value = getattr(account, param, None)
+            if value is None:
+                raise AttributeError(f"'AcctParamsGet' has no attribute '{name}'")
 
-        if name.startswith("acct_"):
-            return get_account_param
-        else:
-            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+            return value, account.balance != 0
+
+        return get_account_param
 
 
 AcctParamsGet = _AcctParamsGet()
