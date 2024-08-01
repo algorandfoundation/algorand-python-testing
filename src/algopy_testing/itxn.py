@@ -6,8 +6,8 @@ from copy import deepcopy
 
 import algosdk
 
+import algopy_testing
 from algopy_testing.constants import MAX_UINT64
-from algopy_testing.context import get_test_context
 from algopy_testing.models.transactions import (
     ApplicationCallFields,
     AssetConfigFields,
@@ -39,23 +39,21 @@ if typing.TYPE_CHECKING:
 def _create_inner_transaction_result(  # noqa: PLR0911
     txn: _BaseInnerTransaction,
 ) -> InnerTransactionResultType:
-    import algopy
-
     match txn:
-        case algopy.itxn.Payment():
-            return algopy.itxn.PaymentInnerTransaction(**txn.fields)
-        case algopy.itxn.KeyRegistration():
-            return algopy.itxn.KeyRegistrationInnerTransaction(**txn.fields)
-        case algopy.itxn.AssetConfig():
-            return algopy.itxn.AssetConfigInnerTransaction(**txn.fields)
-        case algopy.itxn.AssetTransfer():
-            return algopy.itxn.AssetTransferInnerTransaction(**txn.fields)
-        case algopy.itxn.AssetFreeze():
-            return algopy.itxn.AssetFreezeInnerTransaction(**txn.fields)
-        case algopy.itxn.ApplicationCall():
-            return algopy.itxn.ApplicationCallInnerTransaction(**txn.fields)
-        case algopy.itxn.InnerTransaction():
-            return algopy.itxn.InnerTransactionResult(**txn.fields)
+        case algopy_testing.itxn.Payment():
+            return algopy_testing.itxn.PaymentInnerTransaction(**txn.fields)
+        case algopy_testing.itxn.KeyRegistration():
+            return algopy_testing.itxn.KeyRegistrationInnerTransaction(**txn.fields)
+        case algopy_testing.itxn.AssetConfig():
+            return algopy_testing.itxn.AssetConfigInnerTransaction(**txn.fields)
+        case algopy_testing.itxn.AssetTransfer():
+            return algopy_testing.itxn.AssetTransferInnerTransaction(**txn.fields)
+        case algopy_testing.itxn.AssetFreeze():
+            return algopy_testing.itxn.AssetFreezeInnerTransaction(**txn.fields)
+        case algopy_testing.itxn.ApplicationCall():
+            return algopy_testing.itxn.ApplicationCallInnerTransaction(**txn.fields)
+        case algopy_testing.itxn.InnerTransaction():
+            return algopy_testing.itxn.InnerTransactionResult(**txn.fields)
         case _:
             raise ValueError(f"Invalid inner transaction type: {type(txn)}")
 
@@ -64,16 +62,14 @@ class _BaseInnerTransaction:
     fields: dict[str, typing.Any]
 
     def submit(self) -> typing.Any:
-        import algopy
-
-        context = get_test_context()
+        context = algopy_testing.get_test_context()
         result = _create_inner_transaction_result(self)
 
         if not result:
             raise RuntimeError("Invalid inner transaction type")
 
         # if its an asset config then ensure to create an asset and add to context
-        if isinstance(result, algopy.itxn.AssetConfigInnerTransaction):  # type: ignore[attr-defined, unused-ignore]
+        if isinstance(result, algopy_testing.itxn.AssetConfigInnerTransaction):
             # TODO: refine
             created_asset = context.any_asset(
                 total=self.fields.get("total", None),
@@ -294,14 +290,10 @@ class _AssetTransferInitFields(typing.TypedDict, total=False):
 
 class AssetTransfer(_BaseInnerTransaction):
     def __init__(self, **kwargs: typing.Unpack[_AssetTransferInitFields]):
-        import algopy
-
-        from algopy_testing import get_test_context
-
-        context = get_test_context()
+        context = algopy_testing.get_test_context()
         self.fields = {
-            "type": algopy.TransactionType.AssetTransfer,
-            "asset_sender": context.default_application.address if context else None,
+            "type": algopy_testing.TransactionType.AssetTransfer,
+            "asset_sender": context.get_active_application().address,
             "amount": 0,
             **kwargs,
         }

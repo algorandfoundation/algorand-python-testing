@@ -900,9 +900,9 @@ class _AcctParamsGet:
             a: algopy.Account | algopy.UInt64 | int,
         ) -> tuple[algopy.UInt64 | algopy.Account, bool]:
             context = get_test_context()
-            if isinstance(a, (algopy_testing.Account)):
+            if isinstance(a, algopy_testing.Account):
                 account_data = context.get_account(a.public_key)
-            elif isinstance(a, (algopy_testing.UInt64 | int)):
+            elif isinstance(a, algopy_testing.UInt64 | int):
                 active_txn = context.get_active_transaction()
                 try:
                     account_data = active_txn.accounts(a)
