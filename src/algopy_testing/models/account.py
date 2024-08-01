@@ -1,21 +1,22 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, Self, TypedDict, TypeVar
+import dataclasses
+import typing
 
 import algosdk
 
+import algopy_testing
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.utils import as_bytes
 
-if TYPE_CHECKING:
+if typing.TYPE_CHECKING:
     import algopy
 
 
-T = TypeVar("T")
+T = typing.TypeVar("T")
 
 
-class AccountFields(TypedDict, total=False):
+class AccountFields(typing.TypedDict, total=False):
     balance: algopy.UInt64
     min_balance: algopy.UInt64
     auth_address: algopy.Account
@@ -30,39 +31,46 @@ class AccountFields(TypedDict, total=False):
     total_box_bytes: algopy.UInt64
 
 
-@dataclass()
+@dataclasses.dataclass
+class AccountContextData:
+    """
+    Stores account-related information.
+
+    Attributes:
+        opted_asset_balances (dict[int, algopy.UInt64]): Mapping of asset IDs to balances.
+        opted_apps (dict[int, algopy.UInt64]): Mapping of application IDs to instances.
+        fields (AccountFields): Additional account fields.
+    """
+
+    opted_asset_balances: dict[algopy.UInt64, algopy.UInt64] = dataclasses.field(
+        default_factory=dict
+    )
+    opted_apps: dict[algopy.UInt64, algopy.Application] = dataclasses.field(default_factory=dict)
+    fields: AccountFields = dataclasses.field(default_factory=AccountFields)  # type: ignore[arg-type]
+
+
 class Account:
     _public_key: bytes
 
     def __init__(self, value: str | Bytes = algosdk.constants.ZERO_ADDRESS, /):
-        if not isinstance(value, (str | Bytes)):
+        if not isinstance(value, str | Bytes):
             raise TypeError("Invalid value for Account")
 
         public_key = (
             algosdk.encoding.decode_address(value) if isinstance(value, str) else value.value
         )
-
         self._public_key = public_key
 
+    @property
+    def data(self) -> AccountContextData:
+        context = algopy_testing.get_test_context()
+        return context._account_data[self.public_key]
+
     def is_opted_in(self, asset_or_app: algopy.Asset | algopy.Application, /) -> bool:
-        from algopy import Application, Asset
-
-        from algopy_testing import get_test_context
-
-        context = get_test_context()
-        opted_apps = context._account_data[str(self)].opted_apps
-        opted_asset_balances = context._account_data[str(self)].opted_asset_balances
-
-        if not context:
-            raise ValueError(
-                "Test context is not initialized! Use `with algopy_testing_context()` to access "
-                "the context manager."
-            )
-
-        if isinstance(asset_or_app, Asset):
-            return asset_or_app.id in opted_asset_balances
-        elif isinstance(asset_or_app, Application):
-            return asset_or_app.id in opted_apps
+        if isinstance(asset_or_app, algopy_testing.Asset):
+            return asset_or_app.id in self.data.opted_asset_balances
+        elif isinstance(asset_or_app, algopy_testing.Application):
+            return asset_or_app.id in self.data.opted_apps
 
         raise TypeError(
             "Invalid `asset_or_app` argument type. Must be an `algopy.Asset` or "
@@ -70,7 +78,7 @@ class Account:
         )
 
     @classmethod
-    def from_bytes(cls, value: algopy.Bytes | bytes) -> Self:
+    def from_bytes(cls, value: algopy.Bytes | bytes) -> typing.Self:
         # NOTE: AVM does not perform any validation beyond type.
         validated_value = as_bytes(value)
         return cls(Bytes(validated_value))
@@ -84,35 +92,11 @@ class Account:
         return algosdk.encoding.encode_address(self._public_key)  # type: ignore[no-any-return]
 
     def __getattr__(self, name: str) -> object:
-        from algopy_testing.context import get_test_context
-
-        context = get_test_context()
-        if str(self) not in context._account_data:
-            # check if its not 0 (which means its not
-            # instantiated yet, and instantiated directly
-            # without invoking any_account).
-            if str(self) == algosdk.constants.ZERO_ADDRESS:
-                # Handle dunder methods specially
-                if name.startswith("__") and name.endswith("__"):
-                    return getattr(type(self), name)
-                # For non-dunder attributes, check in __dict__
-                if name in self.__dict__:
-                    return self.__dict__[name]
-                raise AttributeError(
-                    f"'{self.__class__.__name__}' object has no attribute '{name}'"
-                )
-
-            raise ValueError(
-                "`algopy.Account` is not present in the test context! "
-                "Use `context.add_account()` or `context.any_account()` to add the account "
-                "to your test setup."
-            )
-
         # When accessing via AcctParamsGet, passed key differ from the one defined on account model
         # hence the mapping
         name = name if name != "auth_addr" else "auth_address"
 
-        return_value = context._account_data[str(self)].fields.get(name)
+        return_value = self.data.fields.get(name)
         if return_value is None:
             raise AttributeError(
                 f"The value for '{name}' in the test context is None. "

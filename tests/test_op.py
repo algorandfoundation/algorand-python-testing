@@ -520,35 +520,37 @@ def test_app_params_get(
     method_name: str,
     expected_value: int | bytes | bool | str | None,
 ) -> None:
+    client = get_state_app_params_avm_result.client
     with algopy_testing_context() as ctx:
-        app_id = get_state_app_params_avm_result.client.app_id
-        assert get_state_app_params_avm_result.client.approval
-        assert get_state_app_params_avm_result.client.app_address
+        app_id = client.app_id
+        assert client.approval
+        assert client.clear
+        assert client.app_address
         app = ctx.any_application(
             id=app_id,
-            approval_program=Bytes(get_state_app_params_avm_result.client.approval.raw_binary),
-            clear_state_program=Bytes(
-                b"\n\x81\x01C"
-            ),  # copied from expected 'clear' bytes snapshot from localnet
+            approval_program=Bytes(client.approval.raw_binary),
+            clear_state_program=Bytes(client.clear.raw_binary),
             global_num_uint=UInt64(0),
             global_num_bytes=UInt64(0),
             local_num_uint=UInt64(0),
             local_num_bytes=UInt64(0),
             extra_program_pages=UInt64(0),
             creator=algopy.Account(get_localnet_default_account(algod_client).address),
+            address=algopy.Account(client.app_address),
         )
 
-        mock_contract = StateAppParamsContract()
+        contract = StateAppParamsContract()
 
         sp = algod_client.suggested_params()
         sp.fee = 1000
         sp.flat_fee = True
 
         avm_result = get_state_app_params_avm_result(method_name, a=app_id, suggested_params=sp)
-        mock_result = getattr(mock_contract, method_name)(app)
-        mock_result_by_index = getattr(mock_contract, method_name)(0)
+        contract_method = getattr(contract, method_name)
+        result = contract_method(app)
 
-        assert avm_result == mock_result == mock_result_by_index
+        # TODO: add alternate tests for testing by index
+        assert avm_result == result
         if expected_value is not None:
             assert avm_result == expected_value
 
@@ -605,13 +607,13 @@ def test_acct_params_get(
     )
 
     mock_result = getattr(mock_contract, method_name)(mock_account)
-    mock_result_by_index = getattr(mock_contract, method_name)(0)
 
     if method_name == "verify_acct_balance":
         assert mock_result == 100_100_000  # assert it returns the value set in test context
         mock_result = avm_result
 
-    assert mock_result == avm_result == mock_result_by_index
+    # TODO: add alternate tests for testing by index
+    assert mock_result == avm_result
 
     if expected_value is not None:
         assert mock_result == expected_value

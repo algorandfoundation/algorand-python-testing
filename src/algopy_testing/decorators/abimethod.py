@@ -1,143 +1,26 @@
 from __future__ import annotations
 
+import dataclasses
 import functools
 import typing
 
 import algosdk
 
-from algopy_testing.constants import UINT64_SIZE
+import algopy_testing
+from algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM
 from algopy_testing.utils import (
     abi_return_type_annotation_for_arg,
     abi_type_name_for_arg,
-    int_to_bytes,
 )
 
 if typing.TYPE_CHECKING:
-    import algopy
+    from collections.abc import Sequence
 
-    from algopy_testing.context import AlgopyTestContext
-
-
-if typing.TYPE_CHECKING:
     import algopy
 
 
 _P = typing.ParamSpec("_P")
 _R = typing.TypeVar("_R")
-
-
-def _generate_arc4_signature(
-    fn: typing.Callable[_P, _R], args: tuple[typing.Any, ...]
-) -> algopy.Bytes:
-    import algopy
-
-    arg_types = [algosdk.abi.Argument(abi_type_name_for_arg(arg=arg)) for arg in args]
-    return_type = algosdk.abi.Returns(
-        abi_return_type_annotation_for_arg(fn.__annotations__.get("return"))
-    )
-    method = algosdk.abi.Method(name=fn.__name__, args=arg_types, returns=return_type)
-    return algopy.Bytes(method.get_selector())
-
-
-def _extract_refs_from_args(
-    args: tuple[typing.Any, ...], kwargs: dict[str, typing.Any], ref_type: type
-) -> list[typing.Any]:
-    # TODO: split this into multiple functions, one per ref_type?
-    import algopy
-
-    refs: list[typing.Any] = []
-    for arg in list(args) + list(kwargs.values()):
-        match arg:
-            case algopy.gtxn.TransactionBase() if ref_type is algopy.gtxn.TransactionBase:
-                refs.append(arg)
-            case algopy.Account() if ref_type is algopy.Account:
-                refs.append(arg)
-            case algopy.Asset() if ref_type is algopy.Asset:
-                refs.append(arg)
-            case algopy.Application() if ref_type is algopy.Application:
-                refs.append(arg)
-            case (
-                algopy.String()
-                | algopy.BigUInt()
-                | algopy.UInt64()
-                | algopy.BigUInt()
-                | algopy.arc4.Bool()
-                | algopy.arc4.BigUIntN()
-                | algopy.arc4.BigUFixedNxM()
-                | algopy.arc4.StaticArray()
-                | algopy.arc4.DynamicArray()
-                | algopy.arc4.DynamicBytes()
-                | algopy.arc4.Address()
-                | algopy.arc4.String()
-                | algopy.arc4.Byte()
-                | algopy.arc4.UIntN()
-                | int()
-            ) if ref_type is algopy.Bytes:
-                refs.append(_extract_bytes(arg))
-            case _:
-                continue
-    return refs
-
-
-def _extract_bytes(value: object) -> algopy.Bytes:
-    import algopy
-
-    if isinstance(value, algopy.Bytes):
-        return value
-    if isinstance(
-        value,
-        (
-            algopy.String
-            | algopy.BigUInt
-            | algopy.arc4.Bool
-            | algopy.arc4.BigUIntN
-            | algopy.arc4.BigUFixedNxM
-            | algopy.arc4.StaticArray
-            | algopy.arc4.DynamicArray
-            | algopy.arc4.DynamicBytes
-            | algopy.arc4.Address
-            | algopy.arc4.String
-            | algopy.arc4.Byte
-            | algopy.arc4.UIntN
-        ),
-    ):
-        return value.bytes  # type: ignore[union-attr, unused-ignore]
-    if isinstance(value, (algopy.UInt64 | int)):
-        return algopy.Bytes(int_to_bytes(int(value), UINT64_SIZE))
-    raise ValueError(f"Unsupported type: {type(value).__name__}")
-
-
-def _extract_and_append_txn_to_context(
-    context: AlgopyTestContext,
-    args: tuple[typing.Any, ...],
-    kwargs: dict[str, typing.Any],
-    fn: typing.Callable[_P, _R],
-) -> None:
-    import algopy
-
-    context.add_transactions(_extract_refs_from_args(args, kwargs, algopy.gtxn.TransactionBase))
-
-    context.add_transactions(
-        [
-            context.any_application_call_transaction(
-                sender=context.default_creator,
-                app_id=context.default_application,
-                accounts=_extract_refs_from_args(args, kwargs, algopy.Account),
-                assets=_extract_refs_from_args(args, kwargs, algopy.Asset),
-                apps=_extract_refs_from_args(args, kwargs, algopy.Application),
-                app_args=[
-                    _generate_arc4_signature(fn, args),
-                    *_extract_refs_from_args(args, kwargs, algopy.Bytes),
-                ],
-                # TODO: approval and clear programs should not come from args
-                #       might be best to leave these unset by default?
-                approval_program_pages=_extract_refs_from_args(args, kwargs, algopy.Bytes),
-                clear_state_program_pages=_extract_refs_from_args(args, kwargs, algopy.Bytes),
-            ),
-        ]
-    )
-    new_active_txn_index = len(context.get_transaction_group()) - 1
-    context.set_active_transaction_index(new_active_txn_index if new_active_txn_index > 0 else 0)
 
 
 @typing.overload
@@ -197,13 +80,130 @@ def abimethod(  # noqa: PLR0913
 
     @functools.wraps(fn)
     def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
-        from algopy_testing import get_test_context
-
-        context = get_test_context()
+        context = algopy_testing.get_test_context()
         if context._active_transaction_index is not None:
             return fn(*args, **kwargs)
 
-        _extract_and_append_txn_to_context(context, args[1:], kwargs, fn)
+        contract, *app_args = args
+        assert isinstance(contract, algopy_testing.ARC4Contract)
+        # TODO: order kwargs correctly based on fn signature
+        ordered_args = [*app_args, *kwargs.values()]
+        _extract_and_append_txn_to_context(
+            context,
+            contract=contract,
+            name=name or fn.__name__,
+            fn=fn,
+            args=ordered_args,
+        )
+        context.set_active_contract(contract)
         return fn(*args, **kwargs)
 
     return wrapper
+
+
+def _extract_and_append_txn_to_context(
+    context: algopy_testing.AlgopyTestContext,
+    contract: algopy_testing.Contract,
+    name: str,
+    fn: typing.Callable[_P, _R],
+    args: Sequence[object],
+) -> None:
+    method_selector = _generate_arc4_signature(fn, name, args)
+    app = context.get_application_for_contract(contract)
+    txn_arrays = _extract_arrays_from_args(
+        args,
+        method_selector=method_selector,
+        sender=context.default_creator,
+        app=app,
+    )
+
+    app_txn = context.any_application_call_transaction(
+        sender=context.default_creator,
+        app_id=app,
+        accounts=txn_arrays.accounts,
+        num_accounts=algopy_testing.UInt64(len(txn_arrays.accounts)),
+        assets=txn_arrays.assets,
+        num_assets=algopy_testing.UInt64(len(txn_arrays.assets)),
+        apps=txn_arrays.apps,
+        num_apps=algopy_testing.UInt64(len(txn_arrays.apps)),
+        app_args=txn_arrays.app_args,
+        num_app_args=algopy_testing.UInt64(len(txn_arrays.app_args)),
+        # at some point could get the actual values by using puya to compile the contract
+        # this should be opt-in behaviour, as that it would be too slow to always do
+        approval_program_pages=[algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)],
+        clear_state_program_pages=[algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)],
+    )
+
+    context.add_transactions([*txn_arrays.txns, app_txn])
+    new_active_txn_index = len(context.get_transaction_group()) - 1
+    context.set_active_transaction_index(new_active_txn_index)
+
+
+@dataclasses.dataclass
+class _TxnArrays:
+    txns: list[algopy.gtxn.TransactionBase]
+    apps: list[algopy.Application]
+    assets: list[algopy.Asset]
+    accounts: list[algopy.Account]
+    app_args: list[algopy.Bytes]
+
+
+def _extract_arrays_from_args(
+    args: Sequence[object],
+    method_selector: algopy.Bytes,
+    app: algopy.Application,
+    sender: algopy.Account,
+) -> _TxnArrays:
+    txns = list[algopy_testing.gtxn.TransactionBase]()
+    apps = [app]
+    assets = list[algopy_testing.Asset]()
+    accounts = [sender]
+    app_args = [method_selector]
+    for arg in args:
+        match arg:
+            case algopy_testing.gtxn.TransactionBase() as txn:
+                txns.append(txn)
+            case algopy_testing.Account() as acc:
+                app_args.append(algopy_testing.arc4.UInt8(len(accounts)).bytes)
+                accounts.append(acc)
+            case algopy_testing.Asset() as asset:
+                app_args.append(algopy_testing.arc4.UInt8(len(assets)).bytes)
+                assets.append(asset)
+            case algopy_testing.Application() as arg_app:
+                app_args.append(algopy_testing.arc4.UInt8(len(apps)).bytes)
+                apps.append(arg_app)
+            case (algopy_testing.UInt64() | bool()) as uint64:
+                app_args.append(algopy_testing.op.itob(uint64))
+            case tuple():
+                # TODO: convert to ARC4 tuple
+                raise NotImplementedError
+            case _ as bytes_arg:
+                if hasattr(bytes_arg, "bytes"):
+                    bytes_arg = bytes_arg.bytes
+                if isinstance(bytes_arg, algopy_testing.Bytes):
+                    app_args.append(bytes_arg)
+                else:
+                    raise TypeError(f"unsupported type: {type(bytes_arg).__name__}")
+    if len(app_args) > 16:
+        # TODO: pack extra args into an ARC4 tuple
+        raise NotImplementedError
+    return _TxnArrays(
+        txns=txns,
+        apps=apps,
+        assets=assets,
+        accounts=accounts,
+        app_args=app_args,
+    )
+
+
+def _generate_arc4_signature(
+    fn: typing.Callable[_P, _R], name: str, args: Sequence[object]
+) -> algopy.Bytes:
+    import algopy
+
+    arg_types = [algosdk.abi.Argument(abi_type_name_for_arg(arg=arg)) for arg in args]
+    return_type = algosdk.abi.Returns(
+        abi_return_type_annotation_for_arg(fn.__annotations__.get("return"))
+    )
+    method = algosdk.abi.Method(name=name, args=arg_types, returns=return_type)
+    return algopy.Bytes(method.get_selector())

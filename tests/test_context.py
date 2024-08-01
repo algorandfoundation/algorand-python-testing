@@ -94,8 +94,8 @@ def test_last_itxn_access() -> None:
         contract.opt_in_dummy_asset(dummy_asset)
         assert len(context.get_submitted_itxn_group(0)) == 1
         itxn = context.last_submitted_itxn.asset_transfer
-        assert itxn.asset_sender == context.default_application.address
-        assert itxn.asset_receiver == context.default_application.address
+        assert itxn.asset_sender == context.get_active_application().address
+        assert itxn.asset_receiver == context.get_active_application().address
         assert itxn.amount == UInt64(0)
         assert itxn.type == TransactionType.AssetTransfer
 

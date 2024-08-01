@@ -19,8 +19,9 @@ def _append_bare_txn_to_context(
     context.add_transactions(
         [
             context.any_application_call_transaction(
+                # TODO: fill out other fields where possible (see abimethod)
                 sender=context.default_creator,
-                app_id=context.default_application,
+                app_id=context.get_active_application(),
             ),
         ]
     )

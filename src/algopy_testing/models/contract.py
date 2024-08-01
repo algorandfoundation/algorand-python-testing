@@ -131,10 +131,12 @@ class Contract(metaclass=_ContractMeta):
 
     def __getattribute__(self, name: str) -> Any:
         attr = super().__getattribute__(name)
-        if callable(attr):
+        # wrap direct calls to approval and clear programs
+        if name in ("approval_program", "clear_state_program"):
 
             def wrapper(*args: Any, **kwargs: dict[str, Any]) -> Any:
                 context = algopy_testing.get_test_context()
+                # TODO: this should also set up the current txn like abimethod does
                 context.set_active_contract(self)
                 try:
                     return attr(*args, **kwargs)

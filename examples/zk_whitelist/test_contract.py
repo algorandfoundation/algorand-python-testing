@@ -73,7 +73,7 @@ def test_is_on_whitelist(context: AlgopyTestContext) -> None:
     # Arrange
     contract = ZkWhitelistContract()
     dummy_account = context.any_account(
-        opted_apps={context.default_application.id: context.default_application}
+        opted_apps=[context.get_application_for_contract(contract)]
     )
     contract.whitelist[dummy_account] = True
 
@@ -89,7 +89,7 @@ def test_is_not_on_whitelist(context: AlgopyTestContext) -> None:
     # Arrange
     contract = ZkWhitelistContract()
     dummy_account = context.any_account(
-        opted_apps={context.default_application.id: context.default_application}
+        opted_apps=[context.get_application_for_contract(contract)]
     )
     contract.whitelist[dummy_account] = False
 

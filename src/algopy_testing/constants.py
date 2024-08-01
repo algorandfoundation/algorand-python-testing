@@ -20,3 +20,8 @@ DEFAULT_MAX_TXN_LIFE = 1_000
 DEFAULT_ASSET_CREATE_MIN_BALANCE = 1000_000
 DEFAULT_ASSET_OPT_IN_MIN_BALANCE = 10_000
 DEFAULT_GLOBAL_GENESIS_HASH = b"\x85Y\xb5\x14x\xfd\x89\xc1vC\xd0]\x15\xa8\xaek\x10\xabG\xbbm\x8a1\x88\x11V\xe6\xbd;\xae\x95\xd1"  # noqa: E501
+
+ALWAYS_APPROVE_TEAL_PROGRAM = (
+    b"\x09"  # pragma version 9
+    b"\x81\x01"  # pushint 1
+)

@@ -3,7 +3,7 @@ from __future__ import annotations
 import secrets
 import string
 import typing
-from collections import ChainMap
+from collections import ChainMap, defaultdict
 from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass
@@ -15,6 +15,7 @@ import algosdk
 
 import algopy_testing
 from algopy_testing.constants import (
+    ALWAYS_APPROVE_TEAL_PROGRAM,
     ARC4_RETURN_PREFIX,
     DEFAULT_ACCOUNT_MIN_BALANCE,
     DEFAULT_ASSET_CREATE_MIN_BALANCE,
@@ -25,7 +26,7 @@ from algopy_testing.constants import (
     MAX_UINT64,
 )
 from algopy_testing.gtxn import NULL_GTXN_GROUP_INDEX
-from algopy_testing.models.account import AccountFields
+from algopy_testing.models.account import AccountContextData, AccountFields
 from algopy_testing.models.asset import AssetFields
 from algopy_testing.models.global_values import GlobalFields
 from algopy_testing.models.txn import TxnFields
@@ -60,27 +61,6 @@ if TYPE_CHECKING:
 
 
 T = TypeVar("T")
-
-ALWAYS_APPROVE_TEAL_PROGRAM = (
-    b"\x09"  # pragma version 9
-    b"\x81\x01"  # pushint 1
-)
-
-
-@dataclass
-class AccountContextData:
-    """
-    Stores account-related information.
-
-    Attributes:
-        opted_asset_balances (dict[int, algopy.UInt64]): Mapping of asset IDs to balances.
-        opted_apps (dict[int, algopy.UInt64]): Mapping of application IDs to instances.
-        fields (AccountFields): Additional account fields.
-    """
-
-    opted_asset_balances: dict[algopy.UInt64, algopy.UInt64]
-    opted_apps: dict[algopy.UInt64, algopy.Application]
-    fields: AccountFields
 
 
 @dataclass
@@ -416,7 +396,6 @@ class AlgopyTestContext:
         self,
         *,
         default_creator: algopy.Account | None = None,
-        default_application: algopy.Application | None = None,
         template_vars: dict[str, Any] | None = None,
     ) -> None:
         import algopy
@@ -444,14 +423,13 @@ class AlgopyTestContext:
         self._boxes: dict[bytes, bytes] = {}
         self._lsigs: dict[algopy.LogicSig, Callable[[], algopy.UInt64 | bool]] = {}
         self._active_lsig_args: Sequence[algopy.Bytes] = []
-        self._account_data: dict[str, AccountContextData] = {}
+        # using defaultdict here because there should be an AccountContextData for any
+        # account, it defaults to an account with no balance
+        self._account_data = defaultdict[str, AccountContextData](AccountContextData)
 
         self.default_creator = default_creator or algopy.Account(
             algosdk.account.generate_account()[1]
         )
-
-        default_application_id = next(self._app_id)
-        default_application_address = algosdk.logic.get_application_address(default_application_id)
 
         self._global_fields: GlobalFields = {
             "min_txn_fee": algopy.UInt64(algosdk.constants.MIN_TXN_FEE),
@@ -459,23 +437,12 @@ class AlgopyTestContext:
             "max_txn_life": algopy.UInt64(DEFAULT_MAX_TXN_LIFE),
             "zero_address": algopy.Account(algosdk.constants.ZERO_ADDRESS),
             "creator_address": self.default_creator,
-            "current_application_address": algopy.Account(default_application_address),
-            "current_application_id": algopy.Application(default_application_id),
             "asset_create_min_balance": algopy.UInt64(DEFAULT_ASSET_CREATE_MIN_BALANCE),
             "asset_opt_in_min_balance": algopy.UInt64(DEFAULT_ASSET_OPT_IN_MIN_BALANCE),
             "genesis_hash": algopy.Bytes(DEFAULT_GLOBAL_GENESIS_HASH),
         }
 
-        self._account_data[self.default_creator.public_key] = AccountContextData(
-            fields=AccountFields(), opted_asset_balances={}, opted_apps={}
-        )
-
         self._arc4 = ARC4Factory(context=self)
-
-        self.default_application = default_application or self.any_application(
-            id=default_application_id,
-            address=algopy.Account(default_application_address),
-        )
 
     @property
     def arc4(self) -> ARC4Factory:
@@ -549,6 +516,9 @@ class AlgopyTestContext:
             None
         """
         self._active_contract = contract
+        app = self.get_application_for_contract(contract)
+        self._global_fields["current_application_address"] = app.address
+        self._global_fields["current_application_id"] = app
 
     def set_template_var(self, name: str, value: Any) -> None:
         """
@@ -779,7 +749,7 @@ class AlgopyTestContext:
         self,
         address: str | None = None,
         opted_asset_balances: dict[algopy.UInt64, algopy.UInt64] | None = None,
-        opted_apps: dict[algopy.UInt64, algopy.Application] | None = None,
+        opted_apps: Sequence[algopy.Application] = (),
         **account_fields: Unpack[AccountFields],
     ) -> algopy.Account:
         """
@@ -790,6 +760,7 @@ class AlgopyTestContext:
         """
         import algopy
 
+        # TODO: ensure passed fields are valid names and types
         if address and not algosdk.encoding.is_valid_address(address):
             raise ValueError("Invalid Algorand address supplied!")
 
@@ -809,7 +780,7 @@ class AlgopyTestContext:
         new_account_data = AccountContextData(
             fields=new_account_fields,
             opted_asset_balances=opted_asset_balances or {},
-            opted_apps=opted_apps or {},
+            opted_apps={app.id: app for app in opted_apps},
         )
 
         self._account_data[new_account_address] = new_account_data
@@ -830,6 +801,7 @@ class AlgopyTestContext:
         if asset_id and asset_id in self._asset_data:
             raise ValueError("Asset with such ID already exists in testing context!")
 
+        # TODO: ensure passed fields are valid names and types
         new_asset = algopy.Asset(asset_id or next(self._asset_id))
         default_asset_fields = {
             "total": self.any_uint64(),
@@ -1031,6 +1003,11 @@ class AlgopyTestContext:
             index (int): The index of the active transaction.
         """
         self._active_transaction_index = index
+
+    def get_active_application(self) -> algopy.Application:
+        if self._active_contract is None:
+            raise ValueError("no active contract")
+        return self.get_application_for_contract(self._active_contract)
 
     def get_active_transaction(
         self,
@@ -1373,7 +1350,7 @@ class AlgopyTestContext:
         """
         Reset the test context to its initial state, clearing all data and resetting ID counters.
         """
-        self._account_data = {}
+        self._account_data = defaultdict(AccountContextData)
         self._application_data = {}
         self._asset_data = {}
         self._active_transaction_index = None

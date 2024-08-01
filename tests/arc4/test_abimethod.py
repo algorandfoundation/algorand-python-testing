@@ -64,7 +64,7 @@ def test_app_args_is_correct_with_simple_args(context: AlgopyTestContext) -> Non
 
     # assert
     txn = context.get_active_transaction()
-    app_args = [txn.app_args(i) for i in range(3)]
+    app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
         algosdk.abi.Method.from_signature("sink(string,uint8[])void").get_selector(),
         b"\x00\x05hello",
@@ -81,7 +81,7 @@ def test_app_args_is_correct_with_alias(context: AlgopyTestContext) -> None:
 
     # assert
     txn = context.get_active_transaction()
-    app_args = [txn.app_args(i) for i in range(3)]
+    app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
         algosdk.abi.Method.from_signature("alias(string,uint8[])void").get_selector(),
         b"\x00\x05hello",
@@ -122,7 +122,7 @@ def test_app_args_is_correct_with_asset(context: AlgopyTestContext) -> None:  # 
 
     # assert
     txn = context.get_active_transaction()
-    app_args = [txn.app_args(i) for i in range(3)]
+    app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
         algosdk.abi.Method.from_signature("with_asset(string,asset,uint8[])void").get_selector(),
         b"\x00\x05hello",
@@ -149,7 +149,9 @@ def test_app_args_is_correct_with_application(context: AlgopyTestContext) -> Non
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     app_foreign_apps = [txn.apps(i) for i in range(int(txn.num_apps))]
     assert app_args == [
-        algosdk.abi.Method.from_signature("with_app(string,app,uint8[])void").get_selector(),
+        algosdk.abi.Method.from_signature(
+            "with_app(string,application,uint8[])void"
+        ).get_selector(),
         b"\x00\x05hello",
         b"\x01",  # 0th index is the app being called
         b"\x00\x02\x01\x02",

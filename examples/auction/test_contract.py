@@ -27,7 +27,7 @@ def test_opt_into_asset(context: AlgopyTestContext) -> None:
     assert contract.asa.id == asset.id
     inner_txn = context.last_submitted_itxn.asset_transfer
     assert (
-        inner_txn.asset_receiver == context.default_application.address
+        inner_txn.asset_receiver == context.get_active_application().address
     ), "Asset receiver does not match"
     assert inner_txn.xfer_asset == asset, "Transferred asset does not match"
 
@@ -36,14 +36,15 @@ def test_start_auction(
     context: AlgopyTestContext,
 ) -> None:
     # Arrange
+    contract = AuctionContract()
+    app = context.get_application_for_contract(contract)
     latest_timestamp = context.any_uint64(1, 1000)
     starting_price = context.any_uint64()
     auction_duration = context.any_uint64(100, 1000)
     axfer_txn = context.any_asset_transfer_transaction(
-        asset_receiver=context.default_application.address,
+        asset_receiver=app.address,
         asset_amount=starting_price,
     )
-    contract = AuctionContract()
     contract.asa_amount = starting_price
     context.patch_global_fields(
         latest_timestamp=latest_timestamp,
