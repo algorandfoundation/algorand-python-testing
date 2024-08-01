@@ -66,6 +66,3 @@ class String(BytesBacked):
     @property
     def value(self) -> str:
         return self._value.decode("utf-8")
-
-
-__all__ = ["String"]

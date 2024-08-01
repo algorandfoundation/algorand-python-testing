@@ -8,6 +8,9 @@ from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass
 
+# Define the union type
+from typing import TYPE_CHECKING, Any, TypeVar, Unpack, cast, overload
+
 import algosdk
 
 import algopy_testing
@@ -33,7 +36,7 @@ from algopy_testing.models.global_values import GlobalFields
 from algopy_testing.models.txn import TxnFields
 from algopy_testing.utils import generate_random_int
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from collections.abc import Callable, Generator, Sequence
 
     import algopy
@@ -62,11 +65,24 @@ if typing.TYPE_CHECKING:
     )
 
 
-T = typing.TypeVar("T")
+T = TypeVar("T")
 
 
 @dataclass
 class ContractContextData:
+    """
+    Stores contract-related information.
+
+    Attributes:
+        contract (algopy.Contract | algopy.ARC4Contract): Contract instance.
+        app_id (algopy.UInt64): Application ID.
+    """
+
+    contract: algopy.Contract | algopy.ARC4Contract
+    app_id: algopy.UInt64
+
+
+class ITxnLoader:
     """
     Stores inner transaction references.
     """
@@ -168,19 +184,17 @@ class ContractContextData:
 
 
 class ITxnGroupLoader:
-    @typing.overload
-    def __getitem__(self, index: int) -> _ITxnLoader: ...
+    @overload
+    def __getitem__(self, index: int) -> ITxnLoader: ...
 
-    @typing.overload
-    def __getitem__(self, index: slice) -> list[_ITxnLoader]: ...
+    @overload
+    def __getitem__(self, index: slice) -> list[ITxnLoader]: ...
 
-    def __getitem__(self, index: int | slice) -> _ITxnLoader | list[_ITxnLoader]:
+    def __getitem__(self, index: int | slice) -> ITxnLoader | list[ITxnLoader]:
         if isinstance(index, int):
-            return _ITxnLoader(self._inner_txn_group[index])
+            return ITxnLoader(self._inner_txn_group[index])
         elif isinstance(index, slice):
-            return [
-                _ITxnLoader(self._inner_txn_group[i]) for i in range(*index.indices(len(self)))
-            ]
+            return [ITxnLoader(self._inner_txn_group[i]) for i in range(*index.indices(len(self)))]
         else:
             raise TypeError("Index must be int or slice")
 
@@ -204,7 +218,7 @@ class ITxnGroupLoader:
     def payment(self, index: int) -> algopy.itxn.PaymentInnerTransaction:
         import algopy
 
-        return _ITxnLoader(self._get_itxn(index, algopy.itxn.PaymentInnerTransaction)).payment
+        return ITxnLoader(self._get_itxn(index, algopy.itxn.PaymentInnerTransaction)).payment
 
     def asset_config(self, index: int) -> algopy.itxn.AssetConfigInnerTransaction:
         import algopy
@@ -239,14 +253,7 @@ class ITxnGroupLoader:
 
 @dataclass
 class ARC4Factory:
-    """Factory for generating ARC4-related objects."""
-
     def __init__(self, *, context: AlgopyTestContext) -> None:
-        """Initialize the ARC4Factory.
-
-        Args:
-            context (AlgopyTestContext): The test context.
-        """
         self._context = context
 
     def any_address(self) -> algopy.arc4.Address:
@@ -385,21 +392,24 @@ class ARC4Factory:
         return algopy.arc4.UInt512(generate_random_int(min_value, max_value))
 
     def any_dynamic_bytes(self, n: int) -> algopy.arc4.DynamicBytes:
-        """Generate random dynamic bytes of size n bits.
+        """Generate a random dynamic bytes of size `n` bits.
 
         Args:
-            n: The number of bits. Must be a multiple of 8, or last byte is truncated.
+            n (int): The number of bits for the dynamic bytes. Must be a multiple of 8, otherwise
+                the last byte will be truncated.
 
         Returns:
-            algopy.arc4.DynamicBytes: New random dynamic bytes of size n bits.
+            algopy.arc4.DynamicBytes: A new, random dynamic bytes of size `n` bits.
         """
         import secrets
 
         import algopy
 
+        # rounding up
         num_bytes = (n + 7) // 8
         random_bytes = secrets.token_bytes(num_bytes)
 
+        # trim to exact bit length if necessary
         if n % 8 != 0:
             last_byte = random_bytes[-1]
             mask = (1 << (n % 8)) - 1
@@ -408,22 +418,26 @@ class ARC4Factory:
         return algopy.arc4.DynamicBytes(random_bytes)
 
     def any_string(self, n: int) -> algopy.arc4.String:
-        """Generate a random string of size n bits.
+        """Generate a random string of size `n` bits.
 
         Args:
-            n: The number of bits for the string.
+            n (int): The number of bits for the string.
 
         Returns:
-            algopy.arc4.String: A new, random string of size n bits.
+            algopy.arc4.String: A new, random string of size `n` bits.
         """
         import secrets
         import string
 
         import algopy
 
+        # Calculate the number of characters needed (rounding up)
         num_chars = (n + 7) // 8
+
+        # Generate random string
         random_string = "".join(secrets.choice(string.printable) for _ in range(num_chars))
 
+        # Trim to exact bit length if necessary
         if n % 8 != 0:
             last_char = ord(random_string[-1])
             mask = (1 << (n % 8)) - 1
@@ -434,8 +448,6 @@ class ARC4Factory:
 
 @dataclass
 class AlgopyTestContext:
-    """Manages the testing context for Algopy applications."""
-
     _arc4: ARC4Factory
 
     def __init__(
@@ -444,14 +456,6 @@ class AlgopyTestContext:
         default_creator: algopy.Account | None = None,
         template_vars: dict[str, Any] | None = None,
     ) -> None:
-        """
-        Initialize the AlgopyTestContext.
-
-        Args:
-            default_creator: Default creator account.
-            default_application: Default application.
-            template_vars: Template variables.
-        """
         import algopy
 
         self._asset_id = iter(range(1001, 2**64))
@@ -472,7 +476,7 @@ class AlgopyTestContext:
         self._constructing_inner_transaction_group: list[InnerTransactionResultType] = []
         self._constructing_inner_transaction: InnerTransactionResultType | None = None
         self._scratch_spaces: dict[str, list[algopy.Bytes | algopy.UInt64 | bytes | int]] = {}
-        self._template_vars: dict[str, typing.Any] = template_vars or {}
+        self._template_vars: dict[str, Any] = template_vars or {}
         self._blocks: dict[int, dict[str, int]] = {}
         self._boxes: dict[bytes, bytes] = {}
         self._lsigs: dict[algopy.LogicSig, Callable[[], algopy.UInt64 | bool]] = {}
@@ -501,10 +505,9 @@ class AlgopyTestContext:
 
     @property
     def arc4(self) -> ARC4Factory:
-        """Get the ARC4Factory instance."""
         return self._arc4
 
-    def patch_global_fields(self, **global_fields: typing.Unpack[GlobalFields]) -> None:
+    def patch_global_fields(self, **global_fields: Unpack[GlobalFields]) -> None:
         """
         Patch 'Global' fields in the test context.
 
@@ -523,7 +526,7 @@ class AlgopyTestContext:
 
         self._global_fields.update(global_fields)
 
-    def patch_txn_fields(self, **txn_fields: typing.Unpack[TxnFields]) -> None:
+    def patch_txn_fields(self, **txn_fields: Unpack[TxnFields]) -> None:
         """
         Patch 'algopy.Txn' fields in the test context.
 
@@ -544,18 +547,6 @@ class AlgopyTestContext:
     def get_application_for_contract(
         self, contract: algopy.Contract | algopy.ARC4Contract
     ) -> algopy.Application:
-        """
-        Get the application associated with a contract.
-
-        Args:
-            contract: The contract to look up.
-
-        Returns:
-            The associated application.
-
-        Raises:
-            ValueError: If the contract is not found.
-        """
         for app_id, app_contract in self._app_id_to_contract.items():
             if app_contract == contract:
                 return self.get_application(app_id)
@@ -564,14 +555,8 @@ class AlgopyTestContext:
     def set_scratch_space(
         self, txn: str, scratch_space: dict[int, algopy.Bytes | algopy.UInt64 | bytes | int]
     ) -> None:
-        """
-        Set the scratch space for a transaction.
-
-        Args:
-            txn: Transaction identifier.
-            scratch_space: Scratch space data.
-        """
         new_scratch_space: list[algopy.Bytes | algopy.UInt64 | bytes | int] = [0] * 256
+        # insert values to list at specific indexes, use key as index and value as value to set
         for index, value in scratch_space.items():
             new_scratch_space[index] = value
 
@@ -579,23 +564,31 @@ class AlgopyTestContext:
 
     def set_active_contract(self, contract: algopy.Contract | algopy.ARC4Contract) -> None:
         """
-        Set the active contract for the current context.
+        Set the active contract for the current context. By default, invoked automatically
+        as part of invocation of any app calls against instances
+        of Contract or ARC4Contract classes.
 
         Args:
-            contract: The contract to set as active.
+            contract (algopy.Contract | algopy.ARC4Contract): The contract to set as active.
+
+        Returns:
+            None
         """
         self._active_contract = contract
         app = self.get_application_for_contract(contract)
         self._global_fields["current_application_address"] = app.address
         self._global_fields["current_application_id"] = app
 
-    def set_template_var(self, name: str, value: typing.Any) -> None:
+    def set_template_var(self, name: str, value: Any) -> None:
         """
         Set a template variable for the current context.
 
         Args:
-            name: The name of the template variable.
-            value: The value to assign to the template variable.
+            name (str): The name of the template variable.
+            value (Any): The value to assign to the template variable.
+
+        Returns:
+            None
         """
         self._template_vars[name] = value
 
@@ -604,13 +597,10 @@ class AlgopyTestContext:
         Retrieve an account by address.
 
         Args:
-            address: Account address.
+            address (str): Account address.
 
         Returns:
-            The account associated with the address.
-
-        Raises:
-            ValueError: If the account is not found.
+            algopy.Account: The account associated with the address.
         """
         return algopy_testing.Account(address)
 
@@ -619,7 +609,7 @@ class AlgopyTestContext:
         Retrieve all account data.
 
         Returns:
-            A dictionary of all account data.
+            dict[str, AccountContextData]: The account data.
         """
         return self._account_data
 
@@ -628,7 +618,7 @@ class AlgopyTestContext:
         Retrieve all asset data.
 
         Returns:
-            A dictionary of all asset data.
+            dict[int, AssetFields]: The asset data.
         """
         return self._asset_data
 
@@ -637,20 +627,20 @@ class AlgopyTestContext:
         Retrieve all application data.
 
         Returns:
-            A dictionary of all application data.
+            dict[int, ApplicationFields]: The application data.
         """
         return self._application_data
 
-    def update_account(self, address: str, **account_fields: typing.Unpack[AccountFields]) -> None:
+    def update_account(self, address: str, **account_fields: Unpack[AccountFields]) -> None:
         """
         Update an existing account.
 
         Args:
-            address: Account address.
+            address (str): Account address.
             **account_fields: New account data.
 
         Raises:
-            ValueError: If the account is not found.
+            TypeError: If the provided object is not an instance of `Account`.
         """
         _assert_address_is_valid(address)
         self._account_data[address].fields.update(account_fields)
@@ -662,27 +652,26 @@ class AlgopyTestContext:
         Retrieve the opted asset balance for an account and asset ID.
 
         Args:
-            account: Account to retrieve the balance for.
-            asset_id: Asset ID.
+            account (algopy.Account): Account to retrieve the balance for.
+            asset_id (algopy.UInt64): Asset ID.
 
         Returns:
-            The opted asset balance or None if not opted in.
+            algopy.UInt64 | None: The opted asset balance or None if not opted in.
         """
 
         response = self._account_data[account.public_key].opted_asset_balances.get(asset_id, None)
+
+        return response
 
     def get_asset(self, asset_id: algopy.UInt64 | int) -> algopy.Asset:
         """
         Retrieve an asset by ID.
 
         Args:
-            asset_id: Asset ID.
+            asset_id (int): Asset ID.
 
         Returns:
-            The asset associated with the ID.
-
-        Raises:
-            ValueError: If the asset is not found.
+            algopy.Asset: The asset associated with the ID.
         """
         import algopy
 
@@ -693,16 +682,13 @@ class AlgopyTestContext:
 
         return algopy.Asset(asset_id)
 
-    def update_asset(self, asset_id: int, **asset_fields: typing.Unpack[AssetFields]) -> None:
+    def update_asset(self, asset_id: int, **asset_fields: Unpack[AssetFields]) -> None:
         """
         Update an existing asset.
 
         Args:
-            asset_id: Asset ID.
+            asset_id (int): Asset ID.
             **asset_fields: New asset data.
-
-        Raises:
-            ValueError: If the asset is not found.
         """
         if asset_id not in self._asset_data:
             raise ValueError("Asset not found in testing context!")
@@ -714,13 +700,10 @@ class AlgopyTestContext:
         Retrieve an application by ID.
 
         Args:
-            app_id: Application ID.
+            app_id (int): Application ID.
 
         Returns:
-            The application associated with the ID.
-
-        Raises:
-            ValueError: If the application is not found.
+            algopy.Application: The application associated with the ID.
         """
         import algopy
 
@@ -732,17 +715,14 @@ class AlgopyTestContext:
         return algopy.Application(app_id)
 
     def update_application(
-        self, app_id: int, **application_fields: typing.Unpack[ApplicationFields]
+        self, app_id: int, **application_fields: Unpack[ApplicationFields]
     ) -> None:
         """
         Update an existing application.
 
         Args:
-            app_id: Application ID.
+            app_id (int): Application ID.
             **application_fields: New application data.
-
-        Raises:
-            ValueError: If the application is not found.
         """
         if app_id not in self._application_data:
             raise ValueError("Application not found in testing context!")
@@ -757,36 +737,32 @@ class AlgopyTestContext:
         Append a group of inner transactions to the context.
 
         Args:
-            itxn: The group of inner transactions to append.
+            itxn (Sequence[InnerTransactionResultType]): The group of inner transactions to append.
         """
         import algopy.itxn
 
-        self._inner_transaction_groups.append(
-            typing.cast(list[algopy.itxn.InnerTransactionResult], itxn)
-        )
+        self._inner_transaction_groups.append(cast(list[algopy.itxn.InnerTransactionResult], itxn))
 
     def get_submitted_itxn_groups(self) -> list[Sequence[InnerTransactionResultType]]:
         """
-        Retrieve all submitted inner transaction groups.
+        Retrieve the number of inner transaction groups.
 
         Returns:
-            A list of all submitted inner transaction groups.
+            int: The number of inner transaction groups.
         """
         return self._inner_transaction_groups
 
     def get_submitted_itxn_group(self, index: int) -> ITxnGroupLoader:
         """
-        Retrieve a specific group of inner transactions.
-
-        Args:
-            index: The index of the group to retrieve.
+        Retrieve the last group of inner transactions.
 
         Returns:
-            An ITxnGroupLoader for the specified group.
+            Sequence[algopy.itxn.InnerTransactionResult]: The last group of inner transactions.
 
         Raises:
-            ValueError: If no inner transaction groups exist or the index is invalid.
+            ValueError: If no inner transaction groups have been submitted yet.
         """
+
         if not self._inner_transaction_groups:
             raise ValueError("No inner transaction groups submitted yet!")
 
@@ -796,22 +772,24 @@ class AlgopyTestContext:
             raise ValueError(f"No inner transaction group available at index {index}!") from err
 
     @property
-    def last_submitted_itxn(self) -> _ITxnLoader:
+    def last_submitted_itxn(self) -> ITxnLoader:
         """
-        Retrieve the last submitted inner transaction from the last group.
+        Retrieve the last submitted inner transaction from the
+        last inner transaction group (if both exist).
 
         Returns:
-            An _ITxnLoader for the last submitted inner transaction.
+            ITxnLoader: The last submitted inner transaction loader.
 
         Raises:
-            ValueError: If no inner transactions exist in the last group.
+            ValueError: If no inner transactions exist in the last inner transaction group.
         """
+
         if not self._inner_transaction_groups or not self._inner_transaction_groups[-1]:
             raise ValueError("No inner transactions in the last inner transaction group!")
 
         try:
             last_itxn = self._inner_transaction_groups[-1][-1]
-            return _ITxnLoader(last_itxn)
+            return ITxnLoader(last_itxn)
         except IndexError as err:
             raise ValueError("No inner transactions in the last inner transaction group!") from err
 
@@ -825,18 +803,8 @@ class AlgopyTestContext:
         """
         Generate and add a new account with a random address.
 
-        Args:
-            address: Optional specific address for the account.
-            opted_asset_balances: Optional asset balances for the account.
-            opted_apps: Optional opted-in applications for the account.
-            **account_fields: Additional account fields.
-
         Returns:
-            The newly generated account.
-
-        Raises:
-            ValueError: If the address is invalid or already exists.
-            AttributeError: If an invalid field is provided.
+            algopy.Account: The newly generated account.
         """
         import algopy
 
@@ -857,7 +825,7 @@ class AlgopyTestContext:
         new_account_address = address or algosdk.account.generate_account()[1]
         new_account = algopy.Account(new_account_address)
         new_account_fields = AccountFields(**account_fields)
-        new_account_data = _AccountContextData(
+        new_account_data = AccountContextData(
             fields=new_account_fields,
             opted_asset_balances=opted_asset_balances or {},
             opted_apps={app.id: app for app in opted_apps},
@@ -868,7 +836,7 @@ class AlgopyTestContext:
         return new_account
 
     def any_asset(
-        self, asset_id: int | None = None, **asset_fields: typing.Unpack[AssetFields]
+        self, asset_id: int | None = None, **asset_fields: Unpack[AssetFields]
     ) -> algopy.Asset:
         """
         Generate and add a new asset with a unique ID.
@@ -905,7 +873,7 @@ class AlgopyTestContext:
         self,
         id: int | None = None,
         address: algopy.Account | None = None,
-        **application_fields: typing.Unpack[ApplicationFields],
+        **application_fields: Unpack[ApplicationFields],
     ) -> algopy.Application:
         """
         Generate and add a new application with a unique ID.
@@ -1109,17 +1077,18 @@ class AlgopyTestContext:
         return typing.cast(algopy.gtxn.Transaction, active_txn)
 
     def any_uint64(self, min_value: int = 0, max_value: int = MAX_UINT64) -> algopy.UInt64:
-        """Generate a random UInt64 value within a specified range.
+        """
+        Generate a random UInt64 value within a specified range.
 
         Args:
-            min_value: Minimum value (default: 0).
-            max_value: Maximum value (default: MAX_UINT64).
+            min_value (int, optional): Minimum value. Defaults to 0.
+            max_value (int, optional): Maximum value. Defaults to MAX_UINT64.
 
         Returns:
-            A random UInt64 value.
+            algopy.UInt64: The randomly generated UInt64 value.
 
         Raises:
-            ValueError: If max_value > MAX_UINT64 or min_value > max_value.
+            ValueError: If `max_value` exceeds MAX_UINT64 or `min_value` exceeds `max_value`.
         """
         import algopy
 
@@ -1131,26 +1100,22 @@ class AlgopyTestContext:
         return algopy.UInt64(generate_random_int(min_value, max_value))
 
     def any_bytes(self, length: int = MAX_BYTES_SIZE) -> algopy.Bytes:
-        """Generate random byte sequence.
+        """
+        Generate a random byte sequence of a specified length.
 
         Args:
-            length: Byte sequence length. Defaults to MAX_BYTES_SIZE.
+            length (int, optional): Length of the byte sequence. Defaults to MAX_BYTES_SIZE.
 
         Returns:
-            Random algopy.Bytes of specified length.
+            algopy.Bytes: The randomly generated byte sequence.
         """
         import algopy
 
         return algopy.Bytes(secrets.token_bytes(length))
 
     def any_string(self, length: int = MAX_BYTES_SIZE) -> algopy.String:
-        """Generate a random string.
-
-        Args:
-            length: Length of the string. Defaults to MAX_BYTES_SIZE.
-
-        Returns:
-            A random algopy.String of specified length.
+        """
+        Generate a random string of a specified length.
         """
         import algopy
 
@@ -1168,13 +1133,13 @@ class AlgopyTestContext:
         approval_program_pages: Sequence[algopy.Bytes] = (),
         clear_state_program_pages: Sequence[algopy.Bytes] = (),
         scratch_space: dict[int, algopy.Bytes | algopy.UInt64 | int | bytes] | None = None,
-        **kwargs: typing.Unpack[_ApplicationCallFields],
+        **kwargs: Unpack[_ApplicationCallFields],
     ) -> algopy.gtxn.ApplicationCallTransaction:
         """
         Generate a new application call transaction with specified fields.
 
         Args:
-            **kwargs (typing.Unpack[ApplicationCallFields]): Fields to be set in the transaction.
+            **kwargs (Unpack[ApplicationCallFields]): Fields to be set in the transaction.
 
         Returns:
             algopy.gtxn.ApplicationCallTransaction: The newly generated application
@@ -1209,13 +1174,13 @@ class AlgopyTestContext:
         return new_txn
 
     def any_asset_transfer_transaction(
-        self, **kwargs: typing.Unpack[AssetTransferFields]
+        self, **kwargs: Unpack[AssetTransferFields]
     ) -> algopy.gtxn.AssetTransferTransaction:
         """
         Generate a new asset transfer transaction with specified fields.
 
         Args:
-            **kwargs (typing.Unpack[AssetTransferFields]): Fields to be set in the transaction.
+            **kwargs (Unpack[AssetTransferFields]): Fields to be set in the transaction.
 
         Returns:
             algopy.gtxn.AssetTransferTransaction: The newly generated asset transfer transaction.
@@ -1230,13 +1195,13 @@ class AlgopyTestContext:
         return new_txn
 
     def any_payment_transaction(
-        self, **kwargs: typing.Unpack[PaymentFields]
+        self, **kwargs: Unpack[PaymentFields]
     ) -> algopy.gtxn.PaymentTransaction:
         """
         Generate a new payment transaction with specified fields.
 
         Args:
-            **kwargs (typing.Unpack[PaymentFields]): Fields to be set in the transaction.
+            **kwargs (Unpack[PaymentFields]): Fields to be set in the transaction.
 
         Returns:
             algopy.gtxn.PaymentTransaction: The newly generated payment transaction.
@@ -1251,7 +1216,7 @@ class AlgopyTestContext:
         return new_txn
 
     def any_asset_config_transaction(
-        self, **kwargs: typing.Unpack[AssetConfigFields]
+        self, **kwargs: Unpack[AssetConfigFields]
     ) -> algopy.gtxn.AssetConfigTransaction:
         """
         Generate a new ACFG transaction with specified fields.
@@ -1266,7 +1231,7 @@ class AlgopyTestContext:
         return new_txn
 
     def any_key_registration_transaction(
-        self, **kwargs: typing.Unpack[KeyRegistrationFields]
+        self, **kwargs: Unpack[KeyRegistrationFields]
     ) -> algopy.gtxn.KeyRegistrationTransaction:
         """
         Generate a new key registration transaction with specified fields.
@@ -1281,7 +1246,7 @@ class AlgopyTestContext:
         return new_txn
 
     def any_asset_freeze_transaction(
-        self, **kwargs: typing.Unpack[AssetFreezeFields]
+        self, **kwargs: Unpack[AssetFreezeFields]
     ) -> algopy.gtxn.AssetFreezeTransaction:
         """
         Generate a new asset freeze transaction with specified fields.
@@ -1298,14 +1263,14 @@ class AlgopyTestContext:
     def any_transaction(  # type: ignore[misc]
         self,
         type: algopy.TransactionType,  # noqa: A002
-        **kwargs: typing.Unpack[TransactionFields],
+        **kwargs: Unpack[TransactionFields],
     ) -> algopy.gtxn.Transaction:
         """
         Generate a new transaction with specified fields.
 
         Args:
             type (algopy.TransactionType): Transaction type.
-            **kwargs (typing.Unpack[TransactionFields]): Fields to be set in the transaction.
+            **kwargs (Unpack[TransactionFields]): Fields to be set in the transaction.
 
         Returns:
             algopy.gtxn.Transaction: The newly generated transaction.
@@ -1465,10 +1430,6 @@ class AlgopyTestContext:
         self._application_logs = {}
         self._asset_id = iter(range(1, 2**64))
         self._app_id = iter(range(1, 2**64))
-        self._boxes = {}
-        self._blocks = {}
-        self._lsigs = {}
-        self._template_vars = {}
 
 
 _var: ContextVar[AlgopyTestContext] = ContextVar("_var")

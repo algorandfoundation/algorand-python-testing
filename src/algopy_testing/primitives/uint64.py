@@ -211,6 +211,3 @@ def _checked_result(result: int, op: str) -> UInt64:
 
 def _as_uint64(value: object) -> UInt64:
     return UInt64(as_int64(value))
-
-
-__all__ = ["UInt64"]

@@ -172,6 +172,3 @@ def _checked_result(result: bytes, op: str) -> Bytes:
     if len(result) > MAX_BYTES_SIZE:
         raise OverflowError(f"{op} overflows")
     return Bytes(result)
-
-
-__all__ = ["Bytes"]

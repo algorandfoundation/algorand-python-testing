@@ -65,6 +65,3 @@ class LocalState(typing.Generic[_T]):
     def maybe(self, key: algopy.Account | algopy.UInt64 | int) -> tuple[object, bool]:
         self._validate_local_state_key(key)
         return self._state.get(key), key in self._state
-
-
-__all__ = ["LocalState"]

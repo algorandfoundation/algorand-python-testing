@@ -146,6 +146,3 @@ class Account:
 
     def __hash__(self) -> int:
         return hash(self._public_key)
-
-
-__all__ = ["Account"]
