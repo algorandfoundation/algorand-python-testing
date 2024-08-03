@@ -81,6 +81,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "byte[]"
                 }
@@ -93,6 +94,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "byte[]"
                 }
@@ -105,6 +107,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "uint64"
                 }
@@ -117,6 +120,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "uint64"
                 }
@@ -129,6 +133,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "uint64"
                 }
@@ -141,6 +146,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "uint64"
                 }
@@ -153,6 +159,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "uint64"
                 }
@@ -165,6 +172,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "byte[]"
                 }
@@ -177,6 +185,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "byte[]"
                 }

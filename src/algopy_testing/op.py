@@ -676,7 +676,7 @@ class Scratch:
         context = get_test_context()
         active_txn = context.get_active_transaction()
 
-        slot_content = context._scratch_spaces[str(active_txn.txn_id)][a]
+        slot_content = context.get_scratch_space(active_txn)[a]
         match slot_content:
             case Bytes():
                 return slot_content
@@ -694,7 +694,7 @@ class Scratch:
         context = get_test_context()
         active_txn = context.get_active_transaction()
 
-        slot_content = context._scratch_spaces[str(active_txn.txn_id)][a]
+        slot_content = context.get_scratch_space(active_txn)[a]
         match slot_content:
             case Bytes() | bytes():
                 return btoi(slot_content)
@@ -711,8 +711,7 @@ class Scratch:
 
         context = get_test_context()
         active_txn = context.get_active_transaction()
-
-        context._scratch_spaces[str(active_txn.txn_id)][a] = b
+        context.set_scratch_slot(active_txn, a, b)
 
 
 class _MultiKeyDict(dict[typing.Any, typing.Any]):
@@ -742,7 +741,7 @@ def gload_uint64(a: UInt64 | int, b: UInt64 | int, /) -> UInt64:
     if a >= len(txn_group):
         raise ValueError(f"Index {a} out of range for transaction group")
     txn = txn_group[a]
-    slot_content = context._scratch_spaces[str(txn.txn_id)][int(b)]
+    slot_content = context._scratch_spaces[txn][int(b)]
     match slot_content:
         case Bytes() | bytes():
             return btoi(slot_content)
@@ -762,7 +761,7 @@ def gload_bytes(a: algopy.UInt64 | int, b: algopy.UInt64 | int, /) -> algopy.Byt
     if a >= len(txn_group):
         raise ValueError(f"Index {a} out of range for transaction group")
     txn = txn_group[a]
-    slot_content = context._scratch_spaces[str(txn.txn_id)][int(b)]
+    slot_content = context._scratch_spaces[txn][int(b)]
     match slot_content:
         case algopy_testing.Bytes():
             return slot_content

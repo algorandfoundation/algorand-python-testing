@@ -40,6 +40,9 @@ class _GroupTransaction:
         self.group_index = group_index
         self._fields = {}
 
+    def __hash__(self) -> int:
+        return hash((self.group_index, frozenset(self._fields.items())))
+
 
 class TransactionFields(
     _TransactionBaseFields,
@@ -87,6 +90,9 @@ class TransactionBase(_GroupTransaction):
 
         return self._fields.get(name)
 
+    def __hash__(self) -> int:
+        return super().__hash__()
+
 
 @dataclass
 class AssetTransferTransaction(TransactionBase):
@@ -105,6 +111,9 @@ class AssetTransferTransaction(TransactionBase):
             return self._fields.get(name)
 
         raise AttributeError(f"'{type(self)}' object has no attribute '{name}'")
+
+    def __hash__(self) -> int:
+        return super().__hash__()
 
 
 @dataclass
@@ -126,6 +135,9 @@ class PaymentTransaction(TransactionBase):
             return self._fields.get(name)
 
         raise AttributeError(f"'{type(self)}' object has no attribute '{name}'")
+
+    def __hash__(self) -> int:
+        return super().__hash__()
 
 
 @dataclass
@@ -150,6 +162,9 @@ class ApplicationCallTransaction(TransactionBase):
 
         raise AttributeError(f"'{type(self)}' object has no attribute '{name}'")
 
+    def __hash__(self) -> int:
+        return super().__hash__()
+
 
 class KeyRegistrationTransaction(TransactionBase):
     def __init__(
@@ -171,6 +186,9 @@ class KeyRegistrationTransaction(TransactionBase):
             return self._fields.get(name)
 
         raise AttributeError(f"'{type(self)}' object has no attribute '{name}'")
+
+    def __hash__(self) -> int:
+        return super().__hash__()
 
 
 @dataclass
@@ -194,6 +212,9 @@ class AssetConfigTransaction(TransactionBase):
             return self._fields.get(name)
 
         raise AttributeError(f"'{type(self)}' object has no attribute '{name}'")
+
+    def __hash__(self) -> int:
+        return super().__hash__()
 
 
 @dataclass
@@ -220,6 +241,9 @@ class AssetFreezeTransaction(TransactionBase):
 
         raise AttributeError(f"'{type(self)}' object has no attribute '{name}'")
 
+    def __hash__(self) -> int:
+        return super().__hash__()
+
 
 @dataclass
 class Transaction(TransactionBase):
@@ -240,6 +264,9 @@ class Transaction(TransactionBase):
             return self._fields.get(name)
 
         raise AttributeError(f"'{type(self)}' object has no attribute '{name}'")
+
+    def __hash__(self) -> int:
+        return super().__hash__()
 
 
 __all__ = [

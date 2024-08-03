@@ -1,3 +1,4 @@
+# type: ignore  # noqa: PGH003
 import re
 
 from docutils import nodes

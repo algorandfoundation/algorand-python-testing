@@ -25,6 +25,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
     "myst_parser",
+    "sphinxmermaid",
     "autodoc2",  # Add this line
 ]
 
@@ -88,3 +89,15 @@ autodoc2_docstring_parser_regexes = [
 add_module_names = False
 autodoc2_index_template = None
 myst_enable_extensions = ["fieldlist"]
+
+
+sphinxmermaid_mermaid_init = {
+    "theme": "base",
+    "themeVariables": {
+        "primaryColor": "#5ca5ff",
+        "primaryTextColor": "#fff",  # Changed to gray for better contrast in light mode
+        "lineColor": "#808080",  # Changed to black for better contrast in light mode
+        "secondaryColor": "#808080",
+        "tertiaryColor": "#113a51",
+    },
+}

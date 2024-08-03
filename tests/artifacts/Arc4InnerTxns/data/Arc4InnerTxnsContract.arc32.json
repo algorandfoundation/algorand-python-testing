@@ -41,6 +41,7 @@
                         "name": "asset"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "void"
                 }

@@ -109,7 +109,7 @@ caption: Contents
 hidden: true
 ---
 
-usage
+testing-guide/index
 examples
 coverage
 glossary
