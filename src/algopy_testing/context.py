@@ -68,23 +68,12 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 
 
-@dataclass
-class ContractContextData:
-    """
-    Stores contract-related information.
-
-    Attributes:
-        contract (algopy.Contract | algopy.ARC4Contract): Contract instance.
-        app_id (algopy.UInt64): Application ID.
-    """
-
-    contract: algopy.Contract | algopy.ARC4Contract
-    app_id: algopy.UInt64
-
-
 class ITxnLoader:
     """
-    Stores inner transaction references.
+    A helper class for handling access to individual inner transactions in test context.
+
+    This class provides methods to access and retrieve specific types of inner transactions.
+    It performs type checking and conversion for various transaction types.
     """
 
     def __init__(self, inner_txn: InnerTransactionResultType):
@@ -184,6 +173,14 @@ class ITxnLoader:
 
 
 class ITxnGroupLoader:
+    """
+    A helper class for handling access to groups of inner transactions in test context.
+
+    This class provides methods to access and retrieve inner transactions
+    from a group, either individually or as slices. It supports type-specific
+    retrieval of inner transactions and implements indexing operations.
+    """
+
     @overload
     def __getitem__(self, index: int) -> ITxnLoader: ...
 
@@ -211,41 +208,112 @@ class ITxnGroupLoader:
             raise ValueError(f"No inner transaction available at index {index}!") from err
 
         if not isinstance(txn, txn_type):
-            raise TypeError(f"Last transaction is not of type {txn_type.__name__}!")
+            raise TypeError(
+                f"Inner transaction at index {index} is of "
+                f"type '{type(txn).__name__}' not '{txn_type.__name__}'!"
+            )
 
         return txn
 
     def payment(self, index: int) -> algopy.itxn.PaymentInnerTransaction:
+        """
+        Return a PaymentInnerTransaction from the group at the given index.
+
+        Args:
+            index (int): The index of the inner transaction in the group.
+
+        Returns:
+            algopy.itxn.PaymentInnerTransaction: The PaymentInnerTransaction at the given index.
+        """
         import algopy
 
         return ITxnLoader(self._get_itxn(index, algopy.itxn.PaymentInnerTransaction)).payment
 
     def asset_config(self, index: int) -> algopy.itxn.AssetConfigInnerTransaction:
+        """
+        Return an AssetConfigInnerTransaction from the group at the given index.
+
+        Args:
+            index (int): The index of the inner transaction in the group.
+
+        Returns:
+            algopy.itxn.AssetConfigInnerTransaction: The AssetConfigInnerTransaction at the
+            given index.
+        """
         import algopy
 
         return self._get_itxn(index, algopy.itxn.AssetConfigInnerTransaction)
 
     def asset_transfer(self, index: int) -> algopy.itxn.AssetTransferInnerTransaction:
+        """
+        Return an AssetTransferInnerTransaction from the group at the given index.
+
+        Args:
+            index (int): The index of the inner transaction in the group.
+
+        Returns:
+            algopy.itxn.AssetTransferInnerTransaction: The AssetTransferInnerTransaction
+            at the given index.
+        """
         import algopy
 
         return self._get_itxn(index, algopy.itxn.AssetTransferInnerTransaction)
 
     def asset_freeze(self, index: int) -> algopy.itxn.AssetFreezeInnerTransaction:
+        """
+        Return an AssetFreezeInnerTransaction from the group at the given index.
+
+        Args:
+            index (int): The index of the inner transaction in the group.
+
+        Returns:
+            algopy.itxn.AssetFreezeInnerTransaction: The AssetFreezeInnerTransaction at
+            the given index.
+        """
         import algopy
 
         return self._get_itxn(index, algopy.itxn.AssetFreezeInnerTransaction)
 
     def application_call(self, index: int) -> algopy.itxn.ApplicationCallInnerTransaction:
+        """
+        Return an ApplicationCallInnerTransaction from the group at the given index.
+
+        Args:
+            index (int): The index of the inner transaction in the group.
+
+        Returns:
+            algopy.itxn.ApplicationCallInnerTransaction: The ApplicationCallInnerTransaction
+            at the given index.
+        """
         import algopy
 
         return self._get_itxn(index, algopy.itxn.ApplicationCallInnerTransaction)
 
     def key_registration(self, index: int) -> algopy.itxn.KeyRegistrationInnerTransaction:
+        """
+        Return a KeyRegistrationInnerTransaction from the group at the given index.
+
+        Args:
+            index (int): The index of the inner transaction in the group.
+
+        Returns:
+            algopy.itxn.KeyRegistrationInnerTransaction: The KeyRegistrationInnerTransaction
+            at the given index.
+        """
         import algopy
 
         return self._get_itxn(index, algopy.itxn.KeyRegistrationInnerTransaction)
 
     def transaction(self, index: int) -> algopy.itxn.InnerTransactionResult:
+        """
+        Return an InnerTransactionResult from the group at the given index.
+
+        Args:
+            index (int): The index of the inner transaction in the group.
+
+        Returns:
+            algopy.itxn.InnerTransactionResult: The InnerTransactionResult at the given index.
+        """
         import algopy
 
         return self._get_itxn(index, algopy.itxn.InnerTransactionResult)
@@ -253,7 +321,17 @@ class ITxnGroupLoader:
 
 @dataclass
 class ARC4Factory:
+    """
+    Factory for generating ARC4-compliant test data.
+    """
+
     def __init__(self, *, context: AlgopyTestContext) -> None:
+        """
+        Initializes the ARC4Factory with the given testing context.
+
+        Args:
+            context (AlgopyTestContext): The testing context for generating test data.
+        """
         self._context = context
 
     def any_address(self) -> algopy.arc4.Address:
@@ -448,6 +526,23 @@ class ARC4Factory:
 
 @dataclass
 class AlgopyTestContext:
+    """
+    Manages the testing context for Algorand Python SDK (algopy) applications.
+
+    This class provides methods and properties to simulate various aspects of the
+    Algorand blockchain environment, including accounts, assets, applications,
+    transactions, and global state. It allows for easy setup and manipulation of
+    test scenarios for algopy-based smart contracts and applications.
+
+    Attributes:
+        _arc4 (ARC4Factory): Factory for generating ARC4-compliant test data.
+
+    ```{note}
+        This class is typically used within a context manager provided by
+        the `algopy_testing_context()` function.
+    ```
+    """
+
     _arc4: ARC4Factory
 
     def __init__(
@@ -475,7 +570,9 @@ class AlgopyTestContext:
         self._inner_transaction_groups: list[Sequence[InnerTransactionResultType]] = []
         self._constructing_inner_transaction_group: list[InnerTransactionResultType] = []
         self._constructing_inner_transaction: InnerTransactionResultType | None = None
-        self._scratch_spaces: dict[str, list[algopy.Bytes | algopy.UInt64 | bytes | int]] = {}
+        self._scratch_spaces: dict[
+            algopy_testing.gtxn._GroupTransaction, list[algopy.Bytes | algopy.UInt64 | bytes | int]
+        ] = {}
         self._template_vars: dict[str, Any] = template_vars or {}
         self._blocks: dict[int, dict[str, int]] = {}
         self._boxes: dict[bytes, bytes] = {}
@@ -553,14 +650,39 @@ class AlgopyTestContext:
         raise ValueError("Contract not found in testing context!")
 
     def set_scratch_space(
-        self, txn: str, scratch_space: dict[int, algopy.Bytes | algopy.UInt64 | bytes | int]
+        self,
+        txn: algopy.gtxn.TransactionBase,
+        scratch_space: Sequence[algopy.Bytes | algopy.UInt64 | bytes | int],
     ) -> None:
         new_scratch_space: list[algopy.Bytes | algopy.UInt64 | bytes | int] = [0] * 256
         # insert values to list at specific indexes, use key as index and value as value to set
-        for index, value in scratch_space.items():
+        for index, value in enumerate(scratch_space):
             new_scratch_space[index] = value
 
-        self._scratch_spaces[str(txn)] = new_scratch_space
+        self._scratch_spaces[txn] = new_scratch_space
+
+    def set_scratch_slot(
+        self,
+        txn: algopy.gtxn.TransactionBase,
+        index: algopy.UInt64 | int,
+        value: algopy.Bytes | algopy.UInt64 | bytes | int,
+    ) -> None:
+        assert index >= 0 and index < 256, f"Index {index} out of bounds for scratch space"
+        self._scratch_spaces.setdefault(txn, [0] * 256)
+        self._scratch_spaces[txn][int(index)] = value
+
+    def get_scratch_space(
+        self, txn: algopy.gtxn.TransactionBase
+    ) -> list[algopy.Bytes | algopy.UInt64 | bytes | int]:
+        """Retrieves scratch space for a transaction.
+
+        Args:
+            txn: Transaction identifier.
+
+        Returns:
+            List of scratch space values.
+        """
+        return self._scratch_spaces[txn]
 
     def set_active_contract(self, contract: algopy.Contract | algopy.ARC4Contract) -> None:
         """
@@ -745,16 +867,28 @@ class AlgopyTestContext:
 
     def get_submitted_itxn_groups(self) -> list[Sequence[InnerTransactionResultType]]:
         """
-        Retrieve the number of inner transaction groups.
+        Retrieve the group of inner transactions at the specified index.
+        Returns a loader instance that allows access to generic inner transaction fields
+        or specific inner transaction types with implicit type checking.
+
+        Args:
+            index (int): The index of the inner transaction group.
 
         Returns:
-            int: The number of inner transaction groups.
+            ITxnGroupLoader: The loader for the inner transaction group.
+
+        Raises:
+            ValueError: If no inner transaction groups have been submitted yet or the index
+            is out of range.
         """
         return self._inner_transaction_groups
 
     def get_submitted_itxn_group(self, index: int) -> ITxnGroupLoader:
         """
         Retrieve the last group of inner transactions.
+        Returns a loader instance that allows access to generic inner transaction fields
+        or specific inner transaction types with implicit type checking.
+        Will implicitly assert that at least one inner transaction group has been submitted.
 
         Returns:
             Sequence[algopy.itxn.InnerTransactionResult]: The last group of inner transactions.
@@ -803,9 +937,18 @@ class AlgopyTestContext:
         """
         Generate and add a new account with a random address.
 
+        Args:
+            address (str | None): Optional account address. If not provided, a new address will
+            be generated.
+            opted_asset_balances (dict[algopy.UInt64, algopy.UInt64] | None): Optional asset
+            balances.
+            opted_apps (Sequence[algopy.Application]): Optional applications.
+            **account_fields: Additional account fields.
+
         Returns:
             algopy.Account: The newly generated account.
         """
+
         import algopy
 
         if address is not None:
@@ -840,6 +983,10 @@ class AlgopyTestContext:
     ) -> algopy.Asset:
         """
         Generate and add a new asset with a unique ID.
+
+        Args:
+            asset_id (int | None): Optional asset ID. If not provided, a new ID will be generated.
+            **asset_fields: Additional asset fields.
 
         Returns:
             algopy.Asset: The newly generated asset.
@@ -937,6 +1084,7 @@ class AlgopyTestContext:
         Args:
             app_id (int): The ID of the application.
             logs (bytes | list[bytes]): A single log entry or a list of log entries.
+            prepend_arc4_prefix (bool, optional): Whether to prepend ARC4 prefix to the logs.
         """
         import algopy
 
@@ -962,10 +1110,13 @@ class AlgopyTestContext:
         Retrieve the application logs for a given app ID.
 
         Args:
-            app_id (int): The ID of the application.
+            app_id (algopy.UInt64 | int): The ID of the application.
 
         Returns:
             list[bytes]: The application logs for the given app ID.
+
+        Raises:
+            ValueError: If no application logs are available for the given app ID.
         """
         import algopy
 
@@ -1053,8 +1204,16 @@ class AlgopyTestContext:
         self._active_transaction_index = index
 
     def get_active_application(self) -> algopy.Application:
+        """Gets the Application associated with the active contract.
+
+        Returns:
+            algopy.Application: The Application instance for the active contract.
+
+        Raises:
+            ValueError: If no active contract is set.
+        """
         if self._active_contract is None:
-            raise ValueError("no active contract")
+            raise ValueError("No active contract")
         return self.get_application_for_contract(self._active_contract)
 
     def get_active_transaction(
@@ -1064,7 +1223,7 @@ class AlgopyTestContext:
         Retrieve the active transaction.
 
         Returns:
-            algopy.gtxn.Transaction | None: The active transaction if it exists, otherwise None.
+            algopy.gtxn.Transaction: The active transaction.
 
         Raises:
             ValueError: If no active transaction is found.
@@ -1132,18 +1291,25 @@ class AlgopyTestContext:
         apps: Sequence[algopy.Application] = (),
         approval_program_pages: Sequence[algopy.Bytes] = (),
         clear_state_program_pages: Sequence[algopy.Bytes] = (),
-        scratch_space: dict[int, algopy.Bytes | algopy.UInt64 | int | bytes] | None = None,
+        scratch_space: Sequence[algopy.Bytes | algopy.UInt64 | int | bytes] | None = None,
         **kwargs: Unpack[_ApplicationCallFields],
     ) -> algopy.gtxn.ApplicationCallTransaction:
         """
-        Generate a new application call transaction with specified fields.
+        Generate a new application call transaction.
 
         Args:
-            **kwargs (Unpack[ApplicationCallFields]): Fields to be set in the transaction.
+            app_id: Application ID.
+            app_args: Application arguments.
+            accounts: Accounts to be used.
+            assets: Assets to be used.
+            apps: Applications to be used.
+            approval_program_pages: Approval program pages.
+            clear_state_program_pages: Clear state program pages.
+            scratch_space: Scratch space data.
+            **kwargs: Additional transaction fields.
 
         Returns:
-            algopy.gtxn.ApplicationCallTransaction: The newly generated application
-            call transaction.
+            New application call transaction.
         """
         import algopy.gtxn
 
@@ -1169,7 +1335,7 @@ class AlgopyTestContext:
         for key, value in merged_params.items():
             setattr(new_txn, key, value)
 
-        self.set_scratch_space(new_txn.txn_id, scratch_space or {})
+        self.set_scratch_space(new_txn.txn_id, scratch_space or [])
 
         return new_txn
 
@@ -1290,7 +1456,15 @@ class AlgopyTestContext:
         return name_bytes in self._boxes
 
     def get_box(self, name: algopy.Bytes | bytes) -> bytes:
-        """Get the content of a box."""
+        """
+        Get the content of a box.
+
+        Args:
+            name (algopy.Bytes | bytes): The name of the box.
+
+        Returns:
+            bytes: The content of the box.
+        """
 
         name_bytes = name if isinstance(name, bytes) else name.value
         return self._boxes.get(name_bytes, b"")
@@ -1312,7 +1486,10 @@ class AlgopyTestContext:
         return lsig.func()
 
     def clear_box(self, name: algopy.Bytes | bytes) -> bool:
-        """Clear the content of a box."""
+        """
+        Clear all data, including accounts, applications, assets, inner transactions,
+        transaction groups, and application logs.
+        """
 
         name_bytes = name if isinstance(name, bytes) else name.value
         if name_bytes in self._boxes:
@@ -1418,6 +1595,7 @@ class AlgopyTestContext:
         """
         Reset the test context to its initial state, clearing all data and resetting ID counters.
         """
+
         self._account_data = defaultdict(AccountContextData)
         self._application_data = {}
         self._asset_data = {}

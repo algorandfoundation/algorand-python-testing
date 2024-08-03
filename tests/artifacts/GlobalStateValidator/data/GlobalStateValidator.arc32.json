@@ -45,6 +45,7 @@
                         "name": "arg2"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "void"
                 }

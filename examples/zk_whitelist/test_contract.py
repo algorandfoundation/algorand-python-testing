@@ -45,7 +45,7 @@ def test_add_address_to_whitelist(context: AlgopyTestContext) -> None:
 def test_add_address_to_whitelist_invalid_proof(context: AlgopyTestContext) -> None:
     # Arrange
     contract = ZkWhitelistContract()
-    address = algopy.arc4.Address(context.default_creator)
+    address = context.arc4.any_address()
     proof = algopy.arc4.DynamicArray[
         algopy.arc4.StaticArray[algopy.arc4.Byte, typing.Literal[32]]
     ](

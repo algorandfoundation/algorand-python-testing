@@ -270,6 +270,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -286,6 +287,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -302,6 +304,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -318,6 +321,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -334,6 +338,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -350,6 +355,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -366,6 +372,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -382,6 +389,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -398,6 +406,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -414,6 +423,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -430,6 +440,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -446,6 +457,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -462,6 +474,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -478,6 +491,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -494,6 +508,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -510,6 +525,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -526,6 +542,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -542,6 +559,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -558,6 +576,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -574,6 +593,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -590,6 +610,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -606,6 +627,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -622,6 +644,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -638,6 +661,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -650,6 +674,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "uint32"
                 }
@@ -662,6 +687,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "uint256"
                 }
@@ -674,6 +700,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "uint32"
                 }
@@ -686,6 +713,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "uint256"
                 }
@@ -698,6 +726,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "uint32"
                 }
@@ -710,6 +739,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "uint256"
                 }
@@ -722,6 +752,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "byte[]"
                 }
@@ -734,6 +765,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "byte[]"
                 }
@@ -746,6 +778,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "ufixed32x8"
                 }
@@ -758,6 +791,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "ufixed256x16"
                 }
@@ -770,6 +804,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "ufixed32x8"
                 }
@@ -782,6 +817,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "ufixed256x16"
                 }
@@ -794,6 +830,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "string"
                 }
@@ -810,6 +847,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "string"
                 }
@@ -826,6 +864,7 @@
                         "name": "b"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -838,6 +877,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "byte[]"
                 }
@@ -850,6 +890,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "string"
                 }
@@ -862,6 +903,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "string"
                 }
@@ -874,6 +916,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "byte[]"
                 }
@@ -886,6 +929,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -898,6 +942,7 @@
                         "name": "a"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "bool"
                 }
@@ -970,6 +1015,7 @@
                         "name": "t"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "void"
                 }
