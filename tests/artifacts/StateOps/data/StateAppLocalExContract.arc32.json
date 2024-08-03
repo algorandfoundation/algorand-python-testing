@@ -49,6 +49,7 @@
             {
                 "name": "opt_in",
                 "args": [],
+                "readonly": false,
                 "returns": {
                     "type": "void"
                 }

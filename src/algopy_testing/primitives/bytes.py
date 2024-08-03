@@ -104,6 +104,9 @@ class Bytes:
         """
         return Bytes(bytes(~x + 256 for x in self.value))
 
+    def __hash__(self) -> int:
+        return hash(self.value)
+
     def _operate_bitwise(self, other: bytes | Bytes, operator_name: str) -> Bytes:
         op = getattr(operator, operator_name)
         maybe_bytes = as_bytes(other)
