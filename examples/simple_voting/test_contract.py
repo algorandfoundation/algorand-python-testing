@@ -79,7 +79,7 @@ def test_vote_already_voted(context: AlgopyTestContext) -> None:
     )
 
     # Act
-    with context.set_txn_fields(sender=voter):
+    with context.scoped_txn_fields(sender=voter):
         result = contract.vote(voter)
 
     # Assert

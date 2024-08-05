@@ -51,7 +51,7 @@ def test_start_auction(
     )
 
     # Act
-    with context.set_txn_fields(sender=context.default_creator):
+    with context.scoped_txn_fields(sender=context.default_creator):
         contract.start_auction(
             starting_price,
             auction_duration,
@@ -98,7 +98,7 @@ def test_claim_bids(
     contract.previous_bid = previous_bid
 
     # Act
-    with context.set_txn_fields(sender=account):
+    with context.scoped_txn_fields(sender=account):
         contract.claim_bids()
 
     # Assert
