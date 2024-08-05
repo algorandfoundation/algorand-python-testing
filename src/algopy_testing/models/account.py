@@ -53,8 +53,7 @@ def get_empty_account() -> AccountContextData:
 
 @dataclasses.dataclass
 class AccountContextData:
-    """
-    Stores account-related information.
+    """Stores account-related information.
 
     Attributes:
         opted_asset_balances (dict[int, algopy.UInt64]): Mapping of asset IDs to balances.

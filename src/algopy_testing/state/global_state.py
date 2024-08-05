@@ -59,7 +59,7 @@ class GlobalState(typing.Generic[_T]):
 
     @property
     def key(self) -> algopy.Bytes:
-        """Provides access to the raw storage key"""
+        """Provides access to the raw storage key."""
         return self._key
 
     @property

@@ -26,8 +26,7 @@ def generate_random_bytes32() -> bytes:
 
 
 def as_int(value: object, *, max: int | None) -> int:  # noqa: A002
-    """
-    Returns the underlying int value for any numeric type up to UInt512
+    """Returns the underlying int value for any numeric type up to UInt512.
 
     Raises:
         TypeError: If `value` is not a numeric type
@@ -72,8 +71,7 @@ def as_int512(value: object) -> int:
 
 
 def as_bytes(value: object, *, max_size: int = MAX_BYTES_SIZE) -> bytes:
-    """
-    Returns the underlying bytes value for bytes or Bytes type up to 4096
+    """Returns the underlying bytes value for bytes or Bytes type up to 4096.
 
     Raises:
         TypeError: If `value` is not a bytes type
@@ -172,9 +170,10 @@ def is_instance(obj: object, class_or_tuple: type | UnionType) -> bool:
 def abi_type_name_for_arg(  # noqa: PLR0912, C901, PLR0911
     *, arg: object, is_return_type: bool = False
 ) -> str:
-    """
-    Returns the ABI type name for the given argument. Especially convenient for use with
-    algosdk to generate method signatures
+    """Returns the ABI type name for the given argument.
+
+    Especially convenient for use with algosdk to generate method
+    signatures
     """
     # TODO: abi_return_type_annotation_for_arg use this with a type rather than an instance
     #       add tests to ensure this still returns the correct value for complex ARC4 types
@@ -248,9 +247,10 @@ def abi_type_name_for_arg(  # noqa: PLR0912, C901, PLR0911
 
 
 def abi_return_type_annotation_for_arg(arg: object) -> str:
-    """
-    Returns the ABI type name for the given argument. Especially convenient for use with
-    algosdk to generate method signatures
+    """Returns the ABI type name for the given argument.
+
+    Especially convenient for use with algosdk to generate method
+    signatures
     """
 
     try:

@@ -42,13 +42,13 @@ _TBitSize = typing.TypeVar("_TBitSize", bound=int)
 class _ABIEncoded(BytesBacked, typing.Protocol):
     @classmethod
     def from_log(cls, log: algopy.Bytes, /) -> typing.Self:
-        """Load an ABI type from application logs,
-        checking for the ABI return prefix `0x151f7c75`"""
+        """Load an ABI type from application logs, checking for the ABI return
+        prefix `0x151f7c75`"""
         ...
 
 
 def arc4_signature(signature: str, /) -> algopy.Bytes:
-    """Convert a signature to ARC4 bytes"""
+    """Convert a signature to ARC4 bytes."""
     import algopy
 
     hashed_signature = SHA512.new(truncate="256")
@@ -58,7 +58,7 @@ def arc4_signature(signature: str, /) -> algopy.Bytes:
 
 
 class String(_ABIEncoded):
-    """An ARC4 sequence of bytes containing a UTF8 string"""
+    """An ARC4 sequence of bytes containing a UTF8 string."""
 
     _value: bytes
 
@@ -79,7 +79,8 @@ class String(_ABIEncoded):
 
     @property
     def native(self) -> algopy.String:
-        """Return the String representation of the UTF8 string after ARC4 decoding"""
+        """Return the String representation of the UTF8 string after ARC4
+        decoding."""
         import algopy
 
         return algopy.String.from_bytes(self._value[_ABI_LENGTH_SIZE:])
@@ -94,7 +95,7 @@ class String(_ABIEncoded):
         return self.native == as_string(other)
 
     def __bool__(self) -> bool:
-        """Returns `True` if length is not zero"""
+        """Returns `True` if length is not zero."""
         return bool(self.native)
 
     @classmethod
@@ -106,15 +107,15 @@ class String(_ABIEncoded):
 
     @property
     def bytes(self) -> algopy.Bytes:
-        """Get the underlying Bytes"""
+        """Get the underlying Bytes."""
         import algopy
 
         return algopy.Bytes(self._value)
 
     @classmethod
     def from_log(cls, log: algopy.Bytes, /) -> typing.Self:
-        """Load an ABI type from application logs,
-        checking for the ABI return prefix `0x151f7c75`"""
+        """Load an ABI type from application logs, checking for the ABI return
+        prefix `0x151f7c75`"""
         import algopy
 
         if log[:4] == algopy.Bytes(ARC4_RETURN_PREFIX):
@@ -193,7 +194,7 @@ class _UIntN(_ABIEncoded, typing.Generic[_TBitSize], metaclass=_UIntNMeta):
         raise NotImplementedError
 
     def __bool__(self) -> bool:
-        """Returns `True` if not equal to zero"""
+        """Returns `True` if not equal to zero."""
         raise NotImplementedError
 
     @classmethod
@@ -207,15 +208,15 @@ class _UIntN(_ABIEncoded, typing.Generic[_TBitSize], metaclass=_UIntNMeta):
 
     @property
     def bytes(self) -> algopy.Bytes:
-        """Get the underlying Bytes"""
+        """Get the underlying Bytes."""
         import algopy
 
         return algopy.Bytes(self._value)
 
     @classmethod
     def from_log(cls, log: algopy.Bytes, /) -> typing.Self:
-        """Load an ABI type from application logs,
-        checking for the ABI return prefix `0x151f7c75`"""
+        """Load an ABI type from application logs, checking for the ABI return
+        prefix `0x151f7c75`"""
         import algopy
 
         if log[:4] == algopy.Bytes(ARC4_RETURN_PREFIX):
@@ -226,13 +227,15 @@ class _UIntN(_ABIEncoded, typing.Generic[_TBitSize], metaclass=_UIntNMeta):
 class UIntN(_UIntN[_TBitSize], typing.Generic[_TBitSize]):
     """An ARC4 UInt consisting of the number of bits specified.
 
-    Max Size: 64 bits"""
+    Max Size: 64 bits
+    """
 
     _max_bits_len = UINT64_SIZE
 
     @property
     def native(self) -> algopy.UInt64:
-        """Return the UInt64 representation of the value after ARC4 decoding"""
+        """Return the UInt64 representation of the value after ARC4
+        decoding."""
         import algopy
 
         return algopy.UInt64(int.from_bytes(self._value))
@@ -262,13 +265,15 @@ class UIntN(_UIntN[_TBitSize], typing.Generic[_TBitSize]):
 class BigUIntN(_UIntN[_TBitSize], typing.Generic[_TBitSize]):
     """An ARC4 UInt consisting of the number of bits specified.
 
-    Max size: 512 bits"""
+    Max size: 512 bits
+    """
 
     _max_bits_len = UINT512_SIZE
 
     @property
     def native(self) -> algopy.BigUInt:
-        """Return the UInt64 representation of the value after ARC4 decoding"""
+        """Return the UInt64 representation of the value after ARC4
+        decoding."""
         import algopy
 
         return algopy.BigUInt.from_bytes(self._value)
@@ -329,10 +334,9 @@ class _UFixedNxM(
     _value: bytes  # underlying 'bytes' value representing the UFixedNxM
 
     def __init__(self, value: str = "0.0", /):
-        """
-        Construct an instance of UFixedNxM where value (v) is determined from the original
-        decimal value (d) by the formula v = round(d * (10^M))
-        """
+        """Construct an instance of UFixedNxM where value (v) is determined
+        from the original decimal value (d) by the formula v = round(d *
+        (10^M))"""
         self._n = as_int(typing.get_args(self._size_t)[0], max=self._max_bits_len)
         self._m = as_int(typing.get_args(self._decimal_t)[0], max=_MAX_M_SIZE)
         self._max_int = 2**self._n - 1
@@ -367,7 +371,7 @@ class _UFixedNxM(
             self._value = as_bytes(bytes_value, max_size=self._max_bytes_len)
 
     def __bool__(self) -> bool:
-        """Returns `True` if not equal to zero"""
+        """Returns `True` if not equal to zero."""
         return bool(int.from_bytes(self._value))
 
     @classmethod
@@ -380,15 +384,15 @@ class _UFixedNxM(
 
     @property
     def bytes(self) -> algopy.Bytes:
-        """Get the underlying Bytes"""
+        """Get the underlying Bytes."""
         import algopy
 
         return algopy.Bytes(self._value)
 
     @classmethod
     def from_log(cls, log: algopy.Bytes, /) -> typing.Self:
-        """Load an ABI type from application logs,
-        checking for the ABI return prefix `0x151f7c75`"""
+        """Load an ABI type from application logs, checking for the ABI return
+        prefix `0x151f7c75`"""
         import algopy
 
         if log[:4] == algopy.Bytes(ARC4_RETURN_PREFIX):
@@ -399,9 +403,11 @@ class _UFixedNxM(
 class UFixedNxM(
     _UFixedNxM[_TBitSize, _TDecimalPlaces], typing.Generic[_TBitSize, _TDecimalPlaces]
 ):
-    """An ARC4 UFixed representing a decimal with the number of bits and precision specified.
+    """An ARC4 UFixed representing a decimal with the number of bits and
+    precision specified.
 
-    Max size: 64 bits"""
+    Max size: 64 bits
+    """
 
     _max_bits_len: int = UINT64_SIZE
 
@@ -409,41 +415,43 @@ class UFixedNxM(
 class BigUFixedNxM(
     _UFixedNxM[_TBitSize, _TDecimalPlaces], typing.Generic[_TBitSize, _TDecimalPlaces]
 ):
-    """An ARC4 UFixed representing a decimal with the number of bits and precision specified.
+    """An ARC4 UFixed representing a decimal with the number of bits and
+    precision specified.
 
-    Max size: 512 bits"""
+    Max size: 512 bits
+    """
 
     _max_bits_len: int = UINT512_SIZE
 
 
 class Byte(UIntN[typing.Literal[8]]):
-    """An ARC4 alias for a UInt8"""
+    """An ARC4 alias for a UInt8."""
 
 
 UInt8: typing.TypeAlias = UIntN[typing.Literal[8]]
-"""An ARC4 UInt8"""
+"""An ARC4 UInt8."""
 
 UInt16: typing.TypeAlias = UIntN[typing.Literal[16]]
-"""An ARC4 UInt16"""
+"""An ARC4 UInt16."""
 
 UInt32: typing.TypeAlias = UIntN[typing.Literal[32]]
-"""An ARC4 UInt32"""
+"""An ARC4 UInt32."""
 
 UInt64: typing.TypeAlias = UIntN[typing.Literal[64]]
-"""An ARC4 UInt64"""
+"""An ARC4 UInt64."""
 
 UInt128: typing.TypeAlias = BigUIntN[typing.Literal[128]]
-"""An ARC4 UInt128"""
+"""An ARC4 UInt128."""
 
 UInt256: typing.TypeAlias = BigUIntN[typing.Literal[256]]
-"""An ARC4 UInt256"""
+"""An ARC4 UInt256."""
 
 UInt512: typing.TypeAlias = BigUIntN[typing.Literal[512]]
-"""An ARC4 UInt512"""
+"""An ARC4 UInt512."""
 
 
 class Bool(_ABIEncoded):
-    """An ARC4 encoded bool"""
+    """An ARC4 encoded bool."""
 
     _value: bytes
 
@@ -455,12 +463,12 @@ class Bool(_ABIEncoded):
         self._value = int_to_bytes(self._true_int_value if value else self._false_int_value, 1)
 
     def __bool__(self) -> bool:
-        """Allow Bool to be used in boolean contexts"""
+        """Allow Bool to be used in boolean contexts."""
         return self.native
 
     @property
     def native(self) -> bool:
-        """Return the bool representation of the value after ARC4 decoding"""
+        """Return the bool representation of the value after ARC4 decoding."""
         int_value = int.from_bytes(self._value)
         return int_value == self._true_int_value
 
@@ -473,15 +481,15 @@ class Bool(_ABIEncoded):
 
     @property
     def bytes(self) -> algopy.Bytes:
-        """Get the underlying Bytes"""
+        """Get the underlying Bytes."""
         import algopy
 
         return algopy.Bytes(self._value)
 
     @classmethod
     def from_log(cls, log: algopy.Bytes, /) -> typing.Self:
-        """Load an ABI type from application logs,
-        checking for the ABI return prefix `0x151f7c75`"""
+        """Load an ABI type from application logs, checking for the ABI return
+        prefix `0x151f7c75`"""
         import algopy
 
         if log[:4] == algopy.Bytes(ARC4_RETURN_PREFIX):
@@ -531,7 +539,7 @@ class StaticArray(
     Reversible[_TArrayItem],
     metaclass=_StaticArrayMeta,
 ):
-    """A fixed length ARC4 Array of the specified type and length"""
+    """A fixed length ARC4 Array of the specified type and length."""
 
     _array_item_t: type[_TArrayItem]
     _child_types: list[_TypeInfo]
@@ -581,7 +589,7 @@ class StaticArray(
         return self._list()[index]
 
     def append(self, item: _TArrayItem, /) -> None:
-        """Append items to this array"""
+        """Append items to this array."""
         if not issubclass(type(item), self._array_item_t):
             expected_type = self._array_item_t.__name__
             actual_type = type(item).__name__
@@ -592,7 +600,7 @@ class StaticArray(
         self._value = _encode(x)
 
     def extend(self, other: Iterable[_TArrayItem], /) -> None:
-        """Extend this array with the contents of another array"""
+        """Extend this array with the contents of another array."""
         if any(not issubclass(type(x), self._array_item_t) for x in other):
             raise TypeError(f"items must be of type {self._array_item_t.__name__!r}")
         x = self._list()
@@ -627,15 +635,15 @@ class StaticArray(
 
     @property
     def bytes(self) -> algopy.Bytes:
-        """Get the underlying Bytes"""
+        """Get the underlying Bytes."""
         import algopy
 
         return algopy.Bytes(self._value)
 
     @classmethod
     def from_log(cls, log: algopy.Bytes, /) -> typing.Self:
-        """Load an ABI type from application logs,
-        checking for the ABI return prefix `0x151f7c75`"""
+        """Load an ABI type from application logs, checking for the ABI return
+        prefix `0x151f7c75`"""
         import algopy
 
         if log[:4] == algopy.Bytes(ARC4_RETURN_PREFIX):
@@ -644,11 +652,12 @@ class StaticArray(
 
 
 class Address(StaticArray[Byte, typing.Literal[32]]):
-    """An alias for an array containing 32 bytes representing an Algorand address"""
+    """An alias for an array containing 32 bytes representing an Algorand
+    address."""
 
     def __init__(self, value: Account | str | algopy.Bytes = algosdk.constants.ZERO_ADDRESS):
-        """
-        If `value` is a string, it should be a 58 character base32 string,
+        """If `value` is a string, it should be a 58 character base32 string,
+
         ie a base32 string-encoded 32 bytes public key + 4 bytes checksum.
         If `value` is a Bytes, it's length checked to be 32 bytes - to avoid this
         check, use `Address.from_bytes(...)` instead.
@@ -712,7 +721,7 @@ class DynamicArray(
     Reversible[_TArrayItem],
     metaclass=_DynamicArrayMeta,
 ):
-    """A dynamically sized ARC4 Array of the specified type"""
+    """A dynamically sized ARC4 Array of the specified type."""
 
     _array_item_t: type[_TArrayItem]
     _child_types: list[_TypeInfo]
@@ -738,16 +747,16 @@ class DynamicArray(
         )
 
     def __iter__(self) -> typing.Iterator[_TArrayItem]:
-        """Returns an iterator for the items in the array"""
+        """Returns an iterator for the items in the array."""
         return iter(self._list())
 
     def __reversed__(self) -> typing.Iterator[_TArrayItem]:
-        """Returns an iterator for the items in the array, in reverse order"""
+        """Returns an iterator for the items in the array, in reverse order."""
         return reversed(self._list())
 
     @property
     def length(self) -> algopy.UInt64:
-        """Returns the current length of the array"""
+        """Returns the current length of the array."""
         import algopy
 
         return algopy.UInt64(len(self._list()))
@@ -762,7 +771,7 @@ class DynamicArray(
         return self._list()[index]
 
     def append(self, item: _TArrayItem, /) -> None:
-        """Append items to this array"""
+        """Append items to this array."""
         if not issubclass(type(item), self._array_item_t):
             expected_type = self._array_item_t.__name__
             actual_type = type(item).__name__
@@ -773,7 +782,7 @@ class DynamicArray(
         self._value = self._encode_with_length(x)
 
     def extend(self, other: Iterable[_TArrayItem], /) -> None:
-        """Extend this array with the contents of another array"""
+        """Extend this array with the contents of another array."""
         if any(not issubclass(type(x), self._array_item_t) for x in other):
             raise TypeError(f"items must be of type {self._array_item_t.__name__!r}")
         x = self._list()
@@ -796,7 +805,7 @@ class DynamicArray(
         return self
 
     def pop(self) -> _TArrayItem:
-        """Remove and return the last item in the array"""
+        """Remove and return the last item in the array."""
         x = self._list()
         item = x.pop()
         self._child_types.pop()
@@ -804,11 +813,11 @@ class DynamicArray(
         return item
 
     def copy(self) -> typing.Self:
-        """Create a copy of this array"""
+        """Create a copy of this array."""
         return copy.deepcopy(self)
 
     def __bool__(self) -> bool:
-        """Returns `True` if not an empty array"""
+        """Returns `True` if not an empty array."""
         return bool(self._list())
 
     def _list(self) -> list[_TArrayItem]:
@@ -833,15 +842,15 @@ class DynamicArray(
 
     @property
     def bytes(self) -> algopy.Bytes:
-        """Get the underlying Bytes"""
+        """Get the underlying Bytes."""
         import algopy
 
         return algopy.Bytes(self._value)
 
     @classmethod
     def from_log(cls, log: algopy.Bytes, /) -> typing.Self:
-        """Load an ABI type from application logs,
-        checking for the ABI return prefix `0x151f7c75`"""
+        """Load an ABI type from application logs, checking for the ABI return
+        prefix `0x151f7c75`"""
         import algopy
 
         if log[:4] == algopy.Bytes(ARC4_RETURN_PREFIX):
@@ -850,7 +859,7 @@ class DynamicArray(
 
 
 class DynamicBytes(DynamicArray[Byte]):
-    """A variable sized array of bytes"""
+    """A variable sized array of bytes."""
 
     @typing.overload
     def __init__(self, *values: Byte | UInt8 | int): ...
@@ -881,7 +890,8 @@ class DynamicBytes(DynamicArray[Byte]):
 
     @property
     def native(self) -> algopy.Bytes:
-        """Return the Bytes representation of the address after ARC4 decoding"""
+        """Return the Bytes representation of the address after ARC4
+        decoding."""
         return self.bytes
 
 
@@ -913,7 +923,7 @@ class Tuple(
     typing.Generic[typing.Unpack[_TTuple]],
     metaclass=_TupleMeta,
 ):
-    """An ARC4 ABI tuple, containing other ARC4 ABI types"""
+    """An ARC4 ABI tuple, containing other ARC4 ABI types."""
 
     __slots__ = ()
 
@@ -921,7 +931,7 @@ class Tuple(
     _value: bytes
 
     def __init__(self, items: tuple[typing.Unpack[_TTuple]] = (), /):  # type: ignore[assignment]
-        """Construct an ARC4 tuple from a python tuple"""
+        """Construct an ARC4 tuple from a python tuple."""
         self._value = _encode(items)
         if items:
             self._child_types = [self._get_type_info(item) for item in items]
@@ -952,7 +962,8 @@ class Tuple(
 
     @property
     def native(self) -> tuple[typing.Unpack[_TTuple]]:
-        """Return the Bytes representation of the address after ARC4 decoding"""
+        """Return the Bytes representation of the address after ARC4
+        decoding."""
         return typing.cast(
             tuple[typing.Unpack[_TTuple]], tuple(_decode(self._value, self._child_types))
         )
@@ -967,15 +978,15 @@ class Tuple(
 
     @property
     def bytes(self) -> algopy.Bytes:
-        """Get the underlying Bytes"""
+        """Get the underlying Bytes."""
         import algopy
 
         return algopy.Bytes(self._value)
 
     @classmethod
     def from_log(cls, log: algopy.Bytes, /) -> typing.Self:
-        """Load an ABI type from application logs,
-        checking for the ABI return prefix `0x151f7c75`"""
+        """Load an ABI type from application logs, checking for the ABI return
+        prefix `0x151f7c75`"""
         import algopy
 
         if log[:4] == algopy.Bytes(ARC4_RETURN_PREFIX):
@@ -997,7 +1008,7 @@ class _StructMeta(type):
 
 
 class Struct(metaclass=_StructMeta):
-    """Base class for ARC4 Struct types"""
+    """Base class for ARC4 Struct types."""
 
     def __init__(self, *args: typing.Any):
         self._value = Tuple(args)
@@ -1019,8 +1030,8 @@ class Struct(metaclass=_StructMeta):
 
     @classmethod
     def from_log(cls, log: algopy.Bytes, /) -> typing.Self:
-        """Load an ABI type from application logs,
-        checking for the ABI return prefix `0x151f7c75`"""
+        """Load an ABI type from application logs, checking for the ABI return
+        prefix `0x151f7c75`"""
         import algopy
 
         if log[:4] == algopy.Bytes(ARC4_RETURN_PREFIX):
@@ -1028,7 +1039,7 @@ class Struct(metaclass=_StructMeta):
         raise ValueError("ABI return prefix not found")
 
     def copy(self) -> typing.Self:
-        """Create a copy of this struct"""
+        """Create a copy of this struct."""
         return copy.deepcopy(self)
 
 
@@ -1162,7 +1173,8 @@ def emit(event: Struct, /) -> None: ...
 @typing.overload
 def emit(event: str, /, *args: _TABIArg) -> None: ...
 def emit(event: str | Struct, /, *args: _TABIArg) -> None:
-    """Emit an ARC-28 event for the provided event signature or name, and provided args.
+    """Emit an ARC-28 event for the provided event signature or name, and
+    provided args.
 
     :param event: Either an ARC4 Struct, an event name, or event signature.
         * If event is an ARC4 Struct, the event signature will be determined from the Struct name and fields
@@ -1289,9 +1301,8 @@ def _find_bool(
     index: int,
     delta: int,
 ) -> int:
-    """
-    Helper function to find consecutive booleans from current index in a tuple.
-    """
+    """Helper function to find consecutive booleans from current index in a
+    tuple."""
     until = 0
     values_length = len(values) if isinstance(values, tuple | list) else values.length.value
     while True:
@@ -1308,9 +1319,8 @@ def _find_bool(
 
 
 def _find_bool_types(values: typing.Sequence[_TypeInfo], index: int, delta: int) -> int:
-    """
-    Helper function to find consecutive booleans from current index in a tuple.
-    """
+    """Helper function to find consecutive booleans from current index in a
+    tuple."""
     until = 0
     values_length = len(values)
     while True:
@@ -1327,9 +1337,7 @@ def _find_bool_types(values: typing.Sequence[_TypeInfo], index: int, delta: int)
 
 
 def _compress_multiple_bool(value_list: list[Bool]) -> int:
-    """
-    Compress consecutive boolean values into a byte for a Tuple/Array.
-    """
+    """Compress consecutive boolean values into a byte for a Tuple/Array."""
     result = 0
     if len(value_list) > 8:
         raise ValueError("length of list should not be greater than 8")

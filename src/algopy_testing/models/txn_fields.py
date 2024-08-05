@@ -176,9 +176,8 @@ def get_txn_defaults() -> Mapping[str, typing.Any]:
 
 
 class TransactionFieldsBase(abc.ABC):
-    """
-    Base transaction type used across both inner and global transactions implementations
-    """
+    """Base transaction type used across both inner and global transactions
+    implementations."""
 
     @property
     @abc.abstractmethod

@@ -10,7 +10,7 @@ if typing.TYPE_CHECKING:
 
 
 class LogicSig:
-    """A logic signature"""
+    """A logic signature."""
 
     def __init__(self, func: Callable[[], bool | algopy.UInt64], name: str | None = None):
         self.func = func
@@ -28,7 +28,7 @@ def logicsig(*, name: str) -> Callable[[Callable[[], bool | algopy.UInt64]], Log
 def logicsig(
     sub: Callable[[], bool | algopy.UInt64] | None = None, *, name: str | None = None
 ) -> algopy.LogicSig | Callable[[Callable[[], bool | algopy.UInt64]], LogicSig]:
-    """Decorator to indicate a function is a logic signature"""
+    """Decorator to indicate a function is a logic signature."""
     import algopy
 
     def decorator(func: Callable[[], bool | algopy.UInt64]) -> algopy.LogicSig:

@@ -8,7 +8,7 @@ if typing.TYPE_CHECKING:
 
 @typing.runtime_checkable
 class BytesBacked(typing.Protocol):
-    """Represents a type that is a single bytes value"""
+    """Represents a type that is a single bytes value."""
 
     @classmethod
     def from_bytes(cls, value: algopy.Bytes | bytes, /) -> typing.Self:
@@ -16,4 +16,4 @@ class BytesBacked(typing.Protocol):
 
     @property
     def bytes(self) -> algopy.Bytes:
-        """Get the underlying Bytes"""
+        """Get the underlying Bytes."""

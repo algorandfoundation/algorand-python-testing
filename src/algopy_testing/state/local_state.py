@@ -33,7 +33,7 @@ class LocalState(typing.Generic[_T]):
 
     @property
     def key(self) -> algopy.Bytes:
-        """Provides access to the raw storage key"""
+        """Provides access to the raw storage key."""
         return self._key
 
     def _validate_local_state_key(self, key: algopy.Account | algopy.UInt64 | int) -> None:

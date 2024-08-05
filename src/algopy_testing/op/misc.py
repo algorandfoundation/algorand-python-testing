@@ -65,7 +65,7 @@ class Base64(enum.Enum):
 
 
 class EC(enum.StrEnum):
-    """Available values for the `EC` enum"""
+    """Available values for the `EC` enum."""
 
     BN254g1 = "BN254g1"
     BN254g2 = "BN254g2"
@@ -517,7 +517,8 @@ def _get_bit(v: int, index: int) -> int:
 
 
 def _set_bit(v: int, index: int, x: int) -> int:
-    """Set the index:th bit of v to 1 if x is truthy, else to 0, and return the new value."""
+    """Set the index:th bit of v to 1 if x is truthy, else to 0, and return the
+    new value."""
     mask = 1 << index  # Compute mask, an integer with just bit 'index' set.
     v &= ~mask  # Clear the bit indicated by the mask (if x is False)
     if x:

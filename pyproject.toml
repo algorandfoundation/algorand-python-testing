@@ -92,6 +92,7 @@ dependencies = [
     "black",
     "ruff==0.4.2",
     "ruff-lsp",
+    "docformatter",
 ]
 
 [tool.hatch.envs.lint.scripts]
@@ -100,6 +101,7 @@ check = [
   "ruff check",
 ]
 fix = [
+  "docformatter -i -r src",
   "black .",
   "ruff check --fix",
 ]

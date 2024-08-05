@@ -174,8 +174,7 @@ class ApplicationCall(_BaseInnerTransactionFields):
 def submit_txns(
     *transactions: _BaseInnerTransactionFields,
 ) -> tuple[_BaseInnerTransactionResult, ...]:
-    """
-    Submits a group of up to 16 inner transactions parameters
+    """Submits a group of up to 16 inner transactions parameters.
 
     :returns: A tuple of the resulting inner transactions
     """
