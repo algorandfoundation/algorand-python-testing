@@ -44,5 +44,6 @@ transactions
 contract-testing
 signature-testing
 state-management
+subroutines
 opcodes
 ```
