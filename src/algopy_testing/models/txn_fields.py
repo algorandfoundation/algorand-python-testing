@@ -185,6 +185,13 @@ class TransactionFieldsBase(abc.ABC):
         raise NotImplementedError
 
     # explicitly define some properties commonly accessed by algopy testing
+    # TODO: mypy complains on fields not defined in this base to be missing on gtxn objects
+    # when accessed with active .venv.examples virtual environment. Should this class explicitly
+    # define all possible txn fields?
+    @property
+    def amount(self) -> algopy.UInt64:
+        return self.fields["amount"]  # type: ignore[return-value]
+
     @property
     def app_id(self) -> algopy.Application:
         return self.fields["app_id"]  # type: ignore[return-value]

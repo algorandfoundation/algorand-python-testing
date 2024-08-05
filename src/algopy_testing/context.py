@@ -1412,13 +1412,26 @@ class AlgopyTestContext:
 
         :param name: The name of the box.
         :type name: algopy.Bytes | bytes
-        :param name: algopy.Bytes | bytes:
-        :returns: The content of the box.
+        :returns: The content of the box. If the box doesn't exist,
+            returns an empty bytes object.
         :rtype: bytes
         """
 
         name_bytes = name if isinstance(name, bytes) else name.value
         return self._boxes.get(name_bytes, b"")
+
+    def get_box_map(self, name: algopy.Bytes | bytes) -> bytes:
+        """Get the content of a box map.
+
+        :param name: The name of the box map.
+        :type name: algopy.Bytes | bytes
+        :returns: The content of the box map.
+        :rtype: bytes
+        """
+
+        name_bytes = name if isinstance(name, bytes) else name.value
+        prefix = b"box_map"
+        return self.get_box(name=prefix + name_bytes)
 
     def set_box(self, name: algopy.Bytes | bytes, content: algopy.Bytes | bytes) -> None:
         """Set the content of a box.
@@ -1464,6 +1477,7 @@ class AlgopyTestContext:
     def clear_transaction_group(self) -> None:
         """Clear the transaction group."""
         self._current_transaction_group.clear()
+        self._active_transaction_index = None
 
     def clear_accounts(self) -> None:
         """Clear all accounts."""
