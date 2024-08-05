@@ -11,9 +11,7 @@ from algopy_testing.utils import as_int64
 
 @functools.total_ordering
 class UInt64:
-    """
-    A python implementation of an AVM 64-bit unsigned integer
-    """
+    """A python implementation of an AVM 64-bit unsigned integer."""
 
     value: int  # underlying 'int' value representing the UInt64
 
@@ -156,8 +154,7 @@ class UInt64:
         return _as_uint64(other) >> self
 
     def __invert__(self) -> UInt64:
-        """
-        Compute the bitwise inversion of the UInt64.
+        """Compute the bitwise inversion of the UInt64.
 
         Returns:
             UInt64: The result of the bitwise inversion operation.
@@ -165,8 +162,8 @@ class UInt64:
         return UInt64(~self.value & MAX_UINT64)
 
     def __index__(self) -> int:
-        """
-        Return the internal integer value of the UInt64 for use in indexing/slice expressions.
+        """Return the internal integer value of the UInt64 for use in
+        indexing/slice expressions.
 
         Returns:
             int: The internal integer value of the UInt64.
@@ -174,8 +171,7 @@ class UInt64:
         return self.value
 
     def __pos__(self) -> UInt64:
-        """
-        Compute the unary positive of the UInt64.
+        """Compute the unary positive of the UInt64.
 
         Returns:
             UInt64: The result of the unary positive operation.
@@ -187,7 +183,7 @@ class UInt64:
 
 
 def _as_maybe_uint64(value: object) -> int | None:
-    """Returns int value if `value` is an int or UInt64, otherwise None"""
+    """Returns int value if `value` is an int or UInt64, otherwise None."""
     match value:
         case int(int_value):
             return as_int64(int_value)
@@ -198,10 +194,11 @@ def _as_maybe_uint64(value: object) -> int | None:
 
 
 def _checked_result(result: int, op: str) -> UInt64:
-    """Ensures `result` is a valid UInt64 value
+    """Ensures `result` is a valid UInt64 value.
 
     Raises:
-        ArithmeticError: If `result` of `op` is out of bounds"""
+        ArithmeticError: If `result` of `op` is out of bounds
+    """
     if result < 0:
         raise ArithmeticError(f"{op} underflows")
     if result > MAX_UINT64:

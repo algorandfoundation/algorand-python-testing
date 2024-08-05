@@ -1,3 +1,4 @@
+import algopy.itxn
 import algosdk
 import pytest
 from algopy import Bytes, TransactionType, UInt64
@@ -20,17 +21,6 @@ def test_patch_global_fields() -> None:
 
         with pytest.raises(AttributeError, match="InvalidField"):
             context.patch_global_fields(InvalidField=123)  # type: ignore   # noqa: PGH003
-
-
-def test_patch_txn_fields() -> None:
-    with algopy_testing_context() as context:
-        dummy_account = algosdk.account.generate_account()[1]
-        context.patch_txn_fields(sender=dummy_account, fee=UInt64(1000))
-        assert context._txn_fields["sender"] == dummy_account
-        assert context._txn_fields["fee"] == 1000
-
-        with pytest.raises(AttributeError, match="InvalidField"):
-            context.patch_txn_fields(InvalidField=123)  # type: ignore   # noqa: PGH003
 
 
 def test_account_management() -> None:
@@ -96,10 +86,12 @@ def test_last_itxn_access() -> None:
         dummy_asset = context.any_asset()
         contract.opt_in_dummy_asset(dummy_asset)
         assert len(context.get_submitted_itxn_group(0)) == 1
-        itxn = context.last_submitted_itxn.asset_transfer
+        itxn: algopy.itxn.AssetTransferInnerTransaction = (
+            context.last_submitted_itxn.asset_transfer
+        )
         assert itxn.asset_sender == context.get_active_application().address
         assert itxn.asset_receiver == context.get_active_application().address
-        assert itxn.amount == UInt64(0)
+        assert itxn.asset_amount == UInt64(0)
         assert itxn.type == TransactionType.AssetTransfer
 
 
@@ -153,7 +145,7 @@ def test_algopy_testing_context() -> None:
         assert len(context.get_account_data()) == 2
 
     # When called outside of a context manager, it should raise an error
-    with pytest.raises(LookupError):
+    with pytest.raises(ValueError, match="Test context is not initialized!"):
         get_test_context()
 
 

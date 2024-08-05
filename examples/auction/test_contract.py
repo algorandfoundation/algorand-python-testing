@@ -49,14 +49,14 @@ def test_start_auction(
     context.patch_global_fields(
         latest_timestamp=latest_timestamp,
     )
-    context.patch_txn_fields(sender=context.default_creator)
 
     # Act
-    contract.start_auction(
-        starting_price,
-        auction_duration,
-        axfer_txn,
-    )
+    with context.set_txn_fields(sender=context.default_creator):
+        contract.start_auction(
+            starting_price,
+            auction_duration,
+            axfer_txn,
+        )
 
     # Assert
     assert contract.auction_end == latest_timestamp + auction_duration
@@ -90,7 +90,6 @@ def test_claim_bids(
 ) -> None:
     # Arrange
     account = context.any_account()
-    context.patch_txn_fields(sender=account)
     contract = AuctionContract()
     claimable_amount = context.any_uint64()
     contract.claimable_amount[account] = claimable_amount
@@ -99,7 +98,8 @@ def test_claim_bids(
     contract.previous_bid = previous_bid
 
     # Act
-    contract.claim_bids()
+    with context.set_txn_fields(sender=account):
+        contract.claim_bids()
 
     # Assert
     expected_payment = claimable_amount - previous_bid

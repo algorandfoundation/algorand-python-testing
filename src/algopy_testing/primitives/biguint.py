@@ -14,9 +14,8 @@ from algopy_testing.utils import as_bytes, as_int, as_int512, int_to_bytes
 
 @functools.total_ordering
 class BigUInt(BytesBacked):
-    """
-    A python implementation of an TEAL bigint type represented by AVM []byte type
-    """
+    """A python implementation of an TEAL bigint type represented by AVM []byte
+    type."""
 
     __value: bytes  # underlying 'bytes' value representing the BigUInt
 
@@ -103,8 +102,7 @@ class BigUInt(BytesBacked):
         return self ^ other
 
     def __pos__(self) -> BigUInt:
-        """
-        Compute the unary positive of the BigUInt.
+        """Compute the unary positive of the BigUInt.
 
         Returns:
             BigUInt: The result of the unary positive operation.
@@ -120,20 +118,21 @@ class BigUInt(BytesBacked):
 
     @property
     def bytes(self) -> Bytes:
-        """Get the underlying Bytes"""
+        """Get the underlying Bytes."""
         return Bytes(self.__value)
 
     @property
     def value(self) -> int:
-        """Get the underlying int"""
+        """Get the underlying int."""
         return int.from_bytes(self.__value)
 
 
 def _checked_result(result: int, op: str) -> BigUInt:
-    """Ensures `result` is a valid BigUInt value
+    """Ensures `result` is a valid BigUInt value.
 
     Raises:
-        ArithmeticError: If `result` of `op` is negative"""
+        ArithmeticError: If `result` of `op` is negative
+    """
     if result < 0:
         raise ArithmeticError(f"{op} underflows")
     return BigUInt(result)

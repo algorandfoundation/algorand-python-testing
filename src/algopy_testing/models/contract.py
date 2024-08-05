@@ -38,6 +38,7 @@ class _ContractMeta(type):
                 local_num_bytes=algopy_testing.UInt64(state_totals.local_bytes),
                 local_num_uint=algopy_testing.UInt64(state_totals.local_uints),
             )
+            # TODO: what about ABI create calls when app_id should still be zero?
             context._app_id_to_contract[int(app_ref.id)] = instance
 
         return instance

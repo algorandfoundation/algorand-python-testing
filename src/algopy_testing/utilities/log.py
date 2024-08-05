@@ -48,6 +48,6 @@ def log(  # noqa: C901
     if not active_txn.app_id:
         raise ValueError("Cannot emit event: missing `app_id` in associated call transaction!")
     context.add_application_logs(
-        app_id=active_txn.app_id(),
+        app_id=active_txn.app_id,
         logs=separator.join(logs),
     )

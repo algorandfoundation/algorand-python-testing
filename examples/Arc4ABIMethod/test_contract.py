@@ -1,61 +1,24 @@
 from collections.abc import Generator
 
 import algopy
+import algopy_testing
 import algosdk
 import pytest
-from algopy import arc4, gtxn
-from algopy_testing.context import AlgopyTestContext, algopy_testing_context
-from algopy_testing.models.contract import ARC4Contract
+from algopy import arc4
 
-UInt8Array = arc4.DynamicArray[arc4.UInt8]
+from .contract import SignaturesContract, UInt8Array
 
-
-class SignaturesContract(ARC4Contract):
-    @arc4.abimethod
-    def sink(self, value: arc4.String, arr: UInt8Array) -> None:
-        assert value
-        assert arr
-
-    @arc4.abimethod(name="alias")
-    def sink2(self, value: arc4.String, arr: UInt8Array) -> None:
-        assert value
-        assert arr
-
-    @arc4.abimethod
-    def with_txn(
-        self, value: arc4.String, acfg: gtxn.AssetConfigTransaction, arr: UInt8Array
-    ) -> None:
-        assert value
-        assert arr
-        assert acfg.total == 123
-
-    @arc4.abimethod
-    def with_asset(self, value: arc4.String, asset: algopy.Asset, arr: UInt8Array) -> None:
-        assert value
-        assert arr
-        assert asset.total == 123
-
-    @arc4.abimethod
-    def with_app(self, value: arc4.String, app: algopy.Application, arr: UInt8Array) -> None:
-        assert value
-        assert arr
-        assert app.id == 1234
-
-    @arc4.abimethod
-    def with_acc(self, value: arc4.String, acc: algopy.Account, arr: UInt8Array) -> None:
-        assert value
-        assert arr
-        assert acc.total_apps_created == 123
+# TODO: execute this on AVM too
 
 
 @pytest.fixture()
-def context() -> Generator[AlgopyTestContext, None, None]:
-    with algopy_testing_context() as ctx:
+def context() -> Generator[algopy_testing.AlgopyTestContext, None, None]:
+    with algopy_testing.algopy_testing_context() as ctx:
         yield ctx
         ctx.reset()
 
 
-def test_app_args_is_correct_with_simple_args(context: AlgopyTestContext) -> None:
+def test_app_args_is_correct_with_simple_args(context: algopy_testing.AlgopyTestContext) -> None:
     # arrange
     contract = SignaturesContract()
 
@@ -72,7 +35,7 @@ def test_app_args_is_correct_with_simple_args(context: AlgopyTestContext) -> Non
     ]
 
 
-def test_app_args_is_correct_with_alias(context: AlgopyTestContext) -> None:
+def test_app_args_is_correct_with_alias(context: algopy_testing.AlgopyTestContext) -> None:
     # arrange
     contract = SignaturesContract()
 
@@ -89,7 +52,7 @@ def test_app_args_is_correct_with_alias(context: AlgopyTestContext) -> None:
     ]
 
 
-def test_app_args_is_correct_with_txn(context: AlgopyTestContext) -> None:
+def test_app_args_is_correct_with_txn(context: algopy_testing.AlgopyTestContext) -> None:
     # arrange
     contract = SignaturesContract()
 
@@ -110,7 +73,9 @@ def test_app_args_is_correct_with_txn(context: AlgopyTestContext) -> None:
     ]
 
 
-def test_app_args_is_correct_with_asset(context: AlgopyTestContext) -> None:  # arrange
+def test_app_args_is_correct_with_asset(
+    context: algopy_testing.AlgopyTestContext,
+) -> None:  # arrange
     contract = SignaturesContract()
 
     # act
@@ -131,7 +96,7 @@ def test_app_args_is_correct_with_asset(context: AlgopyTestContext) -> None:  # 
     ]
 
 
-def test_app_args_is_correct_with_application(context: AlgopyTestContext) -> None:
+def test_app_args_is_correct_with_application(context: algopy_testing.AlgopyTestContext) -> None:
     # arrange
     contract = SignaturesContract()
     self_app = context.get_application_for_contract(contract)

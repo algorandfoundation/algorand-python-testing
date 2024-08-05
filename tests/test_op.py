@@ -225,7 +225,9 @@ def test_ed25519verify(
     approval = get_crypto_ops_avm_result.client.approval
     assert approval
     with algopy_testing_context() as ctx:
-        ctx.patch_txn_fields(approval_program=algopy.Bytes(approval.raw_binary))
+        app_call = ctx.any_application_call_transaction(
+            approval_program=(algopy.Bytes(approval.raw_binary),)
+        )
 
         # Prepare message and signing parameters
         message = b"Test message for ed25519 verification"
@@ -241,6 +243,7 @@ def test_ed25519verify(
         avm_result = get_crypto_ops_avm_result(
             "verify_ed25519verify", a=message, b=signature, c=public_key, suggested_params=sp
         )
+        ctx.set_transaction_group([app_call], active_transaction_index=0)
         result = op.ed25519verify(message, signature, public_key)
 
         assert avm_result == result, "The AVM result should match the expected result"
@@ -248,7 +251,7 @@ def test_ed25519verify(
 
 def test_ed25519verify_no_context() -> None:
     # Ensure the function raises an error outside the state context
-    with pytest.raises(RuntimeError, match="function must be run within an active context"):
+    with pytest.raises(ValueError, match="Test context is not initialized!"):
         op.ed25519verify(b"", b"", b"")
 
 
