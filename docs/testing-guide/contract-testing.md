@@ -124,6 +124,8 @@ For more examples of tests using `algopy.ARC4Contract`, see the [examples](../ex
 
 ## Contract
 
+Classes prefixed with `algopy.Contract` (parent class of `algopy.ARC4Contract`) are **required** to be instantiated withing test context. As part of instantiation, the test context will automatically create a matching `algopy.Application` object instance. This behaviour is identical to `algopy.ARC4Contract` class instances.
+
 Unlike `algopy.ARC4Contract`, `algopy.Contract` requires manual setup of the transaction context and explicit method calls. Here's an example demonstrating how to test a `Contract` class:
 
 ```python
