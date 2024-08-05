@@ -2,6 +2,39 @@
 
 The testing framework follows the Transaction definitions described in [`algorand-python` docs](https://algorand-python.readthedocs.io/en/latest/algorand_sdk/transactions.html). Which implies that transaction related abstractions fall under the following categories:
 
+## `algopy.Txn` opcode
+
+In contrast with [`algopy.Global`](state-management#Global), `algopy.Txn` opcode provides access to transactions submitted by the current executing transaction.
+
+### `scoped_txn_fields`:
+
+`scoped_txn_fields` is a context manager property available on test context instance that allows setting temporary transaction fields within a specific scope. It's defined in the AlgopyTestContext class:
+
+```python
+import algopy
+from algopy_testing import AlgopyTestContext, algopy_testing_context
+
+class SimpleContract(algopy.ARC4Contract):
+    @algopy.arc4.abimethod
+    def check_sender(self) -> algopy.Bytes:
+        return algopy.Txn.sender
+
+# Create a test context
+with algopy_testing_context() as ctx:
+    # Create a contract instance
+    contract = SimpleContract()
+    # Use scoped_txn_fields to temporarily change the sender
+    patched_sender = ctx.any_account()
+    with ctx.scoped_txn_fields(sender=patched_sender):
+        # Call the contract method
+        result = contract.check_sender()
+
+        # Assert that the sender is the default creator
+        assert result == patched_sender
+```
+
+The `scoped_txn_fields` context manager temporarily sets transaction fields and restores them to their previous values when exiting the context. This is useful for applying specific transaction fields for a limited scope without affecting the global state.
+
 ## Group Transactions
 
 Refers to transaction abstractions available under `algopy.gtxn.*` namespace.
@@ -148,4 +181,4 @@ asset_transfer_txn_2 = ctx.get_submitted_itxn_group(0).asset_transfer(0) # since
 # Note that above also performs type validation and will throw an error if the type of inner transaction at index is not of specified type.
 ```
 
-See [TODO: Examples url]() for more examples of accessing inner transactions.
+See [Examples](../examples.md) for more examples of accessing inner transactions.
