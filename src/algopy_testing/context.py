@@ -1075,9 +1075,7 @@ class AlgopyTestContext:
         raw_app_id = (
             int(app_id)
             if isinstance(app_id, algopy.UInt64)
-            else int(app_id.id)
-            if isinstance(app_id, algopy.Application)
-            else app_id
+            else int(app_id.id) if isinstance(app_id, algopy.Application) else app_id
         )
 
         if isinstance(logs, bytes):
@@ -1194,7 +1192,8 @@ class AlgopyTestContext:
         :param index: int:
         """
         # TODO: check active transaction is an app_call
-        # NOTE: In case of can't the Txn refer to non app call txns? Otherwise not sure how htls lsig code compiles (see examples)
+        # NOTE: In case of can't the Txn refer to non app call txns? Otherwise not sure how htls
+        # lsig code compiles (see examples)
         self._active_transaction_index = index
 
     def get_active_application(self) -> algopy.Application:
@@ -1369,7 +1368,20 @@ class AlgopyTestContext:
         return self._new_gtxn(algopy_testing.gtxn.Transaction, **fields)
 
     @contextmanager
-    def set_txn_fields(self, **fields: Unpack[TransactionFields]) -> Generator[None, None, None]:
+    def scoped_txn_fields(
+        self, **fields: Unpack[TransactionFields]
+    ) -> Generator[None, None, None]:
+        """Create a scoped context for transaction fields.
+
+        This context manager allows setting temporary transaction fields
+        that will be restored to their previous values when exiting the
+        context.
+
+        :param **fields: Transaction fields to be set within the scope.
+        :type **fields: Unpack[TransactionFields]
+        :return: A generator that yields None.
+        :rtype: Generator[None, None, None]
+        """
         last_txn = self._active_txn_fields
         self._active_txn_fields = fields  # type: ignore[assignment]
         try:
