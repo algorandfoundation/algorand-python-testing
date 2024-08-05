@@ -60,7 +60,7 @@ class HelloWorld(ARC4Contract):
 #### Test Definition
 
 ```python
-from algopy_testing impany_stringort algopy_testing_context
+from algopy_testing import algopy_testing_context
 from contracts.hello_world import HelloWorld
 
 def test_hello_world():
@@ -81,7 +81,7 @@ The `test_hello_world()` function demonstrates key aspects of testing with `algo
 
 1. Arrange:
 
-    - Simulated Environment: Utilizes `algopy_testing_context()` to mimic the Algorand Virtual Machine. It also provides access to an array of utilities and so called `anonymous variables` which allow quick instantiation of random values of specific types where the value itself is not important, it also serves as a backbone for property based testing capabilities.
+    - Simulated Environment: Utilizes `algopy_testing_context()` to mimic the Algorand Virtual Machine. It also provides access to an array of utilities and so called [_value generators_](testing-guide/concepts.md#value-generators) which allow quick instantiation of random values of specific types where the value itself is not important, it also serves as a backbone for property based testing capabilities.
     - Test Data Generation: Leverages `ctx.any_string()` for creating random, typed inputs of type `algopy.String`. Note that this differs from `algopy.arc4` types, for which context manager provides separate `any_*` methods accessible via `arc4` property on context instance.
     - Contract Instantiation: Creates an instance of `HelloWorld` contract within the test context. Test context automatically instantiates a corresponding `algopy.Application` and links it with the class instance which is loaded in the python interpreter.
 

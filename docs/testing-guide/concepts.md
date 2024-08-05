@@ -20,27 +20,43 @@ def test_my_contract():
     ctx.reset()  # Reset the emulated environment
 ```
 
-The `AlgopyTestContext` provides two methods for managing the state of the testing environment:
+### Managing Test Context State
 
-1. `clear()`: Clears all data structures and state within the context without resetting counters or recreating default objects. This is useful for clearing the state between related tests without fully reinitializing the context. Invoking `clear()` implies invoking all granular `clear_*` methods, see [below](#clear_methods) for more details on exact abstractions and states being cleared.
+1. **Automatic Reset with Context Manager**:
 
-2. `reset()`: Performs a more thorough reset of the context, reinitializing all data structures to their default states, resetting counters, and recreating default objects and settings. This ensures a completely fresh state, especially useful between unrelated test suites.
+    ```python
+    with algopy_testing_context() as ctx:
+        ... # your test code here
+    # Context is reset after exiting the block
+    ```
 
-```python
-# Clear the current state
-ctx.clear()
+    Recommended for its automatic management and efficiency.
 
-# Perform a full reset
-ctx.reset()
-```
+2. **Manual Cleanup with `clear()`**:
+
+    ```python
+    ctx = AlgopyTestContext()
+    ... # your test code here
+    ctx.clear()
+    ```
+
+    Clears state without resetting counters or recreating default objects. Useful between related tests.
+
+3. **Manual Reset with `reset()`**:
+    ```python
+    ctx = AlgopyTestContext()
+    ... # your test code here
+    ctx.reset()
+    ```
+    Thoroughly resets the context, reinitializing all data structures and settings. Ideal for unrelated test suites.
 
 ```{hint}
-The choice between `clear()` and `reset()` depends on your specific testing needs. Use `clear()` for a quick state clearance between related tests, and `reset()` when you need a completely fresh environment.
+Use `clear()` for quick state clearance between related tests, and `reset()` for a completely fresh environment.
 ```
 
 ## Types of `algopy` stub implementations
 
-As expalined in the [introduction](), `algorand-python-testing` _injects_ test implementations for stubs available in `algorand-python` package. However, not all of the stubs implemented in the same manner:
+As explained in the [introduction](index.md), `algorand-python-testing` _injects_ test implementations for stubs available in `algorand-python` package. However, not all of the stubs implemented in the same manner:
 
 1. **Native**: Fully matches AVM computation in Python. For example, `algopy.op.sha256` and other cryptographic operations behave identically in AVM and unit tests. This implies the majority of opcodes that are 'pure' functions in AVM also have a native Python implementation provided by this package. These abstractions and opcodes can be used within and outside of the testing context.
 
@@ -52,7 +68,7 @@ For a full list of all public `algopy` types and their corresponding implementat
 
 ## Value generators
 
-Testing context provides an range of helper methods called _value generators_ which allow quick generate and/or instantiation of randomized values for specified AVM types, which is also a common building block in _property-based_ testing methodologies. To access them, refer to methods prefixed with word `any_*`or`arc4.any_*` on the test context instance.
+Testing context provides an range of helper methods called _value generators_ which allow quick generate and/or instantiation of randomized values for specified AVM types, which is also a common building block in _property-based_ testing methodologies. To access them, refer to methods prefixed with word `any_*` or `arc4.any_*` on the test context instance.
 
 For detailed breakdown of all available value generators and their arguments, refer to the [API docs](api.md).
 

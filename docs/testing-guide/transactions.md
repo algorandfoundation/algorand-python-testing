@@ -114,7 +114,7 @@ ctx.clear_transaction_group()
 
 ## Inner Transaction
 
-Inner transactions are special type of AVM transactions that are signed and executed by AVM applications (instances of deployed smart contract/signatures). When testing smart contracts, you may interact and manage inner transactions via the test context manager as such:
+Inner transactions are AVM transactions that are signed and executed by an AVM applications (instances of deployed smart contract/signatures). When testing smart contracts, you may interact and manage inner transactions via the test context manager as such:
 
 ```python
 # Lets use a method borrowed from our auction contract from examples. The method performs an inner asset transfer.

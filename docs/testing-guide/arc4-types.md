@@ -3,7 +3,7 @@
 These types are available under the `algopy.arc4` namespace. Refer to the [ARC4 specification](https://arc.algorand.foundation/ARCs/arc-0004) for more details on the spec.
 
 ```{hint}
-As outlined in {link to concepts}, test context manager provides _value generators_ for ARC4 types as well. To access those, use `{context_instance}.arc4` property. See more examples below.
+Test context manager provides _value generators_ for ARC4 types. To access those, use `{context_instance}.arc4` property. See more examples below.
 ```
 
 ```{note}

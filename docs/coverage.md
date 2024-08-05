@@ -1,6 +1,6 @@
 # Coverage
 
-See which `algorand-python` stubs are implemented by the `algorand-python-testing` library. See the [Concepts](usage.md#concepts) section for more details on the implementation categories.
+See which `algorand-python` stubs are implemented by the `algorand-python-testing` library. See the [Concepts](testing-guide/concepts.md#types-of-algopy-stub-implementations) section for more details on the implementation categories.
 
 Based on the definitions provided and the implementation details in the `src` directory, here is the classification for the abstractions outlined in the table under the `Name` column:
 

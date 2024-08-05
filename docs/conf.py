@@ -11,25 +11,18 @@ project = "Algorand Python Testing"
 copyright = "2024, Algorand Foundation"  # noqa: A001
 author = "Algorand Foundation"
 
-import sys
-import os
 
-# Add the docs directory to the Python path
-sys.path.insert(0, os.path.abspath("."))
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
     "sphinx.ext.githubpages",
     "sphinx.ext.intersphinx",
-    "sphinx.ext.napoleon",
     "sphinx_copybutton",
     "myst_parser",
     "sphinxmermaid",
     "autodoc2",  # Add this line
 ]
-
-napoleon_google_docstring = True
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
@@ -79,12 +72,6 @@ autodoc2_render_plugin = "myst"
 autodoc2_hidden_objects = [
     "private",  # single-underscore methods, e.g. _private
     "undoc",
-]
-autodoc2_docstring_parser_regexes = [
-    (
-        ".*",
-        "_docstrings_parser",
-    ),
 ]
 add_module_names = False
 autodoc2_index_template = None

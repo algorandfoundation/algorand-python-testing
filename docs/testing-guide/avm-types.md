@@ -82,7 +82,7 @@ random_biguint512 = ctx.any_biguint512(min_value=1000, max_value=999999999999)
 
 ```python
 # Direct instantiation
-asset = algopy.Asset(id=1, name="TestCoin", total=1000000, decimals=6)
+asset = algopy.Asset(asset_id=1001)
 
 # Instantiate test context
 ...
@@ -130,7 +130,7 @@ ctx.clear_asset(asset_id=1)
 
 ```python
 # Direct instantiation
-account = algopy.Account(address="{ADDRESS}", balance=1000000)
+account = algopy.Account({ADDRESS})
 
 # Instantiate test context
 ...
@@ -187,7 +187,7 @@ ctx.clear_accounts()
 
 ```python
 # Direct instantiation
-application = algopy.Application(id=1, approval_program=b"approval_code", clear_state_program=b"clear_code")
+application = algopy.Application(application_id=1001)
 
 # Instantiate test context
 ...
