@@ -87,7 +87,7 @@ The `test_hello_world()` function demonstrates key aspects of testing with `algo
 
 2. Act:
 
-    - Method Invocation: Calls `hello()` in a Python interpreter, enabling state inspection and debugging. When you run methods decorated with `abimethod` or `baremethod`, test context will automatically assemble a respective `appl` transaction which can be accessed via `context.get_active_transaction`, note that it will also automatically pre populate foreign references passed, as well as related method signature simulating AVM behaviour.
+    - Method Invocation: Calls `hello()` in a Python interpreter, enabling state inspection and debugging. When you run methods decorated with `abimethod` or `baremethod`, test context will automatically assemble a respective `appl` transaction which can be accessed via `context.get_active_transaction`, note that it will also automatically pre populate foreign references passed, as include the appropriate method signature in the application args.
 
 3. Assert:
     - Behavior Verification: Asserts the expected output matches the actual result.
