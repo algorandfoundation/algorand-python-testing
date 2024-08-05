@@ -4,7 +4,7 @@ from algopy_testing.protocols import BytesBacked
 from algopy_testing.utils import int_to_bytes
 
 
-def log(  # noqa: C901
+def log(
     *args: UInt64 | Bytes | BytesBacked | str | bytes | int,
     sep: Bytes | bytes | str = b"",
 ) -> None:

@@ -167,7 +167,7 @@ def is_instance(obj: object, class_or_tuple: type | UnionType) -> bool:
     return isinstance(obj, class_or_tuple)
 
 
-def abi_type_name_for_arg(  # noqa: PLR0912, C901, PLR0911
+def abi_type_name_for_arg(  # noqa: PLR0912, PLR0911
     *, arg: object, is_return_type: bool = False
 ) -> str:
     """Returns the ABI type name for the given argument.
