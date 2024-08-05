@@ -90,7 +90,7 @@ detached = true
 path = ".venv.lint"
 dependencies = [
     "black",
-    "ruff==0.4.2",
+    "ruff>=0.4.2",
     "ruff-lsp",
     "docformatter",
 ]
@@ -232,6 +232,8 @@ ignore = [
     "RET504",
     "RET505",  # stylistic choices for readability
     "S101",    # allow asserts    
+    "C901",    # allow >10 args in a method
+    "N805",    # allow using `cls` as a firstparameter name
 ]
 unfixable = [
     "F841", # don't delete unused local variables automatically
@@ -240,6 +242,7 @@ unfixable = [
 "src/**" = [
     "PT", # no pytest rules
 ]
+"src/algopy_testing/models/logicsig.py" = ["ARG002"]
 "scripts/**/*.py" = ["T201"]
 "scripts/refresh_test_artifacts.py" = ["S603"]
 "scripts/validate_examples.py" = ["S603"]
