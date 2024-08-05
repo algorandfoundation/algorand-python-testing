@@ -1,4 +1,4 @@
-from algopy_testing import arc4, gtxn, itxn, op
+from algopy_testing import arc4, gtxn, itxn
 from algopy_testing.context import AlgopyTestContext, algopy_testing_context, get_test_context
 from algopy_testing.decorators.subroutine import subroutine
 from algopy_testing.enums import OnCompleteAction, TransactionType
@@ -11,9 +11,6 @@ from algopy_testing.models import (
     BoxMap,
     BoxRef,
     Contract,
-    Global,
-    GTxn,
-    ITxn,
     LogicSig,
     StateTotals,
     TemplateVar,
@@ -36,10 +33,7 @@ __all__ = [
     "BoxRef",
     "Bytes",
     "Contract",
-    "Global",
     "GlobalState",
-    "GTxn",
-    "ITxn",
     "LocalState",
     "LogicSig",
     "OnCompleteAction",

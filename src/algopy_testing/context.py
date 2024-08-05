@@ -9,7 +9,7 @@ from contextvars import ContextVar
 from dataclasses import dataclass
 
 # Define the union type
-from typing import TYPE_CHECKING, Any, TypeVar, Unpack, cast, overload
+from typing import TYPE_CHECKING, Any, Unpack, overload
 
 import algosdk
 
@@ -29,30 +29,34 @@ from algopy_testing.constants import (
     MAX_UINT64,
     MAX_UINT512,
 )
-from algopy_testing.gtxn import NULL_GTXN_GROUP_INDEX
-from algopy_testing.models.account import AccountContextData, AccountFields, get_empty_account
+from algopy_testing.gtxn import TransactionBase
+from algopy_testing.models.account import (
+    Account,
+    AccountContextData,
+    AccountFields,
+    get_empty_account,
+)
 from algopy_testing.models.asset import AssetFields
-from algopy_testing.models.global_values import GlobalFields
-from algopy_testing.models.txn import TxnFields
-from algopy_testing.utils import generate_random_int
+from algopy_testing.models.txn_fields import get_txn_defaults
+from algopy_testing.primitives.uint64 import UInt64
+from algopy_testing.utils import convert_native_to_stack, generate_random_int
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Generator, Sequence
 
     import algopy
 
-    from algopy_testing.gtxn import (
+    from algopy_testing.models.application import ApplicationFields
+    from algopy_testing.models.txn_fields import (
+        ApplicationCallFields,
+        AssetConfigFields,
+        AssetFreezeFields,
         AssetTransferFields,
+        KeyRegistrationFields,
         PaymentFields,
         TransactionFields,
     )
-    from algopy_testing.models.application import ApplicationFields
-    from algopy_testing.models.transactions import (
-        AssetConfigFields,
-        AssetFreezeFields,
-        KeyRegistrationFields,
-        _ApplicationCallFields,
-    )
+    from algopy_testing.op.global_values import GlobalFields
 
     InnerTransactionResultType = (
         algopy.itxn.InnerTransactionResult
@@ -64,8 +68,12 @@ if TYPE_CHECKING:
         | algopy.itxn.ApplicationCallInnerTransaction
     )
 
+_TGlobalTxn = typing.TypeVar("_TGlobalTxn", bound=TransactionBase)
+T = typing.TypeVar("T")
 
-T = TypeVar("T")
+# temporary group_index value used for group transactions while arranging a test
+# will be replaced with actual group index once a call is made or user sets transaction group
+NULL_GTXN_GROUP_INDEX = -1
 
 
 class ITxnLoader:
@@ -340,9 +348,8 @@ class ARC4Factory:
         Returns:
             algopy.arc4.Address: A new, random Algorand address.
         """
-        import algopy
 
-        return algopy.arc4.Address(algosdk.account.generate_account()[1])
+        return algopy_testing.arc4.Address(algosdk.account.generate_account()[1])
 
     def any_uint8(self, min_value: int = 0, max_value: int = MAX_UINT8) -> algopy.arc4.UInt8:
         """Generate a random UInt8 within the specified range.
@@ -524,7 +531,6 @@ class ARC4Factory:
         return algopy.arc4.String(random_string)
 
 
-@dataclass
 class AlgopyTestContext:
     """
     Manages the testing context for Algorand Python SDK (algopy) applications.
@@ -556,23 +562,24 @@ class AlgopyTestContext:
         self._asset_id = iter(range(1001, 2**64))
         self._app_id = iter(range(1001, 2**64))
 
-        self._active_contract: algopy_testing.Contract | algopy_testing.ARC4Contract | None = None
-        self._contracts: list[algopy_testing.Contract | algopy_testing.ARC4Contract] = []
-        self._app_id_to_contract: dict[
-            int, algopy_testing.Contract | algopy_testing.ARC4Contract
-        ] = {}
-        self._txn_fields: TxnFields = {}
-        self._gtxns: list[algopy.gtxn.TransactionBase] = []
+        self._active_contract: algopy_testing.Contract | None = None
+        self._app_id_to_contract = dict[int, algopy_testing.Contract]()
+        # TODO: combine these?
+        self._gtxns: dict[algopy_testing.gtxn.TransactionBase, dict[str, object]] = {}
+        self._active_txn_fields = dict[str, typing.Any]()
+        self._scratch_spaces = defaultdict[
+            algopy_testing.gtxn.TransactionBase, list[algopy.Bytes | algopy.UInt64]
+        ](_get_scratch_slots)
+        self._current_transaction_group = list[algopy_testing.gtxn.TransactionBase]()
         self._active_transaction_index: int | None = None
         self._application_data: dict[int, ApplicationFields] = {}
+        # TODO: this map is from app_id to logs, should probably instead be stored against
+        #       the appropriate txn
         self._application_logs: dict[int, list[bytes]] = {}
         self._asset_data: dict[int, AssetFields] = {}
         self._inner_transaction_groups: list[Sequence[InnerTransactionResultType]] = []
         self._constructing_inner_transaction_group: list[InnerTransactionResultType] = []
         self._constructing_inner_transaction: InnerTransactionResultType | None = None
-        self._scratch_spaces: dict[
-            algopy_testing.gtxn._GroupTransaction, list[algopy.Bytes | algopy.UInt64 | bytes | int]
-        ] = {}
         self._template_vars: dict[str, Any] = template_vars or {}
         self._blocks: dict[int, dict[str, int]] = {}
         self._boxes: dict[bytes, bytes] = {}
@@ -614,6 +621,8 @@ class AlgopyTestContext:
         Raises:
             AttributeError: If a key is invalid.
         """
+        from algopy_testing.op.global_values import GlobalFields
+
         invalid_keys = global_fields.keys() - GlobalFields.__annotations__.keys()
 
         if invalid_keys:
@@ -622,24 +631,6 @@ class AlgopyTestContext:
             )
 
         self._global_fields.update(global_fields)
-
-    def patch_txn_fields(self, **txn_fields: Unpack[TxnFields]) -> None:
-        """
-        Patch 'algopy.Txn' fields in the test context.
-
-        Args:
-            **txn_fields: Key-value pairs for transaction fields.
-
-        Raises:
-            AttributeError: If a key is invalid.
-        """
-        invalid_keys = txn_fields.keys() - TxnFields.__annotations__.keys()
-        if invalid_keys:
-            raise AttributeError(
-                f"Invalid field(s) found during patch for `Txn`: {', '.join(invalid_keys)}"
-            )
-
-        self._txn_fields.update(txn_fields)
 
     def get_application_for_contract(
         self, contract: algopy.Contract | algopy.ARC4Contract
@@ -654,10 +645,10 @@ class AlgopyTestContext:
         txn: algopy.gtxn.TransactionBase,
         scratch_space: Sequence[algopy.Bytes | algopy.UInt64 | bytes | int],
     ) -> None:
-        new_scratch_space: list[algopy.Bytes | algopy.UInt64 | bytes | int] = [0] * 256
+        new_scratch_space = _get_scratch_slots()
         # insert values to list at specific indexes, use key as index and value as value to set
         for index, value in enumerate(scratch_space):
-            new_scratch_space[index] = value
+            new_scratch_space[index] = convert_native_to_stack(value)
 
         self._scratch_spaces[txn] = new_scratch_space
 
@@ -667,13 +658,26 @@ class AlgopyTestContext:
         index: algopy.UInt64 | int,
         value: algopy.Bytes | algopy.UInt64 | bytes | int,
     ) -> None:
-        assert index >= 0 and index < 256, f"Index {index} out of bounds for scratch space"
-        self._scratch_spaces.setdefault(txn, [0] * 256)
-        self._scratch_spaces[txn][int(index)] = value
+        slots = self._scratch_spaces[txn]
+        try:
+            slots[int(index)] = convert_native_to_stack(value)
+        except IndexError:
+            raise ValueError("invalid scratch slot") from None
+
+    def get_scratch_slot(
+        self,
+        txn: algopy.gtxn.TransactionBase,
+        index: algopy.UInt64 | int,
+    ) -> algopy.UInt64 | algopy.Bytes:
+        slots = self._scratch_spaces[txn]
+        try:
+            return slots[int(index)]
+        except IndexError:
+            raise ValueError("invalid scratch slot") from None
 
     def get_scratch_space(
         self, txn: algopy.gtxn.TransactionBase
-    ) -> list[algopy.Bytes | algopy.UInt64 | bytes | int]:
+    ) -> Sequence[algopy.Bytes | algopy.UInt64]:
         """Retrieves scratch space for a transaction.
 
         Args:
@@ -724,7 +728,7 @@ class AlgopyTestContext:
         Returns:
             algopy.Account: The account associated with the address.
         """
-        return algopy_testing.Account(address)
+        return Account(address)
 
     def get_account_data(self) -> dict[str, AccountContextData]:
         """
@@ -853,7 +857,7 @@ class AlgopyTestContext:
 
     def _append_inner_transaction_group(
         self,
-        itxn: Sequence[InnerTransactionResultType],
+        itxns: Sequence[object],
     ) -> None:
         """
         Append a group of inner transactions to the context.
@@ -861,9 +865,7 @@ class AlgopyTestContext:
         Args:
             itxn (Sequence[InnerTransactionResultType]): The group of inner transactions to append.
         """
-        import algopy.itxn
-
-        self._inner_transaction_groups.append(cast(list[algopy.itxn.InnerTransactionResult], itxn))
+        self._inner_transaction_groups.append(itxns)  # type: ignore[arg-type]
 
     def get_submitted_itxn_groups(self) -> list[Sequence[InnerTransactionResultType]]:
         """
@@ -1148,7 +1150,7 @@ class AlgopyTestContext:
             active_transaction_index (int, optional): Index of the active transaction.
             Defaults to None.
         """
-        self._gtxns = gtxn
+        self._update_current_transaction_group(gtxn)
 
         if active_transaction_index is not None:
             self.set_active_transaction_index(active_transaction_index)
@@ -1167,32 +1169,31 @@ class AlgopyTestContext:
             ValueError: If any transaction is not an instance of TransactionBase or if the total
             number of transactions exceeds the group limit.
         """
-        # ensure that new len after append is at most 16 txns in a group
-        import algopy.gtxn
+        self._update_current_transaction_group([*self._current_transaction_group, *gtxns])
 
-        if not all(isinstance(txn, algopy.gtxn.TransactionBase) for txn in gtxns):  # type: ignore[arg-type, unused-ignore]
+    def _update_current_transaction_group(
+        self, group: list[algopy_testing.gtxn.TransactionBase | algopy.gtxn.TransactionBase]
+    ) -> None:
+        if not all(isinstance(txn, algopy_testing.gtxn.TransactionBase) for txn in group):
             raise ValueError("All transactions must be instances of TransactionBase")
 
-        if len(self._gtxns) + len(gtxns) > algosdk.constants.TX_GROUP_LIMIT:
+        if len(group) > algosdk.constants.TX_GROUP_LIMIT:
             raise ValueError(
                 f"Transaction group can have at most {algosdk.constants.TX_GROUP_LIMIT} "
                 "transactions, as per AVM limits."
             )
+        for i, txn in enumerate(group):
+            txn.fields["group_index"] = algopy_testing.UInt64(i)
+        self._current_transaction_group = group
 
-        self._gtxns.extend(gtxns)
-
-        # iterate and refresh group_index to match the order of transactions
-        for i, txn in enumerate(self._gtxns):
-            txn._fields["group_index"] = i
-
-    def get_transaction_group(self) -> list[algopy.gtxn.TransactionBase]:
+    def get_transaction_group(self) -> Sequence[algopy.gtxn.TransactionBase]:
         """
         Retrieve the current transaction group.
 
         Returns:
             list[algopy.gtxn.TransactionBase]: The current transaction group.
         """
-        return self._gtxns
+        return self._current_transaction_group
 
     def set_active_transaction_index(self, index: int) -> None:
         """
@@ -1201,6 +1202,7 @@ class AlgopyTestContext:
         Args:
             index (int): The index of the active transaction.
         """
+        # TODO: check active transaction is an app_call
         self._active_transaction_index = index
 
     def get_active_application(self) -> algopy.Application:
@@ -1216,9 +1218,15 @@ class AlgopyTestContext:
             raise ValueError("No active contract")
         return self.get_application_for_contract(self._active_contract)
 
-    def get_active_transaction(
-        self,
-    ) -> algopy.gtxn.Transaction:
+    def get_transaction(self, index: int) -> algopy.gtxn.Transaction:
+        try:
+            active_txn = self._current_transaction_group[index]
+        except IndexError:
+            raise ValueError("invalid group index") from None
+
+        return typing.cast(algopy_testing.gtxn.Transaction, active_txn)
+
+    def get_active_transaction(self) -> algopy.gtxn.Transaction:
         """
         Retrieve the active transaction.
 
@@ -1228,12 +1236,10 @@ class AlgopyTestContext:
         Raises:
             ValueError: If no active transaction is found.
         """
-        import algopy
-
         if self._active_transaction_index is None:
             raise ValueError("No active transaction found")
-        active_txn = self._gtxns[self._active_transaction_index]
-        return typing.cast(algopy.gtxn.Transaction, active_txn)
+
+        return self.get_transaction(self._active_transaction_index)
 
     def any_uint64(self, min_value: int = 0, max_value: int = MAX_UINT64) -> algopy.UInt64:
         """
@@ -1249,14 +1255,12 @@ class AlgopyTestContext:
         Raises:
             ValueError: If `max_value` exceeds MAX_UINT64 or `min_value` exceeds `max_value`.
         """
-        import algopy
-
         if max_value > MAX_UINT64:
             raise ValueError("max_value must be less than or equal to MAX_UINT64")
         if min_value > max_value:
             raise ValueError("min_value must be less than or equal to max_value")
 
-        return algopy.UInt64(generate_random_int(min_value, max_value))
+        return algopy_testing.UInt64(generate_random_int(min_value, max_value))
 
     def any_bytes(self, length: int = MAX_BYTES_SIZE) -> algopy.Bytes:
         """
@@ -1268,187 +1272,132 @@ class AlgopyTestContext:
         Returns:
             algopy.Bytes: The randomly generated byte sequence.
         """
-        import algopy
-
-        return algopy.Bytes(secrets.token_bytes(length))
+        return algopy_testing.Bytes(secrets.token_bytes(length))
 
     def any_string(self, length: int = MAX_BYTES_SIZE) -> algopy.String:
         """
         Generate a random string of a specified length.
         """
-        import algopy
-
-        return algopy.String(
+        return algopy_testing.String(
             "".join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(length))
         )
 
-    def any_application_call_transaction(  # type: ignore[misc] # noqa: PLR0913
+    def any_application_call_transaction(
         self,
-        app_id: algopy.Application,
-        app_args: Sequence[algopy.Bytes] = (),
-        accounts: Sequence[algopy.Account] = (),
-        assets: Sequence[algopy.Asset] = (),
-        apps: Sequence[algopy.Application] = (),
-        approval_program_pages: Sequence[algopy.Bytes] = (),
-        clear_state_program_pages: Sequence[algopy.Bytes] = (),
         scratch_space: Sequence[algopy.Bytes | algopy.UInt64 | int | bytes] | None = None,
-        **kwargs: Unpack[_ApplicationCallFields],
+        **fields: Unpack[ApplicationCallFields],
     ) -> algopy.gtxn.ApplicationCallTransaction:
         """
         Generate a new application call transaction.
 
         Args:
-            app_id: Application ID.
-            app_args: Application arguments.
-            accounts: Accounts to be used.
-            assets: Assets to be used.
-            apps: Applications to be used.
-            approval_program_pages: Approval program pages.
-            clear_state_program_pages: Clear state program pages.
             scratch_space: Scratch space data.
-            **kwargs: Additional transaction fields.
+            **fields (Unpack[ApplicationCallFields]): Fields to be set in the transaction.
 
         Returns:
             New application call transaction.
         """
-        import algopy.gtxn
+        try:
+            app_id = fields["app_id"]
+        except KeyError:
+            app_id = fields["app_id"] = self.any_application()
 
-        if not isinstance(app_id, algopy.Application):
+        if not isinstance(app_id, algopy_testing.Application):
             raise TypeError("`app_id` must be an instance of algopy.Application")
         if int(app_id.id) not in self._application_data:
             raise ValueError(
                 f"algopy.Application with ID {app_id.id} not found in testing context!"
             )
 
-        dynamic_params = {
-            "app_id": lambda: app_id,
-            "app_args": lambda index: app_args[index],
-            "accounts": lambda index: accounts[index],
-            "assets": lambda index: assets[index],
-            "apps": lambda index: apps[index],
-            "approval_program_pages": lambda index: approval_program_pages[index],
-            "clear_state_program_pages": lambda index: clear_state_program_pages[index],
-        }
-        new_txn = algopy.gtxn.ApplicationCallTransaction(NULL_GTXN_GROUP_INDEX)
-
-        merged_params = dict(ChainMap(kwargs, dynamic_params))
-        for key, value in merged_params.items():
-            setattr(new_txn, key, value)
-
-        self.set_scratch_space(new_txn.txn_id, scratch_space or [])
+        new_txn = self._new_gtxn(algopy_testing.gtxn.ApplicationCallTransaction, **fields)
+        self.set_scratch_space(new_txn, scratch_space or [])
 
         return new_txn
 
     def any_asset_transfer_transaction(
-        self, **kwargs: Unpack[AssetTransferFields]
+        self, **fields: Unpack[AssetTransferFields]
     ) -> algopy.gtxn.AssetTransferTransaction:
         """
         Generate a new asset transfer transaction with specified fields.
 
         Args:
-            **kwargs (Unpack[AssetTransferFields]): Fields to be set in the transaction.
+            **fields (Unpack[AssetTransferFields]): Fields to be set in the transaction.
 
         Returns:
             algopy.gtxn.AssetTransferTransaction: The newly generated asset transfer transaction.
         """
-        import algopy.gtxn
-
-        new_txn = algopy.gtxn.AssetTransferTransaction(NULL_GTXN_GROUP_INDEX)
-
-        for key, value in kwargs.items():
-            setattr(new_txn, key, value)
-
-        return new_txn
+        return self._new_gtxn(algopy_testing.gtxn.AssetTransferTransaction, **fields)
 
     def any_payment_transaction(
-        self, **kwargs: Unpack[PaymentFields]
+        self, **fields: Unpack[PaymentFields]
     ) -> algopy.gtxn.PaymentTransaction:
         """
         Generate a new payment transaction with specified fields.
 
         Args:
-            **kwargs (Unpack[PaymentFields]): Fields to be set in the transaction.
+            **fields (Unpack[PaymentFields]): Fields to be set in the transaction.
 
         Returns:
             algopy.gtxn.PaymentTransaction: The newly generated payment transaction.
         """
-        import algopy.gtxn
-
-        new_txn = algopy.gtxn.PaymentTransaction(NULL_GTXN_GROUP_INDEX)
-
-        for key, value in kwargs.items():
-            setattr(new_txn, key, value)
-
-        return new_txn
+        return self._new_gtxn(algopy_testing.gtxn.PaymentTransaction, **fields)
 
     def any_asset_config_transaction(
-        self, **kwargs: Unpack[AssetConfigFields]
+        self, **fields: Unpack[AssetConfigFields]
     ) -> algopy.gtxn.AssetConfigTransaction:
         """
         Generate a new ACFG transaction with specified fields.
         """
-        import algopy.gtxn
-
-        new_txn = algopy.gtxn.AssetConfigTransaction(NULL_GTXN_GROUP_INDEX)
-
-        for key, value in kwargs.items():
-            setattr(new_txn, key, value)
-
-        return new_txn
+        return self._new_gtxn(algopy_testing.gtxn.AssetConfigTransaction, **fields)
 
     def any_key_registration_transaction(
-        self, **kwargs: Unpack[KeyRegistrationFields]
+        self, **fields: Unpack[KeyRegistrationFields]
     ) -> algopy.gtxn.KeyRegistrationTransaction:
         """
         Generate a new key registration transaction with specified fields.
         """
-        import algopy.gtxn
-
-        new_txn = algopy.gtxn.KeyRegistrationTransaction(NULL_GTXN_GROUP_INDEX)
-
-        for key, value in kwargs.items():
-            setattr(new_txn, key, value)
-
-        return new_txn
+        return self._new_gtxn(algopy_testing.gtxn.KeyRegistrationTransaction, **fields)
 
     def any_asset_freeze_transaction(
-        self, **kwargs: Unpack[AssetFreezeFields]
+        self, **fields: Unpack[AssetFreezeFields]
     ) -> algopy.gtxn.AssetFreezeTransaction:
         """
         Generate a new asset freeze transaction with specified fields.
         """
-        import algopy.gtxn
+        return self._new_gtxn(algopy_testing.gtxn.AssetFreezeTransaction, **fields)
 
-        new_txn = algopy.gtxn.AssetFreezeTransaction(NULL_GTXN_GROUP_INDEX)
-
-        for key, value in kwargs.items():
-            setattr(new_txn, key, value)
-
-        return new_txn
-
-    def any_transaction(  # type: ignore[misc]
+    def any_transaction(
         self,
-        type: algopy.TransactionType,  # noqa: A002
-        **kwargs: Unpack[TransactionFields],
+        **fields: Unpack[TransactionFields],
     ) -> algopy.gtxn.Transaction:
         """
         Generate a new transaction with specified fields.
 
         Args:
-            type (algopy.TransactionType): Transaction type.
-            **kwargs (Unpack[TransactionFields]): Fields to be set in the transaction.
+            **fields (Unpack[TransactionFields]): Fields to be set in the transaction.
 
         Returns:
             algopy.gtxn.Transaction: The newly generated transaction.
         """
-        import algopy.gtxn
+        return self._new_gtxn(algopy_testing.gtxn.Transaction, **fields)
 
-        new_txn = algopy.gtxn.Transaction(NULL_GTXN_GROUP_INDEX, type=type)  # type: ignore[arg-type, unused-ignore]
+    @contextmanager
+    def set_txn_fields(self, **fields: Unpack[TransactionFields]) -> Generator[None, None, None]:
+        last_txn = self._active_txn_fields
+        self._active_txn_fields = fields  # type: ignore[assignment]
+        try:
+            yield
+        finally:
+            self._active_txn_fields = last_txn
 
-        for key, value in kwargs.items():
-            setattr(new_txn, key, value)
+    def _new_gtxn(self, txn_type: type[_TGlobalTxn], **fields: object) -> _TGlobalTxn:
+        txn = txn_type.new()
+        # TODO: check reference types are known?
+        fields.setdefault("type", txn_type.type_enum)
+        fields.setdefault("sender", self.default_creator)  # TODO: have a default sender too?
 
-        return new_txn
+        self._gtxns[txn] = {**get_txn_defaults(), **fields}
+        return txn
 
     def does_box_exist(self, name: algopy.Bytes | bytes) -> bool:
         """return true if the box with the given name exists."""
@@ -1511,7 +1460,7 @@ class AlgopyTestContext:
         """
         Clear the transaction group.
         """
-        self._gtxns.clear()
+        self._current_transaction_group.clear()
 
     def clear_accounts(self) -> None:
         """
@@ -1600,11 +1549,10 @@ class AlgopyTestContext:
         self._application_data = {}
         self._asset_data = {}
         self._active_transaction_index = None
-        self._scratch_spaces = {}
+        self._scratch_spaces = defaultdict(_get_scratch_slots)
         self._inner_transaction_groups = []
-        self._gtxns = []
+        self._current_transaction_group = []
         self._global_fields = {}
-        self._txn_fields = {}
         self._application_logs = {}
         self._asset_id = iter(range(1, 2**64))
         self._app_id = iter(range(1, 2**64))
@@ -1614,12 +1562,13 @@ _var: ContextVar[AlgopyTestContext] = ContextVar("_var")
 
 
 def get_test_context() -> AlgopyTestContext:
-    result = _var.get()
-    if result is None:
+    try:
+        result = _var.get()
+    except LookupError:
         raise ValueError(
             "Test context is not initialized! Use `with algopy_testing_context()` to "
             "access the context manager."
-        )
+        ) from None
     return result
 
 
@@ -1641,3 +1590,7 @@ def algopy_testing_context(
 
 def _assert_address_is_valid(address: str) -> None:
     assert algosdk.encoding.is_valid_address(address), "Invalid Algorand address supplied!"
+
+
+def _get_scratch_slots() -> list[algopy.Bytes | algopy.UInt64]:
+    return [UInt64(0)] * 256

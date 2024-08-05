@@ -6,6 +6,7 @@ if typing.TYPE_CHECKING:
     import algopy
 
 
+@typing.runtime_checkable
 class BytesBacked(typing.Protocol):
     """Represents a type that is a single bytes value"""
 

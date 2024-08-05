@@ -2,6 +2,7 @@ import typing
 from collections.abc import Callable, Sequence
 
 
+# TODO: combine with itxn
 class _GITxn:
     def __getattr__(self, name: str) -> Callable[[int], typing.Any]:
         from algopy_testing.context import get_test_context

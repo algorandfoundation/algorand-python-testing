@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import base64
+import enum
 import hashlib
 import json
 import math
 import typing
+from collections.abc import Sequence
 
 import algosdk
 import coincurve
@@ -18,7 +20,6 @@ from ecdsa import (  # type: ignore  # noqa: PGH003
     VerifyingKey,
 )
 
-import algopy_testing
 from algopy_testing.constants import (
     BITS_IN_BYTE,
     DEFAULT_ACCOUNT_MIN_BALANCE,
@@ -27,16 +28,12 @@ from algopy_testing.constants import (
     MAX_UINT64,
 )
 from algopy_testing.context import get_test_context
-from algopy_testing.enums import EC, ECDSA, Base64, VrfVerify
-from algopy_testing.models.block import Block
-from algopy_testing.models.gitxn import GITxn
-from algopy_testing.models.global_values import Global
-from algopy_testing.models.gtxn import GTxn
-from algopy_testing.models.itxn import ITxn, ITxnCreate
-from algopy_testing.models.txn import Txn
+from algopy_testing.enums import OnCompleteAction, TransactionType
+from algopy_testing.models import Account, Application, Asset
 from algopy_testing.primitives.biguint import BigUInt
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.uint64 import UInt64
+from algopy_testing.state import GlobalState
 from algopy_testing.utils import (
     as_bytes,
     as_int,
@@ -49,80 +46,31 @@ from algopy_testing.utils import (
 if typing.TYPE_CHECKING:
     import algopy
 
+    from algopy_testing.gtxn import Transaction
+    from algopy_testing.models.contract import ARC4Contract, Contract
 
-__all__ = [
-    "AcctParamsGet",
-    "AppGlobal",
-    "AppLocal",
-    "AppParamsGet",
-    "AssetHoldingGet",
-    "AssetParamsGet",
-    "Base64",
-    "BigUInt",
-    "Block",
-    "Box",
-    "EC",
-    "ECDSA",
-    "EllipticCurve",
-    "GITxn",
-    "GTxn",
-    "Global",
-    "ITxn",
-    "ITxnCreate",
-    "JsonRef",
-    "Scratch",
-    "Txn",
-    "UInt64",
-    "VrfVerify",
-    "addw",
-    "arg",
-    "app_opted_in",
-    "balance",
-    "base64_decode",
-    "bitlen",
-    "bsqrt",
-    "btoi",
-    "bzero",
-    "concat",
-    "divmodw",
-    "divw",
-    "ecdsa_pk_decompress",
-    "ecdsa_pk_recover",
-    "ecdsa_verify",
-    "ed25519verify",
-    "ed25519verify_bare",
-    "err",
-    "exit",
-    "exp",
-    "expw",
-    "extract",
-    "extract_uint16",
-    "extract_uint32",
-    "extract_uint64",
-    "gaid",
-    "getbit",
-    "getbyte",
-    "gload_bytes",
-    "gload_uint64",
-    "itob",
-    "keccak256",
-    "min_balance",
-    "mulw",
-    "replace",
-    "select_bytes",
-    "select_uint64",
-    "setbit_bytes",
-    "setbit_uint64",
-    "setbyte",
-    "sha256",
-    "sha3_256",
-    "sha512_256",
-    "shl",
-    "shr",
-    "sqrt",
-    "substring",
-    "vrf_verify",
-]
+
+class ECDSA(enum.Enum):
+    Secp256k1 = 0
+    Secp256r1 = 1
+
+
+class VrfVerify(enum.Enum):
+    VrfAlgorand = 0
+
+
+class Base64(enum.Enum):
+    URLEncoding = 0
+    StdEncoding = 1
+
+
+class EC(enum.StrEnum):
+    """Available values for the `EC` enum"""
+
+    BN254g1 = "BN254g1"
+    BN254g2 = "BN254g2"
+    BLS12_381g1 = "BLS12_381g1"
+    BLS12_381g2 = "BLS12_381g2"
 
 
 def sha256(a: Bytes | bytes, /) -> Bytes:
@@ -163,21 +111,18 @@ def ed25519verify(a: Bytes | bytes, b: Bytes | bytes, c: Bytes | bytes, /) -> bo
     from algopy_testing.context import get_test_context
     from algopy_testing.utils import as_bytes
 
-    try:
-        ctx = get_test_context()
-    except LookupError as e:
-        raise RuntimeError(
-            "function must be run within an active context"
-            " using `with algopy_testing.context.new_context():`"
-        ) from e
+    ctx = get_test_context()
+    txn = ctx.get_active_transaction()
 
-    # TODO: Decide on whether to pick clear or approval depending on OnComplete state
-    if not ctx._txn_fields:
-        raise RuntimeError("`txn_fields` must be set in the context")
-
-    program_bytes = as_bytes(ctx._txn_fields.get("approval_program", None))
-    if not program_bytes:
-        raise RuntimeError("`program_bytes` must be set in the context")
+    program_pages = typing.cast(
+        Sequence[Bytes],
+        (
+            txn.fields["clear_state_program"]
+            if txn.on_completion == OnCompleteAction.ClearState
+            else txn.fields["approval_program"]
+        ),
+    )
+    program_bytes = b"".join(map(as_bytes, program_pages))
 
     decoded_address = algosdk.encoding.decode_address(algosdk.logic.address(program_bytes))
     address_bytes = as_bytes(decoded_address)
@@ -588,6 +533,55 @@ def _bytes_to_string(a: Bytes | bytes, err_msg: str) -> str:
         raise ValueError(err_msg) from None
 
 
+def _get_active_txn() -> Transaction:
+    context = get_test_context()
+    return context.get_active_transaction()
+
+
+def _get_app(app: algopy.Application | algopy.UInt64 | int) -> Application:
+    if isinstance(app, Application):
+        return app
+    context = get_test_context()
+    if app >= 1001:
+        return context.get_application(app)
+    txn = context.get_active_transaction()
+    return txn.apps(app)
+
+
+def _get_account(acc: algopy.Account | algopy.UInt64 | int) -> Account:
+    if isinstance(acc, Account):
+        return acc
+    txn = _get_active_txn()
+    return txn.accounts(acc)
+
+
+def _get_asset(asset: algopy.Asset | algopy.UInt64 | int) -> Asset:
+    if isinstance(asset, Asset):
+        return asset
+    context = get_test_context()
+    if asset >= 1001:
+        return context.get_asset(asset)
+    txn = context.get_active_transaction()
+    return txn.assets(asset)
+
+
+class _MultiKeyDict(dict[typing.Any, typing.Any]):
+    def __init__(self, items: list[typing.Any]):
+        self[""] = ""
+        items = [
+            (
+                (i[0], _MultiKeyDict(i[1]))
+                if isinstance(i[1], list) and all(isinstance(j, tuple) for j in i[1])
+                else i
+            )
+            for i in items
+        ]
+        self._items = items
+
+    def items(self) -> typing.Any:
+        return self._items
+
+
 class JsonRef:
     @staticmethod
     def _load_json(a: Bytes | bytes) -> dict[typing.Any, typing.Any]:
@@ -668,125 +662,41 @@ class JsonRef:
         return Bytes(result_string.encode())
 
 
-class Scratch:
-    @staticmethod
-    def load_bytes(a: UInt64 | int, /) -> Bytes:
-        from algopy_testing import get_test_context
+def _gload(a: UInt64 | int, b: UInt64 | int, /) -> Bytes | UInt64:
+    context = get_test_context()
+    txn = context.get_transaction(int(a))
+    try:
+        return context.get_scratch_slot(txn, b)
+    except IndexError:
+        raise ValueError("invalid scratch slot") from None
 
+
+class _Scratch:
+    def load_bytes(self, a: UInt64 | int, /) -> Bytes | UInt64:
         context = get_test_context()
         active_txn = context.get_active_transaction()
+        return _gload(active_txn.group_index, a)
 
-        slot_content = context.get_scratch_space(active_txn)[a]
-        match slot_content:
-            case Bytes():
-                return slot_content
-            case bytes():
-                return Bytes(slot_content)
-            case UInt64() | int():
-                return itob(slot_content)
-            case _:
-                raise ValueError(f"Invalid scratch space type: {type(slot_content)}")
+    load_uint64 = load_bytes  # functionally these are the same
 
     @staticmethod
-    def load_uint64(a: UInt64 | int, /) -> UInt64:
-        from algopy_testing import get_test_context
-
-        context = get_test_context()
-        active_txn = context.get_active_transaction()
-
-        slot_content = context.get_scratch_space(active_txn)[a]
-        match slot_content:
-            case Bytes() | bytes():
-                return btoi(slot_content)
-            case UInt64():
-                return slot_content
-            case int():
-                return UInt64(slot_content)
-            case _:
-                raise ValueError(f"Invalid scratch space type: {type(slot_content)}")
-
-    @staticmethod
-    def store(a: UInt64 | int, b: Bytes | UInt64 | bytes | int, /) -> None:
-        from algopy_testing import get_test_context
-
+    def store(a: algopy.UInt64 | int, b: algopy.Bytes | algopy.UInt64 | bytes | int, /) -> None:
         context = get_test_context()
         active_txn = context.get_active_transaction()
         context.set_scratch_slot(active_txn, a, b)
 
 
-class _MultiKeyDict(dict[typing.Any, typing.Any]):
-    def __init__(self, items: list[typing.Any]):
-        self[""] = ""
-        items = [
-            (
-                (i[0], _MultiKeyDict(i[1]))
-                if isinstance(i[1], list) and all(isinstance(j, tuple) for j in i[1])
-                else i
-            )
-            for i in items
-        ]
-        self._items = items
-
-    def items(self) -> typing.Any:
-        return self._items
-
-
-def gload_uint64(a: UInt64 | int, b: UInt64 | int, /) -> UInt64:
-    from algopy_testing import get_test_context
-
-    context = get_test_context()
-    txn_group = context.get_transaction_group()
-    if not txn_group:
-        raise ValueError("No transaction group found to reference scratch space")
-    if a >= len(txn_group):
-        raise ValueError(f"Index {a} out of range for transaction group")
-    txn = txn_group[a]
-    slot_content = context._scratch_spaces[txn][int(b)]
-    match slot_content:
-        case Bytes() | bytes():
-            return btoi(slot_content)
-        case int():
-            return UInt64(slot_content)
-        case UInt64():
-            return slot_content
-        case _:
-            raise ValueError(f"Invalid scratch space type: {type(slot_content)}")
-
-
-def gload_bytes(a: algopy.UInt64 | int, b: algopy.UInt64 | int, /) -> algopy.Bytes:
-    context = get_test_context()
-    txn_group = context.get_transaction_group()
-    if not txn_group:
-        raise ValueError("No transaction group found to reference scratch space")
-    if a >= len(txn_group):
-        raise ValueError(f"Index {a} out of range for transaction group")
-    txn = txn_group[a]
-    slot_content = context._scratch_spaces[txn][int(b)]
-    match slot_content:
-        case algopy_testing.Bytes():
-            return slot_content
-        case bytes():
-            return algopy_testing.Bytes(slot_content)
-        case int() | algopy_testing.UInt64():
-            return itob(slot_content)
-        case _:
-            raise ValueError(f"Invalid scratch space type: {type(slot_content)}")
+Scratch = _Scratch()
+gload_uint64 = _gload
+gload_bytes = _gload
 
 
 def gaid(a: algopy.UInt64 | int, /) -> algopy.Application:
+    # TODO: add tests
     context = get_test_context()
-    txn_group = context.get_transaction_group()
+    txn = context.get_transaction(int(a))
 
-    if not txn_group:
-        raise ValueError("No transaction group found to reference gaid")
-
-    a = int(a)
-    if a >= len(txn_group):
-        raise ValueError(f"Index {a} out of range for transaction group")
-
-    txn = txn_group[a]
-
-    if not txn.type == algopy_testing.TransactionType.ApplicationCall:
+    if not txn.type == TransactionType.ApplicationCall:
         raise TypeError(f"Transaction at index {a} is not an ApplicationCallTransaction")
 
     app_id = txn.created_application_id
@@ -797,35 +707,20 @@ def gaid(a: algopy.UInt64 | int, /) -> algopy.Application:
 
 
 def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
+    # TODO: add tests
     context = get_test_context()
     active_txn = context.get_active_transaction()
 
-    if isinstance(a, algopy_testing.Account):
-        account = a
-    elif isinstance(a, algopy_testing.UInt64 | int):
-        index = int(a)
-        if index == 0:
-            account = active_txn.sender
-        else:
-            accounts = getattr(active_txn, "accounts", None)
-            if not accounts or index >= len(accounts):
-                raise ValueError(f"Invalid account index: {index}")
-            account = accounts[index]
-    else:
-        raise TypeError("Invalid type for account parameter")
-
-    account_data = context._account_data.get(account.public_key)
-    if not account_data:
-        raise ValueError(f"Account {account} not found in testing context!")
-
-    balance = account_data.fields.get("balance")
-    if balance is None:
-        raise ValueError(f"Balance not set for account {account}")
+    account = _get_account(a)
+    balance = account.balance
+    # TODO: add explict properties to account
+    assert isinstance(balance, UInt64)
 
     # Deduct the fee for the current transaction
     if account == active_txn.sender:
-        fee = getattr(active_txn, "fee", algopy_testing.UInt64(0))
-        balance = algopy_testing.UInt64(int(balance) - int(fee))
+        fee = active_txn.fee
+        assert isinstance(fee, UInt64)
+        balance -= fee
 
     return balance
 
@@ -834,9 +729,9 @@ def min_balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     context = get_test_context()
     active_txn = context.get_active_transaction()
 
-    if isinstance(a, algopy_testing.Account):
+    if isinstance(a, Account):
         account = a
-    elif isinstance(a, (algopy_testing.UInt64 | int)):
+    elif isinstance(a, (UInt64 | int)):
         index = int(a)
         if index == 0:
             account = active_txn.sender
@@ -864,29 +759,10 @@ def exit(a: UInt64 | int, /) -> typing.Never:  # noqa: A001
 def app_opted_in(
     a: algopy.Account | algopy.UInt64 | int, b: algopy.Application | algopy.UInt64 | int, /
 ) -> bool:
-    context = get_test_context()
-    active_txn = context.get_active_transaction()
+    account = _get_account(a)
+    app = _get_app(b)
 
-    # Resolve account
-    if isinstance(a, (algopy_testing.UInt64 | int)):
-        index = int(a)
-        account = active_txn.sender if index == 0 else active_txn.accounts[index]
-    else:
-        account = a
-
-    # Resolve application
-    if isinstance(b, (algopy_testing.UInt64 | int)):
-        index = int(b)
-        app_id = active_txn.application_id if index == 0 else active_txn.foreign_apps[index]
-    else:
-        app_id = b.id
-
-    # Check if account is opted in to the application
-    account_data = context._account_data.get(account.public_key)
-    if not account_data:
-        return False
-
-    return app_id in account_data.opted_apps
+    return account.is_opted_in(app)
 
 
 class _AcctParamsGet:
@@ -899,9 +775,9 @@ class _AcctParamsGet:
             a: algopy.Account | algopy.UInt64 | int,
         ) -> tuple[algopy.UInt64 | algopy.Account, bool]:
             context = get_test_context()
-            if isinstance(a, algopy_testing.Account):
+            if isinstance(a, Account):
                 account = context.get_account(a.public_key)
-            elif isinstance(a, algopy_testing.UInt64 | int):
+            elif isinstance(a, UInt64 | int):
                 active_txn = context.get_active_transaction()
                 try:
                     account = active_txn.accounts(a)
@@ -930,28 +806,20 @@ class _AssetParamsGet:
         self, name: str
     ) -> typing.Callable[[algopy.Asset | algopy.UInt64 | int], tuple[typing.Any, bool]]:
         def get_asset_param(a: algopy.Asset | algopy.UInt64 | int) -> tuple[typing.Any, bool]:
-            context = get_test_context()
-            active_txn = context.get_active_transaction()
-            is_index = isinstance(a, algopy_testing.UInt64 | int) and int(a) < 1001
             try:
-                asset_id = active_txn.assets(a).id if is_index else getattr(a, "id", a)
-            except IndexError as e:
-                raise ValueError(
-                    f"Invalid asset index for assets in active transaction: {a}"
-                ) from e
-            asset_data = context.get_asset(asset_id)
+                asset = _get_asset(a)
+            except ValueError:
+                return UInt64(0), False
 
-            if asset_data is None:
-                return algopy_testing.UInt64(0), False
+            short_name = name.removeprefix("asset_")
+            try:
+                return getattr(asset, short_name), True
+            except AttributeError:
+                raise AttributeError(
+                    f"'{self.__class__.__name__}' object has no attribute '{name}'"
+                ) from None
 
-            param = name.removeprefix("asset_")
-            value = getattr(asset_data, param, None)
-            return value, True
-
-        if name.startswith("asset_"):
-            return get_asset_param
-        else:
-            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+        return get_asset_param
 
 
 AssetParamsGet = _AssetParamsGet()
@@ -960,39 +828,28 @@ AssetParamsGet = _AssetParamsGet()
 class _AssetHoldingGet:
     def _get_asset_holding(
         self,
-        account: algopy.Account | algopy.UInt64 | int,
-        asset: algopy.Asset | algopy.UInt64 | int,
+        account_or_index: algopy.Account | algopy.UInt64 | int,
+        asset_or_index: algopy.Asset | algopy.UInt64 | int,
         field: str,
     ) -> tuple[typing.Any, bool]:
         context = get_test_context()
-        active_txn = context.get_active_transaction()
 
         # Resolve account
-        if isinstance(account, algopy_testing.UInt64 | int):
-            index = int(account)
-            account = active_txn.sender if index == 0 else active_txn.accounts[index]
-
-        # Resolve asset
-        # TODO: this could be an index or an id
-        if isinstance(asset, algopy_testing.UInt64 | int):
-            index = int(asset)
-            asset_id = active_txn.assets[index]
-        else:
-            asset_id = asset.id
-
-        assert isinstance(account, algopy_testing.Account)
-        account_data = context._account_data.get(account.public_key)
-        if not account_data:
+        account = _get_account(account_or_index)
+        try:
+            asset = _get_asset(asset_or_index)
+        except ValueError:
             return UInt64(0), False
 
-        asset_balance = account_data.opted_asset_balances.get(asset_id)
+        account_data = context.get_account_data()[account.public_key]
+        asset_balance = account_data.opted_asset_balances.get(asset.id)
         if asset_balance is None:
             return UInt64(0), False
 
         if field == "balance":
             return asset_balance, True
         elif field == "frozen":
-            asset_data = context._asset_data.get(int(asset_id))
+            asset_data = context._asset_data.get(int(asset.id))
             if not asset_data:
                 return UInt64(0), False
             return asset_data["default_frozen"], True
@@ -1019,21 +876,12 @@ class _AppParamsGet:
     def _get_app_param_from_ctx(
         self, a: algopy.Application | algopy.UInt64 | int, param: str
     ) -> tuple[typing.Any, bool]:
-        context = get_test_context()
-
-        active_txn = context.get_active_transaction()
-
-        is_index = isinstance(a, algopy_testing.UInt64 | int) and int(a) < 1001
         try:
-            app_id = active_txn.apps(a).id if is_index else getattr(a, "id", a)
-        except IndexError as e:
-            raise ValueError(f"Invalid app index for apps in active transaction: {a}") from e
-        app_data = context.get_application(int(app_id))
+            app = _get_app(a)
+        except ValueError:
+            return UInt64(0), False
 
-        if app_data is None:
-            return algopy_testing.UInt64(0), False
-
-        value = getattr(app_data, param, None)
+        value = getattr(app, param)
         return value, True
 
     def app_approval_program(
@@ -1099,7 +947,7 @@ class _AppLocal:
         return local_state
 
     def _get_key(self, b: algopy.Bytes | bytes) -> bytes:
-        return b.value if isinstance(b, algopy_testing.Bytes) else b
+        return b.value if isinstance(b, Bytes) else b
 
     def _parse_local_state_value(self, value: typing.Any) -> typing.Any:
         if hasattr(value, "bytes"):
@@ -1109,10 +957,10 @@ class _AppLocal:
     def _get_contract(
         self,
         b: algopy.Application | algopy.UInt64 | int,
-    ) -> algopy_testing.Contract | algopy_testing.ARC4Contract:
-        test_context = algopy_testing.get_test_context()
+    ) -> Contract | ARC4Contract:
+        test_context = get_test_context()
 
-        app_id = int(b.id) if isinstance(b, algopy_testing.Application) else int(b)
+        app_id = int(b.id) if isinstance(b, Application) else int(b)
         contract = test_context._app_id_to_contract.get(app_id)
         if contract is None:
             raise ValueError(f"Contract with app id {b} not found")
@@ -1124,7 +972,7 @@ class _AppLocal:
         try:
             key = self._get_key(b)
             local_state = self._get_local_state(key)[a]
-            return algopy_testing.Bytes(self._parse_local_state_value(local_state))
+            return Bytes(self._parse_local_state_value(local_state))
         except (ValueError, KeyError):
             # returning UInt64 on key error matches AVM behaviour
             return UInt64(0)  # type: ignore[return-value]
@@ -1201,15 +1049,15 @@ class _AppGlobal:
         return global_states[key]
 
     def _get_key(self, b: algopy.Bytes | bytes) -> bytes:
-        return b.value if isinstance(b, algopy_testing.Bytes) else b
+        return b.value if isinstance(b, Bytes) else b
 
     def _get_contract(
         self,
         b: algopy.Application | algopy.UInt64 | int,
-    ) -> algopy_testing.Contract | algopy_testing.ARC4Contract:
+    ) -> Contract | ARC4Contract:
         test_context = get_test_context()
 
-        app_id = int(b.id) if isinstance(b, algopy_testing.Application) else int(b)
+        app_id = int(b.id) if isinstance(b, Application) else int(b)
         contract = test_context._app_id_to_contract.get(app_id)
         if contract is None:
             raise ValueError(f"Contract with app id {b} not found")
@@ -1223,14 +1071,14 @@ class _AppGlobal:
     def get_bytes(self, b: algopy.Bytes | bytes, /) -> algopy.Bytes:
         try:
             global_state = self._get_global_state(self._get_key(b))
-            return algopy_testing.Bytes(self._parse_global_state_value(global_state.get(b)))
+            return Bytes(self._parse_global_state_value(global_state.get(b)))
         except (ValueError, KeyError):
             return UInt64(0)  # type: ignore[return-value]
 
     def get_uint64(self, b: algopy.Bytes | bytes, /) -> algopy.UInt64:
         try:
             global_state = self._get_global_state(self._get_key(b))
-            return algopy_testing.UInt64(global_state.get(b))
+            return UInt64(global_state.get(b))
         except (ValueError, KeyError):
             return UInt64(0)
 
@@ -1242,9 +1090,7 @@ class _AppGlobal:
         global_state = global_states.get(self._get_key(b))
         # TODO: this is subtly different than AVM behaviour
         value = self._parse_global_state_value(
-            global_state
-            if not isinstance(global_state, algopy_testing.GlobalState)
-            else global_state.value
+            global_state if not isinstance(global_state, GlobalState) else global_state.value
         )
         return Bytes(value or b""), value is not None
 
@@ -1300,7 +1146,7 @@ class Box:
     @staticmethod
     def create(a: algopy.Bytes | bytes, b: algopy.UInt64 | int, /) -> bool:
         context = get_test_context()
-        name_bytes = a.value if isinstance(a, algopy_testing.Bytes) else a
+        name_bytes = a.value if isinstance(a, Bytes) else a
         size = int(b)
         if not name_bytes or size > MAX_BOX_SIZE:
             raise ValueError("Invalid box name or size")
@@ -1312,7 +1158,7 @@ class Box:
     @staticmethod
     def delete(a: algopy.Bytes | bytes, /) -> bool:
         context = get_test_context()
-        name_bytes = a.value if isinstance(a, algopy_testing.Bytes) else a
+        name_bytes = a.value if isinstance(a, Bytes) else a
         if context.get_box(name_bytes):
             context.clear_box(name_bytes)
             return True
@@ -1323,7 +1169,7 @@ class Box:
         a: algopy.Bytes | bytes, b: algopy.UInt64 | int, c: algopy.UInt64 | int, /
     ) -> algopy.Bytes:
         context = get_test_context()
-        name_bytes = a.value if isinstance(a, algopy_testing.Bytes) else a
+        name_bytes = a.value if isinstance(a, Bytes) else a
         start = int(b)
         length = int(c)
         box_content = context.get_box(name_bytes)
@@ -1335,15 +1181,15 @@ class Box:
     @staticmethod
     def get(a: algopy.Bytes | bytes, /) -> tuple[algopy.Bytes, bool]:
         context = get_test_context()
-        name_bytes = a.value if isinstance(a, algopy_testing.Bytes) else a
-        box_content = algopy_testing.Bytes(context.get_box(name_bytes))
+        name_bytes = a.value if isinstance(a, Bytes) else a
+        box_content = Bytes(context.get_box(name_bytes))
         box_exists = context.does_box_exist(name_bytes)
         return box_content, box_exists
 
     @staticmethod
     def length(a: algopy.Bytes | bytes, /) -> tuple[algopy.UInt64, bool]:
         context = get_test_context()
-        name_bytes = a.value if isinstance(a, algopy_testing.Bytes) else a
+        name_bytes = a.value if isinstance(a, Bytes) else a
         box_content = context.get_box(name_bytes)
         box_exists = context.does_box_exist(name_bytes)
         return UInt64(len(box_content)), box_exists
@@ -1351,8 +1197,8 @@ class Box:
     @staticmethod
     def put(a: algopy.Bytes | bytes, b: algopy.Bytes | bytes, /) -> None:
         context = get_test_context()
-        name_bytes = a.value if isinstance(a, algopy_testing.Bytes) else a
-        content = b.value if isinstance(b, algopy_testing.Bytes) else b
+        name_bytes = a.value if isinstance(a, Bytes) else a
+        content = b.value if isinstance(b, Bytes) else b
         existing_content = context.get_box(name_bytes)
         if existing_content and len(existing_content) != len(content):
             raise ValueError("New content length does not match existing box length")
@@ -1363,9 +1209,9 @@ class Box:
         a: algopy.Bytes | bytes, b: algopy.UInt64 | int, c: algopy.Bytes | bytes, /
     ) -> None:
         context = get_test_context()
-        name_bytes = a.value if isinstance(a, algopy_testing.Bytes) else a
+        name_bytes = a.value if isinstance(a, Bytes) else a
         start = int(b)
-        new_content = c.value if isinstance(c, algopy_testing.Bytes) else c
+        new_content = c.value if isinstance(c, Bytes) else c
         box_content = context.get_box(name_bytes)
         if not box_content:
             raise RuntimeError("Box does not exist")
@@ -1379,7 +1225,7 @@ class Box:
     @staticmethod
     def resize(a: algopy.Bytes | bytes, b: algopy.UInt64 | int, /) -> None:
         context = get_test_context()
-        name_bytes = a.value if isinstance(a, algopy_testing.Bytes) else a
+        name_bytes = a.value if isinstance(a, Bytes) else a
         new_size = int(b)
         if not name_bytes or new_size > MAX_BOX_SIZE:
             raise ValueError("Invalid box name or size")
@@ -1401,10 +1247,10 @@ class Box:
         /,
     ) -> None:
         context = get_test_context()
-        name_bytes = a.value if isinstance(a, algopy_testing.Bytes) else a
+        name_bytes = a.value if isinstance(a, Bytes) else a
         start = int(b)
         delete_count = int(c)
-        insert_content = d.value if isinstance(d, algopy_testing.Bytes) else d
+        insert_content = d.value if isinstance(d, Bytes) else d
         box_content = context.get_box(name_bytes)
 
         if not box_content:

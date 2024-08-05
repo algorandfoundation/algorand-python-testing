@@ -19,7 +19,7 @@ from algopy_testing.constants import (
 )
 from algopy_testing.decorators.abimethod import abimethod
 from algopy_testing.decorators.baremethod import baremethod
-from algopy_testing.models import Account
+from algopy_testing.models.account import Account
 from algopy_testing.protocols import BytesBacked
 from algopy_testing.utils import (
     abi_type_name_for_arg,
@@ -1212,7 +1212,7 @@ def emit(event: str | Struct, /, *args: _TABIArg) -> None:
         args_tuple = tuple(_cast_arg_as_arc4(arg) for arg in args)
         event_hash = algopy.Bytes(SHA512.new(event.encode(), truncate="256").digest())
         context.add_application_logs(
-            app_id=active_txn.app_id(),
+            app_id=active_txn.app_id,
             logs=(event_hash[:4] + Struct(*args_tuple).bytes).value,
         )
     elif isinstance(event, Struct):
@@ -1220,7 +1220,7 @@ def emit(event: str | Struct, /, *args: _TABIArg) -> None:
         event_str = event.__class__.__name__ + arg_types
         event_hash = algopy.Bytes(SHA512.new(event_str.encode(), truncate="256").digest())
         context.add_application_logs(
-            app_id=active_txn.app_id(),
+            app_id=active_txn.app_id,
             logs=(event_hash[:4] + event.bytes).value,
         )
 

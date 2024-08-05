@@ -21,6 +21,10 @@ def generate_random_int(min_value: int, max_value: int) -> int:
     return secrets.randbelow(max_value - min_value + 1) + min_value
 
 
+def generate_random_bytes32() -> bytes:
+    return secrets.token_bytes(32)
+
+
 def as_int(value: object, *, max: int | None) -> int:  # noqa: A002
     """
     Returns the underlying int value for any numeric type up to UInt512
@@ -107,23 +111,6 @@ def int_to_bytes(x: int, pad_to: int | None = None) -> bytes:
     return result
 
 
-def dummy_transaction_id() -> bytes:
-    private_key, address = algosdk.account.generate_account()
-
-    suggested_params = algosdk.transaction.SuggestedParams(fee=1000, first=0, last=1, gh="")
-    txn = algosdk.transaction.PaymentTxn(
-        sender=address,
-        receiver=address,
-        amt=1000,
-        sp=suggested_params,
-        note=secrets.token_bytes(8),
-    )
-
-    signed_txn = txn.sign(private_key)
-    txn_id = str(signed_txn.transaction.get_txid()).encode("utf-8")
-    return txn_id
-
-
 class _TransactionStrType(enum.StrEnum):
     PAYMENT = algosdk.constants.PAYMENT_TXN
     KEYREG = algosdk.constants.KEYREG_TXN
@@ -134,7 +121,7 @@ class _TransactionStrType(enum.StrEnum):
 
 
 @functools.cache
-def txn_type_to_bytes(txn_type: int) -> algopy.Bytes:
+def txn_type_to_bytes(txn_type: algopy_testing.TransactionType) -> algopy.Bytes:
     match txn_type:
         case algopy_testing.TransactionType.Payment:
             result = _TransactionStrType.PAYMENT
@@ -272,3 +259,13 @@ def abi_return_type_annotation_for_arg(arg: object) -> str:
         if arg is None:
             return "void"
         raise
+
+
+def convert_native_to_stack(
+    value: algopy.Bytes | algopy.UInt64 | bytes | int,
+) -> algopy.Bytes | algopy.UInt64:
+    if isinstance(value, int):
+        return algopy_testing.UInt64(value)
+    if isinstance(value, bytes):
+        return algopy_testing.Bytes(value)
+    return value

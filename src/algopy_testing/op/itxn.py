@@ -29,9 +29,9 @@ class _ITxn:
 ITxn = _ITxn()
 
 
+# TODO: add tests for these ops
 class _ITxnCreate:
-    @classmethod
-    def begin(cls) -> None:
+    def begin(self) -> None:
         from algopy_testing.context import get_test_context
 
         context = get_test_context()

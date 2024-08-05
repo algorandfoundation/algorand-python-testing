@@ -8,6 +8,7 @@ import algosdk
 
 import algopy_testing
 from algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM
+from algopy_testing.models.txn_fields import ApplicationCallFields
 from algopy_testing.utils import (
     abi_return_type_annotation_for_arg,
     abi_type_name_for_arg,
@@ -109,7 +110,9 @@ def _extract_and_append_txn_to_context(
     args: Sequence[object],
 ) -> None:
     method_selector = _generate_arc4_signature(fn, name, args)
-    app = context.get_application_for_contract(contract)
+    txn_fields = context._active_txn_fields.copy()
+
+    app = txn_fields.get("app_id", context.get_application_for_contract(contract))
     txn_arrays = _extract_arrays_from_args(
         args,
         method_selector=method_selector,
@@ -117,21 +120,23 @@ def _extract_and_append_txn_to_context(
         app=app,
     )
 
+    txn_fields.setdefault("sender", context.default_creator)
+    txn_fields.setdefault("app_id", app)
+    txn_fields.setdefault("accounts", txn_arrays.accounts)
+    txn_fields.setdefault("assets", txn_arrays.assets)
+    txn_fields.setdefault("apps", txn_arrays.apps)
+    txn_fields.setdefault("app_args", txn_arrays.app_args)
+    # at some point could get the actual values by using puya to compile the contract
+    # this should be opt-in behaviour, as that it would be too slow to always do
+    txn_fields.setdefault(
+        "approval_program_pages", [algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)]
+    )
+    txn_fields.setdefault(
+        "clear_state_program_pages", [algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)]
+    )
+
     app_txn = context.any_application_call_transaction(
-        sender=context.default_creator,
-        app_id=app,
-        accounts=txn_arrays.accounts,
-        num_accounts=algopy_testing.UInt64(len(txn_arrays.accounts)),
-        assets=txn_arrays.assets,
-        num_assets=algopy_testing.UInt64(len(txn_arrays.assets)),
-        apps=txn_arrays.apps,
-        num_apps=algopy_testing.UInt64(len(txn_arrays.apps)),
-        app_args=txn_arrays.app_args,
-        num_app_args=algopy_testing.UInt64(len(txn_arrays.app_args)),
-        # at some point could get the actual values by using puya to compile the contract
-        # this should be opt-in behaviour, as that it would be too slow to always do
-        approval_program_pages=[algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)],
-        clear_state_program_pages=[algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)],
+        **typing.cast(ApplicationCallFields, txn_fields)
     )
 
     context.add_transactions([*txn_arrays.txns, app_txn])

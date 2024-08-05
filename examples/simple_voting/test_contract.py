@@ -62,7 +62,6 @@ def test_vote_already_voted(context: AlgopyTestContext) -> None:
     contract = VotingContract()
     voter = context.any_account()
     contract.voted[voter] = algopy.UInt64(1)
-    context.patch_txn_fields(sender=voter)
 
     context.set_transaction_group(
         gtxn=[
@@ -80,7 +79,8 @@ def test_vote_already_voted(context: AlgopyTestContext) -> None:
     )
 
     # Act
-    result = contract.vote(voter)
+    with context.set_txn_fields(sender=voter):
+        result = contract.vote(voter)
 
     # Assert
     assert result is False
