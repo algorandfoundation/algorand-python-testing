@@ -1237,7 +1237,7 @@ def emit(event: str | Struct, /, *args: _TABIArg) -> None:
         )
 
 
-def _cast_arg_as_arc4(arg: object) -> _TABIArg:  # noqa: C901, PLR0911
+def _cast_arg_as_arc4(arg: object) -> _TABIArg:  # noqa: PLR0911
     import algopy
 
     if isinstance(arg, bool):
@@ -1440,7 +1440,7 @@ def _encode(
     return values_length_bytes + b"".join(heads) + b"".join(tails)
 
 
-def _decode(  # noqa: PLR0912, C901
+def _decode(  # noqa: PLR0912
     value: bytes, child_types: typing.Sequence[_TypeInfo]
 ) -> list[typing.Any]:
     dynamic_segments: list[list[int]] = []  # Store the start and end of a dynamic element

@@ -33,7 +33,8 @@ def test_seller_receives_payment(context: AlgopyTestContext) -> None:
     )
 
     # Act
-    result = context.execute_logicsig(hashed_time_locked_lsig, lsig_args=[algopy.Bytes(b"secret")])
+    with context.scoped_lsig_args([algopy.Bytes(b"secret")]):
+        result = context.execute_logicsig(hashed_time_locked_lsig)
 
     # Assert
     assert result is True

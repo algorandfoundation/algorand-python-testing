@@ -1444,14 +1444,64 @@ class AlgopyTestContext:
         content_bytes = content if isinstance(content, bytes) else content.value
         self._boxes[name_bytes] = content_bytes
 
-    def execute_logicsig(
-        self, lsig: algopy.LogicSig, lsig_args: Sequence[algopy.Bytes] | None = None
-    ) -> bool | algopy.UInt64:
+    @contextmanager
+    def scoped_lsig_args(
+        self, lsig_args: Sequence[algopy.Bytes] | None = None
+    ) -> Generator[None, None, None]:
+        """Temporarily set the active logic signature arguments within a
+        context.
+
+        This context manager allows you to set logic signature arguments
+        for the duration of a specific block of code. When the context
+        is exited, the previous arguments are restored.
+
+        :param lsig_args: The logic signature arguments to set. If None,
+            an empty list will be used.
+        :type lsig_args: Sequence[algopy.Bytes] | None
+        :yield: None
+        :rtype: Generator[None, None, None]
+        """
+        last_lsig_args = self._active_lsig_args
         self._active_lsig_args = lsig_args or []
-        # TODO: refine LogicSig class to handle injects into context
+        try:
+            yield
+        finally:
+            self._active_lsig_args = last_lsig_args
+
+    def execute_logicsig(
+        self,
+        lsig: algopy.LogicSig,
+    ) -> bool | algopy.UInt64:
+        """Execute a logic signature.
+
+        This method executes the given logic signature. If the logic
+        signature is not already in the context's list of logic
+        signatures, it adds it before execution.
+
+        :param lsig: The logic signature to execute.
+        :type lsig: algopy.LogicSig
+        :return: The result of executing the logic signature function.
+        :rtype: bool | algopy.UInt64
+        """
         if lsig not in self._lsigs:
             self._lsigs[lsig] = lsig.func
         return lsig.func()
+
+    def add_logicsig(self, lsig: algopy.LogicSig) -> None:
+        """Add a logic signature to the context.
+
+        This method adds the given logic signature to the context's list of logic signatures.
+
+        :param lsig: The logic signature to add.
+        :type lsig: algopy.LogicSig
+        :return: None
+        :raises TypeError: If `lsig` is not an instance of `algopy.LogicSig`.
+        """
+        if not isinstance(lsig, algopy_testing.LogicSig):
+            raise TypeError("lsig must be an instance of algopy.LogicSig")
+        if lsig in self._lsigs:
+            raise ValueError(f"Logic signature {lsig} already exists in the context!")
+        self._lsigs[lsig] = lsig.func
 
     def clear_box(self, name: algopy.Bytes | bytes) -> bool:
         """Clear all data, including accounts, applications, assets, inner
