@@ -20,8 +20,10 @@ class _ITxn:
             raise ValueError("No inner transaction found in the testing context!")
 
         last_itxn = last_itxn_group[-1]
+        field = name.removeprefix("set_")
+        field = OP_MEMBER_TO_TXN_MEMBER.get(field, field)
 
-        value = getattr(last_itxn, name)
+        value = getattr(last_itxn, field)
         if value is None:
             raise ValueError(f"'{name}' is not defined for {type(last_itxn).__name__} ")
         # mimic the static functions on ITxn with a lambda
