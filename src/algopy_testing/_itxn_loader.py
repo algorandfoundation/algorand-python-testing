@@ -1,0 +1,252 @@
+from __future__ import annotations
+
+import typing
+
+if typing.TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    import algopy
+
+    InnerTransactionResultType = (
+        algopy.itxn.InnerTransactionResult
+        | algopy.itxn.PaymentInnerTransaction
+        | algopy.itxn.KeyRegistrationInnerTransaction
+        | algopy.itxn.AssetConfigInnerTransaction
+        | algopy.itxn.AssetTransferInnerTransaction
+        | algopy.itxn.AssetFreezeInnerTransaction
+        | algopy.itxn.ApplicationCallInnerTransaction
+    )
+
+_T = typing.TypeVar("_T")
+
+
+class ITxnLoader:
+    """A helper class for handling access to individual inner transactions in
+    test context.
+
+    This class provides methods to access and retrieve specific types of
+    inner transactions. It performs type checking and conversion for
+    various transaction types.
+    """
+
+    def __init__(self, inner_txn: InnerTransactionResultType):
+        self._inner_txn = inner_txn
+
+    def _get_itxn(self, txn_type: type[_T]) -> _T:
+        txn = self._inner_txn
+
+        if not isinstance(txn, txn_type):
+            raise TypeError(f"Last transaction is not of type {txn_type.__name__}!")
+
+        return txn
+
+    @property
+    def payment(self) -> algopy.itxn.PaymentInnerTransaction:
+        """Retrieve the last PaymentInnerTransaction.
+
+        :raises ValueError: If the transaction is not found or not of
+            the expected type.
+        """
+        import algopy
+
+        return self._get_itxn(algopy.itxn.PaymentInnerTransaction)
+
+    @property
+    def asset_config(self) -> algopy.itxn.AssetConfigInnerTransaction:
+        """Retrieve the last AssetConfigInnerTransaction.
+
+        :raises ValueError: If the transaction is not found or not of
+            the expected type.
+        """
+        import algopy
+
+        return self._get_itxn(algopy.itxn.AssetConfigInnerTransaction)
+
+    @property
+    def asset_transfer(self) -> algopy.itxn.AssetTransferInnerTransaction:
+        """Retrieve the last AssetTransferInnerTransaction.
+
+        :raises ValueError: If the transaction is not found or not of
+            the expected type.
+        """
+        import algopy
+
+        return self._get_itxn(algopy.itxn.AssetTransferInnerTransaction)
+
+    @property
+    def asset_freeze(self) -> algopy.itxn.AssetFreezeInnerTransaction:
+        """Retrieve the last AssetFreezeInnerTransaction.
+
+        :raises ValueError: If the transaction is not found or not of
+            the expected type.
+        """
+        import algopy
+
+        return self._get_itxn(algopy.itxn.AssetFreezeInnerTransaction)
+
+    @property
+    def application_call(self) -> algopy.itxn.ApplicationCallInnerTransaction:
+        """Retrieve the last ApplicationCallInnerTransaction.
+
+        :raises ValueError: If the transaction is not found or not of
+            the expected type.
+        """
+        import algopy
+
+        return self._get_itxn(algopy.itxn.ApplicationCallInnerTransaction)
+
+    @property
+    def key_registration(self) -> algopy.itxn.KeyRegistrationInnerTransaction:
+        """Retrieve the last KeyRegistrationInnerTransaction.
+
+        :raises ValueError: If the transaction is not found or not of
+            the expected type.
+        """
+        import algopy
+
+        return self._get_itxn(algopy.itxn.KeyRegistrationInnerTransaction)
+
+    @property
+    def transaction(self) -> algopy.itxn.InnerTransactionResult:
+        """Retrieve the last InnerTransactionResult.
+
+        :raises ValueError: If the transaction is not found or not of
+            the expected type.
+        """
+        import algopy
+
+        return self._get_itxn(algopy.itxn.InnerTransactionResult)
+
+
+class ITxnGroupLoader:
+    """A helper class for handling access to groups of inner transactions in
+    test context.
+
+    This class provides methods to access and retrieve inner
+    transactions from a group, either individually or as slices. It
+    supports type-specific retrieval of inner transactions and
+    implements indexing operations.
+    """
+
+    @typing.overload
+    def __getitem__(self, index: int) -> ITxnLoader: ...
+
+    @typing.overload
+    def __getitem__(self, index: slice) -> list[ITxnLoader]: ...
+
+    def __getitem__(self, index: int | slice) -> ITxnLoader | list[ITxnLoader]:
+        if isinstance(index, int):
+            return ITxnLoader(self._inner_txn_group[index])
+        elif isinstance(index, slice):
+            return [ITxnLoader(self._inner_txn_group[i]) for i in range(*index.indices(len(self)))]
+        else:
+            raise TypeError("Index must be int or slice")
+
+    def __len__(self) -> int:
+        return len(self._inner_txn_group)
+
+    def __init__(self, inner_txn_group: Sequence[InnerTransactionResultType]):
+        self._inner_txn_group = inner_txn_group
+
+    def _get_itxn(self, index: int, txn_type: type[_T]) -> _T:
+        try:
+            txn = self._inner_txn_group[index]
+        except IndexError as err:
+            raise ValueError(f"No inner transaction available at index {index}!") from err
+
+        if not isinstance(txn, txn_type):
+            raise TypeError(
+                f"Inner transaction at index {index} is of "
+                f"type '{type(txn).__name__}' not '{txn_type.__name__}'!"
+            )
+
+        return txn
+
+    def payment(self, index: int) -> algopy.itxn.PaymentInnerTransaction:
+        """Return a PaymentInnerTransaction from the group at the given index.
+
+        :param index: int
+        :param index: int:
+        :returns: algopy.itxn.PaymentInnerTransaction: The
+            PaymentInnerTransaction at the given index.
+        """
+        import algopy
+
+        return ITxnLoader(self._get_itxn(index, algopy.itxn.PaymentInnerTransaction)).payment
+
+    def asset_config(self, index: int) -> algopy.itxn.AssetConfigInnerTransaction:
+        """Return an AssetConfigInnerTransaction from the group at the given
+        index.
+
+        :param index: int
+        :param index: int:
+        :returns: algopy.itxn.AssetConfigInnerTransaction: The
+            AssetConfigInnerTransaction at the given index.
+        """
+        import algopy
+
+        return self._get_itxn(index, algopy.itxn.AssetConfigInnerTransaction)
+
+    def asset_transfer(self, index: int) -> algopy.itxn.AssetTransferInnerTransaction:
+        """Return an AssetTransferInnerTransaction from the group at the given
+        index.
+
+        :param index: int
+        :param index: int:
+        :returns: algopy.itxn.AssetTransferInnerTransaction: The
+            AssetTransferInnerTransaction at the given index.
+        """
+        import algopy
+
+        return self._get_itxn(index, algopy.itxn.AssetTransferInnerTransaction)
+
+    def asset_freeze(self, index: int) -> algopy.itxn.AssetFreezeInnerTransaction:
+        """Return an AssetFreezeInnerTransaction from the group at the given
+        index.
+
+        :param index: int
+        :param index: int:
+        :returns: algopy.itxn.AssetFreezeInnerTransaction: The
+            AssetFreezeInnerTransaction at the given index.
+        """
+        import algopy
+
+        return self._get_itxn(index, algopy.itxn.AssetFreezeInnerTransaction)
+
+    def application_call(self, index: int) -> algopy.itxn.ApplicationCallInnerTransaction:
+        """Return an ApplicationCallInnerTransaction from the group at the
+        given index.
+
+        :param index: int
+        :param index: int:
+        :returns: algopy.itxn.ApplicationCallInnerTransaction: The
+            ApplicationCallInnerTransaction at the given index.
+        """
+        import algopy
+
+        return self._get_itxn(index, algopy.itxn.ApplicationCallInnerTransaction)
+
+    def key_registration(self, index: int) -> algopy.itxn.KeyRegistrationInnerTransaction:
+        """Return a KeyRegistrationInnerTransaction from the group at the given
+        index.
+
+        :param index: int
+        :param index: int:
+        :returns: algopy.itxn.KeyRegistrationInnerTransaction: The
+            KeyRegistrationInnerTransaction at the given index.
+        """
+        import algopy
+
+        return self._get_itxn(index, algopy.itxn.KeyRegistrationInnerTransaction)
+
+    def transaction(self, index: int) -> algopy.itxn.InnerTransactionResult:
+        """Return an InnerTransactionResult from the group at the given index.
+
+        :param index: int
+        :param index: int:
+        :returns: algopy.itxn.InnerTransactionResult: The
+            InnerTransactionResult at the given index.
+        """
+        import algopy
+
+        return self._get_itxn(index, algopy.itxn.InnerTransactionResult)

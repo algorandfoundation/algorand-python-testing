@@ -6,14 +6,15 @@ import typing
 from collections import ChainMap, defaultdict
 from contextlib import contextmanager
 from contextvars import ContextVar
-from dataclasses import dataclass
 
 # Define the union type
-from typing import TYPE_CHECKING, Any, Unpack, overload
+from typing import Any, Unpack
 
 import algosdk
 
 import algopy_testing
+from algopy_testing._arc4_factory import ARC4Factory
+from algopy_testing._itxn_loader import ITxnGroupLoader, ITxnLoader
 from algopy_testing.constants import (
     ALWAYS_APPROVE_TEAL_PROGRAM,
     ARC4_RETURN_PREFIX,
@@ -23,11 +24,7 @@ from algopy_testing.constants import (
     DEFAULT_GLOBAL_GENESIS_HASH,
     DEFAULT_MAX_TXN_LIFE,
     MAX_BYTES_SIZE,
-    MAX_UINT8,
-    MAX_UINT16,
-    MAX_UINT32,
     MAX_UINT64,
-    MAX_UINT512,
 )
 from algopy_testing.gtxn import TransactionBase
 from algopy_testing.models.account import (
@@ -41,11 +38,12 @@ from algopy_testing.models.txn_fields import get_txn_defaults
 from algopy_testing.primitives.uint64 import UInt64
 from algopy_testing.utils import convert_native_to_stack, generate_random_int
 
-if TYPE_CHECKING:
+if typing.TYPE_CHECKING:
     from collections.abc import Callable, Generator, Sequence
 
     import algopy
 
+    from algopy_testing._itxn_loader import InnerTransactionResultType
     from algopy_testing.models.application import ApplicationFields
     from algopy_testing.models.txn_fields import (
         ApplicationCallFields,
@@ -58,460 +56,11 @@ if TYPE_CHECKING:
     )
     from algopy_testing.op.global_values import GlobalFields
 
-    InnerTransactionResultType = (
-        algopy.itxn.InnerTransactionResult
-        | algopy.itxn.PaymentInnerTransaction
-        | algopy.itxn.KeyRegistrationInnerTransaction
-        | algopy.itxn.AssetConfigInnerTransaction
-        | algopy.itxn.AssetTransferInnerTransaction
-        | algopy.itxn.AssetFreezeInnerTransaction
-        | algopy.itxn.ApplicationCallInnerTransaction
-    )
-
 _TGlobalTxn = typing.TypeVar("_TGlobalTxn", bound=TransactionBase)
-T = typing.TypeVar("T")
 
 # temporary group_index value used for group transactions while arranging a test
 # will be replaced with actual group index once a call is made or user sets transaction group
 NULL_GTXN_GROUP_INDEX = -1
-
-
-class ITxnLoader:
-    """A helper class for handling access to individual inner transactions in
-    test context.
-
-    This class provides methods to access and retrieve specific types of
-    inner transactions. It performs type checking and conversion for
-    various transaction types.
-    """
-
-    def __init__(self, inner_txn: InnerTransactionResultType):
-        self._inner_txn = inner_txn
-
-    def _get_itxn(self, txn_type: type[T]) -> T:
-        txn = self._inner_txn
-
-        if not isinstance(txn, txn_type):
-            raise TypeError(f"Last transaction is not of type {txn_type.__name__}!")
-
-        return txn
-
-    @property
-    def payment(self) -> algopy.itxn.PaymentInnerTransaction:
-        """Retrieve the last PaymentInnerTransaction.
-
-        :raises ValueError: If the transaction is not found or not of
-            the expected type.
-        """
-        import algopy
-
-        return self._get_itxn(algopy.itxn.PaymentInnerTransaction)
-
-    @property
-    def asset_config(self) -> algopy.itxn.AssetConfigInnerTransaction:
-        """Retrieve the last AssetConfigInnerTransaction.
-
-        :raises ValueError: If the transaction is not found or not of
-            the expected type.
-        """
-        import algopy
-
-        return self._get_itxn(algopy.itxn.AssetConfigInnerTransaction)
-
-    @property
-    def asset_transfer(self) -> algopy.itxn.AssetTransferInnerTransaction:
-        """Retrieve the last AssetTransferInnerTransaction.
-
-        :raises ValueError: If the transaction is not found or not of
-            the expected type.
-        """
-        import algopy
-
-        return self._get_itxn(algopy.itxn.AssetTransferInnerTransaction)
-
-    @property
-    def asset_freeze(self) -> algopy.itxn.AssetFreezeInnerTransaction:
-        """Retrieve the last AssetFreezeInnerTransaction.
-
-        :raises ValueError: If the transaction is not found or not of
-            the expected type.
-        """
-        import algopy
-
-        return self._get_itxn(algopy.itxn.AssetFreezeInnerTransaction)
-
-    @property
-    def application_call(self) -> algopy.itxn.ApplicationCallInnerTransaction:
-        """Retrieve the last ApplicationCallInnerTransaction.
-
-        :raises ValueError: If the transaction is not found or not of
-            the expected type.
-        """
-        import algopy
-
-        return self._get_itxn(algopy.itxn.ApplicationCallInnerTransaction)
-
-    @property
-    def key_registration(self) -> algopy.itxn.KeyRegistrationInnerTransaction:
-        """Retrieve the last KeyRegistrationInnerTransaction.
-
-        :raises ValueError: If the transaction is not found or not of
-            the expected type.
-        """
-        import algopy
-
-        return self._get_itxn(algopy.itxn.KeyRegistrationInnerTransaction)
-
-    @property
-    def transaction(self) -> algopy.itxn.InnerTransactionResult:
-        """Retrieve the last InnerTransactionResult.
-
-        :raises ValueError: If the transaction is not found or not of
-            the expected type.
-        """
-        import algopy
-
-        return self._get_itxn(algopy.itxn.InnerTransactionResult)
-
-
-class ITxnGroupLoader:
-    """A helper class for handling access to groups of inner transactions in
-    test context.
-
-    This class provides methods to access and retrieve inner
-    transactions from a group, either individually or as slices. It
-    supports type-specific retrieval of inner transactions and
-    implements indexing operations.
-    """
-
-    @overload
-    def __getitem__(self, index: int) -> ITxnLoader: ...
-
-    @overload
-    def __getitem__(self, index: slice) -> list[ITxnLoader]: ...
-
-    def __getitem__(self, index: int | slice) -> ITxnLoader | list[ITxnLoader]:
-        if isinstance(index, int):
-            return ITxnLoader(self._inner_txn_group[index])
-        elif isinstance(index, slice):
-            return [ITxnLoader(self._inner_txn_group[i]) for i in range(*index.indices(len(self)))]
-        else:
-            raise TypeError("Index must be int or slice")
-
-    def __len__(self) -> int:
-        return len(self._inner_txn_group)
-
-    def __init__(self, inner_txn_group: Sequence[InnerTransactionResultType]):
-        self._inner_txn_group = inner_txn_group
-
-    def _get_itxn(self, index: int, txn_type: type[T]) -> T:
-        try:
-            txn = self._inner_txn_group[index]
-        except IndexError as err:
-            raise ValueError(f"No inner transaction available at index {index}!") from err
-
-        if not isinstance(txn, txn_type):
-            raise TypeError(
-                f"Inner transaction at index {index} is of "
-                f"type '{type(txn).__name__}' not '{txn_type.__name__}'!"
-            )
-
-        return txn
-
-    def payment(self, index: int) -> algopy.itxn.PaymentInnerTransaction:
-        """Return a PaymentInnerTransaction from the group at the given index.
-
-        :param index: int
-        :param index: int:
-        :returns: algopy.itxn.PaymentInnerTransaction: The
-            PaymentInnerTransaction at the given index.
-        """
-        import algopy
-
-        return ITxnLoader(self._get_itxn(index, algopy.itxn.PaymentInnerTransaction)).payment
-
-    def asset_config(self, index: int) -> algopy.itxn.AssetConfigInnerTransaction:
-        """Return an AssetConfigInnerTransaction from the group at the given
-        index.
-
-        :param index: int
-        :param index: int:
-        :returns: algopy.itxn.AssetConfigInnerTransaction: The
-            AssetConfigInnerTransaction at the given index.
-        """
-        import algopy
-
-        return self._get_itxn(index, algopy.itxn.AssetConfigInnerTransaction)
-
-    def asset_transfer(self, index: int) -> algopy.itxn.AssetTransferInnerTransaction:
-        """Return an AssetTransferInnerTransaction from the group at the given
-        index.
-
-        :param index: int
-        :param index: int:
-        :returns: algopy.itxn.AssetTransferInnerTransaction: The
-            AssetTransferInnerTransaction at the given index.
-        """
-        import algopy
-
-        return self._get_itxn(index, algopy.itxn.AssetTransferInnerTransaction)
-
-    def asset_freeze(self, index: int) -> algopy.itxn.AssetFreezeInnerTransaction:
-        """Return an AssetFreezeInnerTransaction from the group at the given
-        index.
-
-        :param index: int
-        :param index: int:
-        :returns: algopy.itxn.AssetFreezeInnerTransaction: The
-            AssetFreezeInnerTransaction at the given index.
-        """
-        import algopy
-
-        return self._get_itxn(index, algopy.itxn.AssetFreezeInnerTransaction)
-
-    def application_call(self, index: int) -> algopy.itxn.ApplicationCallInnerTransaction:
-        """Return an ApplicationCallInnerTransaction from the group at the
-        given index.
-
-        :param index: int
-        :param index: int:
-        :returns: algopy.itxn.ApplicationCallInnerTransaction: The
-            ApplicationCallInnerTransaction at the given index.
-        """
-        import algopy
-
-        return self._get_itxn(index, algopy.itxn.ApplicationCallInnerTransaction)
-
-    def key_registration(self, index: int) -> algopy.itxn.KeyRegistrationInnerTransaction:
-        """Return a KeyRegistrationInnerTransaction from the group at the given
-        index.
-
-        :param index: int
-        :param index: int:
-        :returns: algopy.itxn.KeyRegistrationInnerTransaction: The
-            KeyRegistrationInnerTransaction at the given index.
-        """
-        import algopy
-
-        return self._get_itxn(index, algopy.itxn.KeyRegistrationInnerTransaction)
-
-    def transaction(self, index: int) -> algopy.itxn.InnerTransactionResult:
-        """Return an InnerTransactionResult from the group at the given index.
-
-        :param index: int
-        :param index: int:
-        :returns: algopy.itxn.InnerTransactionResult: The
-            InnerTransactionResult at the given index.
-        """
-        import algopy
-
-        return self._get_itxn(index, algopy.itxn.InnerTransactionResult)
-
-
-@dataclass
-class ARC4Factory:
-    """Factory for generating ARC4-compliant test data."""
-
-    def __init__(self, *, context: AlgopyTestContext) -> None:
-        """Initializes the ARC4Factory with the given testing context.
-
-        Args:
-            context (AlgopyTestContext): The testing context for generating test data.
-        """
-        self._context = context
-
-    def any_address(self) -> algopy.arc4.Address:
-        """Generate a random Algorand address.
-
-        :returns: A new, random Algorand address.
-        :rtype: algopy.arc4.Address
-        """
-
-        return algopy_testing.arc4.Address(algosdk.account.generate_account()[1])
-
-    def any_uint8(self, min_value: int = 0, max_value: int = MAX_UINT8) -> algopy.arc4.UInt8:
-        """Generate a random UInt8 within the specified range.
-
-        :param min_value: Minimum value (inclusive). Defaults to 0.
-        :type min_value: int
-        :param max_value: Maximum value (inclusive). Defaults to
-            MAX_UINT8.
-        :type max_value: int
-        :param min_value: int:  (Default value = 0)
-        :param max_value: int:  (Default value = MAX_UINT8)
-        :returns: A random UInt8 value.
-        :rtype: algopy.arc4.UInt8
-        :raises AssertionError: If values are out of UInt8 range.
-        """
-        import algopy
-
-        return algopy.arc4.UInt8(generate_random_int(min_value, max_value))
-
-    def any_uint16(self, min_value: int = 0, max_value: int = MAX_UINT16) -> algopy.arc4.UInt16:
-        """Generate a random UInt16 within the specified range.
-
-        :param min_value: Minimum value (inclusive). Defaults to 0.
-        :type min_value: int
-        :param max_value: Maximum value (inclusive). Defaults to
-            MAX_UINT16.
-        :type max_value: int
-        :param min_value: int:  (Default value = 0)
-        :param max_value: int:  (Default value = MAX_UINT16)
-        :returns: A random UInt16 value.
-        :rtype: algopy.arc4.UInt16
-        :raises AssertionError: If values are out of UInt16 range.
-        """
-        import algopy
-
-        return algopy.arc4.UInt16(generate_random_int(min_value, max_value))
-
-    def any_uint32(self, min_value: int = 0, max_value: int = MAX_UINT32) -> algopy.arc4.UInt32:
-        """Generate a random UInt32 within the specified range.
-
-        :param min_value: Minimum value (inclusive). Defaults to 0.
-        :type min_value: int
-        :param max_value: Maximum value (inclusive). Defaults to
-            MAX_UINT32.
-        :type max_value: int
-        :param min_value: int:  (Default value = 0)
-        :param max_value: int:  (Default value = MAX_UINT32)
-        :returns: A random UInt32 value.
-        :rtype: algopy.arc4.UInt32
-        :raises AssertionError: If values are out of UInt32 range.
-        """
-        import algopy
-
-        return algopy.arc4.UInt32(generate_random_int(min_value, max_value))
-
-    def any_uint64(self, min_value: int = 0, max_value: int = MAX_UINT64) -> algopy.arc4.UInt64:
-        """Generate a random UInt64 within the specified range.
-
-        :param min_value: Minimum value (inclusive). Defaults to 0.
-        :type min_value: int
-        :param max_value: Maximum value (inclusive). Defaults to
-            MAX_UINT64.
-        :type max_value: int
-        :param min_value: int:  (Default value = 0)
-        :param max_value: int:  (Default value = MAX_UINT64)
-        :returns: A random UInt64 value.
-        :rtype: algopy.arc4.UInt64
-        :raises AssertionError: If values are out of UInt64 range.
-        """
-        import algopy
-
-        return algopy.arc4.UInt64(generate_random_int(min_value, max_value))
-
-    def any_biguint128(
-        self, min_value: int = 0, max_value: int = (1 << 128) - 1
-    ) -> algopy.arc4.UInt128:
-        """Generate a random UInt128 within the specified range.
-
-        :param min_value: Minimum value (inclusive). Defaults to 0.
-        :type min_value: int
-        :param max_value: Maximum value (inclusive). Defaults to (2^128 - 1).
-        :type max_value: int
-        :param min_value: int:  (Default value = 0)
-        :param max_value: int:  (Default value = (1 << 128) - 1)
-        :returns: A random UInt128 value.
-        :rtype: algopy.arc4.UInt128
-        :raises AssertionError: If values are out of UInt128 range.
-        """
-        import algopy
-
-        return algopy.arc4.UInt128(generate_random_int(min_value, max_value))
-
-    def any_biguint256(
-        self, min_value: int = 0, max_value: int = (1 << 256) - 1
-    ) -> algopy.arc4.UInt256:
-        """Generate a random UInt256 within the specified range.
-
-        :param min_value: Minimum value (inclusive). Defaults to 0.
-        :type min_value: int
-        :param max_value: Maximum value (inclusive). Defaults to (2^256 - 1).
-        :type max_value: int
-        :param min_value: int:  (Default value = 0)
-        :param max_value: int:  (Default value = (1 << 256) - 1)
-        :returns: A random UInt256 value.
-        :rtype: algopy.arc4.UInt256
-        :raises AssertionError: If values are out of UInt256 range.
-        """
-        import algopy
-
-        return algopy.arc4.UInt256(generate_random_int(min_value, max_value))
-
-    def any_biguint512(
-        self, min_value: int = 0, max_value: int = MAX_UINT512
-    ) -> algopy.arc4.UInt512:
-        """Generate a random UInt512 within the specified range.
-
-        :param min_value: Minimum value (inclusive). Defaults to 0.
-        :type min_value: int
-        :param max_value: Maximum value (inclusive). Defaults to
-            MAX_UINT512.
-        :type max_value: int
-        :param min_value: int:  (Default value = 0)
-        :param max_value: int:  (Default value = MAX_UINT512)
-        :returns: A random UInt512 value.
-        :rtype: algopy.arc4.UInt512
-        :raises AssertionError: If values are out of UInt512 range.
-        """
-        import algopy
-
-        return algopy.arc4.UInt512(generate_random_int(min_value, max_value))
-
-    def any_dynamic_bytes(self, n: int) -> algopy.arc4.DynamicBytes:
-        """Generate a random dynamic bytes of size `n` bits.
-
-        :param n: The number of bits for the dynamic bytes. Must be a multiple of 8, otherwise
-                the last byte will be truncated.
-        :type n: int
-        :param n: int:
-        :returns: A new, random dynamic bytes of size `n` bits.
-        :rtype: algopy.arc4.DynamicBytes
-        """
-        import secrets
-
-        import algopy
-
-        # rounding up
-        num_bytes = (n + 7) // 8
-        random_bytes = secrets.token_bytes(num_bytes)
-
-        # trim to exact bit length if necessary
-        if n % 8 != 0:
-            last_byte = random_bytes[-1]
-            mask = (1 << (n % 8)) - 1
-            random_bytes = random_bytes[:-1] + bytes([last_byte & mask])
-
-        return algopy.arc4.DynamicBytes(random_bytes)
-
-    def any_string(self, n: int) -> algopy.arc4.String:
-        """Generate a random string of size `n` bits.
-
-        :param n: The number of bits for the string.
-        :type n: int
-        :param n: int:
-        :returns: A new, random string of size `n` bits.
-        :rtype: algopy.arc4.String
-        """
-        import secrets
-        import string
-
-        import algopy
-
-        # Calculate the number of characters needed (rounding up)
-        num_chars = (n + 7) // 8
-
-        # Generate random string
-        random_string = "".join(secrets.choice(string.printable) for _ in range(num_chars))
-
-        # Trim to exact bit length if necessary
-        if n % 8 != 0:
-            last_char = ord(random_string[-1])
-            mask = (1 << (n % 8)) - 1
-            random_string = random_string[:-1] + chr(last_char & mask)
-
-        return algopy.arc4.String(random_string)
 
 
 class AlgopyTestContext:
@@ -565,6 +114,8 @@ class AlgopyTestContext:
         # account, it defaults to an account with no balance
         self._account_data = defaultdict[str, AccountContextData](get_empty_account)
 
+        # TODO: should just be default_sender,
+        #       and used to define creator when a contract is created
         self.default_creator: algopy.Account = default_creator or algopy.Account(
             algosdk.account.generate_account()[1]
         )
