@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import typing
 
+from algopy_testing import itxn
+
 if typing.TYPE_CHECKING:
     from collections.abc import Sequence
 
@@ -36,7 +38,7 @@ class ITxnLoader:
         txn = self._inner_txn
 
         if not isinstance(txn, txn_type):
-            raise TypeError(f"Last transaction is not of type {txn_type.__name__}!")
+            raise TypeError(f"transaction is not of type {txn_type.__name__}!")
 
         return txn
 
@@ -47,9 +49,7 @@ class ITxnLoader:
         :raises ValueError: If the transaction is not found or not of
             the expected type.
         """
-        import algopy
-
-        return self._get_itxn(algopy.itxn.PaymentInnerTransaction)
+        return self._get_itxn(itxn.PaymentInnerTransaction)
 
     @property
     def asset_config(self) -> algopy.itxn.AssetConfigInnerTransaction:
@@ -58,9 +58,7 @@ class ITxnLoader:
         :raises ValueError: If the transaction is not found or not of
             the expected type.
         """
-        import algopy
-
-        return self._get_itxn(algopy.itxn.AssetConfigInnerTransaction)
+        return self._get_itxn(itxn.AssetConfigInnerTransaction)
 
     @property
     def asset_transfer(self) -> algopy.itxn.AssetTransferInnerTransaction:
@@ -69,9 +67,7 @@ class ITxnLoader:
         :raises ValueError: If the transaction is not found or not of
             the expected type.
         """
-        import algopy
-
-        return self._get_itxn(algopy.itxn.AssetTransferInnerTransaction)
+        return self._get_itxn(itxn.AssetTransferInnerTransaction)
 
     @property
     def asset_freeze(self) -> algopy.itxn.AssetFreezeInnerTransaction:
@@ -80,9 +76,7 @@ class ITxnLoader:
         :raises ValueError: If the transaction is not found or not of
             the expected type.
         """
-        import algopy
-
-        return self._get_itxn(algopy.itxn.AssetFreezeInnerTransaction)
+        return self._get_itxn(itxn.AssetFreezeInnerTransaction)
 
     @property
     def application_call(self) -> algopy.itxn.ApplicationCallInnerTransaction:
@@ -91,9 +85,7 @@ class ITxnLoader:
         :raises ValueError: If the transaction is not found or not of
             the expected type.
         """
-        import algopy
-
-        return self._get_itxn(algopy.itxn.ApplicationCallInnerTransaction)
+        return self._get_itxn(itxn.ApplicationCallInnerTransaction)
 
     @property
     def key_registration(self) -> algopy.itxn.KeyRegistrationInnerTransaction:
@@ -102,9 +94,7 @@ class ITxnLoader:
         :raises ValueError: If the transaction is not found or not of
             the expected type.
         """
-        import algopy
-
-        return self._get_itxn(algopy.itxn.KeyRegistrationInnerTransaction)
+        return self._get_itxn(itxn.KeyRegistrationInnerTransaction)
 
     @property
     def transaction(self) -> algopy.itxn.InnerTransactionResult:
@@ -113,9 +103,7 @@ class ITxnLoader:
         :raises ValueError: If the transaction is not found or not of
             the expected type.
         """
-        import algopy
-
-        return self._get_itxn(algopy.itxn.InnerTransactionResult)
+        return self._get_itxn(itxn.InnerTransactionResult)
 
 
 class ITxnGroupLoader:
@@ -136,7 +124,7 @@ class ITxnGroupLoader:
 
     def __getitem__(self, index: int | slice) -> ITxnLoader | list[ITxnLoader]:
         if isinstance(index, int):
-            return ITxnLoader(self._inner_txn_group[index])
+            return ITxnLoader(self._get_itxn(index))
         elif isinstance(index, slice):
             return [ITxnLoader(self._inner_txn_group[i]) for i in range(*index.indices(len(self)))]
         else:
@@ -148,18 +136,11 @@ class ITxnGroupLoader:
     def __init__(self, inner_txn_group: Sequence[InnerTransactionResultType]):
         self._inner_txn_group = inner_txn_group
 
-    def _get_itxn(self, index: int, txn_type: type[_T]) -> _T:
+    def _get_itxn(self, index: int) -> InnerTransactionResultType:
         try:
             txn = self._inner_txn_group[index]
         except IndexError as err:
             raise ValueError(f"No inner transaction available at index {index}!") from err
-
-        if not isinstance(txn, txn_type):
-            raise TypeError(
-                f"Inner transaction at index {index} is of "
-                f"type '{type(txn).__name__}' not '{txn_type.__name__}'!"
-            )
-
         return txn
 
     def payment(self, index: int) -> algopy.itxn.PaymentInnerTransaction:
@@ -170,9 +151,7 @@ class ITxnGroupLoader:
         :returns: algopy.itxn.PaymentInnerTransaction: The
             PaymentInnerTransaction at the given index.
         """
-        import algopy
-
-        return ITxnLoader(self._get_itxn(index, algopy.itxn.PaymentInnerTransaction)).payment
+        return ITxnLoader(self._get_itxn(index)).payment
 
     def asset_config(self, index: int) -> algopy.itxn.AssetConfigInnerTransaction:
         """Return an AssetConfigInnerTransaction from the group at the given
@@ -183,9 +162,7 @@ class ITxnGroupLoader:
         :returns: algopy.itxn.AssetConfigInnerTransaction: The
             AssetConfigInnerTransaction at the given index.
         """
-        import algopy
-
-        return self._get_itxn(index, algopy.itxn.AssetConfigInnerTransaction)
+        return ITxnLoader(self._get_itxn(index)).asset_config
 
     def asset_transfer(self, index: int) -> algopy.itxn.AssetTransferInnerTransaction:
         """Return an AssetTransferInnerTransaction from the group at the given
@@ -196,9 +173,7 @@ class ITxnGroupLoader:
         :returns: algopy.itxn.AssetTransferInnerTransaction: The
             AssetTransferInnerTransaction at the given index.
         """
-        import algopy
-
-        return self._get_itxn(index, algopy.itxn.AssetTransferInnerTransaction)
+        return ITxnLoader(self._get_itxn(index)).asset_transfer
 
     def asset_freeze(self, index: int) -> algopy.itxn.AssetFreezeInnerTransaction:
         """Return an AssetFreezeInnerTransaction from the group at the given
@@ -209,9 +184,7 @@ class ITxnGroupLoader:
         :returns: algopy.itxn.AssetFreezeInnerTransaction: The
             AssetFreezeInnerTransaction at the given index.
         """
-        import algopy
-
-        return self._get_itxn(index, algopy.itxn.AssetFreezeInnerTransaction)
+        return ITxnLoader(self._get_itxn(index)).asset_freeze
 
     def application_call(self, index: int) -> algopy.itxn.ApplicationCallInnerTransaction:
         """Return an ApplicationCallInnerTransaction from the group at the
@@ -222,9 +195,7 @@ class ITxnGroupLoader:
         :returns: algopy.itxn.ApplicationCallInnerTransaction: The
             ApplicationCallInnerTransaction at the given index.
         """
-        import algopy
-
-        return self._get_itxn(index, algopy.itxn.ApplicationCallInnerTransaction)
+        return ITxnLoader(self._get_itxn(index)).application_call
 
     def key_registration(self, index: int) -> algopy.itxn.KeyRegistrationInnerTransaction:
         """Return a KeyRegistrationInnerTransaction from the group at the given
@@ -235,9 +206,7 @@ class ITxnGroupLoader:
         :returns: algopy.itxn.KeyRegistrationInnerTransaction: The
             KeyRegistrationInnerTransaction at the given index.
         """
-        import algopy
-
-        return self._get_itxn(index, algopy.itxn.KeyRegistrationInnerTransaction)
+        return ITxnLoader(self._get_itxn(index)).key_registration
 
     def transaction(self, index: int) -> algopy.itxn.InnerTransactionResult:
         """Return an InnerTransactionResult from the group at the given index.
@@ -247,6 +216,4 @@ class ITxnGroupLoader:
         :returns: algopy.itxn.InnerTransactionResult: The
             InnerTransactionResult at the given index.
         """
-        import algopy
-
-        return self._get_itxn(index, algopy.itxn.InnerTransactionResult)
+        return ITxnLoader(self._get_itxn(index)).transaction
