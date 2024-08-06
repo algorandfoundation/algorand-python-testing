@@ -28,10 +28,11 @@
     "ruff.codeAction.fixViolation": {
         "enable": true
     },
-
-    "mypy.configFile": "pyproject.toml",
-    // set to empty array to use config from project
-    "mypy.targets": ["--cache-dir=/dev/null"],
-    "mypy.runUsingActiveInterpreter": true,
-    "cSpell.words": ["addw", "mulw"]
+    "mypy-type-checker.importStrategy": "fromEnvironment",
+    "mypy-type-checker.args": [
+        "--enable-incomplete-feature=Unpack",
+        "--config-file=pyproject.toml",
+        "--strict",
+        "--show-column-numbers"
+    ]
 }
