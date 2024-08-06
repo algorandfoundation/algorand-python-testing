@@ -117,11 +117,11 @@ def _extract_and_append_txn_to_context(
     txn_arrays = _extract_arrays_from_args(
         args,
         method_selector=method_selector,
-        sender=context.default_creator,
+        sender=context.default_sender,
         app=app,
     )
 
-    txn_fields.setdefault("sender", context.default_creator)
+    txn_fields.setdefault("sender", context.default_sender)
     txn_fields.setdefault("app_id", app)
     txn_fields.setdefault("accounts", txn_arrays.accounts)
     txn_fields.setdefault("assets", txn_arrays.assets)

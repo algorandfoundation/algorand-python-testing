@@ -31,7 +31,7 @@ def test_vote(context: AlgopyTestContext) -> None:
     # Arrange
     contract = VotingContract()
     contract.votes.value = algopy.UInt64(0)
-    voter = context.default_creator
+    voter = context.default_sender
 
     context.set_transaction_group(
         gtxn=[

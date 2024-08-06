@@ -22,7 +22,7 @@ def _append_bare_txn_to_context(
         [
             context.any_application_call_transaction(
                 # TODO: fill out other fields where possible (see abimethod)
-                sender=context.default_creator,
+                sender=context.default_sender,
                 app_id=context.get_active_application(),
             ),
         ]

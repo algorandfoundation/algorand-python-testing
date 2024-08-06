@@ -64,13 +64,13 @@ def test_application_management() -> None:
 def test_transaction_group_management() -> None:
     with algopy_testing_context() as context:
         txn1 = context.any_payment_transaction(
-            sender=context.default_creator,
-            receiver=context.default_creator,
+            sender=context.default_sender,
+            receiver=context.default_sender,
             amount=UInt64(1000),
         )
         txn2 = context.any_payment_transaction(
-            sender=context.default_creator,
-            receiver=context.default_creator,
+            sender=context.default_sender,
+            receiver=context.default_sender,
             amount=UInt64(2000),
         )
         context.set_transaction_group([txn1, txn2])
@@ -152,13 +152,13 @@ def test_algopy_testing_context() -> None:
 def test_get_last_submitted_itxn_loader() -> None:
     with algopy_testing_context() as context:
         itxn1 = PaymentInnerTransaction(
-            sender=context.default_creator,
-            receiver=context.default_creator,
+            sender=context.default_sender,
+            receiver=context.default_sender,
             amount=UInt64(1000),
         )
         itxn2 = PaymentInnerTransaction(
-            sender=context.default_creator,
-            receiver=context.default_creator,
+            sender=context.default_sender,
+            receiver=context.default_sender,
             amount=UInt64(2000),
         )
         context._append_inner_transaction_group([itxn1, itxn2])
@@ -169,13 +169,13 @@ def test_get_last_submitted_itxn_loader() -> None:
 def test_clear_inner_transaction_groups() -> None:
     with algopy_testing_context() as context:
         itxn1 = PaymentInnerTransaction(
-            sender=context.default_creator,
-            receiver=context.default_creator,
+            sender=context.default_sender,
+            receiver=context.default_sender,
             amount=UInt64(1000),
         )
         itxn2 = PaymentInnerTransaction(
-            sender=context.default_creator,
-            receiver=context.default_creator,
+            sender=context.default_sender,
+            receiver=context.default_sender,
             amount=UInt64(2000),
         )
         context._append_inner_transaction_group([itxn1, itxn2])

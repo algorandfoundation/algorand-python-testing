@@ -18,7 +18,7 @@ def context() -> Generator[AlgopyTestContext, None, None]:
 def test_add_address_to_whitelist(context: AlgopyTestContext) -> None:
     # Arrange
     contract = ZkWhitelistContract()
-    address = algopy.arc4.Address(context.default_creator)
+    address = algopy.arc4.Address(context.default_sender)
     proof = algopy.arc4.DynamicArray[
         algopy.arc4.StaticArray[algopy.arc4.Byte, typing.Literal[32]]
     ](
@@ -39,7 +39,7 @@ def test_add_address_to_whitelist(context: AlgopyTestContext) -> None:
 
     # Assert
     assert result == algopy.arc4.String("")
-    assert contract.whitelist[context.default_creator]
+    assert contract.whitelist[context.default_sender]
 
 
 def test_add_address_to_whitelist_invalid_proof(context: AlgopyTestContext) -> None:

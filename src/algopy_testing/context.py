@@ -76,7 +76,7 @@ class AlgopyTestContext:
     def __init__(
         self,
         *,
-        default_creator: algopy.Account | None = None,
+        default_sender: algopy.Account | None = None,
         template_vars: dict[str, typing.Any] | None = None,
     ) -> None:
         import algopy
@@ -110,20 +110,17 @@ class AlgopyTestContext:
         # using defaultdict here because there should be an AccountContextData for any
         # account, it defaults to an account with no balance
         self._account_data = defaultdict[str, AccountContextData](get_empty_account)
-
-        # TODO: should just be default_sender,
-        #       and used to define creator when a contract is created
-        self.default_creator: algopy.Account = default_creator or algopy.Account(
+        self.default_sender: algopy.Account = default_sender or algopy.Account(
             algosdk.account.generate_account()[1]
         )
-        self._account_data[self.default_creator.public_key] = get_empty_account()
+        self._account_data[self.default_sender.public_key] = get_empty_account()
 
         self._global_fields: GlobalFields = {
             "min_txn_fee": algopy.UInt64(algosdk.constants.MIN_TXN_FEE),
             "min_balance": algopy.UInt64(DEFAULT_ACCOUNT_MIN_BALANCE),
             "max_txn_life": algopy.UInt64(DEFAULT_MAX_TXN_LIFE),
             "zero_address": algopy.Account(algosdk.constants.ZERO_ADDRESS),
-            "creator_address": self.default_creator,
+            "creator_address": self.default_sender,
             "asset_create_min_balance": algopy.UInt64(DEFAULT_ASSET_CREATE_MIN_BALANCE),
             "asset_opt_in_min_balance": algopy.UInt64(DEFAULT_ASSET_OPT_IN_MIN_BALANCE),
             "genesis_hash": algopy.Bytes(DEFAULT_GLOBAL_GENESIS_HASH),
@@ -530,7 +527,7 @@ class AlgopyTestContext:
             "manager": algopy.Account(algosdk.constants.ZERO_ADDRESS),
             "freeze": algopy.Account(algosdk.constants.ZERO_ADDRESS),
             "clawback": algopy.Account(algosdk.constants.ZERO_ADDRESS),
-            "creator": self.default_creator,
+            "creator": self.default_sender,
             "reserve": algopy.Account(algosdk.constants.ZERO_ADDRESS),
         }
         merged_fields = dict(ChainMap(asset_fields, default_asset_fields))  # type: ignore[arg-type]
@@ -579,7 +576,7 @@ class AlgopyTestContext:
             "local_num_uint": algopy_testing.UInt64(0),
             "local_num_bytes": algopy_testing.UInt64(0),
             "extra_program_pages": algopy_testing.UInt64(0),
-            "creator": self.default_creator,
+            "creator": self.default_sender,
             "address": address
             or algopy_testing.Account(algosdk.logic.get_application_address(new_app_id)),
         }
@@ -941,7 +938,7 @@ class AlgopyTestContext:
         txn = txn_type.new()
         # TODO: check reference types are known?
         fields.setdefault("type", txn_type.type_enum)
-        fields.setdefault("sender", self.default_creator)  # TODO: have a default sender too?
+        fields.setdefault("sender", self.default_sender)  # TODO: have a default sender too?
 
         self._gtxns[txn] = {**get_txn_defaults(), **fields}
         return txn

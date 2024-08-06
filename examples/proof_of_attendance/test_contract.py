@@ -50,7 +50,7 @@ def test_confirm_attendance(
     confirm()
 
     # Assert
-    assert context.get_box(key_prefix + context.default_creator.bytes) == algopy.op.itob(1001)
+    assert context.get_box(key_prefix + context.default_sender.bytes) == algopy.op.itob(1001)
 
 
 @pytest.mark.parametrize(
@@ -71,15 +71,15 @@ def test_claim_poa(
     contract = ProofOfAttendance()
     dummy_poa = context.any_asset()
     opt_in_txn = context.any_asset_transfer_transaction(
-        sender=context.default_creator,
-        asset_receiver=context.default_creator,
+        sender=context.default_sender,
+        asset_receiver=context.default_sender,
         asset_close_to=algopy.Account(algosdk.constants.ZERO_ADDRESS),
         rekey_to=algopy.Account(algosdk.constants.ZERO_ADDRESS),
         xfer_asset=dummy_poa,
         fee=algopy.UInt64(0),
         asset_amount=algopy.UInt64(0),
     )
-    context.set_box(key_prefix + context.default_creator.bytes, algopy.op.itob(dummy_poa.id))
+    context.set_box(key_prefix + context.default_sender.bytes, algopy.op.itob(dummy_poa.id))
 
     # Act
     claim = getattr(contract, claim_poa)
@@ -87,5 +87,5 @@ def test_claim_poa(
 
     # Assert
     axfer_itxn = context.get_submitted_itxn_group(-1).asset_transfer(0)
-    assert axfer_itxn.asset_receiver == context.default_creator
+    assert axfer_itxn.asset_receiver == context.default_sender
     assert axfer_itxn.asset_amount == algopy.UInt64(1)

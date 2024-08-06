@@ -947,7 +947,7 @@ def test_itxn_ops(context: AlgopyTestContext) -> None:
     assert appl_itxn.on_completion == algopy.OnCompleteAction.DeleteApplication
     assert appl_itxn.fee == algopy.UInt64(algosdk.constants.MIN_TXN_FEE)
 
-    assert pay_itxn.receiver == context.default_creator
+    assert pay_itxn.receiver == context.default_sender
     assert pay_itxn.amount == algopy.UInt64(1000)
 
 

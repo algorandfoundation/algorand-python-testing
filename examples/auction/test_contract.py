@@ -51,7 +51,7 @@ def test_start_auction(
     )
 
     # Act
-    with context.scoped_txn_fields(sender=context.default_creator):
+    with context.scoped_txn_fields(sender=context.default_sender):
         contract.start_auction(
             starting_price,
             auction_duration,
@@ -66,7 +66,7 @@ def test_start_auction(
 
 def test_bid(context: AlgopyTestContext) -> None:
     # Arrange
-    account = context.default_creator
+    account = context.default_sender
     auction_end = context.any_uint64(min_value=int(time.time()) + 10_000)
     previous_bid = context.any_uint64(1, 100)
     pay_amount = context.any_uint64()
@@ -115,7 +115,7 @@ def test_claim_asset(context: AlgopyTestContext) -> None:
     context.patch_global_fields(latest_timestamp=context.any_uint64())
     contract = AuctionContract()
     contract.auction_end = context.any_uint64(1, 100)
-    contract.previous_bidder = context.default_creator
+    contract.previous_bidder = context.default_sender
     asa_amount = context.any_uint64(1000, 2000)
     contract.asa_amount = asa_amount
     asset = context.any_asset()
@@ -126,8 +126,8 @@ def test_claim_asset(context: AlgopyTestContext) -> None:
     # Assert
     last_inner_txn = context.last_submitted_itxn.asset_transfer
     assert last_inner_txn.xfer_asset == asset
-    assert last_inner_txn.asset_close_to == context.default_creator
-    assert last_inner_txn.asset_receiver == context.default_creator
+    assert last_inner_txn.asset_close_to == context.default_sender
+    assert last_inner_txn.asset_receiver == context.default_sender
     assert last_inner_txn.asset_amount == asa_amount
 
 

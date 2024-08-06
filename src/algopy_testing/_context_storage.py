@@ -28,13 +28,13 @@ def get_test_context() -> AlgopyTestContext:
 @contextmanager
 def algopy_testing_context(
     *,
-    default_creator: algopy.Account | None = None,
+    default_sender: algopy.Account | None = None,
 ) -> Generator[AlgopyTestContext, None, None]:
     from algopy_testing.context import AlgopyTestContext
 
     token = _var.set(
         AlgopyTestContext(
-            default_creator=default_creator,
+            default_sender=default_sender,
         )
     )
     try:
