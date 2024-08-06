@@ -1,12 +1,12 @@
 import typing
 from collections.abc import Callable, Sequence
 
+from algopy_testing._context_storage import get_test_context
+
 
 # TODO: combine with itxn
 class _GITxn:
     def __getattr__(self, name: str) -> Callable[[int], typing.Any]:
-        from algopy_testing.context import get_test_context
-
         context = get_test_context()
         if not context._inner_transaction_groups:
             raise ValueError(

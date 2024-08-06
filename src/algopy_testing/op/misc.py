@@ -20,6 +20,7 @@ from ecdsa import (  # type: ignore  # noqa: PGH003
     VerifyingKey,
 )
 
+from algopy_testing._context_storage import get_test_context
 from algopy_testing.constants import (
     BITS_IN_BYTE,
     DEFAULT_ACCOUNT_MIN_BALANCE,
@@ -27,7 +28,6 @@ from algopy_testing.constants import (
     MAX_BYTES_SIZE,
     MAX_UINT64,
 )
-from algopy_testing.context import get_test_context
 from algopy_testing.enums import OnCompleteAction, TransactionType
 from algopy_testing.models import Account, Application, Asset
 from algopy_testing.primitives.biguint import BigUInt
@@ -108,7 +108,6 @@ def ed25519verify_bare(a: Bytes | bytes, b: Bytes | bytes, c: Bytes | bytes, /) 
 
 
 def ed25519verify(a: Bytes | bytes, b: Bytes | bytes, c: Bytes | bytes, /) -> bool:
-    from algopy_testing.context import get_test_context
     from algopy_testing.utils import as_bytes
 
     ctx = get_test_context()
@@ -1105,8 +1104,6 @@ class _AppGlobal:
         return UInt64(value or 0), value is None
 
     def delete(self, b: algopy.Bytes | bytes, /) -> None:
-        from algopy_testing import get_test_context
-
         test_context = get_test_context()
         if not test_context or not test_context._active_contract:
             raise ValueError("No active contract or test context found.")

@@ -7,6 +7,8 @@ from typing import TypedDict, TypeVar
 
 import algosdk
 
+from algopy_testing._context_storage import get_test_context
+
 if typing.TYPE_CHECKING:
     from collections.abc import Callable
 
@@ -40,8 +42,6 @@ class GlobalFields(TypedDict, total=False):
 class _Global:
     def __getattr__(self, name: str) -> typing.Any:
         import algopy
-
-        from algopy_testing.context import get_test_context
 
         context = get_test_context()
         if name == "latest_timestamp" and context._global_fields.get(name) is None:

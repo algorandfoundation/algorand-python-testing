@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing
 
+from algopy_testing._context_storage import get_test_context
 from algopy_testing.enums import TransactionType
 from algopy_testing.models.txn_fields import TransactionFieldsBase
 
@@ -40,8 +41,6 @@ class TransactionBase(TransactionFieldsBase):
 
     @property
     def key_txn(self) -> TransactionBase:
-        from algopy_testing.context import get_test_context
-
         if self._is_context_mapped:
             return self
 
@@ -56,8 +55,6 @@ class TransactionBase(TransactionFieldsBase):
 
     @property
     def fields(self) -> dict[str, object]:
-        from algopy_testing.context import get_test_context
-
         context = get_test_context()
         try:
             return context._gtxns[self.key_txn]

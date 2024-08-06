@@ -10,6 +10,7 @@ from collections.abc import Iterable, Reversible
 import algosdk
 from Cryptodome.Hash import SHA512
 
+from algopy_testing._context_storage import get_test_context
 from algopy_testing.constants import (
     ARC4_RETURN_PREFIX,
     BITS_IN_BYTE,
@@ -1203,8 +1204,6 @@ def emit(event: str | Struct, /, *args: _TABIArg) -> None:
     ```
     """  # noqa: E501
     import algopy
-
-    from algopy_testing.context import get_test_context
 
     context = get_test_context()
     active_txn = context.get_active_transaction()

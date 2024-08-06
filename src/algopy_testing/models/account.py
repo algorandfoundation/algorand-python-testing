@@ -5,8 +5,8 @@ import typing
 
 import algosdk
 
-import algopy_testing
-from algopy_testing.primitives.bytes import Bytes
+from algopy_testing._context_storage import get_test_context
+from algopy_testing.primitives import Bytes, UInt64
 from algopy_testing.utils import as_bytes
 
 if typing.TYPE_CHECKING:
@@ -32,12 +32,12 @@ class AccountFields(typing.TypedDict, total=False):
 
 
 def get_empty_account() -> AccountContextData:
-    zero = algopy_testing.UInt64(0)
+    zero = UInt64()
     return AccountContextData(
         fields={
             "balance": zero,
             "min_balance": zero,
-            "auth_address": algopy_testing.Account(),
+            "auth_address": Account(),
             "total_num_uint": zero,
             "total_num_byte_slice": zero,
             "total_extra_app_pages": zero,
@@ -82,13 +82,15 @@ class Account:
 
     @property
     def data(self) -> AccountContextData:
-        context = algopy_testing.get_test_context()
+        context = get_test_context()
         return context._account_data[self.public_key]
 
     def is_opted_in(self, asset_or_app: algopy.Asset | algopy.Application, /) -> bool:
-        if isinstance(asset_or_app, algopy_testing.Asset):
+        from algopy_testing.models import Application, Asset
+
+        if isinstance(asset_or_app, Asset):
             return asset_or_app.id in self.data.opted_asset_balances
-        elif isinstance(asset_or_app, algopy_testing.Application):
+        elif isinstance(asset_or_app, Application):
             return asset_or_app.id in self.data.opted_apps
 
         raise TypeError(

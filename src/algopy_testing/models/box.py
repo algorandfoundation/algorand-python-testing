@@ -3,8 +3,8 @@ from __future__ import annotations
 import typing
 
 import algopy_testing
+from algopy_testing._context_storage import get_test_context
 from algopy_testing.constants import MAX_BOX_SIZE
-from algopy_testing.context import get_test_context
 from algopy_testing.utils import as_bytes, as_string
 
 _TKey = typing.TypeVar("_TKey")

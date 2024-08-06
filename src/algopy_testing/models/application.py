@@ -3,7 +3,8 @@ from __future__ import annotations
 import inspect
 import typing
 
-import algopy_testing
+from algopy_testing._context_storage import get_test_context
+from algopy_testing.primitives import UInt64
 from algopy_testing.utils import as_int64
 
 if typing.TYPE_CHECKING:
@@ -31,11 +32,11 @@ class Application:
 
     @property
     def id(self) -> algopy.UInt64:
-        return algopy_testing.UInt64(self._id)
+        return UInt64(self._id)
 
     @property
     def fields(self) -> ApplicationFields:
-        context = algopy_testing.get_test_context()
+        context = get_test_context()
         try:
             return context._application_data[self._id]
         except KeyError:

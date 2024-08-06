@@ -3,6 +3,8 @@ from __future__ import annotations
 import functools
 import typing
 
+from algopy_testing._context_storage import get_test_context
+
 if typing.TYPE_CHECKING:
     import algopy
 
@@ -67,8 +69,6 @@ def baremethod(
     def decorator(fn: typing.Callable[_P, _R]) -> typing.Callable[_P, _R]:
         @functools.wraps(fn)
         def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
-            from algopy_testing import get_test_context
-
             context = get_test_context()
             if context._active_transaction_index is not None:
                 return fn(*args, **kwargs)

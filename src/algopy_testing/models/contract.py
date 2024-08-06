@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, final
 
 import algopy_testing
+from algopy_testing._context_storage import get_test_context
 
 if TYPE_CHECKING:
     import algopy
@@ -27,7 +28,7 @@ class _StateTotals:
 
 class _ContractMeta(type):
     def __call__(cls, *args: Any, **kwargs: dict[str, Any]) -> object:
-        context = algopy_testing.get_test_context()
+        context = get_test_context()
         instance = super().__call__(*args, **kwargs)
 
         if context and isinstance(instance, Contract):
@@ -136,7 +137,7 @@ class Contract(metaclass=_ContractMeta):
         if name in ("approval_program", "clear_state_program"):
 
             def wrapper(*args: Any, **kwargs: dict[str, Any]) -> Any:
-                context = algopy_testing.get_test_context()
+                context = get_test_context()
                 # TODO: this should also set up the current txn like abimethod does
                 context.set_active_contract(self)
                 try:

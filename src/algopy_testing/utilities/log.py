@@ -1,3 +1,4 @@
+from algopy_testing._context_storage import get_test_context
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.uint64 import UInt64
 from algopy_testing.protocols import BytesBacked
@@ -14,8 +15,6 @@ def log(
     Literal `str` values will be encoded as UTF8.
     """
     import algopy
-
-    from algopy_testing.context import get_test_context
 
     context = get_test_context()
     logs: list[bytes] = []

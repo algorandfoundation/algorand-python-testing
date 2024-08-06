@@ -3,8 +3,8 @@ from collections.abc import Generator
 
 import algopy
 import pytest
-from algopy_testing import arc4
-from algopy_testing.context import AlgopyTestContext, algopy_testing_context
+from algopy_testing import algopy_testing_context, arc4
+from algopy_testing.context import AlgopyTestContext
 from algopy_testing.models.box import BoxMap
 from algopy_testing.primitives.biguint import BigUInt
 from algopy_testing.primitives.bytes import Bytes

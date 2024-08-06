@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, TypedDict, TypeVar
 
+from algopy_testing._context_storage import get_test_context
+
 if TYPE_CHECKING:
     import algopy
 
@@ -35,8 +37,6 @@ class Asset:
         self.id = asset_id if isinstance(asset_id, UInt64) else UInt64(asset_id)
 
     def balance(self, account: algopy.Account) -> algopy.UInt64:
-        from algopy_testing.context import get_test_context
-
         context = get_test_context()
         if account not in context._account_data:
             raise ValueError(
@@ -65,8 +65,6 @@ class Asset:
         )
 
     def __getattr__(self, name: str) -> object:
-        from algopy_testing.context import get_test_context
-
         context = get_test_context()
         if int(self.id) not in context._asset_data:
             # check if its not 0 (which means its not

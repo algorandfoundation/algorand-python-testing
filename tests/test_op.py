@@ -11,8 +11,8 @@ import ecdsa.util  # type: ignore  # noqa: PGH003
 import nacl.signing
 import pytest
 from algokit_utils import LogicError, get_localnet_default_account
-from algopy_testing import op
-from algopy_testing.context import AlgopyTestContext, algopy_testing_context
+from algopy_testing import algopy_testing_context, op
+from algopy_testing.context import AlgopyTestContext
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.uint64 import UInt64
 from algopy_testing.utils import convert_native_to_stack

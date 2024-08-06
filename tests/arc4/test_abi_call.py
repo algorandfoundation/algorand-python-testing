@@ -2,8 +2,8 @@ import typing
 from collections.abc import Generator
 
 import pytest
-from algopy_testing import arc4
-from algopy_testing.context import AlgopyTestContext, algopy_testing_context
+from algopy_testing import algopy_testing_context, arc4
+from algopy_testing.context import AlgopyTestContext
 from algopy_testing.itxn import ApplicationCallInnerTransaction
 from algopy_testing.models.contract import ARC4Contract
 from pytest_mock import MockerFixture

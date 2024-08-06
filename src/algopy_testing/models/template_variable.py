@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import typing
 
+from algopy_testing._context_storage import get_test_context
+
 _T = typing.TypeVar("_T")
 
 
 class TemplateVarGeneric:
     def __getitem__(self, type_: type[_T]) -> typing.Callable[[str], typing.Any]:
-        from algopy_testing.context import get_test_context
-
         context = get_test_context()
 
         def create_template_var(variable_name: str) -> typing.Any:

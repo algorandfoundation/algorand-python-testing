@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-import algopy_testing
+from algopy_testing._context_storage import get_test_context
 
 _OP_MEMBER_TO_TXN_MEMBER = {
     "type": "type_bytes",
@@ -15,8 +15,6 @@ _OP_MEMBER_TO_TXN_MEMBER = {
 
 class _Txn:
     def __getattr__(self, name: str) -> typing.Any:
-        from algopy_testing.context import get_test_context
-
         context = get_test_context()
         active_txn = context.get_active_transaction()
         txn_name = _OP_MEMBER_TO_TXN_MEMBER.get(name, name)
@@ -37,7 +35,7 @@ class _Txn:
 
 class _GTxn:
     def __getattr__(self, name: str) -> typing.Any:
-        context = algopy_testing.get_test_context()
+        context = get_test_context()
         txn_group = context._current_transaction_group
         if not txn_group:
             raise ValueError(

@@ -6,10 +6,9 @@ from copy import deepcopy
 
 import algosdk
 
-import algopy_testing
-from algopy_testing.context import get_test_context
+from algopy_testing._context_storage import get_test_context
 from algopy_testing.enums import TransactionType
-from algopy_testing.models import Account
+from algopy_testing.models import Account, Asset
 from algopy_testing.models.txn_fields import (
     TransactionFieldsBase,
     get_txn_defaults,
@@ -50,7 +49,7 @@ __all__ = [
 
 
 class _BaseInnerTransactionResult(TransactionFieldsBase):
-    txn_type: algopy_testing.TransactionType = TransactionType.Payment
+    txn_type: TransactionType = TransactionType.Payment
 
     def __init__(self, **fields: typing.Any):
         self._fields = fields
@@ -61,7 +60,8 @@ class _BaseInnerTransactionResult(TransactionFieldsBase):
 
     @property
     def _logs(self) -> list[bytes]:
-        context = algopy_testing.get_test_context()
+
+        context = get_test_context()
         try:
             return context._application_logs[int(self.app_id.id)]
         except KeyError:
@@ -134,7 +134,7 @@ class _BaseInnerTransactionFields:
         _narrow_covariant_types(fields)
 
     def submit(self) -> typing.Any:
-        context = algopy_testing.get_test_context()
+        context = get_test_context()
         result = _get_itxn_result(self)
         context._append_inner_transaction_group([result])
         return result
@@ -178,8 +178,6 @@ def submit_txns(
 
     :returns: A tuple of the resulting inner transactions
     """
-    from algopy_testing import get_test_context
-
     context = get_test_context()
 
     if len(transactions) > algosdk.constants.TX_GROUP_LIMIT:
@@ -210,7 +208,7 @@ def _on_keyreg(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
 
 def _on_asset_config(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
     # if it is a txn to create an asset then ensure this is reflected in the context
-    if fields.get("config_asset") == algopy_testing.Asset():
+    if fields.get("config_asset") == Asset():
         context = get_test_context()
         # TODO: refine
         created_asset = context.any_asset(

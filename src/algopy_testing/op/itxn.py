@@ -1,11 +1,11 @@
 import typing
 from collections.abc import Callable
 
+from algopy_testing._context_storage import get_test_context
+
 
 class _ITxn:
     def __getattr__(self, name: str) -> Callable[[], typing.Any]:
-        from algopy_testing.context import get_test_context
-
         context = get_test_context()
         if not context._inner_transaction_groups:
             raise ValueError(
@@ -32,15 +32,11 @@ ITxn = _ITxn()
 # TODO: add tests for these ops
 class _ITxnCreate:
     def begin(self) -> None:
-        from algopy_testing.context import get_test_context
-
         context = get_test_context()
         context._constructing_inner_transaction_group = []
 
     @classmethod
     def next(cls) -> None:
-        from algopy_testing.context import get_test_context
-
         context = get_test_context()
         if context._constructing_inner_transaction:
             context._constructing_inner_transaction_group.append(
@@ -50,8 +46,6 @@ class _ITxnCreate:
 
     @classmethod
     def submit(cls) -> None:
-        from algopy_testing.context import get_test_context
-
         context = get_test_context()
         if context._constructing_inner_transaction:
             context._constructing_inner_transaction_group.append(
@@ -69,8 +63,6 @@ class _ITxnCreate:
             super().__setattr__(name, value)
 
     def _set_field(self, field: str, value: typing.Any) -> None:
-        from algopy_testing.context import get_test_context
-
         context = get_test_context()
         if not context._constructing_inner_transaction:
             raise ValueError("No active inner transaction. Call ITxnCreate.begin() first.")

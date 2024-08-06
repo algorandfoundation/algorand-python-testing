@@ -5,10 +5,7 @@ import string
 import typing
 from collections import ChainMap, defaultdict
 from contextlib import contextmanager
-from contextvars import ContextVar
-
-# Define the union type
-from typing import Any, Unpack
+from typing import Unpack
 
 import algosdk
 
@@ -80,7 +77,7 @@ class AlgopyTestContext:
         self,
         *,
         default_creator: algopy.Account | None = None,
-        template_vars: dict[str, Any] | None = None,
+        template_vars: dict[str, typing.Any] | None = None,
     ) -> None:
         import algopy
 
@@ -105,7 +102,7 @@ class AlgopyTestContext:
         self._inner_transaction_groups: list[Sequence[InnerTransactionResultType]] = []
         self._constructing_inner_transaction_group: list[InnerTransactionResultType] = []
         self._constructing_inner_transaction: InnerTransactionResultType | None = None
-        self._template_vars: dict[str, Any] = template_vars or {}
+        self._template_vars: dict[str, typing.Any] = template_vars or {}
         self._blocks: dict[int, dict[str, int]] = {}
         self._boxes: dict[bytes, bytes] = {}
         self._lsigs: dict[algopy.LogicSig, Callable[[], algopy.UInt64 | bool]] = {}
@@ -225,7 +222,7 @@ class AlgopyTestContext:
         self._global_fields["current_application_address"] = app.address
         self._global_fields["current_application_id"] = app
 
-    def set_template_var(self, name: str, value: Any) -> None:
+    def set_template_var(self, name: str, value: typing.Any) -> None:
         """Set a template variable for the current context.
 
         :param name: The name of the template variable.
@@ -1157,36 +1154,6 @@ class AlgopyTestContext:
         self._application_logs = {}
         self._asset_id = iter(range(1, 2**64))
         self._app_id = iter(range(1, 2**64))
-
-
-_var: ContextVar[AlgopyTestContext] = ContextVar("_var")
-
-
-def get_test_context() -> AlgopyTestContext:
-    try:
-        result = _var.get()
-    except LookupError:
-        raise ValueError(
-            "Test context is not initialized! Use `with algopy_testing_context()` to "
-            "access the context manager."
-        ) from None
-    return result
-
-
-@contextmanager
-def algopy_testing_context(
-    *,
-    default_creator: algopy.Account | None = None,
-) -> Generator[AlgopyTestContext, None, None]:
-    token = _var.set(
-        AlgopyTestContext(
-            default_creator=default_creator,
-        )
-    )
-    try:
-        yield _var.get()
-    finally:
-        _var.reset(token)
 
 
 def _assert_address_is_valid(address: str) -> None:

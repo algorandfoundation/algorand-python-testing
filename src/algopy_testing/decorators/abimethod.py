@@ -7,6 +7,7 @@ import typing
 import algosdk
 
 import algopy_testing
+from algopy_testing._context_storage import get_test_context
 from algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM
 from algopy_testing.models.txn_fields import ApplicationCallFields
 from algopy_testing.utils import (
@@ -81,7 +82,7 @@ def abimethod(  # noqa: PLR0913
 
     @functools.wraps(fn)
     def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
-        context = algopy_testing.get_test_context()
+        context = get_test_context()
         if context._active_transaction_index is not None:
             return fn(*args, **kwargs)
 

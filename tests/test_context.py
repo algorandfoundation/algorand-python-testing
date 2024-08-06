@@ -2,9 +2,9 @@ import algopy.itxn
 import algosdk
 import pytest
 from algopy import Bytes, TransactionType, UInt64
-from algopy_testing import arc4
+from algopy_testing import algopy_testing_context, arc4, get_test_context
 from algopy_testing.constants import MAX_UINT8, MAX_UINT16, MAX_UINT32, MAX_UINT64, MAX_UINT512
-from algopy_testing.context import AlgopyTestContext, algopy_testing_context, get_test_context
+from algopy_testing.context import AlgopyTestContext
 from algopy_testing.itxn import PaymentInnerTransaction
 
 from tests.artifacts.Arc4InnerTxns.contract import Arc4InnerTxnsContract
