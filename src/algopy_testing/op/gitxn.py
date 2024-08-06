@@ -2,6 +2,7 @@ import typing
 from collections.abc import Callable, Sequence
 
 from algopy_testing._context_storage import get_test_context
+from algopy_testing.op.constants import OP_MEMBER_TO_TXN_MEMBER
 
 
 # TODO: combine with itxn
@@ -20,16 +21,11 @@ class _GITxn:
 
         return lambda index: self._get_value(last_itxn_group, name, index)
 
-    # TODO: refine mapping
-    def _map_fields(self, name: str) -> str:
-        field_mapping = {"type": "type_bytes", "type_enum": "type", "application_args": "app_args"}
-        return field_mapping.get(name, name)
-
     def _get_value(self, itxn_group: Sequence[typing.Any], name: str, index: int) -> object:
         if index >= len(itxn_group):
             raise IndexError("Transaction index out of range")
         itxn = itxn_group[index]
-        value = getattr(itxn, self._map_fields(name))
+        value = getattr(itxn, OP_MEMBER_TO_TXN_MEMBER.get(name, name))
         if value is None:
             raise ValueError(f"'{name}' is not defined for {type(itxn).__name__}")
         return value

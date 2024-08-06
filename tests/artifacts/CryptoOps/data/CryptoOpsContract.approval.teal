@@ -229,7 +229,7 @@ main_verify_ecdsa_verify_k1_route@8:
     return
 
 main_verify_ecdsa_verify_r1_route@9:
-    // tests/artifacts/CryptoOps/contract.py:49
+    // tests/artifacts/CryptoOps/contract.py:47
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -248,7 +248,7 @@ main_verify_ecdsa_verify_r1_route@9:
     extract 2 0
     txna ApplicationArgs 5
     extract 2 0
-    // tests/artifacts/CryptoOps/contract.py:49
+    // tests/artifacts/CryptoOps/contract.py:47
     // @arc4.abimethod()
     callsub verify_ecdsa_verify_r1
     byte 0x00
@@ -263,7 +263,7 @@ main_verify_ecdsa_verify_r1_route@9:
     return
 
 main_verify_ecdsa_recover_k1_route@10:
-    // tests/artifacts/CryptoOps/contract.py:57
+    // tests/artifacts/CryptoOps/contract.py:53
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -280,7 +280,7 @@ main_verify_ecdsa_recover_k1_route@10:
     extract 2 0
     txna ApplicationArgs 4
     extract 2 0
-    // tests/artifacts/CryptoOps/contract.py:57
+    // tests/artifacts/CryptoOps/contract.py:53
     // @arc4.abimethod()
     callsub verify_ecdsa_recover_k1
     swap
@@ -318,7 +318,7 @@ main_verify_ecdsa_recover_k1_route@10:
     return
 
 main_verify_ecdsa_recover_r1_route@11:
-    // tests/artifacts/CryptoOps/contract.py:64
+    // tests/artifacts/CryptoOps/contract.py:60
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -335,7 +335,7 @@ main_verify_ecdsa_recover_r1_route@11:
     extract 2 0
     txna ApplicationArgs 4
     extract 2 0
-    // tests/artifacts/CryptoOps/contract.py:64
+    // tests/artifacts/CryptoOps/contract.py:60
     // @arc4.abimethod()
     callsub verify_ecdsa_recover_r1
     swap
@@ -373,7 +373,7 @@ main_verify_ecdsa_recover_r1_route@11:
     return
 
 main_verify_ecdsa_decompress_k1_route@12:
-    // tests/artifacts/CryptoOps/contract.py:74
+    // tests/artifacts/CryptoOps/contract.py:70
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -384,7 +384,7 @@ main_verify_ecdsa_decompress_k1_route@12:
     // class CryptoOpsContract(ARC4Contract):
     txna ApplicationArgs 1
     extract 2 0
-    // tests/artifacts/CryptoOps/contract.py:74
+    // tests/artifacts/CryptoOps/contract.py:70
     // @arc4.abimethod()
     callsub verify_ecdsa_decompress_k1
     swap
@@ -422,7 +422,7 @@ main_verify_ecdsa_decompress_k1_route@12:
     return
 
 main_verify_ecdsa_decompress_r1_route@13:
-    // tests/artifacts/CryptoOps/contract.py:79
+    // tests/artifacts/CryptoOps/contract.py:75
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -433,7 +433,7 @@ main_verify_ecdsa_decompress_r1_route@13:
     // class CryptoOpsContract(ARC4Contract):
     txna ApplicationArgs 1
     extract 2 0
-    // tests/artifacts/CryptoOps/contract.py:79
+    // tests/artifacts/CryptoOps/contract.py:75
     // @arc4.abimethod()
     callsub verify_ecdsa_decompress_r1
     swap
@@ -471,7 +471,7 @@ main_verify_ecdsa_decompress_r1_route@13:
     return
 
 main_verify_vrf_verify_route@14:
-    // tests/artifacts/CryptoOps/contract.py:84
+    // tests/artifacts/CryptoOps/contract.py:80
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -486,7 +486,7 @@ main_verify_vrf_verify_route@14:
     extract 2 0
     txna ApplicationArgs 3
     extract 2 0
-    // tests/artifacts/CryptoOps/contract.py:84
+    // tests/artifacts/CryptoOps/contract.py:80
     // @arc4.abimethod()
     callsub verify_vrf_verify
     swap
@@ -721,18 +721,16 @@ verify_ed25519verify_bare:
 
 // tests.artifacts.CryptoOps.contract.CryptoOpsContract.verify_ecdsa_verify_k1(a: bytes, b: bytes, c: bytes, d: bytes, e: bytes) -> uint64:
 verify_ecdsa_verify_k1:
-    // tests/artifacts/CryptoOps/contract.py:41-44
+    // tests/artifacts/CryptoOps/contract.py:41-42
     // @arc4.abimethod()
-    // def verify_ecdsa_verify_k1(  # noqa: PLR0913
-    //     self, a: Bytes, b: Bytes, c: Bytes, d: Bytes, e: Bytes
-    // ) -> bool:
+    // def verify_ecdsa_verify_k1(self, a: Bytes, b: Bytes, c: Bytes, d: Bytes, e: Bytes) -> bool:
     proto 5 1
-    // tests/artifacts/CryptoOps/contract.py:45
+    // tests/artifacts/CryptoOps/contract.py:43
     // ensure_budget(3000, OpUpFeeSource.GroupCredit)
     int 3000
     int 0
     callsub ensure_budget
-    // tests/artifacts/CryptoOps/contract.py:46
+    // tests/artifacts/CryptoOps/contract.py:44
     // result_k1 = op.ecdsa_verify(op.ECDSA.Secp256k1, a, b, c, d, e)
     frame_dig -5
     frame_dig -4
@@ -740,25 +738,23 @@ verify_ecdsa_verify_k1:
     frame_dig -2
     frame_dig -1
     ecdsa_verify Secp256k1
-    // tests/artifacts/CryptoOps/contract.py:47
+    // tests/artifacts/CryptoOps/contract.py:45
     // return result_k1
     retsub
 
 
 // tests.artifacts.CryptoOps.contract.CryptoOpsContract.verify_ecdsa_verify_r1(a: bytes, b: bytes, c: bytes, d: bytes, e: bytes) -> uint64:
 verify_ecdsa_verify_r1:
-    // tests/artifacts/CryptoOps/contract.py:49-52
+    // tests/artifacts/CryptoOps/contract.py:47-48
     // @arc4.abimethod()
-    // def verify_ecdsa_verify_r1(  # noqa: PLR0913
-    //     self, a: Bytes, b: Bytes, c: Bytes, d: Bytes, e: Bytes
-    // ) -> bool:
+    // def verify_ecdsa_verify_r1(self, a: Bytes, b: Bytes, c: Bytes, d: Bytes, e: Bytes) -> bool:
     proto 5 1
-    // tests/artifacts/CryptoOps/contract.py:53
+    // tests/artifacts/CryptoOps/contract.py:49
     // ensure_budget(3000, OpUpFeeSource.GroupCredit)
     int 3000
     int 0
     callsub ensure_budget
-    // tests/artifacts/CryptoOps/contract.py:54
+    // tests/artifacts/CryptoOps/contract.py:50
     // result_r1 = op.ecdsa_verify(op.ECDSA.Secp256r1, a, b, c, d, e)
     frame_dig -5
     frame_dig -4
@@ -766,25 +762,25 @@ verify_ecdsa_verify_r1:
     frame_dig -2
     frame_dig -1
     ecdsa_verify Secp256r1
-    // tests/artifacts/CryptoOps/contract.py:55
+    // tests/artifacts/CryptoOps/contract.py:51
     // return result_r1
     retsub
 
 
 // tests.artifacts.CryptoOps.contract.CryptoOpsContract.verify_ecdsa_recover_k1(a: bytes, b: uint64, c: bytes, d: bytes) -> bytes, bytes:
 verify_ecdsa_recover_k1:
-    // tests/artifacts/CryptoOps/contract.py:57-60
+    // tests/artifacts/CryptoOps/contract.py:53-56
     // @arc4.abimethod()
     // def verify_ecdsa_recover_k1(
     //     self, a: Bytes, b: UInt64, c: Bytes, d: Bytes
     // ) -> tuple[Bytes, Bytes]:
     proto 4 2
-    // tests/artifacts/CryptoOps/contract.py:61
+    // tests/artifacts/CryptoOps/contract.py:57
     // ensure_budget(3000, OpUpFeeSource.GroupCredit)
     int 3000
     int 0
     callsub ensure_budget
-    // tests/artifacts/CryptoOps/contract.py:62
+    // tests/artifacts/CryptoOps/contract.py:58
     // return op.ecdsa_pk_recover(op.ECDSA.Secp256k1, a, b, c, d)
     frame_dig -4
     frame_dig -3
@@ -796,18 +792,18 @@ verify_ecdsa_recover_k1:
 
 // tests.artifacts.CryptoOps.contract.CryptoOpsContract.verify_ecdsa_recover_r1(a: bytes, b: uint64, c: bytes, d: bytes) -> bytes, bytes:
 verify_ecdsa_recover_r1:
-    // tests/artifacts/CryptoOps/contract.py:64-67
+    // tests/artifacts/CryptoOps/contract.py:60-63
     // @arc4.abimethod()
     // def verify_ecdsa_recover_r1(
     //     self, a: Bytes, b: UInt64, c: Bytes, d: Bytes
     // ) -> tuple[Bytes, Bytes]:
     proto 4 2
-    // tests/artifacts/CryptoOps/contract.py:71
+    // tests/artifacts/CryptoOps/contract.py:67
     // ensure_budget(3000, OpUpFeeSource.GroupCredit)
     int 3000
     int 0
     callsub ensure_budget
-    // tests/artifacts/CryptoOps/contract.py:72
+    // tests/artifacts/CryptoOps/contract.py:68
     // return op.ecdsa_pk_recover(op.ECDSA.Secp256r1, a, b, c, d)
     frame_dig -4
     frame_dig -3
@@ -819,16 +815,16 @@ verify_ecdsa_recover_r1:
 
 // tests.artifacts.CryptoOps.contract.CryptoOpsContract.verify_ecdsa_decompress_k1(a: bytes) -> bytes, bytes:
 verify_ecdsa_decompress_k1:
-    // tests/artifacts/CryptoOps/contract.py:74-75
+    // tests/artifacts/CryptoOps/contract.py:70-71
     // @arc4.abimethod()
     // def verify_ecdsa_decompress_k1(self, a: Bytes) -> tuple[Bytes, Bytes]:
     proto 1 2
-    // tests/artifacts/CryptoOps/contract.py:76
+    // tests/artifacts/CryptoOps/contract.py:72
     // ensure_budget(700, OpUpFeeSource.GroupCredit)
     int 700
     int 0
     callsub ensure_budget
-    // tests/artifacts/CryptoOps/contract.py:77
+    // tests/artifacts/CryptoOps/contract.py:73
     // return op.ecdsa_pk_decompress(op.ECDSA.Secp256k1, a)
     frame_dig -1
     ecdsa_pk_decompress Secp256k1
@@ -837,16 +833,16 @@ verify_ecdsa_decompress_k1:
 
 // tests.artifacts.CryptoOps.contract.CryptoOpsContract.verify_ecdsa_decompress_r1(a: bytes) -> bytes, bytes:
 verify_ecdsa_decompress_r1:
-    // tests/artifacts/CryptoOps/contract.py:79-80
+    // tests/artifacts/CryptoOps/contract.py:75-76
     // @arc4.abimethod()
     // def verify_ecdsa_decompress_r1(self, a: Bytes) -> tuple[Bytes, Bytes]:
     proto 1 2
-    // tests/artifacts/CryptoOps/contract.py:81
+    // tests/artifacts/CryptoOps/contract.py:77
     // ensure_budget(700, OpUpFeeSource.GroupCredit)
     int 700
     int 0
     callsub ensure_budget
-    // tests/artifacts/CryptoOps/contract.py:82
+    // tests/artifacts/CryptoOps/contract.py:78
     // return op.ecdsa_pk_decompress(op.ECDSA.Secp256r1, a)
     frame_dig -1
     ecdsa_pk_decompress Secp256r1
@@ -855,21 +851,21 @@ verify_ecdsa_decompress_r1:
 
 // tests.artifacts.CryptoOps.contract.CryptoOpsContract.verify_vrf_verify(a: bytes, b: bytes, c: bytes) -> bytes, uint64:
 verify_vrf_verify:
-    // tests/artifacts/CryptoOps/contract.py:84-85
+    // tests/artifacts/CryptoOps/contract.py:80-81
     // @arc4.abimethod()
     // def verify_vrf_verify(self, a: Bytes, b: Bytes, c: Bytes) -> tuple[Bytes, bool]:
     proto 3 2
-    // tests/artifacts/CryptoOps/contract.py:86
+    // tests/artifacts/CryptoOps/contract.py:82
     // ensure_budget(5700, OpUpFeeSource.GroupCredit)
     int 5700
     int 0
     callsub ensure_budget
-    // tests/artifacts/CryptoOps/contract.py:87
+    // tests/artifacts/CryptoOps/contract.py:83
     // result = op.vrf_verify(op.VrfVerify.VrfAlgorand, a, b, c)
     frame_dig -3
     frame_dig -2
     frame_dig -1
     vrf_verify VrfAlgorand
-    // tests/artifacts/CryptoOps/contract.py:88
+    // tests/artifacts/CryptoOps/contract.py:84
     // return result
     retsub

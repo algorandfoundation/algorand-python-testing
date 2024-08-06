@@ -1,7 +1,9 @@
 import typing
 from collections.abc import Callable
 
+import algopy_testing
 from algopy_testing._context_storage import get_test_context
+from algopy_testing.op.constants import OP_MEMBER_TO_TXN_MEMBER
 
 
 class _ITxn:
@@ -29,13 +31,11 @@ class _ITxn:
 ITxn = _ITxn()
 
 
-# TODO: add tests for these ops
 class _ITxnCreate:
     def begin(self) -> None:
         context = get_test_context()
         context._constructing_inner_transaction_group = []
 
-    @classmethod
     def next(cls) -> None:
         context = get_test_context()
         if context._constructing_inner_transaction:
@@ -44,7 +44,6 @@ class _ITxnCreate:
             )
             context._constructing_inner_transaction = None
 
-    @classmethod
     def submit(cls) -> None:
         context = get_test_context()
         if context._constructing_inner_transaction:
@@ -55,15 +54,21 @@ class _ITxnCreate:
             context._inner_transaction_groups.append(context._constructing_inner_transaction_group)
             context._constructing_inner_transaction_group = []
 
-    def __setattr__(self, name: str, value: typing.Any) -> None:
-        if name.startswith("set_"):
-            field = name[4:]  # Remove 'set_' prefix
-            self._set_field(field, value)
-        else:
-            super().__setattr__(name, value)
+    def __getattr__(self, name: str) -> Callable[[typing.Any], None]:
+        context = get_test_context()
+
+        if not context._constructing_inner_transaction:
+            context._constructing_inner_transaction = algopy_testing.itxn.InnerTransactionResult()
+
+        def setter(value: typing.Any) -> None:
+            self._set_field(name, value)
+
+        return setter
 
     def _set_field(self, field: str, value: typing.Any) -> None:
         context = get_test_context()
+        field = field.removeprefix("set_")
+        field = OP_MEMBER_TO_TXN_MEMBER.get(field, field)
         if not context._constructing_inner_transaction:
             raise ValueError("No active inner transaction. Call ITxnCreate.begin() first.")
         setattr(context._constructing_inner_transaction, field, value)

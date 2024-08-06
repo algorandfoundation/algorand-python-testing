@@ -3,21 +3,14 @@ from __future__ import annotations
 import typing
 
 from algopy_testing._context_storage import get_test_context
-
-_OP_MEMBER_TO_TXN_MEMBER = {
-    "type": "type_bytes",
-    "type_enum": "type",
-    "application_args": "app_args",
-    "applications": "apps",
-    "application_id": "app_id",
-}
+from algopy_testing.op.constants import OP_MEMBER_TO_TXN_MEMBER
 
 
 class _Txn:
     def __getattr__(self, name: str) -> typing.Any:
         context = get_test_context()
         active_txn = context.get_active_transaction()
-        txn_name = _OP_MEMBER_TO_TXN_MEMBER.get(name, name)
+        txn_name = OP_MEMBER_TO_TXN_MEMBER.get(name, name)
         field = getattr(active_txn, txn_name)
         # fields with multiple values are exposed as functions in the stubs
         if isinstance(field, tuple):
@@ -50,10 +43,10 @@ class _GTxn:
             except IndexError:
                 raise ValueError("invalid group index") from None
 
-            field_name = _OP_MEMBER_TO_TXN_MEMBER.get(name, name)
+            field_name = OP_MEMBER_TO_TXN_MEMBER.get(name, name)
             field = txn.fields[field_name]
             match field, array_index:
-                case [*items], int(index):
+                case [[*items], int(index)]:
                     try:
                         return items[index]
                     except ValueError:

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing
 
+import algopy_testing
 from algopy_testing import itxn
 
 if typing.TYPE_CHECKING:
@@ -31,16 +32,26 @@ class ITxnLoader:
     various transaction types.
     """
 
+    _TXN_TYPE_MAP: typing.ClassVar = {
+        itxn.PaymentInnerTransaction: algopy_testing.enums.TransactionType.Payment,
+        itxn.AssetConfigInnerTransaction: algopy_testing.enums.TransactionType.AssetConfig,
+        itxn.AssetTransferInnerTransaction: algopy_testing.enums.TransactionType.AssetTransfer,
+        itxn.AssetFreezeInnerTransaction: algopy_testing.enums.TransactionType.AssetFreeze,
+        itxn.ApplicationCallInnerTransaction: algopy_testing.enums.TransactionType.ApplicationCall,
+        itxn.KeyRegistrationInnerTransaction: algopy_testing.enums.TransactionType.KeyRegistration,
+        itxn.InnerTransactionResult: -1,
+    }
+
     def __init__(self, inner_txn: InnerTransactionResultType):
         self._inner_txn = inner_txn
 
     def _get_itxn(self, txn_type: type[_T]) -> _T:
-        txn = self._inner_txn
-
-        if not isinstance(txn, txn_type):
+        if (
+            not isinstance(self._inner_txn, txn_type)
+            and getattr(self._inner_txn, "type", None) != self._TXN_TYPE_MAP[txn_type]
+        ):
             raise TypeError(f"transaction is not of type {txn_type.__name__}!")
-
-        return txn
+        return self._inner_txn  # type: ignore[return-value]
 
     @property
     def payment(self) -> algopy.itxn.PaymentInnerTransaction:

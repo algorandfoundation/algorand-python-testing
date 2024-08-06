@@ -332,3 +332,26 @@ class StateAppGlobalContract(ARC4Contract):
     @arc4.abimethod()
     def verify_put_bytes(self, a: Bytes, b: Bytes) -> None:
         op.AppGlobal.put(a, b)
+
+
+class ITxnOpsContract(ARC4Contract):
+    @arc4.abimethod()
+    def verify_itxn_ops(self) -> None:
+        algopy.op.ITxnCreate.begin()
+        algopy.op.ITxnCreate.set_type_enum(algopy.TransactionType.ApplicationCall)
+        algopy.op.ITxnCreate.set_on_completion(algopy.OnCompleteAction.DeleteApplication)
+        algopy.op.ITxnCreate.set_approval_program(Bytes.from_hex("068101"))
+        algopy.op.ITxnCreate.set_clear_state_program(Bytes.from_hex("068101"))
+        algopy.op.ITxnCreate.set_fee(algopy.op.Global.min_txn_fee)
+        algopy.op.ITxnCreate.next()
+        algopy.op.ITxnCreate.set_type_enum(algopy.TransactionType.Payment)
+        algopy.op.ITxnCreate.set_receiver(algopy.op.Global.creator_address)
+        algopy.op.ITxnCreate.set_amount(algopy.UInt64(1000))
+        algopy.op.ITxnCreate.submit()
+
+        assert algopy.op.ITxn.receiver() == algopy.op.Global.creator_address
+        assert algopy.op.ITxn.amount() == algopy.UInt64(1000)
+        assert algopy.op.ITxn.type_enum() == algopy.TransactionType.Payment
+
+        assert algopy.op.GITxn.type_enum(0) == algopy.TransactionType.ApplicationCall
+        assert algopy.op.GITxn.type_enum(1) == algopy.TransactionType.Payment

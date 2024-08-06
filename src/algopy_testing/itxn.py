@@ -54,6 +54,17 @@ class _BaseInnerTransactionResult(TransactionFieldsBase):
     def __init__(self, **fields: typing.Any):
         self._fields = fields
 
+    def __getattr__(self, name: str) -> typing.Any:
+        if name in self._fields:
+            return self._fields[name]
+        raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, name: str, value: typing.Any) -> None:
+        if name == "_fields":
+            super().__setattr__(name, value)
+        else:
+            self._fields[name] = narrow_field_type(name, value)
+
     @property
     def fields(self) -> dict[str, object]:
         return self._fields

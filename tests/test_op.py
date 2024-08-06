@@ -22,6 +22,7 @@ from ecdsa import SECP256k1, SigningKey, curves
 from pytest_mock import MockerFixture
 
 from tests.artifacts.StateOps.contract import (
+    ITxnOpsContract,
     StateAcctParamsGetContract,
     StateAppGlobalContract,
     StateAppGlobalExContract,
@@ -927,3 +928,27 @@ def test_overwrite_scratch_slot(context: AlgopyTestContext) -> None:
     context.set_scratch_slot(txn, 0, algopy.Bytes(b"initial"))
     context.set_scratch_slot(txn, 0, algopy.UInt64(99))
     assert context.get_scratch_slot(txn, 0) == algopy.UInt64(99)
+
+
+def test_itxn_ops(context: AlgopyTestContext) -> None:
+    # arrange
+    contract = ITxnOpsContract()
+
+    # act (implicitly tests ITxn and GITxn as well)
+    contract.verify_itxn_ops()
+
+    # assert
+    itxn_group = context.get_submitted_itxn_group(0)
+    appl_itxn = itxn_group.application_call(0)
+    pay_itxn = itxn_group.payment(1)
+
+    assert appl_itxn.approval_program == algopy.Bytes.from_hex("068101")[0]
+    assert appl_itxn.clear_state_program == algopy.Bytes.from_hex("068101")
+    assert appl_itxn.on_completion == algopy.OnCompleteAction.DeleteApplication
+    assert appl_itxn.fee == algopy.UInt64(algosdk.constants.MIN_TXN_FEE)
+
+    assert pay_itxn.receiver == context.default_creator
+    assert pay_itxn.amount == algopy.UInt64(1000)
+
+
+# def test_
