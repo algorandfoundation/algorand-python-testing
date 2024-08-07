@@ -237,7 +237,7 @@ def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa:
     if annotation is None:
         return "void"
 
-    if isinstance(annotation, types.GenericAlias):  # for tuple[...]
+    if isinstance(annotation, types.GenericAlias) and typing.get_origin(annotation) is tuple:
         tuple_args = [_type_to_arc4(a) for a in typing.get_args(annotation)]
         return f"({','.join(tuple_args)})"
 
