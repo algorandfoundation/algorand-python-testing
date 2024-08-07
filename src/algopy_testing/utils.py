@@ -3,6 +3,7 @@ from __future__ import annotations
 import enum
 import functools
 import secrets
+import types
 import typing
 from types import UnionType
 from typing import TYPE_CHECKING, get_args
@@ -269,3 +270,9 @@ def convert_native_to_stack(
     if isinstance(value, bytes):
         return algopy_testing.Bytes(value)
     return value
+
+
+def check_type(value: object, typ: type | types.UnionType) -> None:
+    if not isinstance(value, typ):
+        expected_name = typ.__name__ if isinstance(typ, type) else str(typ)
+        raise TypeError(f"expected {expected_name}, got {type(value).__name__!r}")

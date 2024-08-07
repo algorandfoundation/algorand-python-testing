@@ -30,6 +30,7 @@ from algopy_testing.constants import (
 )
 from algopy_testing.enums import OnCompleteAction, TransactionType
 from algopy_testing.models import Account, Application, Asset
+from algopy_testing.models.contract import get_global_states, get_local_states
 from algopy_testing.primitives.biguint import BigUInt
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.uint64 import UInt64
@@ -849,8 +850,9 @@ class _AssetHoldingGet:
         if field == "balance":
             return asset_balance, True
         elif field == "frozen":
-            asset_data = context._asset_data.get(int(asset.id))
-            if not asset_data:
+            try:
+                asset_data = context._asset_data[int(asset.id)]
+            except KeyError:
                 return UInt64(0), False
             return asset_data["default_frozen"], True
         else:
@@ -860,7 +862,7 @@ class _AssetHoldingGet:
         self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Asset | algopy.UInt64 | int, /
     ) -> tuple[algopy.UInt64, bool]:
         balance, exists = self._get_asset_holding(a, b, "balance")
-        return UInt64(balance if exists else 0), exists
+        return balance if exists else UInt64(), exists
 
     def asset_frozen(
         self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Asset | algopy.UInt64 | int, /
@@ -933,6 +935,7 @@ class _AppParamsGet:
 AppParamsGet = _AppParamsGet()
 
 
+# TODO: backing state should be on context rather than contract instances
 class _AppLocal:
     def _get_local_state(self, key: bytes) -> algopy.LocalState[typing.Any]:
         test_context = get_test_context()
@@ -949,22 +952,11 @@ class _AppLocal:
     def _get_key(self, b: algopy.Bytes | bytes) -> bytes:
         return b.value if isinstance(b, Bytes) else b
 
-    def _parse_local_state_value(self, value: typing.Any) -> typing.Any:
+    def _parse_local_state_value(self, value: typing.Any) -> algopy.Bytes:
         if hasattr(value, "bytes"):
-            return value.bytes
+            value = value.bytes
+        assert isinstance(value, Bytes)
         return value
-
-    def _get_contract(
-        self,
-        b: algopy.Application | algopy.UInt64 | int,
-    ) -> Contract | ARC4Contract:
-        test_context = get_test_context()
-
-        app_id = int(b.id) if isinstance(b, Application) else int(b)
-        contract = test_context._app_id_to_contract.get(app_id)
-        if contract is None:
-            raise ValueError(f"Contract with app id {b} not found")
-        return contract
 
     def get_bytes(
         self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
@@ -972,19 +964,19 @@ class _AppLocal:
         try:
             key = self._get_key(b)
             local_state = self._get_local_state(key)[a]
-            return Bytes(self._parse_local_state_value(local_state))
         except (ValueError, KeyError):
             # returning UInt64 on key error matches AVM behaviour
             return UInt64(0)  # type: ignore[return-value]
+        return self._parse_local_state_value(local_state)
 
     def get_uint64(
         self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
     ) -> algopy.UInt64:
         try:
             local_state = self._get_local_state(self._get_key(b))
-            return UInt64(local_state.get(a))
         except (ValueError, KeyError):
             return UInt64(0)
+        return local_state.get(a)  # type: ignore[no-any-return]
 
     def get_ex_bytes(
         self,
@@ -998,9 +990,10 @@ class _AppLocal:
         local_state = local_states.get(self._get_key(c))
 
         if local_state and a in local_state and local_state[a] is not None:
-            return Bytes(self._parse_local_state_value(local_state[a])), True
+            return self._parse_local_state_value(local_state[a]), True
         else:
-            return Bytes(b""), False
+            # note: returns uint64 when not founds, to match AVM
+            return UInt64(), False  # type: ignore[return-value]
 
     def get_ex_uint64(
         self,
@@ -1016,7 +1009,7 @@ class _AppLocal:
         if local_state and a in local_state:
             return UInt64(local_state[a]), True
         else:
-            return UInt64(0), False
+            return UInt64(), False
 
     def delete(self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /) -> None:
         local_state = self._get_local_state(self._get_key(b))
@@ -1065,22 +1058,25 @@ class _AppGlobal:
 
     def _parse_global_state_value(self, value: typing.Any) -> typing.Any:
         if hasattr(value, "bytes"):
-            return value.bytes
+            value = value.bytes
+        assert isinstance(value, Bytes)
         return value
 
     def get_bytes(self, b: algopy.Bytes | bytes, /) -> algopy.Bytes:
         try:
             global_state = self._get_global_state(self._get_key(b))
-            return Bytes(self._parse_global_state_value(global_state.get(b)))
+            return self._parse_global_state_value(global_state.get(b))
         except (ValueError, KeyError):
             return UInt64(0)  # type: ignore[return-value]
 
     def get_uint64(self, b: algopy.Bytes | bytes, /) -> algopy.UInt64:
         try:
             global_state = self._get_global_state(self._get_key(b))
-            return UInt64(global_state.get(b))
         except (ValueError, KeyError):
             return UInt64(0)
+        value = global_state.get(b)
+        # TODO: this might not be a UInt64
+        return value  # type: ignore[no-any-return]
 
     def get_ex_bytes(
         self, a: algopy.Application | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
@@ -1092,7 +1088,7 @@ class _AppGlobal:
         value = self._parse_global_state_value(
             global_state if not isinstance(global_state, GlobalState) else global_state.value
         )
-        return Bytes(value or b""), value is not None
+        return value or Bytes(), value is not None
 
     def get_ex_uint64(
         self, a: algopy.Application | algopy.UInt64 | int, b: algopy.Bytes | bytes, /

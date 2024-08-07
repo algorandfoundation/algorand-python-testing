@@ -3,7 +3,7 @@ from __future__ import annotations
 import functools
 
 from algopy_testing.constants import MAX_UINT64
-from algopy_testing.utils import as_int64
+from algopy_testing.utils import as_int64, check_type
 
 # TypeError, ValueError are used for operations that are compile time errors
 # ArithmeticError and subclasses are used for operations that would fail during AVM execution
@@ -16,6 +16,7 @@ class UInt64:
     value: int  # underlying 'int' value representing the UInt64
 
     def __init__(self, value: int = 0) -> None:
+        check_type(value, int)
         self.value = as_int64(value)
 
     def __repr__(self) -> str:
