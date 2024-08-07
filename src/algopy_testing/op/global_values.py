@@ -67,7 +67,7 @@ class _Global:
             if app_data.is_creating:
                 return Application(0)
             return context.get_active_transaction().app_id
-
+    # TODO: move creator_address here
     @property
     def latest_timestamp(self) -> algopy.UInt64:
         try:

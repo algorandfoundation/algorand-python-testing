@@ -75,6 +75,7 @@ class ApplicationCallFields(_TransactionBaseFields, total=False):
     accounts: Sequence[algopy.Account]
     assets: Sequence[algopy.Asset]
     apps: Sequence[algopy.Application]
+    # TODO: when storing these pages values, combine into one bytes and then "chop" into 4096 length pieces
     approval_program: Sequence[algopy.Bytes]
     clear_state_program: Sequence[algopy.Bytes]
 
@@ -276,6 +277,9 @@ class TransactionFieldsBase(abc.ABC):
     @property
     def approval_program_pages(self) -> Callable[[algopy.UInt64 | int], algopy.Bytes]:
         return lambda i: self._approval_program_pages[int(i)]
+
+    # TODO: num_approval_program_pages
+    # TODO: clear program
 
     @property
     def on_completion(self) -> algopy.OnCompleteAction:
