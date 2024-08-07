@@ -45,7 +45,6 @@ def as_int(value: object, *, max: int | None) -> int:  # noqa: A002
             int_value = native.value
         case algopy_testing.arc4.BigUIntN(native=native):
             int_value = native.value
-        # TODO: add arc4 numerics
         case _:
             raise TypeError(f"value must be a numeric type, not {type(value).__name__!r}")
     if int_value < 0:

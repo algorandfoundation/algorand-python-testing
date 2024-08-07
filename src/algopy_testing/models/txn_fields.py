@@ -75,7 +75,8 @@ class ApplicationCallFields(_TransactionBaseFields, total=False):
     accounts: Sequence[algopy.Account]
     assets: Sequence[algopy.Asset]
     apps: Sequence[algopy.Application]
-    # TODO: when storing these pages values, combine into one bytes and then "chop" into 4096 length pieces
+    # TODO: when storing these pages values, combine into one bytes and then
+    # "chop" into 4096 length pieces
     approval_program: Sequence[algopy.Bytes]
     clear_state_program: Sequence[algopy.Bytes]
 
@@ -186,9 +187,6 @@ class TransactionFieldsBase(abc.ABC):
         raise NotImplementedError
 
     # explicitly define some properties commonly accessed by algopy testing
-    # TODO: mypy complains on fields not defined in this base to be missing on gtxn objects
-    # when accessed with active .venv.examples virtual environment. Should this class explicitly
-    # define all possible txn fields?
     @property
     def amount(self) -> algopy.UInt64:
         return self.fields["amount"]  # type: ignore[return-value]

@@ -128,7 +128,7 @@ class _BaseInnerTransactionFields:
     fields: dict[str, typing.Any]
 
     def __init__(self, **fields: typing.Any) -> None:
-        # TODO: validate fields
+        # TODO: validate fields against TransactionFields composite type
         context = get_test_context()
         txn_type = self.txn_class.txn_type or TransactionType.Payment
         fields = {
@@ -221,7 +221,6 @@ def _on_asset_config(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
     # if it is a txn to create an asset then ensure this is reflected in the context
     if fields.get("config_asset") == Asset():
         context = get_test_context()
-        # TODO: refine
         created_asset = context.any_asset(
             total=fields["total"],
             decimals=fields["decimals"],

@@ -1,7 +1,6 @@
 from algopy_testing.op.block import Block
-from algopy_testing.op.gitxn import GITxn
 from algopy_testing.op.global_values import Global
-from algopy_testing.op.itxn import ITxn, ITxnCreate
+from algopy_testing.op.itxn import GITxn, ITxn, ITxnCreate
 from algopy_testing.op.misc import (
     EC,
     ECDSA,
