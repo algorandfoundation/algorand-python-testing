@@ -20,7 +20,7 @@ from ecdsa import (  # type: ignore  # noqa: PGH003
     VerifyingKey,
 )
 
-from algopy_testing._context_storage import get_test_context
+from algopy_testing._context_storage import get_account_data, get_test_context
 from algopy_testing.constants import (
     BITS_IN_BYTE,
     DEFAULT_ACCOUNT_MIN_BALANCE,
@@ -47,7 +47,6 @@ from algopy_testing.utils import (
 if typing.TYPE_CHECKING:
     import algopy
 
-    from algopy_testing.gtxn import Transaction
     from algopy_testing.models.contract import ARC4Contract, Contract
 
 
@@ -112,7 +111,7 @@ def ed25519verify(a: Bytes | bytes, b: Bytes | bytes, c: Bytes | bytes, /) -> bo
     from algopy_testing.utils import as_bytes
 
     ctx = get_test_context()
-    txn = ctx.get_active_transaction()
+    txn = ctx.last_active_txn
 
     program_pages = typing.cast(
         Sequence[Bytes],
@@ -534,25 +533,20 @@ def _bytes_to_string(a: Bytes | bytes, err_msg: str) -> str:
         raise ValueError(err_msg) from None
 
 
-def _get_active_txn() -> Transaction:
-    context = get_test_context()
-    return context.get_active_transaction()
-
-
 def _get_app(app: algopy.Application | algopy.UInt64 | int) -> Application:
     if isinstance(app, Application):
         return app
     context = get_test_context()
     if app >= 1001:
         return context.get_application(app)
-    txn = context.get_active_transaction()
+    txn = context.last_active_txn
     return txn.apps(app)
 
 
 def _get_account(acc: algopy.Account | algopy.UInt64 | int) -> Account:
     if isinstance(acc, Account):
         return acc
-    txn = _get_active_txn()
+    txn = get_test_context().last_active_txn
     return txn.accounts(acc)
 
 
@@ -562,7 +556,7 @@ def _get_asset(asset: algopy.Asset | algopy.UInt64 | int) -> Asset:
     context = get_test_context()
     if asset >= 1001:
         return context.get_asset(asset)
-    txn = context.get_active_transaction()
+    txn = context.last_active_txn
     return txn.assets(asset)
 
 
@@ -675,7 +669,7 @@ def _gload(a: UInt64 | int, b: UInt64 | int, /) -> Bytes | UInt64:
 class _Scratch:
     def load_bytes(self, a: UInt64 | int, /) -> Bytes | UInt64:
         context = get_test_context()
-        active_txn = context.get_active_transaction()
+        active_txn = context.last_active_txn
         return _gload(active_txn.group_index, a)
 
     load_uint64 = load_bytes  # functionally these are the same
@@ -683,7 +677,7 @@ class _Scratch:
     @staticmethod
     def store(a: algopy.UInt64 | int, b: algopy.Bytes | algopy.UInt64 | bytes | int, /) -> None:
         context = get_test_context()
-        active_txn = context.get_active_transaction()
+        active_txn = context.last_active_txn
         context.set_scratch_slot(active_txn, a, b)
 
 
@@ -710,7 +704,7 @@ def gaid(a: algopy.UInt64 | int, /) -> algopy.Application:
 def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     # TODO: add tests
     context = get_test_context()
-    active_txn = context.get_active_transaction()
+    active_txn = context.last_active_txn
 
     account = _get_account(a)
     balance = account.balance
@@ -728,7 +722,7 @@ def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
 
 def min_balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     context = get_test_context()
-    active_txn = context.get_active_transaction()
+    active_txn = context.last_active_txn
 
     if isinstance(a, Account):
         account = a
@@ -744,12 +738,13 @@ def min_balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     else:
         raise TypeError("Invalid type for account parameter")
 
-    account_data = context._account_data.get(account.public_key)
-    if not account_data:
-        raise ValueError(f"Account {account} not found in testing context!")
-
+    account_data = get_account_data(account.public_key)
     # Return the pre-set min_balance if available, otherwise use a default value
-    return account_data.fields.get("min_balance", UInt64(DEFAULT_ACCOUNT_MIN_BALANCE))
+    return (
+        account_data.fields["min_balance"]
+        if account_data.fields["min_balance"] is not None
+        else UInt64(DEFAULT_ACCOUNT_MIN_BALANCE)
+    )
 
 
 def exit(a: UInt64 | int, /) -> typing.Never:  # noqa: A001
@@ -779,7 +774,7 @@ class _AcctParamsGet:
             if isinstance(a, Account):
                 account = context.get_account(a.public_key)
             elif isinstance(a, UInt64 | int):
-                active_txn = context.get_active_transaction()
+                active_txn = context.last_active_txn
                 try:
                     account = active_txn.accounts(a)
                 except IndexError as e:
@@ -833,16 +828,15 @@ class _AssetHoldingGet:
         asset_or_index: algopy.Asset | algopy.UInt64 | int,
         field: str,
     ) -> tuple[typing.Any, bool]:
-        context = get_test_context()
-
         # Resolve account
+        context = get_test_context()
         account = _get_account(account_or_index)
         try:
             asset = _get_asset(asset_or_index)
         except ValueError:
             return UInt64(0), False
 
-        account_data = context.get_account_data()[account.public_key]
+        account_data = get_account_data(account.public_key)
         asset_balance = account_data.opted_asset_balances.get(asset.id)
         if asset_balance is None:
             return UInt64(0), False
@@ -851,10 +845,10 @@ class _AssetHoldingGet:
             return asset_balance, True
         elif field == "frozen":
             try:
-                asset_data = context._asset_data[int(asset.id)]
+                asset_data = context.get_asset(asset.id)
             except KeyError:
                 return UInt64(0), False
-            return asset_data["default_frozen"], True
+            return asset_data.default_frozen, True
         else:
             raise ValueError(f"Invalid asset holding field: {field}")
 
@@ -1152,7 +1146,7 @@ class Box:
         context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
         if context.get_box(name_bytes):
-            context.clear_box(name_bytes)
+            context.delete_box(name_bytes)
             return True
         return False
 
@@ -1175,7 +1169,7 @@ class Box:
         context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
         box_content = Bytes(context.get_box(name_bytes))
-        box_exists = context.does_box_exist(name_bytes)
+        box_exists = context.box_exists(name_bytes)
         return box_content, box_exists
 
     @staticmethod
@@ -1183,7 +1177,7 @@ class Box:
         context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
         box_content = context.get_box(name_bytes)
-        box_exists = context.does_box_exist(name_bytes)
+        box_exists = context.box_exists(name_bytes)
         return UInt64(len(box_content)), box_exists
 
     @staticmethod

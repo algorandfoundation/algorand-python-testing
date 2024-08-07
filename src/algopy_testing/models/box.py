@@ -36,7 +36,7 @@ class Box(typing.Generic[_TValue]):
         """Returns True if the box exists, regardless of the truthiness of the
         contents of the box."""
         context = get_test_context()
-        return context.does_box_exist(self.key)
+        return context.box_exists(self.key)
 
     @property
     def key(self) -> algopy.Bytes:
@@ -52,7 +52,7 @@ class Box(typing.Generic[_TValue]):
         Fails if the box has not been created.
         """
         context = get_test_context()
-        if not context.does_box_exist(self.key):
+        if not context.box_exists(self.key):
             raise RuntimeError("Box has not been created")
         return _cast_to_value_type(self._type, context.get_box(self.key))
 
@@ -70,7 +70,7 @@ class Box(typing.Generic[_TValue]):
     def value(self) -> None:
         """Delete the box."""
         context = get_test_context()
-        context.clear_box(self.key)
+        context.delete_box(self.key)
 
     def get(self, *, default: _TValue) -> _TValue:
         """Retrieve the contents of the box, or return the default value if the
@@ -86,7 +86,7 @@ class Box(typing.Generic[_TValue]):
         """Retrieve the contents of the box if it exists, and return a boolean
         indicating if the box exists."""
         context = get_test_context()
-        box_exists = context.does_box_exist(self.key)
+        box_exists = context.box_exists(self.key)
         box_content_bytes = context.get_box(self.key)
         box_content = _cast_to_value_type(self._type, box_content_bytes)
         return box_content, box_exists
@@ -98,7 +98,7 @@ class Box(typing.Generic[_TValue]):
         Fails if the box does not exist
         """
         context = get_test_context()
-        if not context.does_box_exist(self.key):
+        if not context.box_exists(self.key):
             raise RuntimeError("Box has not been created")
         return algopy_testing.UInt64(len(context.get_box(self.key)))
 
@@ -122,7 +122,7 @@ class BoxRef:
         """Returns True if the box has a value set, regardless of the
         truthiness of that value."""
         context = get_test_context()
-        return context.does_box_exist(self.key)
+        return context.box_exists(self.key)
 
     @property
     def key(self) -> algopy.Bytes:
@@ -157,7 +157,7 @@ class BoxRef:
         """Deletes the box if it exists and returns a value indicating if the
         box existed."""
         context = get_test_context()
-        return context.clear_box(self.key)
+        return context.delete_box(self.key)
 
     def extract(
         self, start_index: algopy.UInt64 | int, length: algopy.UInt64 | int
@@ -302,7 +302,7 @@ class BoxRef:
 
     def _maybe(self) -> tuple[bytes, bool]:
         context = get_test_context()
-        box_exists = context.does_box_exist(self.key)
+        box_exists = context.box_exists(self.key)
         box_content = context.get_box(self.key)
         return box_content, box_exists
 
@@ -387,14 +387,14 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         """Deletes a keyed box."""
         context = get_test_context()
         key_bytes = self._full_key(key)
-        context.clear_box(key_bytes)
+        context.delete_box(key_bytes)
 
     def __contains__(self, key: _TKey) -> bool:
         """Returns True if a box with the specified key exists in the map,
         regardless of the truthiness of the contents of the box."""
         context = get_test_context()
         key_bytes = self._full_key(key)
-        return context.does_box_exist(key_bytes)
+        return context.box_exists(key_bytes)
 
     def get(self, key: _TKey, *, default: _TValue) -> _TValue:
         """Retrieve the contents of a keyed box, or return the default value if
@@ -414,7 +414,7 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         """
         context = get_test_context()
         key_bytes = self._full_key(key)
-        box_exists = context.does_box_exist(key_bytes)
+        box_exists = context.box_exists(key_bytes)
         box_content_bytes = context.get_box(key_bytes)
         box_content = _cast_to_value_type(self._value_type, box_content_bytes)
         return box_content, box_exists
@@ -427,7 +427,7 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         """
         context = get_test_context()
         key_bytes = self._full_key(key)
-        box_exists = context.does_box_exist(key_bytes)
+        box_exists = context.box_exists(key_bytes)
         if not box_exists:
             raise RuntimeError("Box has not been created")
         box_content_bytes = context.get_box(key_bytes)

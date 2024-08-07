@@ -17,7 +17,7 @@ class Block:
 
         try:
             index = int(a)
-            return itob(context._blocks[index]["seed"])
+            return itob(context._ledger_context.get_block_content(index, "seed"))
         except KeyError as e:
             raise KeyError(f"Block {a} not set") from e
 
@@ -27,6 +27,6 @@ class Block:
 
         try:
             index = int(a)
-            return UInt64(context._blocks[index]["timestamp"])
+            return UInt64(context._ledger_context.get_block_content(index, "timestamp"))
         except KeyError as e:
             raise KeyError(f"Block {a} not set") from e

@@ -70,7 +70,6 @@ _TBitSize = typing.TypeVar("_TBitSize", bound=int)
 
 
 class _TypeInfo:
-
     @property
     def typ(self) -> type:
         raise NotImplementedError
@@ -151,7 +150,6 @@ def arc4_signature(signature: str, /) -> algopy.Bytes:
 
 
 class _StringTypeInfo(_TypeInfo):
-
     @property
     def typ(self) -> type:
         return String
@@ -212,7 +210,6 @@ class String(_ABIEncoded):
 
 
 class _UIntTypeInfo(_TypeInfo):
-
     def __init__(self, size: int, alias: str | None = None) -> None:
         self.bit_size = size
         if size <= UINT64_SIZE:
@@ -392,7 +389,6 @@ _MAX_M_SIZE = 160
 
 
 class _UFixedTypeInfo(_UIntTypeInfo):
-
     def __init__(self, size: int, precision: int) -> None:
         super().__init__(size)
         self.precision = precision
@@ -511,7 +507,6 @@ UInt512: typing.TypeAlias = BigUIntN[typing.Literal[512]]
 
 
 class _BoolTypeInfo(_TypeInfo):
-
     @property
     def typ(self) -> type:
         return Bool
@@ -557,7 +552,6 @@ _TArrayLength = typing.TypeVar("_TArrayLength", bound=int)
 
 
 class _StaticArrayTypeInfo(_TypeInfo):
-
     def __init__(self, item_type: _TypeInfo, size: int, alias: str | None = None):
         self.item_type = item_type
         self.size = size
@@ -899,7 +893,6 @@ _TTuple = typing.TypeVarTuple("_TTuple")
 
 
 class _TupleTypeInfo(_TypeInfo):
-
     def __init__(self, child_types: list[_TypeInfo]) -> None:
         self.child_types = child_types
 
@@ -1201,7 +1194,7 @@ def emit(event: str | Struct, /, *args: _TABIArg) -> None:
     import algopy
 
     context = get_test_context()
-    active_txn = context.get_active_transaction()
+    active_txn = context.last_active_txn
 
     if active_txn.type != algopy.TransactionType.ApplicationCall:
         raise ValueError("Cannot emit events outside of application call context!")

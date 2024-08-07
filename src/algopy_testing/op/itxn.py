@@ -1,20 +1,20 @@
 import typing
 from collections.abc import Callable, Sequence
 
-import algopy_testing
 from algopy_testing._context_storage import get_test_context
+from algopy_testing.itxn import InnerTransactionResult
 from algopy_testing.op.constants import OP_MEMBER_TO_TXN_MEMBER
 
 
 class _ITxn:
     def __getattr__(self, name: str) -> Callable[[], typing.Any]:
         context = get_test_context()
-        if not context._inner_transaction_groups:
+        if not context._txn_context.inner_txn_groups:
             raise ValueError(
                 "No inner transaction found in the context! Use `with algopy_testing_context()` "
                 "to access the context manager."
             )
-        last_itxn_group = context._inner_transaction_groups[-1]
+        last_itxn_group = context._txn_context.inner_txn_groups[-1]
 
         if not last_itxn_group:
             raise ValueError("No inner transaction found in the testing context!")
@@ -36,12 +36,12 @@ ITxn = _ITxn()
 class _GITxn:
     def __getattr__(self, name: str) -> Callable[[int], typing.Any]:
         context = get_test_context()
-        if not context._inner_transaction_groups:
+        if not context._txn_context.inner_txn_groups:
             raise ValueError(
                 "No inner transaction found in the context! Use `with algopy_testing_context()` "
                 "to access the context manager."
             )
-        last_itxn_group = context._inner_transaction_groups[-1]
+        last_itxn_group = context._txn_context.inner_txn_groups[-1]
 
         if not last_itxn_group:
             raise ValueError("No inner transaction found in the testing context!")
@@ -63,45 +63,27 @@ GITxn = _GITxn()
 
 class _ITxnCreate:
     def begin(self) -> None:
-        context = get_test_context()
-        context._constructing_inner_transaction_group = []
+        get_test_context()._txn_context.begin_constructing_itxn_group()
 
-    def next(cls) -> None:
-        context = get_test_context()
-        if context._constructing_inner_transaction:
-            context._constructing_inner_transaction_group.append(
-                context._constructing_inner_transaction
-            )
-            context._constructing_inner_transaction = None
+    def next(self) -> None:
+        get_test_context()._txn_context.add_to_constructing_itxn_group()
 
-    def submit(cls) -> None:
-        context = get_test_context()
-        if context._constructing_inner_transaction:
-            context._constructing_inner_transaction_group.append(
-                context._constructing_inner_transaction
-            )
-            context._constructing_inner_transaction = None
-            context._inner_transaction_groups.append(context._constructing_inner_transaction_group)
-            context._constructing_inner_transaction_group = []
+    def submit(self) -> None:
+        get_test_context()._txn_context.submit_constructing_itxn_group()
 
     def __getattr__(self, name: str) -> Callable[[typing.Any], None]:
-        context = get_test_context()
+        context = get_test_context()._txn_context
 
-        if not context._constructing_inner_transaction:
-            context._constructing_inner_transaction = algopy_testing.itxn.InnerTransactionResult()
+        if context.constructing_inner_txn is None:
+            context.constructing_inner_txn = InnerTransactionResult()
 
         def setter(value: typing.Any) -> None:
-            self._set_field(name, value)
+            field = OP_MEMBER_TO_TXN_MEMBER.get(
+                name.removeprefix("set_"), name.removeprefix("set_")
+            )
+            setattr(context.constructing_inner_txn, field, value)
 
         return setter
-
-    def _set_field(self, field: str, value: typing.Any) -> None:
-        context = get_test_context()
-        field = field.removeprefix("set_")
-        field = OP_MEMBER_TO_TXN_MEMBER.get(field, field)
-        if not context._constructing_inner_transaction:
-            raise ValueError("No active inner transaction. Call ITxnCreate.begin() first.")
-        setattr(context._constructing_inner_transaction, field, value)
 
 
 ITxnCreate = _ITxnCreate()

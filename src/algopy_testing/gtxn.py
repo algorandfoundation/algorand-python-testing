@@ -8,7 +8,6 @@ from algopy_testing.models import Application
 from algopy_testing.models.txn_fields import TransactionFieldsBase
 
 if typing.TYPE_CHECKING:
-
     import algopy
 
 
@@ -42,7 +41,7 @@ class TransactionBase(TransactionFieldsBase):
         if self._fields is not None:
             return self
 
-        return get_test_context().last_group.transactions[self._group_index]
+        return get_test_context().last_txn_group.transactions[self._group_index]
 
     @property
     def fields(self) -> dict[str, object]:

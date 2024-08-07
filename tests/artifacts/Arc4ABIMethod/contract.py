@@ -3,9 +3,7 @@ from algopy import Account, Application, ARC4Contract, Asset, Txn, arc4, gtxn, o
 UInt8Array = arc4.DynamicArray[arc4.UInt8]
 
 
-# TODO: move out of examples
 class SignaturesContract(ARC4Contract):
-
     @arc4.abimethod(create="require")
     def create(self) -> None:
         app_txn = gtxn.ApplicationCallTransaction(0)

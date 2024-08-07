@@ -71,7 +71,6 @@ class _BaseInnerTransactionResult(TransactionFieldsBase):
 
     @property
     def _logs(self) -> list[bytes]:
-
         context = get_test_context()
         try:
             return context._application_logs[int(self.app_id.id)]
@@ -147,7 +146,7 @@ class _BaseInnerTransactionFields:
     def submit(self) -> typing.Any:
         context = get_test_context()
         result = _get_itxn_result(self)
-        context._append_inner_transaction_group([result])
+        context._txn_context.add_inner_txn_group([result])  # type: ignore[list-item]
         return result
 
     def copy(self) -> typing.Self:
@@ -195,7 +194,7 @@ def submit_txns(
         raise ValueError("Cannot submit more than 16 inner transactions at once")
 
     results = tuple(_get_itxn_result(tx) for tx in transactions)
-    context._append_inner_transaction_group(results)
+    context._txn_context.add_inner_txn_group(results)  # type: ignore[arg-type]
 
     return results
 
@@ -250,7 +249,6 @@ def _on_asset_xfer(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
 
 
 def _on_app_call(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
-
     return fields
 
 

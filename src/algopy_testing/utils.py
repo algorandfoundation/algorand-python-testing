@@ -3,13 +3,28 @@ from __future__ import annotations
 import secrets
 from typing import TYPE_CHECKING
 
+import algosdk
+
 import algopy_testing
-from algopy_testing.constants import MAX_BYTES_SIZE, MAX_UINT8, MAX_UINT16, MAX_UINT64, MAX_UINT512
+from algopy_testing.constants import (
+    DEFAULT_ACCOUNT_MIN_BALANCE,
+    DEFAULT_ASSET_CREATE_MIN_BALANCE,
+    DEFAULT_ASSET_OPT_IN_MIN_BALANCE,
+    DEFAULT_GLOBAL_GENESIS_HASH,
+    DEFAULT_MAX_TXN_LIFE,
+    MAX_BYTES_SIZE,
+    MAX_UINT8,
+    MAX_UINT16,
+    MAX_UINT64,
+    MAX_UINT512,
+)
 
 if TYPE_CHECKING:
     import types
 
     import algopy
+
+    from algopy_testing.op.global_values import GlobalFields
 
 
 def generate_random_int(min_value: int, max_value: int) -> int:
@@ -117,3 +132,23 @@ def check_type(value: object, typ: type | types.UnionType) -> None:
     if not isinstance(value, typ):
         expected_name = typ.__name__ if isinstance(typ, type) else str(typ)
         raise TypeError(f"expected {expected_name}, got {type(value).__name__!r}")
+
+
+def assert_address_is_valid(address: str) -> None:
+    assert algosdk.encoding.is_valid_address(address), "Invalid Algorand address supplied!"
+
+
+def get_default_global_fields(creator_address: algopy.Account) -> GlobalFields:
+    """Return the default global fields for the context."""
+    import algopy
+
+    return {
+        "min_txn_fee": algopy.UInt64(algosdk.constants.MIN_TXN_FEE),
+        "min_balance": algopy.UInt64(DEFAULT_ACCOUNT_MIN_BALANCE),
+        "max_txn_life": algopy.UInt64(DEFAULT_MAX_TXN_LIFE),
+        "zero_address": algopy.Account(algosdk.constants.ZERO_ADDRESS),
+        "creator_address": creator_address,
+        "asset_create_min_balance": algopy.UInt64(DEFAULT_ASSET_CREATE_MIN_BALANCE),
+        "asset_opt_in_min_balance": algopy.UInt64(DEFAULT_ASSET_OPT_IN_MIN_BALANCE),
+        "genesis_hash": algopy.Bytes(DEFAULT_GLOBAL_GENESIS_HASH),
+    }

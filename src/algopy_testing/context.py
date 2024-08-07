@@ -3,7 +3,7 @@ from __future__ import annotations
 import secrets
 import string
 import typing
-from collections import ChainMap, defaultdict
+from collections import defaultdict
 from contextlib import contextmanager
 from typing import Unpack
 
@@ -11,37 +11,33 @@ import algosdk
 
 import algopy_testing
 from algopy_testing._arc4_factory import ARC4Factory
-from algopy_testing._itxn_loader import ITxnGroupLoader, ITxnLoader
+from algopy_testing._context_storage import get_app_data
+from algopy_testing._ledger_context import LedgerContext
+from algopy_testing._txn_context import TransactionContext, TransactionGroup
 from algopy_testing.constants import (
-    ALWAYS_APPROVE_TEAL_PROGRAM,
     ARC4_RETURN_PREFIX,
-    DEFAULT_ACCOUNT_MIN_BALANCE,
-    DEFAULT_ASSET_CREATE_MIN_BALANCE,
-    DEFAULT_ASSET_OPT_IN_MIN_BALANCE,
-    DEFAULT_GLOBAL_GENESIS_HASH,
-    DEFAULT_MAX_TXN_LIFE,
     MAX_BYTES_SIZE,
     MAX_UINT64,
 )
 from algopy_testing.gtxn import TransactionBase
-from algopy_testing.models.account import (
-    Account,
-    AccountContextData,
-    AccountFields,
-    get_empty_account,
-)
-from algopy_testing.models.asset import AssetFields
 from algopy_testing.models.txn_fields import get_txn_defaults
 from algopy_testing.primitives.uint64 import UInt64
-from algopy_testing.utils import convert_native_to_stack, generate_random_int
+from algopy_testing.utils import (
+    convert_native_to_stack,
+    generate_random_int,
+)
 
 if typing.TYPE_CHECKING:
     from collections.abc import Callable, Generator, Sequence
 
     import algopy
 
-    from algopy_testing._itxn_loader import InnerTransactionResultType
-    from algopy_testing.models.application import ApplicationContextData, ApplicationFields
+    from algopy_testing._itxn_loader import InnerTransactionResultType, ITxnGroupLoader, ITxnLoader
+    from algopy_testing.models.account import (
+        AccountFields,
+    )
+    from algopy_testing.models.application import ApplicationFields
+    from algopy_testing.models.asset import AssetFields
     from algopy_testing.models.txn_fields import (
         ApplicationCallFields,
         AssetConfigFields,
@@ -54,24 +50,6 @@ if typing.TYPE_CHECKING:
     from algopy_testing.op.global_values import GlobalFields
 
 _TGlobalTxn = typing.TypeVar("_TGlobalTxn", bound=TransactionBase)
-
-
-class TransactionGroup:
-
-    def __init__(
-        self,
-        transactions: Sequence[algopy.gtxn.TransactionBase],
-        active_transaction_index: int | None = None,
-    ):
-        # TODO: add TransactionContext and combine with logs and scratch space
-        self.transactions = transactions
-        self.active_transaction_index = (
-            len(transactions) - 1 if active_transaction_index is None else active_transaction_index
-        )
-
-    @property
-    def active_txn(self) -> algopy.gtxn.Transaction:
-        return self.transactions[self.active_transaction_index]  # type: ignore[return-value]
 
 
 class AlgopyTestContext:
@@ -102,47 +80,25 @@ class AlgopyTestContext:
         self._scratch_spaces = defaultdict[
             algopy_testing.gtxn.TransactionBase, list[algopy.Bytes | algopy.UInt64]
         ](_get_scratch_slots)
-        self._active_txn_fields = dict[str, typing.Any]()
-        self._groups = list[TransactionGroup]()
         # TODO: remove direct reads of data mappings outside of context_storage
-        self._application_data: dict[int, ApplicationContextData] = {}
         self._contract_app_ids = dict[algopy.Contract, int]()
         # TODO: this map is from app_id to logs, should probably instead be stored against
         #       the appropriate txn
+        self._ledger_context = LedgerContext(default_sender=default_sender)
         self._application_logs: dict[int, list[bytes]] = {}
-        self._asset_data: dict[int, AssetFields] = {}
-        self._inner_transaction_groups: list[Sequence[InnerTransactionResultType]] = []
-        self._constructing_inner_transaction_group: list[InnerTransactionResultType] = []
-        self._constructing_inner_transaction: InnerTransactionResultType | None = None
-        self._template_vars: dict[str, typing.Any] = template_vars or {}
-        self._blocks: dict[int, dict[str, int]] = {}
-        self._boxes: dict[bytes, bytes] = {}
-        self._lsigs: dict[algopy.LogicSig, Callable[[], algopy.UInt64 | bool]] = {}
+        self._txn_context = TransactionContext()
         self._active_lsig_args: Sequence[algopy.Bytes] = []
-        # using defaultdict here because there should be an AccountContextData for any
-        # account, it defaults to an account with no balance
-        self._account_data = defaultdict[str, AccountContextData](get_empty_account)
-        self.default_sender: algopy.Account = default_sender or algopy.Account(
-            algosdk.account.generate_account()[1]
-        )
-        self._account_data[self.default_sender.public_key] = get_empty_account()
-
-        self._global_fields: GlobalFields = {
-            "min_txn_fee": algopy.UInt64(algosdk.constants.MIN_TXN_FEE),
-            "min_balance": algopy.UInt64(DEFAULT_ACCOUNT_MIN_BALANCE),
-            "max_txn_life": algopy.UInt64(DEFAULT_MAX_TXN_LIFE),
-            "zero_address": algopy.Account(algosdk.constants.ZERO_ADDRESS),
-            "creator_address": self.default_sender,
-            "asset_create_min_balance": algopy.UInt64(DEFAULT_ASSET_CREATE_MIN_BALANCE),
-            "asset_opt_in_min_balance": algopy.UInt64(DEFAULT_ASSET_OPT_IN_MIN_BALANCE),
-            "genesis_hash": algopy.Bytes(DEFAULT_GLOBAL_GENESIS_HASH),
-        }
-
         self._arc4 = ARC4Factory(context=self)
+        self._template_vars: dict[str, typing.Any] = template_vars or {}
+        self._lsigs: dict[algopy.LogicSig, Callable[[], algopy.UInt64 | bool]] = {}
 
     @property
     def arc4(self) -> ARC4Factory:
         return self._arc4
+
+    @property
+    def default_sender(self) -> algopy.Account:
+        return self._ledger_context.default_sender
 
     def patch_global_fields(self, **global_fields: Unpack[GlobalFields]) -> None:
         """Patch 'Global' fields in the test context.
@@ -151,16 +107,7 @@ class AlgopyTestContext:
         :param **global_fields: Unpack[GlobalFields]:
         :raises AttributeError: If a key is invalid.
         """
-        from algopy_testing.op.global_values import GlobalFields
-
-        invalid_keys = global_fields.keys() - GlobalFields.__annotations__.keys()
-
-        if invalid_keys:
-            raise AttributeError(
-                f"Invalid field(s) found during patch for `Global`: {', '.join(invalid_keys)}"
-            )
-
-        self._global_fields.update(global_fields)
+        self._ledger_context.patch_global_fields(**global_fields)
 
     def get_application_for_contract(
         self, contract: algopy.Contract | algopy.ARC4Contract
@@ -172,7 +119,7 @@ class AlgopyTestContext:
         return self.get_application(app_id)
 
     def get_contract_for_app(self, app: algopy.Application) -> algopy.Contract | None:
-        app_data = self._application_data[int(app.id)]
+        app_data = get_app_data(int(app.id))
         return app_data.contract
 
     def set_scratch_space(
@@ -255,31 +202,7 @@ class AlgopyTestContext:
         :returns: The account associated with the address.
         :rtype: algopy.Account
         """
-        return Account(address)
-
-    def get_account_data(self) -> dict[str, AccountContextData]:
-        """Retrieve all account data.
-
-        :returns: The account data.
-        :rtype: dict[str, AccountContextData]
-        """
-        return self._account_data
-
-    def get_asset_data(self) -> dict[int, AssetFields]:
-        """Retrieve all asset data.
-
-        :returns: The asset data.
-        :rtype: dict[int, AssetFields]
-        """
-        return self._asset_data
-
-    def get_application_data(self) -> dict[int, ApplicationFields]:
-        """Retrieve all application data.
-
-        :returns: The application data.
-        :rtype: dict[int, ApplicationFields]
-        """
-        return self._application_data  # type: ignore[return-value]
+        return self._ledger_context.get_account(address)
 
     def update_account(self, address: str, **account_fields: Unpack[AccountFields]) -> None:
         """Update an existing account.
@@ -291,45 +214,19 @@ class AlgopyTestContext:
         :param **account_fields: Unpack[AccountFields]:
         :raises TypeError: If the provided object is not an instance of `Account`.
         """
-        _assert_address_is_valid(address)
-        self._account_data[address].fields.update(account_fields)
-
-    def get_opted_asset_balance(
-        self, account: algopy.Account, asset_id: algopy.UInt64
-    ) -> algopy.UInt64 | None:
-        """Retrieve the opted asset balance for an account and asset ID.
-
-        :param account: Account to retrieve the balance for.
-        :type account: algopy.Account
-        :param asset_id: Asset ID.
-        :type asset_id: algopy.UInt64
-        :param account: algopy.Account:
-        :param asset_id: algopy.UInt64:
-        :returns: The opted asset balance or None if not opted in.
-        :rtype: algopy.UInt64 | None
-        """
-
-        response = self._account_data[account.public_key].opted_asset_balances.get(asset_id, None)
-
-        return response
+        self._ledger_context.update_account(address, **account_fields)
 
     def get_asset(self, asset_id: algopy.UInt64 | int) -> algopy.Asset:
-        """Retrieve an asset by ID.
+        """Retrieve an asset by its ID.
 
-        :param asset_id: Asset ID.
+        :param asset_id: The ID of the asset to retrieve.
         :type asset_id: int
-        :param asset_id: algopy.UInt64 | int:
-        :returns: The asset associated with the ID.
+        :returns: The asset associated with the given ID.
         :rtype: algopy.Asset
+        :raises ValueError: If the asset is not found in the testing
+            context.
         """
-        import algopy
-
-        asset_id = int(asset_id) if isinstance(asset_id, algopy.UInt64) else asset_id
-
-        if asset_id not in self._asset_data:
-            raise ValueError("Asset not found in testing context!")
-
-        return algopy.Asset(asset_id)
+        return self._ledger_context.get_asset(asset_id)
 
     def update_asset(self, asset_id: int, **asset_fields: Unpack[AssetFields]) -> None:
         """Update an existing asset.
@@ -339,73 +236,25 @@ class AlgopyTestContext:
         :param asset_id: int: :param **asset_fields:
             Unpack[AssetFields]:
         """
-        if asset_id not in self._asset_data:
-            raise ValueError("Asset not found in testing context!")
+        self._ledger_context.update_asset(asset_id, **asset_fields)
 
-        self._asset_data[asset_id].update(asset_fields)
+    @property
+    def inner_txn_groups(self) -> list[Sequence[InnerTransactionResultType]]:
+        """Retrieve all groups of inner transactions that have been submitted.
 
-    def get_application(self, app_id: algopy.UInt64 | int) -> algopy.Application:
-        """Retrieve an application by ID.
-
-        :param app_id: Application ID.
-        :type app_id: int
-        :param app_id: algopy.UInt64 | int:
-        :returns: The application associated with the ID.
-        :rtype: algopy.Application
+        :returns: A list of inner transaction groups, where each group
+            is a sequence of inner transaction results.
+        :rtype: list[Sequence[InnerTransactionResultType]]
         """
-        import algopy
+        return self._txn_context.inner_txn_groups
 
-        app_id = int(app_id) if isinstance(app_id, algopy.UInt64) else app_id
+    @property
+    def last_txn_group(self) -> TransactionGroup:
+        return self._txn_context.last_txn_group
 
-        if app_id not in self._application_data:
-            raise ValueError("Application not found in testing context!")
-
-        return algopy.Application(app_id)
-
-    def update_application(
-        self, app_id: int, **application_fields: Unpack[ApplicationFields]
-    ) -> None:
-        """Update an existing application.
-
-        :param app_id: Application ID.
-        :type app_id: int :param **application_fields: New application
-            data.
-        :param app_id: int: :param **application_fields:
-            Unpack[ApplicationFields]:
-        """
-        if app_id not in self._application_data:
-            raise ValueError("Application not found in testing context!")
-
-        self._application_data[app_id].fields.update(application_fields)
-
-    def _append_inner_transaction_group(
-        self,
-        itxns: Sequence[object],
-    ) -> None:
-        """Append a group of inner transactions to the context.
-
-        :param itxn: The group of inner transactions to append.
-        :type itxn: Sequence[InnerTransactionResultType]
-        :param itxns: Sequence[object]:
-        """
-        self._inner_transaction_groups.append(itxns)  # type: ignore[arg-type]
-
-    def get_submitted_itxn_groups(self) -> list[Sequence[InnerTransactionResultType]]:
-        """Retrieve the group of inner transactions at the specified index.
-        Returns a loader instance that allows access to generic inner
-        transaction fields or specific inner transaction types with implicit
-        type checking.
-
-        :param index: The index of the inner transaction group.
-        :type index: int
-        :returns: The loader for the inner transaction group.
-        :rtype: ITxnGroupLoader
-        :raises ValueError: If no inner transaction groups have been
-            submitted yet or the index
-        :raises ValueError: If no inner transaction groups have been
-            submitted yet or the index is out of range.
-        """
-        return self._inner_transaction_groups
+    @property
+    def last_active_txn(self) -> algopy.gtxn.Transaction:
+        return self._txn_context.last_active_txn
 
     def get_submitted_itxn_group(self, index: int) -> ITxnGroupLoader:
         """Retrieve the last group of inner transactions. Returns a loader
@@ -421,13 +270,7 @@ class AlgopyTestContext:
             submitted yet.
         """
 
-        if not self._inner_transaction_groups:
-            raise ValueError("No inner transaction groups submitted yet!")
-
-        try:
-            return ITxnGroupLoader(self._inner_transaction_groups[index])
-        except IndexError as err:
-            raise ValueError(f"No inner transaction group available at index {index}!") from err
+        return self._txn_context.get_submitted_itxn_group(index)
 
     @property
     def last_submitted_itxn(self) -> ITxnLoader:
@@ -440,14 +283,31 @@ class AlgopyTestContext:
             inner transaction group.
         """
 
-        if not self._inner_transaction_groups or not self._inner_transaction_groups[-1]:
-            raise ValueError("No inner transactions in the last inner transaction group!")
+        return self._txn_context.last_submitted_itxn
 
-        try:
-            last_itxn = self._inner_transaction_groups[-1][-1]
-            return ITxnLoader(last_itxn)
-        except IndexError as err:
-            raise ValueError("No inner transactions in the last inner transaction group!") from err
+    def get_application(self, app_id: algopy.UInt64 | int) -> algopy.Application:
+        """Retrieve an application by ID.
+
+        :param app_id: Application ID.
+        :type app_id: int
+        :param app_id: algopy.UInt64 | int:
+        :returns: The application associated with the ID.
+        :rtype: algopy.Application
+        """
+        return self._ledger_context.get_application(app_id)
+
+    def update_application(
+        self, app_id: int, **application_fields: Unpack[ApplicationFields]
+    ) -> None:
+        """Update an existing application.
+
+        :param app_id: Application ID.
+        :type app_id: int :param **application_fields: New application
+            data.
+        :param app_id: int: :param **application_fields:
+            Unpack[ApplicationFields]:
+        """
+        self._ledger_context.update_application(app_id, **application_fields)
 
     def any_account(
         self,
@@ -480,34 +340,9 @@ class AlgopyTestContext:
         :rtype: algopy.Account
         """
 
-        import algopy
-
-        if address is not None:
-            _assert_address_is_valid(address)
-
-        # TODO: ensure passed fields are valid names and types
-        if address in self._account_data:
-            raise ValueError(
-                "Account with such address already exists in testing context! "
-                "Use `context.get_account(address)` to retrieve the existing account."
-            )
-
-        for key in account_fields:
-            if key not in AccountFields.__annotations__:
-                raise AttributeError(f"Invalid field '{key}' for Account")
-
-        new_account_address = address or algosdk.account.generate_account()[1]
-        new_account = algopy.Account(new_account_address)
-        new_account_fields = AccountFields(**account_fields)
-        new_account_data = AccountContextData(
-            fields=new_account_fields,
-            opted_asset_balances=opted_asset_balances or {},
-            opted_apps={app.id: app for app in opted_apps},
+        return self._ledger_context.any_account(
+            address, opted_asset_balances, opted_apps, **account_fields
         )
-
-        self._account_data[new_account_address] = new_account_data
-
-        return new_account
 
     def any_asset(
         self, asset_id: int | None = None, **asset_fields: Unpack[AssetFields]
@@ -523,30 +358,7 @@ class AlgopyTestContext:
         :returns: The newly generated asset.
         :rtype: algopy.Asset
         """
-        import algopy
-
-        if asset_id and asset_id in self._asset_data:
-            raise ValueError("Asset with such ID already exists in testing context!")
-
-        # TODO: ensure passed fields are valid names and types
-        new_asset = algopy.Asset(asset_id or next(self._asset_id))
-        default_asset_fields = {
-            "total": self.any_uint64(),
-            "decimals": self.any_uint64(1, 6),
-            "default_frozen": False,
-            "unit_name": self.any_bytes(4),
-            "name": self.any_bytes(32),
-            "url": self.any_bytes(10),
-            "metadata_hash": self.any_bytes(32),
-            "manager": algopy.Account(algosdk.constants.ZERO_ADDRESS),
-            "freeze": algopy.Account(algosdk.constants.ZERO_ADDRESS),
-            "clawback": algopy.Account(algosdk.constants.ZERO_ADDRESS),
-            "creator": self.default_sender,
-            "reserve": algopy.Account(algosdk.constants.ZERO_ADDRESS),
-        }
-        merged_fields = dict(ChainMap(asset_fields, default_asset_fields))  # type: ignore[arg-type]
-        self._asset_data[int(new_asset.id)] = AssetFields(**merged_fields)  # type: ignore[typeddict-item]
-        return new_asset
+        return self._ledger_context.any_asset(asset_id, **asset_fields)
 
     def any_application(  # type: ignore[misc]
         self,
@@ -572,47 +384,7 @@ class AlgopyTestContext:
         :returns: The newly generated application.
         :rtype: algopy.Application
         """
-        from algopy_testing.models.application import ApplicationContextData
-
-        new_app_id = id if id is not None else next(self._app_id)
-
-        if new_app_id in self._application_data:
-            raise ValueError(
-                f"Application id {new_app_id} has already been configured in test context!"
-            )
-
-        new_app = algopy_testing.Application(new_app_id)
-
-        # Set sensible defaults
-        app_fields: ApplicationFields = {
-            "approval_program": algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM),
-            "clear_state_program": algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM),
-            "global_num_uint": algopy_testing.UInt64(0),
-            "global_num_bytes": algopy_testing.UInt64(0),
-            "local_num_uint": algopy_testing.UInt64(0),
-            "local_num_bytes": algopy_testing.UInt64(0),
-            "extra_program_pages": algopy_testing.UInt64(0),
-            "creator": self.default_sender,
-            "address": address
-            or algopy_testing.Account(algosdk.logic.get_application_address(new_app_id)),
-        }
-
-        # Merge provided fields with defaults, prioritizing provided fields
-        for field, value in application_fields.items():
-            try:
-                default_value = app_fields[field]  # type: ignore[literal-required]
-            except KeyError:
-                raise ValueError(f"invalid field: {field!r}") from None
-            if not issubclass(type(value), type(default_value)):
-                raise TypeError(f"incorrect type for {field!r}")
-            app_fields[field] = value  # type: ignore[literal-required]
-
-        self._application_data[new_app_id] = ApplicationContextData(
-            fields=app_fields,
-            app_id=new_app_id,
-        )
-
-        return new_app
+        return self._ledger_context.any_application(id, address, **application_fields)
 
     def add_application_logs(
         self,
@@ -675,6 +447,25 @@ class AlgopyTestContext:
 
         return self._application_logs[app_id]
 
+    def set_box(self, name: algopy.Bytes | bytes, content: algopy.Bytes | bytes) -> None:
+        """Set the content of a box.
+
+        :param name: algopy.Bytes | bytes:
+        :param content: algopy.Bytes | bytes:
+        """
+        self._ledger_context.set_box(name, content)
+
+    def get_box(self, name: algopy.Bytes | bytes) -> bytes:
+        """Get the content of a box.
+
+        :param name: The name of the box.
+        :type name: algopy.Bytes | bytes
+        :returns: The content of the box. If the box doesn't exist,
+            returns an empty bytes object.
+        :rtype: bytes
+        """
+        return self._ledger_context.get_box(name)
+
     def set_block(
         self, index: int, seed: algopy.UInt64 | int, timestamp: algopy.UInt64 | int
     ) -> None:
@@ -684,7 +475,7 @@ class AlgopyTestContext:
         :param seed: algopy.UInt64 | int:
         :param timestamp: algopy.UInt64 | int:
         """
-        self._blocks[index] = {"seed": int(seed), "timestamp": int(timestamp)}
+        self._ledger_context.set_block(index, seed, timestamp)
 
     def set_transaction_group(
         self,
@@ -716,23 +507,12 @@ class AlgopyTestContext:
 
         for i, txn in enumerate(gtxns):
             txn.fields["group_index"] = UInt64(i)
-        self._groups.append(
-            TransactionGroup(
-                transactions=gtxns,
-                active_transaction_index=active_transaction_index,
-            )
+
+        txn_group = TransactionGroup(
+            transactions=gtxns,
+            active_transaction_index=active_transaction_index,
         )
-
-    @property
-    def last_group(self) -> TransactionGroup:
-        if not self._groups:
-            raise ValueError("No group transactions found in the context!")
-
-        return self._groups[-1]
-
-    @property
-    def last_active_txn(self) -> algopy.gtxn.Transaction:
-        return self.last_group.active_txn
+        self._txn_context.add_txn_group(txn_group)
 
     # TODO: should not expose this to the user, "active" transactions/apps should only
     #       be while a function is executing
@@ -748,22 +528,7 @@ class AlgopyTestContext:
         return self.get_application_for_contract(self._active_contract)
 
     def get_transaction(self, index: int) -> algopy.gtxn.Transaction:
-        try:
-            active_txn = self.last_group.transactions[index]
-        except IndexError:
-            raise ValueError("invalid group index") from None
-
-        return typing.cast(algopy_testing.gtxn.Transaction, active_txn)
-
-    def get_active_transaction(self) -> algopy.gtxn.Transaction:
-        """Retrieve the active transaction.
-
-        :returns: The active transaction.
-        :rtype: algopy.gtxn.Transaction
-        :raises ValueError: If no active transaction is found.
-        """
-        # TODO: should only be valid during execution?
-        return self.last_active_txn
+        return self._txn_context.get_txn(index)
 
     def any_uint64(self, min_value: int = 0, max_value: int = MAX_UINT64) -> algopy.UInt64:
         """Generate a random UInt64 value within a specified range.
@@ -822,16 +587,14 @@ class AlgopyTestContext:
         :returns: New application call transaction.
         """
         try:
-            app_id = fields["app_id"]
+            app = fields["app_id"]
         except KeyError:
-            app_id = fields["app_id"] = self.any_application()
+            app = fields["app_id"] = self.any_application()
 
-        if not isinstance(app_id, algopy_testing.Application):
+        if not isinstance(app, algopy_testing.Application):
             raise TypeError("`app_id` must be an instance of algopy.Application")
-        if int(app_id.id) not in self._application_data:
-            raise ValueError(
-                f"algopy.Application with ID {app_id.id} not found in testing context!"
-            )
+        if not get_app_data(int(app.id)):
+            raise ValueError(f"algopy.Application with ID {app.id} not found in testing context!")
 
         new_txn = self._new_gtxn(algopy_testing.gtxn.ApplicationCallTransaction, **fields)
         self.set_scratch_space(new_txn, scratch_space or [])
@@ -920,12 +683,8 @@ class AlgopyTestContext:
         :return: A generator that yields None.
         :rtype: Generator[None, None, None]
         """
-        last_txn = self._active_txn_fields
-        self._active_txn_fields = fields  # type: ignore[assignment]
-        try:
+        with self._txn_context.scoped_txn_fields(**fields):
             yield
-        finally:
-            self._active_txn_fields = last_txn
 
     def _new_gtxn(self, txn_type: type[_TGlobalTxn], **fields: object) -> _TGlobalTxn:
         # TODO: check reference types are known?
@@ -935,51 +694,26 @@ class AlgopyTestContext:
         fields = {**get_txn_defaults(), **fields}
         return txn_type(fields)
 
-    def does_box_exist(self, name: algopy.Bytes | bytes) -> bool:
-        """
+    def delete_box(self, name: algopy.Bytes | bytes) -> bool:
+        """Delete a box from the test context.
 
-        :param name: algopy.Bytes | bytes:
-
-        """
-        name_bytes = name if isinstance(name, bytes) else name.value
-        return name_bytes in self._boxes
-
-    def get_box(self, name: algopy.Bytes | bytes) -> bytes:
-        """Get the content of a box.
-
-        :param name: The name of the box.
+        :param name: The name of the box to delete.
         :type name: algopy.Bytes | bytes
-        :returns: The content of the box. If the box doesn't exist,
-            returns an empty bytes object.
-        :rtype: bytes
+        :returns: True if the box was successfully deleted, False if the
+            box didn't exist.
+        :rtype: bool
         """
+        return self._ledger_context.delete_box(name)
 
-        name_bytes = name if isinstance(name, bytes) else name.value
-        return self._boxes.get(name_bytes, b"")
+    def box_exists(self, name: algopy.Bytes | bytes) -> bool:
+        """Check if a box exists in the test context.
 
-    def get_box_map(self, name: algopy.Bytes | bytes) -> bytes:
-        """Get the content of a box map.
-
-        :param name: The name of the box map.
+        :param name: The name of the box to check.
         :type name: algopy.Bytes | bytes
-        :returns: The content of the box map.
-        :rtype: bytes
+        :returns: True if the box exists, False otherwise.
+        :rtype: bool
         """
-
-        name_bytes = name if isinstance(name, bytes) else name.value
-        prefix = b"box_map"
-        return self.get_box(name=prefix + name_bytes)
-
-    def set_box(self, name: algopy.Bytes | bytes, content: algopy.Bytes | bytes) -> None:
-        """Set the content of a box.
-
-        :param name: algopy.Bytes | bytes:
-        :param content: algopy.Bytes | bytes:
-        """
-
-        name_bytes = name if isinstance(name, bytes) else name.value
-        content_bytes = content if isinstance(content, bytes) else content.value
-        self._boxes[name_bytes] = content_bytes
+        return self._ledger_context.box_exists(name)
 
     @contextmanager
     def scoped_lsig_args(
@@ -1040,107 +774,50 @@ class AlgopyTestContext:
             raise ValueError(f"Logic signature {lsig} already exists in the context!")
         self._lsigs[lsig] = lsig.func
 
-    def clear_box(self, name: algopy.Bytes | bytes) -> bool:
-        """Clear all data, including accounts, applications, assets, inner
-        transactions, transaction groups, and application logs.
-
-        :param name: algopy.Bytes | bytes:
-        """
-
-        name_bytes = name if isinstance(name, bytes) else name.value
-        if name_bytes in self._boxes:
-            del self._boxes[name_bytes]
-            return True
-        return False
-
-    def clear_all_boxes(self) -> None:
-        """Clear all boxes."""
-        self._boxes.clear()
-
-    def clear_inner_transaction_groups(self) -> None:
-        """Clear all inner transactions."""
-        self._inner_transaction_groups.clear()
-
-    def clear_transaction_group(self) -> None:
-        """Clear the transaction group."""
-        self._groups.clear()
-
-    def clear_accounts(self) -> None:
-        """Clear all accounts."""
-        self._account_data.clear()
-
-    def clear_applications(self) -> None:
-        """Clear all applications."""
-        self._application_data.clear()
-
-    def clear_assets(self) -> None:
-        """Clear all assets."""
-        self._asset_data.clear()
-
-    def clear_application_logs(self) -> None:
-        """Clear all application logs."""
-        self._application_logs.clear()
-
-    def clear_scratch_spaces(self) -> None:
-        """Clear all scratch spaces."""
-        self._scratch_spaces.clear()
-
     def clear_active_contract(self) -> None:
         """Clear the active contract."""
         self._active_contract = None
 
-    def clear_boxes(self) -> None:
-        """Clear all boxes."""
-        self._boxes.clear()
+    def clear_transaction_context(
+        self, *, group_txns: bool = True, inner_txns: bool = True
+    ) -> None:
+        """Clear the transaction context.
 
-    def clear_blocks(self) -> None:
-        """Clear all blocks."""
-        self._blocks.clear()
+        This method clears the transaction context, optionally including
+        group transactions and inner transactions.
 
-    def clear_lsigs(self) -> None:
-        """Clear all logic signatures."""
-        self._lsigs.clear()
-        self._active_lsig_args = []
+        :param group_txns: If False, skip clearing group transactions.
+            Defaults to True.
+        :type group_txns: bool
+        :param inner_txns: If False, skip clearing inner transactions.
+            Defaults to True.
+        :type inner_txns: bool
+        :return: None
+        """
+        self._txn_context.clear(group_txns=group_txns, inner_txns=inner_txns)
 
-    def clear_template_vars(self) -> None:
-        """Clear all template variables."""
-        self._template_vars.clear()
+    def clear_ledger_context(self) -> None:
+        """Clear the ledger context."""
+        self._ledger_context.clear()
 
     def clear(self) -> None:
         """Clear all data, including accounts, applications, assets, inner
         transactions, transaction groups, and application_logs."""
-        self.clear_accounts()
-        self.clear_applications()
-        self.clear_assets()
-        self.clear_inner_transaction_groups()
-        self.clear_transaction_group()
-        self.clear_application_logs()
-        self.clear_scratch_spaces()
-        self.clear_active_contract()
-        self.clear_boxes()
-        self.clear_blocks()
-        self.clear_lsigs()
-        self.clear_template_vars()
+        self._application_logs.clear()
+        self._scratch_spaces.clear()
+        self._active_contract = None
+        self._lsigs.clear()
+        self._template_vars.clear()
+        self.clear_transaction_context()
+        self.clear_ledger_context()
 
     def reset(self) -> None:
         """Reset the test context to its initial state, clearing all data and
         resetting ID counters."""
 
-        self._account_data = defaultdict(AccountContextData)
-        self._application_data = {}
-        self._asset_data = {}
-        self._active_transaction_index = None
-        self._scratch_spaces = defaultdict(_get_scratch_slots)
-        self._inner_transaction_groups = []
-        self._groups = []
-        self._global_fields = {}
-        self._application_logs = {}
-        self._asset_id = iter(range(1, 2**64))
-        self._app_id = iter(range(1, 2**64))
-
-
-def _assert_address_is_valid(address: str) -> None:
-    assert algosdk.encoding.is_valid_address(address), "Invalid Algorand address supplied!"
+        self.clear()
+        self._txn_context = TransactionContext()
+        self._ledger_contex = LedgerContext()
 
 
 def _get_scratch_slots() -> list[algopy.Bytes | algopy.UInt64]:

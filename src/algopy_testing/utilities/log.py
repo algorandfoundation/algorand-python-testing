@@ -41,7 +41,7 @@ def log(
     else:
         separator = sep
 
-    active_txn = context.get_active_transaction()
+    active_txn = context.last_active_txn
     if active_txn.type != algopy.TransactionType.ApplicationCall:
         raise ValueError("Cannot emit events outside of application call context!")
     if not active_txn.app_id:

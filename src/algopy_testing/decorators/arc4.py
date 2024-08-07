@@ -46,7 +46,7 @@ def check_create(contract: algopy.Contract, create: _CreateValues) -> None:
 
 def check_oca(actions: Sequence[_AllowActions]) -> None:
     context = get_test_context()
-    txn = context.get_active_transaction()
+    txn = context.last_active_txn
     allowed_actions = [action if isinstance(action, str) else action.name for action in actions]
     if txn.on_completion.name not in allowed_actions:
         raise RuntimeError(
@@ -132,7 +132,7 @@ def _extract_group_txns(
 ) -> list[algopy.gtxn.TransactionBase]:
     method = algosdk.abi.Method.from_signature(arc4_signature)
     method_selector = Bytes(method.get_selector())
-    txn_fields = context._active_txn_fields.copy()
+    txn_fields = context._txn_context._active_txn_fields.copy()
 
     app = txn_fields.get("app_id", context.get_application_for_contract(contract))
     txn_arrays = _extract_arrays_from_args(

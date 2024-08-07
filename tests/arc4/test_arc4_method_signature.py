@@ -6,7 +6,7 @@ import algosdk
 import pytest
 from algopy import arc4
 
-from .contract import SignaturesContract, UInt8Array
+from tests.artifacts.Arc4ABIMethod.contract import SignaturesContract, UInt8Array
 
 # TODO: execute this on AVM too
 

@@ -40,11 +40,10 @@ class GlobalFields(TypedDict, total=False):
 
 
 class _Global:
-
     @property
     def _fields(self) -> GlobalFields:
         context = get_test_context()
-        return context._global_fields
+        return context._ledger_context._global_fields
 
     @property
     def current_application_address(self) -> algopy.Account:
@@ -66,7 +65,7 @@ class _Global:
             app_data = get_app_data(int(app.id))
             if app_data.is_creating:
                 return Application(0)
-            return context.get_active_transaction().app_id
+            return context.last_active_txn.app_id
 
     # TODO: move creator_address here
     @property
@@ -83,7 +82,7 @@ class _Global:
         except KeyError:
             context = get_test_context()
             # TODO: active group?
-            return UInt64(len(context.last_group.transactions))
+            return UInt64(len(context.last_txn_group.transactions))
 
     @property
     def zero_address(self) -> algopy.Account:

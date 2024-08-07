@@ -83,7 +83,7 @@ class Account:
     @property
     def data(self) -> AccountContextData:
         context = get_test_context()
-        return context._account_data[self.public_key]
+        return context._ledger_context._account_data[self.public_key]
 
     def is_opted_in(self, asset_or_app: algopy.Asset | algopy.Application, /) -> bool:
         from algopy_testing.models import Application, Asset
