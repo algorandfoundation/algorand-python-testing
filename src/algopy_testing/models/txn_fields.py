@@ -276,6 +276,19 @@ class TransactionFieldsBase(abc.ABC):
     def approval_program_pages(self) -> Callable[[algopy.UInt64 | int], algopy.Bytes]:
         return lambda i: self._approval_program_pages[int(i)]
 
+    @property
+    def clear_state_program(self) -> algopy.Bytes:
+        pages = self._clear_state_program_pages
+        return pages[0] if pages else Bytes()
+
+    @property
+    def _clear_state_program_pages(self) -> Sequence[algopy.Bytes]:
+        return self.fields["clear_state_program"]  # type: ignore[return-value]
+
+    @property
+    def clear_state_program_pages(self) -> Callable[[algopy.UInt64 | int], algopy.Bytes]:
+        return lambda i: self._clear_state_program_pages[int(i)]
+
     # TODO: num_approval_program_pages
     # TODO: clear program
 

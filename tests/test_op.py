@@ -943,7 +943,7 @@ def test_itxn_ops(context: AlgopyTestContext) -> None:
     pay_itxn = itxn_group.payment(1)
 
     assert appl_itxn.approval_program == algopy.Bytes.from_hex("068101")[0]
-    assert appl_itxn.clear_state_program == algopy.Bytes.from_hex("068101")
+    assert appl_itxn.clear_state_program == algopy.Bytes.from_hex("068101")[0]
     assert appl_itxn.on_completion == algopy.OnCompleteAction.DeleteApplication
     assert appl_itxn.fee == algopy.UInt64(algosdk.constants.MIN_TXN_FEE)
 
