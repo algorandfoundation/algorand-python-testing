@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import functools
+import types
 import typing
 
 import algosdk
@@ -9,11 +10,7 @@ import algosdk
 import algopy_testing
 from algopy_testing._context_storage import get_app_data, get_test_context
 from algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM
-from algopy_testing.primitives import Bytes
-from algopy_testing.utils import (
-    abi_return_type_annotation_for_arg,
-    abi_type_name_for_arg,
-)
+from algopy_testing.primitives import BigUInt, Bytes, String, UInt64
 
 _P = typing.ParamSpec("_P")
 _R = typing.TypeVar("_R")
@@ -95,6 +92,8 @@ def abimethod(  # noqa: PLR0913
         )
 
     fn.is_create = create != "disallow"  # type: ignore[attr-defined]
+    arc4_name = name or fn.__name__
+    arc4_signature = _generate_arc4_signature_from_fn(fn, arc4_name)
 
     @functools.wraps(fn)
     def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
@@ -106,8 +105,6 @@ def abimethod(  # noqa: PLR0913
         # TODO: handle custom txn groups
         # TODO: order kwargs correctly based on fn signature
         ordered_args = [*app_args, *kwargs.values()]
-        arc4_name = name or fn.__name__
-        arc4_signature = _generate_arc4_signature_from_args(fn, arc4_name, ordered_args)
         txns = _extract_group_txns(
             context,
             contract=contract,
@@ -223,30 +220,57 @@ def _extract_arrays_from_args(
 
 def _generate_arc4_signature_from_fn(fn: typing.Callable[_P, _R], arc4_name: str) -> str:
     annotations = fn.__annotations__.copy()
-    returns = algosdk.abi.Returns(_annotation_to_arc4(annotations.pop("return")))
+    returns = algosdk.abi.Returns(_type_to_arc4(annotations.pop("return")))
     method = algosdk.abi.Method(
         name=arc4_name,
-        args=[algosdk.abi.Argument(_annotation_to_arc4(a)) for a in annotations.values()],
+        args=[algosdk.abi.Argument(_type_to_arc4(a)) for a in annotations.values()],
         returns=returns,
     )
     return method.get_signature()
 
 
-def _annotation_to_arc4(_annotation: object) -> str:
-    # TODO: use ARC4 type to get arc4_name
-    raise NotImplementedError
+def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa: PLR0911, PLR0912
+    from algopy_testing.arc4 import _ABIEncoded
+    from algopy_testing.gtxn import Transaction, TransactionBase
+    from algopy_testing.models import Account, Application, Asset
 
+    if annotation is None:
+        return "void"
 
-def _generate_arc4_signature_from_args(
-    fn: typing.Callable[_P, _R], arc4_name: str, args: Sequence[object]
-) -> str:
+    if isinstance(annotation, types.GenericAlias):  # for tuple[...]
+        tuple_args = [_type_to_arc4(a) for a in typing.get_args(annotation)]
+        return f"({','.join(tuple_args)})"
 
-    arg_types = [algosdk.abi.Argument(abi_type_name_for_arg(arg=arg)) for arg in args]
-    return_type = algosdk.abi.Returns(
-        abi_return_type_annotation_for_arg(fn.__annotations__.get("return"))
-    )
-    method = algosdk.abi.Method(name=arc4_name, args=arg_types, returns=return_type)
-    return method.get_signature()
+    if not isinstance(annotation, type):
+        raise TypeError(f"expected type: {annotation!r}")
+
+    # arc4 types
+    if issubclass(annotation, _ABIEncoded):
+        return annotation.type_info.arc4_name
+    # txn types
+    if issubclass(annotation, Transaction):
+        return "txn"
+    if issubclass(annotation, TransactionBase):
+        return annotation.type_enum.txn_name
+    # reference types
+    if issubclass(annotation, Account):
+        return "account"
+    if issubclass(annotation, Asset):
+        return "asset"
+    if issubclass(annotation, Application):
+        return "application"
+    # native types
+    if issubclass(annotation, UInt64):
+        return "uint64"
+    if issubclass(annotation, String):
+        return "string"
+    if issubclass(annotation, BigUInt):
+        return "uint512"
+    if issubclass(annotation, Bytes):
+        return "byte[]"
+    if issubclass(annotation, bool):
+        return "bool"
+    raise TypeError(f"type not a valid ARC4 type: {annotation}")
 
 
 @typing.overload

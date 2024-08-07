@@ -6,7 +6,7 @@ import typing
 from algopy_testing.enums import OnCompleteAction, TransactionType
 from algopy_testing.models import Account, Application, Asset
 from algopy_testing.primitives import Bytes, String, UInt64
-from algopy_testing.utils import generate_random_bytes32, txn_type_to_bytes
+from algopy_testing.utils import generate_random_bytes32
 
 if typing.TYPE_CHECKING:
     from collections.abc import Callable, Mapping, Sequence
@@ -261,7 +261,7 @@ class TransactionFieldsBase(abc.ABC):
 
     @property
     def type_bytes(self) -> algopy.Bytes:
-        return txn_type_to_bytes(self.type)
+        return Bytes(self.type.txn_name.encode("utf8"))
 
     @property
     def approval_program(self) -> algopy.Bytes:

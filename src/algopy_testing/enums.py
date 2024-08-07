@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import typing
 
+from algosdk import constants
+
 from algopy_testing.primitives import UInt64
 
 
@@ -50,6 +52,24 @@ class TransactionType(_EnumLike):
     AssetTransfer: TransactionType
     AssetFreeze: TransactionType
     ApplicationCall: TransactionType
+
+    @property
+    def txn_name(self) -> str:
+        match self:
+            case self.Payment:
+                return constants.PAYMENT_TXN
+            case self.KeyRegistration:
+                return constants.KEYREG_TXN
+            case self.AssetConfig:
+                return constants.ASSETCONFIG_TXN
+            case self.AssetTransfer:
+                return constants.ASSETTRANSFER_TXN
+            case self.AssetFreeze:
+                return constants.ASSETFREEZE_TXN
+            case self.ApplicationCall:
+                return constants.APPCALL_TXN
+            case _:
+                raise ValueError("unexpected transaction type")
 
 
 _add_enum_values(
