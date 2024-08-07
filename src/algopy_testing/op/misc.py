@@ -942,7 +942,7 @@ class _AppLocal:
         if not test_context or not test_context._active_contract:
             raise ValueError("No active contract or test context found.")
 
-        local_states = test_context._active_contract._get_local_states()
+        local_states = get_local_states(test_context._active_contract)
         local_state = local_states.get(key)
         if local_state is None:
             key_repr = key.decode("utf-8", errors="backslashreplace")
@@ -985,8 +985,8 @@ class _AppLocal:
         c: algopy.Bytes | bytes,
         /,
     ) -> tuple[algopy.Bytes, bool]:
-        contract = self._get_contract(b)
-        local_states = contract._get_local_states()
+        contract = _get_contract(b)  # TODO: check if b might also be an array offset
+        local_states = get_local_states(contract)
         local_state = local_states.get(self._get_key(c))
 
         if local_state and a in local_state and local_state[a] is not None:
@@ -1002,8 +1002,8 @@ class _AppLocal:
         c: algopy.Bytes | bytes,
         /,
     ) -> tuple[algopy.UInt64, bool]:
-        contract = self._get_contract(b)
-        local_states = contract._get_local_states()
+        contract = _get_contract(b)
+        local_states = get_local_states(contract)
         local_state = local_states.get(self._get_key(c))
 
         if local_state and a in local_state:
@@ -1026,6 +1026,16 @@ class _AppLocal:
         local_state[a] = c
 
 
+def _get_contract(app_id: algopy.Application | algopy.UInt64 | int) -> Contract | ARC4Contract:
+    context = get_test_context()
+
+    app = _get_app(app_id)
+    contract = context.get_contract_for_app(app)
+    if contract is None:
+        raise ValueError(f"Contract with app id {app_id} not found")
+    return contract
+
+
 AppLocal = _AppLocal()
 
 
@@ -1038,25 +1048,13 @@ class _AppGlobal:
                 "method inside a test context."
             )
 
-        global_states = test_context._active_contract._get_global_states()
+        global_states = get_global_states(test_context._active_contract)
         return global_states[key]
 
     def _get_key(self, b: algopy.Bytes | bytes) -> bytes:
         return b.value if isinstance(b, Bytes) else b
 
-    def _get_contract(
-        self,
-        b: algopy.Application | algopy.UInt64 | int,
-    ) -> Contract | ARC4Contract:
-        test_context = get_test_context()
-
-        app_id = int(b.id) if isinstance(b, Application) else int(b)
-        contract = test_context._app_id_to_contract.get(app_id)
-        if contract is None:
-            raise ValueError(f"Contract with app id {b} not found")
-        return contract
-
-    def _parse_global_state_value(self, value: typing.Any) -> typing.Any:
+    def _parse_global_state_value(self, value: typing.Any) -> algopy.Bytes:
         if hasattr(value, "bytes"):
             value = value.bytes
         assert isinstance(value, Bytes)
@@ -1081,8 +1079,8 @@ class _AppGlobal:
     def get_ex_bytes(
         self, a: algopy.Application | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
     ) -> tuple[algopy.Bytes, bool]:
-        contract = self._get_contract(a)
-        global_states = contract._get_global_states()
+        contract = _get_contract(a)
+        global_states = get_global_states(contract)
         global_state = global_states.get(self._get_key(b))
         # TODO: this is subtly different than AVM behaviour
         value = self._parse_global_state_value(
@@ -1093,7 +1091,7 @@ class _AppGlobal:
     def get_ex_uint64(
         self, a: algopy.Application | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
     ) -> tuple[algopy.UInt64, bool]:
-        contract = self._get_contract(a)
+        contract = _get_contract(a)
         global_state = contract._get_global_state()
         value = global_state.get(self._get_key(b))
         # TODO: this wont work for Application, Asset state

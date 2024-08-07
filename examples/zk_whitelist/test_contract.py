@@ -15,9 +15,17 @@ def context() -> Generator[AlgopyTestContext, None, None]:
         ctx.reset()
 
 
-def test_add_address_to_whitelist(context: AlgopyTestContext) -> None:
-    # Arrange
+@pytest.fixture()
+def contract(context: AlgopyTestContext) -> ZkWhitelistContract:
     contract = ZkWhitelistContract()
+    contract.create(name=context.arc4.any_string(10))
+    return contract
+
+
+def test_add_address_to_whitelist(
+    context: AlgopyTestContext, contract: ZkWhitelistContract
+) -> None:
+    # Arrange
     address = algopy.arc4.Address(context.default_sender)
     proof = algopy.arc4.DynamicArray[
         algopy.arc4.StaticArray[algopy.arc4.Byte, typing.Literal[32]]
@@ -42,9 +50,10 @@ def test_add_address_to_whitelist(context: AlgopyTestContext) -> None:
     assert contract.whitelist[context.default_sender]
 
 
-def test_add_address_to_whitelist_invalid_proof(context: AlgopyTestContext) -> None:
+def test_add_address_to_whitelist_invalid_proof(
+    context: AlgopyTestContext, contract: ZkWhitelistContract
+) -> None:
     # Arrange
-    contract = ZkWhitelistContract()
     address = context.arc4.any_address()
     proof = algopy.arc4.DynamicArray[
         algopy.arc4.StaticArray[algopy.arc4.Byte, typing.Literal[32]]
@@ -69,9 +78,8 @@ def test_add_address_to_whitelist_invalid_proof(context: AlgopyTestContext) -> N
 
 
 @pytest.mark.usefixtures("context")
-def test_is_on_whitelist(context: AlgopyTestContext) -> None:
+def test_is_on_whitelist(context: AlgopyTestContext, contract: ZkWhitelistContract) -> None:
     # Arrange
-    contract = ZkWhitelistContract()
     dummy_account = context.any_account(
         opted_apps=[context.get_application_for_contract(contract)]
     )
@@ -85,9 +93,8 @@ def test_is_on_whitelist(context: AlgopyTestContext) -> None:
 
 
 @pytest.mark.usefixtures("context")
-def test_is_not_on_whitelist(context: AlgopyTestContext) -> None:
+def test_is_not_on_whitelist(context: AlgopyTestContext, contract: ZkWhitelistContract) -> None:
     # Arrange
-    contract = ZkWhitelistContract()
     dummy_account = context.any_account(
         opted_apps=[context.get_application_for_contract(contract)]
     )

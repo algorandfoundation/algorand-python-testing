@@ -34,7 +34,7 @@ def test_vote(context: AlgopyTestContext) -> None:
     voter = context.default_sender
 
     context.set_transaction_group(
-        gtxn=[
+        gtxns=[
             context.any_application_call_transaction(
                 sender=voter,
                 app_id=context.any_application(),
@@ -64,7 +64,7 @@ def test_vote_already_voted(context: AlgopyTestContext) -> None:
     contract.voted[voter] = algopy.UInt64(1)
 
     context.set_transaction_group(
-        gtxn=[
+        gtxns=[
             context.any_application_call_transaction(
                 sender=voter,
                 app_id=context.any_application(),

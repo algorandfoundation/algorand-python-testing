@@ -15,6 +15,14 @@ def context() -> Generator[AlgopyTestContext, None, None]:
         ctx.reset()
 
 
+@pytest.fixture()
+def contract(context: AlgopyTestContext) -> ProofOfAttendance:
+    contract = ProofOfAttendance()
+    contract.init(context.any_uint64(1, 100))
+
+    return contract
+
+
 def test_init(context: AlgopyTestContext) -> None:
     # Arrange
     contract = ProofOfAttendance()
@@ -38,12 +46,11 @@ def test_init(context: AlgopyTestContext) -> None:
 )
 def test_confirm_attendance(
     context: AlgopyTestContext,
+    contract: ProofOfAttendance,
     confirm_attendance: str,
     key_prefix: bytes,
 ) -> None:
     # Arrange
-    contract = ProofOfAttendance()
-    contract.max_attendees = context.any_uint64(1, 100)
 
     # Act
     confirm = getattr(contract, confirm_attendance)
@@ -64,11 +71,11 @@ def test_confirm_attendance(
 )
 def test_claim_poa(
     context: AlgopyTestContext,
+    contract: ProofOfAttendance,
     claim_poa: str,
     key_prefix: bytes,
 ) -> None:
     # Arrange
-    contract = ProofOfAttendance()
     dummy_poa = context.any_asset()
     opt_in_txn = context.any_asset_transfer_transaction(
         sender=context.default_sender,

@@ -41,7 +41,7 @@ if typing.TYPE_CHECKING:
     import algopy
 
     from algopy_testing._itxn_loader import InnerTransactionResultType
-    from algopy_testing.models.application import ApplicationFields
+    from algopy_testing.models.application import ApplicationContextData, ApplicationFields
     from algopy_testing.models.txn_fields import (
         ApplicationCallFields,
         AssetConfigFields,
@@ -55,9 +55,23 @@ if typing.TYPE_CHECKING:
 
 _TGlobalTxn = typing.TypeVar("_TGlobalTxn", bound=TransactionBase)
 
-# temporary group_index value used for group transactions while arranging a test
-# will be replaced with actual group index once a call is made or user sets transaction group
-NULL_GTXN_GROUP_INDEX = -1
+
+class TransactionGroup:
+
+    def __init__(
+        self,
+        transactions: Sequence[algopy.gtxn.TransactionBase],
+        active_transaction_index: int | None = None,
+    ):
+        # TODO: add TransactionContext and combine with logs and scratch space
+        self.transactions = transactions
+        self.active_transaction_index = (
+            len(transactions) - 1 if active_transaction_index is None else active_transaction_index
+        )
+
+    @property
+    def active_txn(self) -> algopy.gtxn.Transaction:
+        return self.transactions[self.active_transaction_index]  # type: ignore[return-value]
 
 
 class AlgopyTestContext:
@@ -85,16 +99,14 @@ class AlgopyTestContext:
         self._app_id = iter(range(1001, 2**64))
 
         self._active_contract: algopy_testing.Contract | None = None
-        self._app_id_to_contract = dict[int, algopy_testing.Contract]()
-        # TODO: combine these?
-        self._gtxns: dict[algopy_testing.gtxn.TransactionBase, dict[str, object]] = {}
-        self._active_txn_fields = dict[str, typing.Any]()
         self._scratch_spaces = defaultdict[
             algopy_testing.gtxn.TransactionBase, list[algopy.Bytes | algopy.UInt64]
         ](_get_scratch_slots)
-        self._current_transaction_group = list[algopy_testing.gtxn.TransactionBase]()
-        self._active_transaction_index: int | None = None
-        self._application_data: dict[int, ApplicationFields] = {}
+        self._active_txn_fields = dict[str, typing.Any]()
+        self._groups = list[TransactionGroup]()
+        # TODO: remove direct reads of data mappings outside of context_storage
+        self._application_data: dict[int, ApplicationContextData] = {}
+        self._contract_app_ids = dict[algopy.Contract, int]()
         # TODO: this map is from app_id to logs, should probably instead be stored against
         #       the appropriate txn
         self._application_logs: dict[int, list[bytes]] = {}
@@ -153,10 +165,15 @@ class AlgopyTestContext:
     def get_application_for_contract(
         self, contract: algopy.Contract | algopy.ARC4Contract
     ) -> algopy.Application:
-        for app_id, app_contract in self._app_id_to_contract.items():
-            if app_contract == contract:
-                return self.get_application(app_id)
-        raise ValueError("Contract not found in testing context!")
+        try:
+            app_id = self._contract_app_ids[contract]
+        except KeyError:
+            raise ValueError("Contract not found in testing context!") from None
+        return self.get_application(app_id)
+
+    def get_contract_for_app(self, app: algopy.Application) -> algopy.Contract | None:
+        app_data = self._application_data[int(app.id)]
+        return app_data.contract
 
     def set_scratch_space(
         self,
@@ -215,9 +232,6 @@ class AlgopyTestContext:
         :returns: None
         """
         self._active_contract = contract
-        app = self.get_application_for_contract(contract)
-        self._global_fields["current_application_address"] = app.address
-        self._global_fields["current_application_id"] = app
 
     def set_template_var(self, name: str, value: typing.Any) -> None:
         """Set a template variable for the current context.
@@ -265,7 +279,7 @@ class AlgopyTestContext:
         :returns: The application data.
         :rtype: dict[int, ApplicationFields]
         """
-        return self._application_data
+        return self._application_data  # type: ignore[return-value]
 
     def update_account(self, address: str, **account_fields: Unpack[AccountFields]) -> None:
         """Update an existing account.
@@ -362,7 +376,7 @@ class AlgopyTestContext:
         if app_id not in self._application_data:
             raise ValueError("Application not found in testing context!")
 
-        self._application_data[app_id].update(application_fields)
+        self._application_data[app_id].fields.update(application_fields)
 
     def _append_inner_transaction_group(
         self,
@@ -558,6 +572,8 @@ class AlgopyTestContext:
         :returns: The newly generated application.
         :rtype: algopy.Application
         """
+        from algopy_testing.models.application import ApplicationContextData
+
         new_app_id = id if id is not None else next(self._app_id)
 
         if new_app_id in self._application_data:
@@ -591,7 +607,10 @@ class AlgopyTestContext:
                 raise TypeError(f"incorrect type for {field!r}")
             app_fields[field] = value  # type: ignore[literal-required]
 
-        self._application_data[int(new_app.id)] = app_fields
+        self._application_data[new_app_id] = ApplicationContextData(
+            fields=app_fields,
+            app_id=new_app_id,
+        )
 
         return new_app
 
@@ -668,12 +687,14 @@ class AlgopyTestContext:
         self._blocks[index] = {"seed": int(seed), "timestamp": int(timestamp)}
 
     def set_transaction_group(
-        self, gtxn: list[algopy.gtxn.TransactionBase], active_transaction_index: int | None = None
+        self,
+        gtxns: Sequence[algopy.gtxn.TransactionBase],
+        active_transaction_index: int | None = None,
     ) -> None:
         """Set the transaction group using a list of transactions.
 
-        :param gtxn: List of transactions.
-        :type gtxn: list[algopy.gtxn.TransactionBase]
+        :param gtxns: List of transactions.
+        :type gtxns: list[algopy.gtxn.TransactionBase]
         :param active_transaction_index: Index of the active
             transaction.
         :type active_transaction_index: int
@@ -684,63 +705,37 @@ class AlgopyTestContext:
         :param active_transaction_index: int | None: (Default value =
             None)
         """
-        self._update_current_transaction_group(gtxn)
-
-        if active_transaction_index is not None:
-            self.set_active_transaction_index(active_transaction_index)
-
-    def add_transactions(
-        self,
-        gtxns: list[algopy.gtxn.TransactionBase],
-    ) -> None:
-        """Add transactions to the current transaction group.
-
-        :param gtxns: List of transactions to add.
-        :type gtxns: list[algopy.gtxn.TransactionBase]
-        :param gtxns: list[algopy.gtxn.TransactionBase]:
-        :raises ValueError: If any transaction is not an instance of
-            TransactionBase or if the total
-        :raises ValueError: If any transaction is not an instance of
-            TransactionBase or if the total number of transactions
-            exceeds the group limit.
-        """
-        self._update_current_transaction_group([*self._current_transaction_group, *gtxns])
-
-    def _update_current_transaction_group(
-        self, group: list[algopy_testing.gtxn.TransactionBase | algopy.gtxn.TransactionBase]
-    ) -> None:
-        if not all(isinstance(txn, algopy_testing.gtxn.TransactionBase) for txn in group):
+        if not all(isinstance(txn, algopy_testing.gtxn.TransactionBase) for txn in gtxns):
             raise ValueError("All transactions must be instances of TransactionBase")
 
-        if len(group) > algosdk.constants.TX_GROUP_LIMIT:
+        if len(gtxns) > algosdk.constants.TX_GROUP_LIMIT:
             raise ValueError(
                 f"Transaction group can have at most {algosdk.constants.TX_GROUP_LIMIT} "
                 "transactions, as per AVM limits."
             )
-        for i, txn in enumerate(group):
-            txn.fields["group_index"] = algopy_testing.UInt64(i)
-        self._current_transaction_group = group
 
-    def get_transaction_group(self) -> Sequence[algopy.gtxn.TransactionBase]:
-        """Retrieve the current transaction group.
+        for i, txn in enumerate(gtxns):
+            txn.fields["group_index"] = UInt64(i)
+        self._groups.append(
+            TransactionGroup(
+                transactions=gtxns,
+                active_transaction_index=active_transaction_index,
+            )
+        )
 
-        :returns: The current transaction group.
-        :rtype: list[algopy.gtxn.TransactionBase]
-        """
-        return self._current_transaction_group
+    @property
+    def last_group(self) -> TransactionGroup:
+        if not self._groups:
+            raise ValueError("No group transactions found in the context!")
 
-    def set_active_transaction_index(self, index: int) -> None:
-        """Set the index of the active transaction.
+        return self._groups[-1]
 
-        :param index: The index of the active transaction.
-        :type index: int
-        :param index: int:
-        """
-        # TODO: check active transaction is an app_call
-        # NOTE: In case of can't the Txn refer to non app call txns? Otherwise not sure how htls
-        # lsig code compiles (see examples)
-        self._active_transaction_index = index
+    @property
+    def last_active_txn(self) -> algopy.gtxn.Transaction:
+        return self.last_group.active_txn
 
+    # TODO: should not expose this to the user, "active" transactions/apps should only
+    #       be while a function is executing
     def get_active_application(self) -> algopy.Application:
         """Gets the Application associated with the active contract.
 
@@ -754,7 +749,7 @@ class AlgopyTestContext:
 
     def get_transaction(self, index: int) -> algopy.gtxn.Transaction:
         try:
-            active_txn = self._current_transaction_group[index]
+            active_txn = self.last_group.transactions[index]
         except IndexError:
             raise ValueError("invalid group index") from None
 
@@ -767,10 +762,8 @@ class AlgopyTestContext:
         :rtype: algopy.gtxn.Transaction
         :raises ValueError: If no active transaction is found.
         """
-        if self._active_transaction_index is None:
-            raise ValueError("No active transaction found")
-
-        return self.get_transaction(self._active_transaction_index)
+        # TODO: should only be valid during execution?
+        return self.last_active_txn
 
     def any_uint64(self, min_value: int = 0, max_value: int = MAX_UINT64) -> algopy.UInt64:
         """Generate a random UInt64 value within a specified range.
@@ -935,13 +928,12 @@ class AlgopyTestContext:
             self._active_txn_fields = last_txn
 
     def _new_gtxn(self, txn_type: type[_TGlobalTxn], **fields: object) -> _TGlobalTxn:
-        txn = txn_type.new()
         # TODO: check reference types are known?
         fields.setdefault("type", txn_type.type_enum)
         fields.setdefault("sender", self.default_sender)  # TODO: have a default sender too?
 
-        self._gtxns[txn] = {**get_txn_defaults(), **fields}
-        return txn
+        fields = {**get_txn_defaults(), **fields}
+        return txn_type(fields)
 
     def does_box_exist(self, name: algopy.Bytes | bytes) -> bool:
         """
@@ -1071,8 +1063,7 @@ class AlgopyTestContext:
 
     def clear_transaction_group(self) -> None:
         """Clear the transaction group."""
-        self._current_transaction_group.clear()
-        self._active_transaction_index = None
+        self._groups.clear()
 
     def clear_accounts(self) -> None:
         """Clear all accounts."""
@@ -1093,10 +1084,6 @@ class AlgopyTestContext:
     def clear_scratch_spaces(self) -> None:
         """Clear all scratch spaces."""
         self._scratch_spaces.clear()
-
-    def clear_active_transaction_index(self) -> None:
-        """Clear the active transaction index."""
-        self._active_transaction_index = None
 
     def clear_active_contract(self) -> None:
         """Clear the active contract."""
@@ -1129,7 +1116,6 @@ class AlgopyTestContext:
         self.clear_transaction_group()
         self.clear_application_logs()
         self.clear_scratch_spaces()
-        self.clear_active_transaction_index()
         self.clear_active_contract()
         self.clear_boxes()
         self.clear_blocks()
@@ -1146,7 +1132,7 @@ class AlgopyTestContext:
         self._active_transaction_index = None
         self._scratch_spaces = defaultdict(_get_scratch_slots)
         self._inner_transaction_groups = []
-        self._current_transaction_group = []
+        self._groups = []
         self._global_fields = {}
         self._application_logs = {}
         self._asset_id = iter(range(1, 2**64))

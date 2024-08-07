@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import typing
 
-from algopy_testing._context_storage import get_test_context
+from algopy_testing._context_storage import get_app_data, get_test_context
 from algopy_testing.enums import TransactionType
+from algopy_testing.models import Application
 from algopy_testing.models.txn_fields import TransactionFieldsBase
 
 if typing.TYPE_CHECKING:
@@ -28,41 +29,39 @@ class TransactionBase(TransactionFieldsBase):
 
     # since the only thing that matters is that the implementation matches the stubs
     # we can define all the fields in TransactionBase
-    def __init__(self, group_index: algopy.UInt64 | int):
-        self._group_index = int(group_index)
-        self._is_context_mapped = False
-        # indicates this instance has field mappings on the context
-
-    @classmethod
-    def new(cls) -> typing.Self:
-        instance = cls(0)
-        instance._is_context_mapped = True
-        return instance
+    def __init__(self, group_index_or_fields: algopy.UInt64 | int | dict[str, typing.Any]):
+        if isinstance(group_index_or_fields, dict):
+            self._fields: dict[str, typing.Any] | None = group_index_or_fields
+            self._group_index = 0
+        else:
+            self._fields = None
+            self._group_index = int(group_index_or_fields)
 
     @property
     def key_txn(self) -> TransactionBase:
-        if self._is_context_mapped:
+        if self._fields is not None:
             return self
 
-        # positive values are indexes into the current group
-        # find the canonical instance
-        context = get_test_context()
-        try:
-            txn = context._current_transaction_group[self._group_index]
-        except IndexError:
-            raise ValueError("invalid group index") from None
-        return txn
+        return get_test_context().last_group.transactions[self._group_index]
 
     @property
     def fields(self) -> dict[str, object]:
-        context = get_test_context()
-        try:
-            return context._gtxns[self.key_txn]
-        except KeyError:
+        fields = self.key_txn._fields
+        if fields is None:
             raise ValueError(
-                "invalid transaction group id,"
+                "invalid transaction group,"
                 " ensure transaction was created with the current AlgopyTestingContext"
-            ) from None
+            )
+        return fields
+
+    @property
+    def app_id(self) -> algopy.Application:
+        app_id: algopy.Application = self.fields["app_id"]  # type: ignore[assignment]
+        app_data = get_app_data(int(app_id.id))
+        if app_data.is_creating:
+            # return zero app while creating
+            return Application(0)
+        return app_id
 
 
 class AssetTransferTransaction(TransactionBase):

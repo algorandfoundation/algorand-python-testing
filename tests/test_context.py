@@ -74,10 +74,11 @@ def test_transaction_group_management() -> None:
             amount=UInt64(2000),
         )
         context.set_transaction_group([txn1, txn2])
-        assert len(context.get_transaction_group()) == 2
+        assert len(context.last_group.transactions) == 2
 
         context.clear_transaction_group()
-        assert len(context.get_transaction_group()) == 0
+        with pytest.raises(ValueError, match="No group transactions"):
+            assert len(context.last_group.transactions) == 0
 
 
 def test_last_itxn_access() -> None:
@@ -85,12 +86,14 @@ def test_last_itxn_access() -> None:
         contract = Arc4InnerTxnsContract()
         dummy_asset = context.any_asset()
         contract.opt_in_dummy_asset(dummy_asset)
+
         assert len(context.get_submitted_itxn_group(0)) == 1
         itxn: algopy.itxn.AssetTransferInnerTransaction = (
             context.last_submitted_itxn.asset_transfer
         )
-        assert itxn.asset_sender == context.get_active_application().address
-        assert itxn.asset_receiver == context.get_active_application().address
+        app = context.get_application_for_contract(contract)
+        assert itxn.asset_sender == app.address
+        assert itxn.asset_receiver == app.address
         assert itxn.asset_amount == UInt64(0)
         assert itxn.type == TransactionType.AssetTransfer
 
@@ -109,10 +112,10 @@ def test_context_clearing() -> None:
         assert len(context._application_data) == 0
         with pytest.raises(ValueError, match="No inner transaction groups submitted yet!"):
             context.get_submitted_itxn_group(0)
-        assert len(context.get_transaction_group()) == 0
+        with pytest.raises(ValueError, match="No group transactions found"):
+            assert len(context.last_group.transactions) == 0
         assert len(context._application_logs) == 0
         assert len(context._scratch_spaces) == 0
-        assert context._active_transaction_index is None
 
 
 def test_context_reset() -> None:
@@ -129,10 +132,10 @@ def test_context_reset() -> None:
         assert len(context._application_data) == 0
         with pytest.raises(ValueError, match="No inner transaction groups submitted yet!"):
             context.get_submitted_itxn_group(0)
-        assert len(context.get_transaction_group()) == 0
+        with pytest.raises(ValueError, match="No group transactions found"):
+            assert len(context.last_group.transactions) == 0
         assert len(context._application_logs) == 0
         assert len(context._scratch_spaces) == 0
-        assert context._active_transaction_index is None
         assert next(context._asset_id) == 1
         assert next(context._app_id) == 1
 

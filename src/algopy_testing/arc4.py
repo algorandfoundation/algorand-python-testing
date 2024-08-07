@@ -18,8 +18,7 @@ from algopy_testing.constants import (
     UINT64_SIZE,
     UINT512_SIZE,
 )
-from algopy_testing.decorators.abimethod import abimethod
-from algopy_testing.decorators.baremethod import baremethod
+from algopy_testing.decorators.arc4 import abimethod, baremethod
 from algopy_testing.models.account import Account
 from algopy_testing.protocols import BytesBacked
 from algopy_testing.utils import (

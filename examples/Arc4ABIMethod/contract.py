@@ -10,6 +10,7 @@ class SignaturesContract(ARC4Contract):
         app_txn = gtxn.ApplicationCallTransaction(0)
         assert op.Global.current_application_id == 0
         assert app_txn.app_id == 0
+        assert Txn.application_id == 0
 
     @arc4.abimethod
     def sink(self, value: arc4.String, arr: UInt8Array) -> None:

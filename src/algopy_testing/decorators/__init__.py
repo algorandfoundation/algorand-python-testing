@@ -1,5 +1,4 @@
-from algopy_testing.decorators.abimethod import abimethod
-from algopy_testing.decorators.baremethod import baremethod
+from algopy_testing.decorators.arc4 import abimethod, baremethod
 from algopy_testing.decorators.subroutine import subroutine
 
 __all__ = [

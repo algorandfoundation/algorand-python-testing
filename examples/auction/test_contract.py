@@ -27,7 +27,7 @@ def test_opt_into_asset(context: AlgopyTestContext) -> None:
     assert contract.asa.id == asset.id
     inner_txn = context.last_submitted_itxn.asset_transfer
     assert (
-        inner_txn.asset_receiver == context.get_active_application().address
+        inner_txn.asset_receiver == context.get_application_for_contract(contract).address
     ), "Asset receiver does not match"
     assert inner_txn.xfer_asset == asset, "Transferred asset does not match"
 
@@ -140,7 +140,9 @@ def test_delete_application(
 
     # Act
     contract = AuctionContract()
-    contract.delete_application()
+
+    with context.scoped_txn_fields(on_completion=algopy.OnCompleteAction.DeleteApplication):
+        contract.delete_application()
 
     # Assert
     inner_transactions = context.last_submitted_itxn.payment

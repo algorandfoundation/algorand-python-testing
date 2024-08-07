@@ -277,6 +277,10 @@ class TransactionFieldsBase(abc.ABC):
     def approval_program_pages(self) -> Callable[[algopy.UInt64 | int], algopy.Bytes]:
         return lambda i: self._approval_program_pages[int(i)]
 
+    @property
+    def on_completion(self) -> algopy.OnCompleteAction:
+        return self.fields["on_completion"]  # type: ignore[return-value]
+
     def __getattr__(self, name: str) -> object:
         try:
             return self.fields[name]

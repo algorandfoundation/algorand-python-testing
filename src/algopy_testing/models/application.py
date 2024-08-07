@@ -1,17 +1,17 @@
 from __future__ import annotations
 
+import dataclasses
 import inspect
 import typing
 
-from algopy_testing._context_storage import get_test_context
+from algopy_testing._context_storage import get_app_data
 from algopy_testing.primitives import UInt64
 from algopy_testing.utils import as_int64
 
 if typing.TYPE_CHECKING:
     import algopy
 
-
-T = typing.TypeVar("T")
+    from algopy_testing.models.contract import Contract
 
 
 class ApplicationFields(typing.TypedDict, total=False):
@@ -26,6 +26,14 @@ class ApplicationFields(typing.TypedDict, total=False):
     address: algopy.Account
 
 
+@dataclasses.dataclass
+class ApplicationContextData:
+    app_id: int
+    fields: ApplicationFields
+    is_creating: bool = False
+    contract: Contract | None = None
+
+
 class Application:
     def __init__(self, application_id: algopy.UInt64 | int = 0, /):
         self._id = as_int64(application_id)
@@ -36,12 +44,11 @@ class Application:
 
     @property
     def fields(self) -> ApplicationFields:
-        context = get_test_context()
         try:
-            return context._application_data[self._id]
+            return get_app_data(self._id).fields
         except KeyError:
             if self._id == 0:
-                return ApplicationFields()
+                return {}
             raise ValueError(
                 "`algopy.Application` is not present in the test context! "
                 "Use `context.add_application()` or `context.any_application()` to add the "

@@ -29,17 +29,12 @@ class _Txn:
 class _GTxn:
     def __getattr__(self, name: str) -> typing.Any:
         context = get_test_context()
-        txn_group = context._current_transaction_group
-        if not txn_group:
-            raise ValueError(
-                "No group transactions found in the context! Use `with algopy_testing_context()` "
-                "to access the context manager."
-            )
+        txn_group = context.last_group
 
         # for gtxn all fields are functions with at least one argument (the group_index)
         def get_field(group_index: int, array_index: int | None = None) -> typing.Any:
             try:
-                txn = txn_group[group_index]
+                txn = txn_group.transactions[group_index]
             except IndexError:
                 raise ValueError("invalid group index") from None
 
