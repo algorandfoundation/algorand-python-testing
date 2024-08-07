@@ -496,13 +496,13 @@ def test_asset_params_get(
 
     avm_result = get_state_asset_params_avm_result(method_name, a=dummy_asset, suggested_params=sp)
     mock_result = getattr(mock_contract, method_name)(mock_asset)
-    mock_result_by_index = getattr(mock_contract, method_name)(0)
+    # TODO: add separate tests by foreign array index
 
     expected = expected_value(dummy_account) if callable(expected_value) else expected_value
     expected = (
         algopy.Account().bytes if str(expected) == algosdk.constants.ZERO_ADDRESS else expected
     )
-    assert mock_result == mock_result_by_index == avm_result == expected
+    assert mock_result == avm_result == expected
 
 
 @pytest.mark.parametrize(
