@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from algopy_testing import op
 from algopy_testing._context_storage import get_test_context
-from algopy_testing.op.misc import itob
 from algopy_testing.primitives import UInt64
 
 if TYPE_CHECKING:
@@ -17,7 +17,7 @@ class Block:
 
         try:
             index = int(a)
-            return itob(context._ledger_context.get_block_content(index, "seed"))
+            return op.itob(context._ledger_context.get_block_content(index, "seed"))
         except KeyError as e:
             raise KeyError(f"Block {a} not set") from e
 
