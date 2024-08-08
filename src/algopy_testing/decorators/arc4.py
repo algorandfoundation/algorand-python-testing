@@ -91,8 +91,8 @@ def abimethod(  # noqa: PLR0913
             default_args=default_args,
         )
 
-    fn.is_create = create != "disallow"  # type: ignore[attr-defined]
     arc4_name = name or fn.__name__
+    fn.is_create = create != "disallow"  # type: ignore[attr-defined]
     arc4_signature = _generate_arc4_signature_from_fn(fn, arc4_name)
 
     @functools.wraps(fn)
@@ -119,6 +119,7 @@ def abimethod(  # noqa: PLR0913
             result = fn(*args, **kwargs)
         finally:
             context.clear_active_contract()
+        # TODO: add result along with ARC4 log prefix to application logs?
         return result
 
     return wrapper
@@ -194,18 +195,8 @@ def _extract_arrays_from_args(
             case algopy_testing.Application() as arg_app:
                 app_args.append(algopy_testing.arc4.UInt8(len(apps)).bytes)
                 apps.append(arg_app)
-            case (algopy_testing.UInt64() | bool()) as uint64:
-                app_args.append(algopy_testing.op.itob(uint64))
-            case tuple():
-                # TODO: convert to ARC4 tuple
-                raise NotImplementedError
-            case _ as bytes_arg:
-                if hasattr(bytes_arg, "bytes"):
-                    bytes_arg = bytes_arg.bytes
-                if isinstance(bytes_arg, algopy_testing.Bytes):
-                    app_args.append(bytes_arg)
-                else:
-                    raise TypeError(f"unsupported type: {type(bytes_arg).__name__}")
+            case _ as maybe_native:
+                app_args.append(algopy_testing.arc4.native_value_to_arc4(maybe_native).bytes)
     if len(app_args) > 16:
         # TODO: pack extra args into an ARC4 tuple
         raise NotImplementedError
@@ -230,7 +221,7 @@ def _generate_arc4_signature_from_fn(fn: typing.Callable[_P, _R], arc4_name: str
 
 
 def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa: PLR0911, PLR0912
-    from algopy_testing.arc4 import _ABIEncoded
+    from algopy_testing.arc4 import Struct, _ABIEncoded
     from algopy_testing.gtxn import Transaction, TransactionBase
     from algopy_testing.models import Account, Application, Asset
 
@@ -245,7 +236,7 @@ def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa:
         raise TypeError(f"expected type: {annotation!r}")
 
     # arc4 types
-    if issubclass(annotation, _ABIEncoded):
+    if issubclass(annotation, _ABIEncoded | Struct):
         return annotation.type_info.arc4_name
     # txn types
     if issubclass(annotation, Transaction):

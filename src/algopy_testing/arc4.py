@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import copy
+import dataclasses
 import decimal
 import types
 import typing
-from collections import ChainMap
 
 import algosdk
 from Cryptodome.Hash import SHA512
@@ -32,7 +32,7 @@ from algopy_testing.utils import (
 )
 
 if typing.TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator
+    from collections.abc import Iterable, Iterator, Sequence
 
     import algopy
 
@@ -100,8 +100,16 @@ def _get_int_literal(literal_type: type) -> int:
         int_arg = 0
     return int(int_arg)
 
+
 def _get_cls_name(cls: type, type_params: tuple[type, ...]) -> str:
     return f"{cls.__name__}[{','.join(t.__name__ for t in type_params)}]"
+
+
+def _check_is_arc4(items: Sequence[typing.Any]) -> Sequence[_ABIEncoded]:
+    for item in items:
+        if not isinstance(item, _ABIEncoded | Struct):
+            raise TypeError("expected ARC4 type")
+    return items
 
 
 class _ABIEncoded(BytesBacked):
@@ -607,9 +615,10 @@ class StaticArray(
     type_info: _StaticArrayTypeInfo
     _value: bytes
 
-    def __init__(self, *items: _TArrayItem, type_info: _TypeInfo | None = None):
+    def __init__(self, *_items: _TArrayItem, type_info: _TypeInfo | None = None):
         super().__init__(type_info=type_info)
         type_info = self.type_info  # from class
+        items = _check_is_arc4(_items)
         if not type_info and items:
             item_type = items[0].type_info
             self.type_info = type_info = _StaticArrayTypeInfo(item_type=item_type, size=len(items))
@@ -762,9 +771,10 @@ class DynamicArray(  # TODO: inherit from StaticArray?
     type_info: _DynamicArrayTypeInfo
     _value: bytes
 
-    def __init__(self, *items: _TArrayItem, type_info: _TypeInfo | None = None):
+    def __init__(self, *_items: _TArrayItem, type_info: _TypeInfo | None = None):
         super().__init__(type_info=type_info)
         type_info = self.type_info
+        items = _check_is_arc4(_items)
         if not type_info and items:
             item_type = items[0].type_info
             self.type_info = type_info = _DynamicArrayTypeInfo(
@@ -853,7 +863,7 @@ class DynamicArray(  # TODO: inherit from StaticArray?
         length, data = _read_length(self._value)
         return _decode_tuple_items(data, [self.type_info.item_type] * length)
 
-    def _encode_with_length(self, items: list[_TArrayItem] | tuple[_TArrayItem, ...]) -> bytes:
+    def _encode_with_length(self, items: Sequence[_ABIEncoded]) -> bytes:
         return _encode_length(len(items)) + _encode(items)
 
 
@@ -943,7 +953,7 @@ class Tuple(
 
     def __init__(
         self,
-        items: tuple[typing.Unpack[_TTuple]] = (),  # type: ignore[assignment]
+        _items: tuple[typing.Unpack[_TTuple]] = (),  # type: ignore[assignment]
         /,
         *,
         type_info: _TypeInfo | None = None,
@@ -951,19 +961,15 @@ class Tuple(
         """Construct an ARC4 tuple from a python tuple."""
         super().__init__(type_info=type_info)
         type_info = self.type_info  # from class
+        items = _check_is_arc4(_items)
         if not type_info:
-            child_types = []
-            for item in items:
-                assert isinstance(item, _ABIEncoded), "expected ARC4 type"
-                assert item.type_info is not None
-                child_types.append(item.type_info)
+            child_types = [item.type_info for item in items]
             self.type_info = type_info = _TupleTypeInfo(child_types)
         if self.type_info != type_info:
             raise TypeError(f"item must be of type {self.type_info!r}, not {type_info!r}")
         if items:
-            for item, expected_type in zip(items, type_info.child_types, strict=True):  # type: ignore[arg-type]
-                assert isinstance(item, _ABIEncoded), "expected ARC4 type"
-                item_type_info = item.type_info  # type: ignore[attr-defined]
+            for item, expected_type in zip(items, type_info.child_types, strict=True):
+                item_type_info = item.type_info
                 if expected_type != item_type_info:
                     raise TypeError(
                         f"item must be of type {self.type_info!r}, not {item_type_info!r}"
@@ -994,26 +1000,28 @@ class _StructMeta(type):
     pass
 
 
-# TODO: add tests with struct property access
+def _tuple_type_from_struct(struct: type[Struct]) -> type[Tuple]:  # type: ignore[type-arg]
+    tuple_field_types = [f.type for f in dataclasses.fields(struct)]
+    tuple_inner = tuple(tuple_field_types)
+    return Tuple[tuple_inner]  # type: ignore[valid-type]
+
+
 class Struct(metaclass=_StructMeta):
     """Base class for ARC4 Struct types."""
 
-    def __init__(self, *args: typing.Any, type_info: _TypeInfo | None = None):
-        self._value = Tuple(args)
-        # TODO: does Struct need it's own TypeInfo?
-        self.type_info = type_info or self._value.type_info
+    type_info: typing.ClassVar[_TypeInfo]  # TODO: this could clash with user values
+
+    def __init_subclass__(cls) -> None:
+        dataclasses.dataclass(cls)
+        cls.type_info = _tuple_type_from_struct(cls).type_info
 
     @classmethod
     def from_bytes(
         cls, value: algopy.Bytes | bytes, /, *, type_info: _TypeInfo | None = None
     ) -> typing.Self:
-        annotations = _all_annotations(cls)
-
-        result = cls(type_info=type_info)
-        tuple_value = Tuple[tuple(v for k, v in annotations.items())].from_bytes(value)  # type: ignore[misc, attr-defined]
-        result._value = tuple_value
-
-        return result
+        tuple_type = _tuple_type_from_struct(cls)
+        tuple_value = tuple_type.from_bytes(value, type_info=type_info)
+        return cls(*tuple_value.native)
 
     @classmethod
     def from_log(cls, log: algopy.Bytes, /) -> typing.Self:
@@ -1026,7 +1034,14 @@ class Struct(metaclass=_StructMeta):
     @property
     def bytes(self) -> algopy.Bytes:
         """Get the underlying bytes[]"""
-        return self._value.bytes
+        return self._as_tuple.bytes
+
+    @property
+    def _as_tuple(self) -> Tuple:  # type: ignore[type-arg]
+        # can't use dataclass.astuple here as that processes all dataclasses
+        # in the object graph, not just immediate fields
+        tuple_items = tuple(getattr(self, field.name) for field in dataclasses.fields(self))
+        return Tuple(tuple_items)
 
     def copy(self) -> typing.Self:
         """Create a copy of this struct."""
@@ -1099,13 +1114,13 @@ def emit(event: str | Struct, /, *args: object) -> None:
         raise ValueError("Cannot emit event: missing `app_id` in associated call transaction!")
 
     if isinstance(event, str):
-        arc4_args = [_cast_arg_as_arc4(arg) for arg in args]
-        struct = Struct(*arc4_args)
+        arc4_args = tuple(_cast_arg_as_arc4(arg) for arg in args)
+        struct = Tuple(arc4_args)
         arg_types = struct.type_info.arc4_name
         if event.find("(") == -1:
             event += arg_types
         elif event.find(arg_types) == -1:
-            raise ValueError(f"Event signature {event} does not match args {args}")
+            raise ValueError(f"Event signature {event} does not match arg types {arg_types}")
         event_str = event
         event_data = struct.bytes
     elif isinstance(event, Struct):
@@ -1121,38 +1136,35 @@ def emit(event: str | Struct, /, *args: object) -> None:
     )
 
 
-def _cast_arg_as_arc4(arg: object) -> _ABIEncoded:  # noqa: PLR0911
+def native_value_to_arc4(value: object) -> _ABIEncoded:  # noqa: PLR0911
     import algopy
 
-    if isinstance(arg, _ABIEncoded):
-        return arg
-    if isinstance(arg, bool):
-        return Bool(arg)
-    if isinstance(arg, algopy.UInt64):
-        return UInt64(arg)
-    if isinstance(arg, algopy.BigUInt):
-        return UInt512(arg)
-    if isinstance(arg, int):
+    if isinstance(value, _ABIEncoded | Struct):
+        # Struct still matches the _ABIEncoded protocol
+        return value  # type: ignore[return-value]
+    if isinstance(value, bool):
+        return Bool(value)
+    if isinstance(value, algopy.UInt64):
+        return UInt64(value)
+    if isinstance(value, algopy.BigUInt):
+        return UInt512(value)
+    if isinstance(value, algopy.Bytes):
+        return DynamicBytes(value)
+    if isinstance(value, algopy.String):
+        return String(value)
+    if isinstance(value, tuple):
+        return Tuple(value)
+    raise TypeError(f"Unsupported type: {type(value).__name__}")
+
+
+def _cast_arg_as_arc4(arg: object) -> _ABIEncoded:
+    if isinstance(arg, int) and not isinstance(arg, bool):
         return UInt64(arg) if arg <= MAX_UINT64 else UInt512(arg)
-    if isinstance(arg, algopy.Bytes | bytes):
+    if isinstance(arg, bytes):
         return DynamicBytes(arg)
-    if isinstance(arg, algopy.String | str):
+    if isinstance(arg, str):
         return String(arg)
-    # TODO: check these against puya, as they don't seem correct for emit
-    if isinstance(arg, algopy.Asset):
-        return UInt64(arg.id)
-    if isinstance(arg, algopy.Account):
-        return Address(arg)
-    if isinstance(arg, algopy.Application):
-        return UInt64(arg.id)
-    raise ValueError(f"Unsupported type {type(arg)}")
-
-
-# https://stackoverflow.com/a/72037059
-def _all_annotations(cls: type) -> ChainMap[str, type]:
-    """Returns a dictionary-like ChainMap that includes annotations for all
-    attributes defined in cls or inherited from superclasses."""
-    return ChainMap(*(c.__annotations__ for c in cls.__mro__ if "__annotations__" in c.__dict__))
+    return native_value_to_arc4(arg)
 
 
 def _find_bool(
@@ -1243,31 +1255,39 @@ def _get_max_bytes_len(type_info: _TypeInfo) -> int:
     return size
 
 
-def _encode(
+def _encode(  # noqa: PLR0912
     values: (
         StaticArray[typing.Any, typing.Any]
         | DynamicArray[typing.Any]
         | Tuple[typing.Any]
-        | tuple[typing.Any, ...]
-        | list[typing.Any]
+        | Struct
+        | Sequence[typing.Any]
     ),
 ) -> bytes:
     heads = []
     tails = []
     is_dynamic_index = []
     i = 0
-    values_length = len(values) if hasattr(values, "__len__") else values.length.value
+    if isinstance(values, Struct):
+        values = values._as_tuple
+    match values:
+        case (StaticArray() | DynamicArray()) as has_length:
+            values_length = has_length.length.value
+        case tuple() | list() as can_len:
+            values_length = len(can_len)
+        case _:
+            raise TypeError("expected sized type")
     values_length_bytes = (
         _encode_length(values_length) if isinstance(values, DynamicArray) else b""
     )
     while i < values_length:
         value = values[i]
-        assert isinstance(value, _ABIEncoded), "expected ARC4 value"
+        assert isinstance(value, _ABIEncoded | Struct), "expected ARC4 value"
         is_dynamic_index.append(value.type_info.is_dynamic)
         if is_dynamic_index[-1]:
             heads.append(b"\x00\x00")
             assert isinstance(
-                value, StaticArray | DynamicArray | Tuple | String
+                value, StaticArray | DynamicArray | Tuple | String | Struct
             ), f"expected dynamic type: {value}"
             tail_encoding = value.bytes.value if isinstance(value, String) else _encode(value)
             tails.append(tail_encoding)

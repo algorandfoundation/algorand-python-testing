@@ -51,27 +51,6 @@ class SwappedArc4(arc4.Struct):
     s: arc4.DynamicArray[arc4.UInt16]
     t: arc4.Tuple[arc4.UInt32, arc4.UInt64, arc4.String]
 
-    def __init__(  # noqa: PLR0913
-        self,
-        m: arc4.UIntN[typing.Literal[64]],
-        n: arc4.BigUIntN[typing.Literal[256]],
-        o: arc4.UFixedNxM[typing.Literal[32], typing.Literal[8]],
-        p: arc4.BigUFixedNxM[typing.Literal[256], typing.Literal[16]],
-        q: arc4.Bool,
-        r: arc4.StaticArray[arc4.UInt8, typing.Literal[3]],
-        s: arc4.DynamicArray[arc4.UInt16],
-        t: arc4.Tuple[arc4.UInt32, arc4.UInt64, arc4.String],
-    ) -> None:
-        self.m = m
-        self.n = n
-        self.o = o
-        self.p = p
-        self.q = q
-        self.r = r
-        self.s = s
-        self.t = t
-        super().__init__(m, n, o, p, q, r, s, t)
-
 
 @pytest.fixture()
 def context() -> Generator[AlgopyTestContext, None, None]:
