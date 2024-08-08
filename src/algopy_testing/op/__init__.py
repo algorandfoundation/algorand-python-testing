@@ -1,9 +1,22 @@
 from algopy_testing.op.block import Block
+from algopy_testing.op.crypto import (
+    ECDSA,
+    VrfVerify,
+    ecdsa_pk_decompress,
+    ecdsa_pk_recover,
+    ecdsa_verify,
+    ed25519verify,
+    ed25519verify_bare,
+    keccak256,
+    sha3_256,
+    sha256,
+    sha512_256,
+    vrf_verify,
+)
 from algopy_testing.op.global_values import Global
 from algopy_testing.op.itxn import GITxn, ITxn, ITxnCreate
 from algopy_testing.op.misc import (
     EC,
-    ECDSA,
     AcctParamsGet,
     AppGlobal,
     AppLocal,
@@ -15,7 +28,6 @@ from algopy_testing.op.misc import (
     EllipticCurve,
     JsonRef,
     Scratch,
-    VrfVerify,
     addw,
     app_opted_in,
     arg,
@@ -28,11 +40,6 @@ from algopy_testing.op.misc import (
     concat,
     divmodw,
     divw,
-    ecdsa_pk_decompress,
-    ecdsa_pk_recover,
-    ecdsa_verify,
-    ed25519verify,
-    ed25519verify_bare,
     err,
     exit,
     exp,
@@ -47,7 +54,6 @@ from algopy_testing.op.misc import (
     gload_bytes,
     gload_uint64,
     itob,
-    keccak256,
     min_balance,
     mulw,
     replace,
@@ -56,14 +62,10 @@ from algopy_testing.op.misc import (
     setbit_bytes,
     setbit_uint64,
     setbyte,
-    sha3_256,
-    sha256,
-    sha512_256,
     shl,
     shr,
     sqrt,
     substring,
-    vrf_verify,
 )
 from algopy_testing.op.txn import GTxn, Txn
 
