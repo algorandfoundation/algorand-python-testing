@@ -942,8 +942,14 @@ def test_itxn_ops(context: AlgopyTestContext) -> None:
     appl_itxn = itxn_group.application_call(0)
     pay_itxn = itxn_group.payment(1)
 
-    assert appl_itxn.approval_program == algopy.Bytes.from_hex("068101")[0]
-    assert appl_itxn.clear_state_program == algopy.Bytes.from_hex("068101")[0]
+    # TODO: also test other array fields, apps, accounts, applications, assets
+    assert appl_itxn.approval_program == algopy.Bytes.from_hex("068101068101")
+    assert appl_itxn.clear_state_program == algopy.Bytes.from_hex("068101")
+    approval_pages = [
+        appl_itxn.approval_program_pages(i)
+        for i in range(int(appl_itxn.num_approval_program_pages))
+    ]
+    assert approval_pages == [appl_itxn.approval_program]
     assert appl_itxn.on_completion == algopy.OnCompleteAction.DeleteApplication
     assert appl_itxn.fee == algopy.UInt64(algosdk.constants.MIN_TXN_FEE)
 

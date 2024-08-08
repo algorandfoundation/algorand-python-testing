@@ -3,6 +3,7 @@ from __future__ import annotations
 import abc
 import typing
 
+from algopy_testing.constants import MAX_BYTES_SIZE
 from algopy_testing.enums import OnCompleteAction, TransactionType
 from algopy_testing.models import Account, Application, Asset
 from algopy_testing.primitives import Bytes, String, UInt64
@@ -217,7 +218,7 @@ class TransactionFieldsBase(abc.ABC):
 
     @property
     def accounts(self) -> Callable[[algopy.UInt64 | int], algopy.Account]:
-        return lambda i: self._accounts[int(i)]
+        return _create_array_accessor(self._accounts)
 
     @property
     def _assets(self) -> Sequence[algopy.Asset]:
@@ -229,7 +230,7 @@ class TransactionFieldsBase(abc.ABC):
 
     @property
     def assets(self) -> Callable[[algopy.UInt64 | int], algopy.Asset]:
-        return lambda i: self._assets[int(i)]
+        return _create_array_accessor(self._assets)
 
     @property
     def _apps(self) -> Sequence[algopy.Application]:
@@ -241,7 +242,7 @@ class TransactionFieldsBase(abc.ABC):
 
     @property
     def apps(self) -> Callable[[algopy.UInt64 | int], algopy.Application]:
-        return lambda i: self._apps[int(i)]
+        return _create_array_accessor(self._apps)
 
     @property
     def _app_args(self) -> Sequence[algopy.Bytes]:
@@ -274,7 +275,11 @@ class TransactionFieldsBase(abc.ABC):
 
     @property
     def approval_program_pages(self) -> Callable[[algopy.UInt64 | int], algopy.Bytes]:
-        return lambda i: self._approval_program_pages[int(i)]
+        return _create_array_accessor(self._approval_program_pages)
+
+    @property
+    def num_approval_program_pages(self) -> algopy.UInt64:
+        return UInt64(len(self._approval_program_pages))
 
     @property
     def clear_state_program(self) -> algopy.Bytes:
@@ -287,10 +292,11 @@ class TransactionFieldsBase(abc.ABC):
 
     @property
     def clear_state_program_pages(self) -> Callable[[algopy.UInt64 | int], algopy.Bytes]:
-        return lambda i: self._clear_state_program_pages[int(i)]
+        return _create_array_accessor(self._clear_state_program_pages)
 
-    # TODO: num_approval_program_pages
-    # TODO: clear program
+    @property
+    def num_clear_state_program_pages(self) -> algopy.UInt64:
+        return UInt64(len(self._clear_state_program_pages))
 
     @property
     def on_completion(self) -> algopy.OnCompleteAction:
@@ -303,7 +309,7 @@ class TransactionFieldsBase(abc.ABC):
             raise AttributeError(f"'{type(self)}' object has no attribute '{name}'") from None
 
 
-def narrow_field_type(field: str, value: object) -> object:
+def narrow_field_type(field: str, value: object) -> object:  # noqa: PLR0911
     if field == "app_args":
         if not isinstance(value, tuple):
             raise TypeError("unexpected type")
@@ -314,12 +320,27 @@ def narrow_field_type(field: str, value: object) -> object:
         return _narrow_tuple(value, Account)
     if field == "applications":
         return _narrow_tuple(value, Application)
+    if field in ("approval_program", "clear_state_program"):
+        pages = _narrow_tuple(value, Bytes)
+        pages = combine_into_max_byte_pages(pages)
+        return pages
+
     try:
         field_type = _FIELD_TYPES[field]
     except KeyError:
         return value
     narrow = _NARROW_TYPE_MAP[field_type]
     return narrow(value)
+
+
+def combine_into_max_byte_pages(pages: tuple[Bytes, ...]) -> tuple[Bytes, ...]:
+    raw_pages = b"".join(page.value for page in pages)
+    total_pages = (len(raw_pages) + MAX_BYTES_SIZE - 1) // MAX_BYTES_SIZE
+    full_pages = [
+        raw_pages[page * MAX_BYTES_SIZE : (page + 1) * MAX_BYTES_SIZE]
+        for page in range(total_pages)
+    ]
+    return tuple(Bytes(page) for page in full_pages)
 
 
 def _as_application(value: typing.Any) -> Application:
@@ -411,12 +432,25 @@ def _as_bool(value: typing.Any) -> bool:
     return value
 
 
-def _narrow_tuple(value: typing.Any, item_type: type) -> object:
+def _narrow_tuple(value: typing.Any, item_type: type) -> tuple[typing.Any, ...]:
     if not isinstance(value, tuple):
         raise TypeError("unexpected type")
 
     narrow = _NARROW_TYPE_MAP[item_type]
     return tuple(map(narrow, value))
+
+
+_T = typing.TypeVar("_T")
+
+
+def _create_array_accessor(values: Sequence[_T]) -> Callable[[algopy.UInt64 | int], _T]:
+    def wrapper(index: algopy.UInt64 | int) -> _T:
+        try:
+            return values[int(index)]
+        except IndexError:
+            raise ValueError("invalid array index") from None
+
+    return wrapper
 
 
 _NARROW_TYPE_MAP = {

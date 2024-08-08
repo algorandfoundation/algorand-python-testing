@@ -59,12 +59,6 @@ class _BaseInnerTransactionResult(TransactionFieldsBase):
             return self._fields[name]
         raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
-    def __setattr__(self, name: str, value: typing.Any) -> None:
-        if name == "_fields":
-            super().__setattr__(name, value)
-        else:
-            self._fields[name] = narrow_field_type(name, value)
-
     @property
     def fields(self) -> dict[str, object]:
         return self._fields
@@ -127,7 +121,7 @@ class _BaseInnerTransactionFields:
     fields: dict[str, typing.Any]
 
     def __init__(self, **fields: typing.Any) -> None:
-        # TODO: validate fields against TransactionFields composite type
+        _check_fields(fields)
         context = get_test_context()
         txn_type = self.txn_class.txn_type or TransactionType.Payment
         fields = {
@@ -140,8 +134,9 @@ class _BaseInnerTransactionFields:
         self.fields = fields
 
     def set(self, **fields: typing.Any) -> None:
-        self.fields.update(fields)
+        _check_fields(fields)
         _narrow_covariant_types(fields)
+        self.fields.update(fields)
 
     def submit(self) -> typing.Any:
         context = get_test_context()
@@ -151,6 +146,14 @@ class _BaseInnerTransactionFields:
 
     def copy(self) -> typing.Self:
         return deepcopy(self)
+
+
+def _check_fields(fields: dict[str, object]) -> None:
+    from algopy_testing.models.txn_fields import TransactionFields
+
+    invalid_fields = fields.keys() - TransactionFields.__annotations__
+    if invalid_fields:
+        raise ValueError(f"unexpected fields: {','.join(fields.keys())}")
 
 
 class InnerTransaction(_BaseInnerTransactionFields):

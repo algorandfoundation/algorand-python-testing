@@ -9,6 +9,7 @@ if typing.TYPE_CHECKING:
 
     import algopy
 
+    from algopy_testing._txn_context import TransactionContext
     from algopy_testing.context import AlgopyTestContext
     from algopy_testing.models.account import AccountContextData
     from algopy_testing.models.application import ApplicationContextData
@@ -28,6 +29,11 @@ def get_test_context() -> AlgopyTestContext:
             "access the context manager."
         ) from None
     return result
+
+
+def get_txn_context() -> TransactionContext:
+    context = get_test_context()
+    return context._txn_context
 
 
 def link_application(contract: algopy.Contract, app_id: int) -> None:

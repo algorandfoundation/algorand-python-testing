@@ -341,6 +341,8 @@ class ITxnOpsContract(ARC4Contract):
         algopy.op.ITxnCreate.set_type_enum(algopy.TransactionType.ApplicationCall)
         algopy.op.ITxnCreate.set_on_completion(algopy.OnCompleteAction.DeleteApplication)
         algopy.op.ITxnCreate.set_approval_program(Bytes.from_hex("068101"))
+        # pages essentially appends
+        algopy.op.ITxnCreate.set_approval_program_pages(Bytes.from_hex("068101"))
         algopy.op.ITxnCreate.set_clear_state_program(Bytes.from_hex("068101"))
         algopy.op.ITxnCreate.set_fee(algopy.op.Global.min_txn_fee)
         algopy.op.ITxnCreate.next()

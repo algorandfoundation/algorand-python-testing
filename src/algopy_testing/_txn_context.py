@@ -9,6 +9,7 @@ if typing.TYPE_CHECKING:
     from algopy_testing._itxn_loader import InnerTransactionResultType
 
 from algopy_testing._itxn_loader import ITxnGroupLoader, ITxnLoader
+from algopy_testing.itxn import InnerTransaction, submit_txns
 
 
 class TransactionContext:
@@ -16,8 +17,7 @@ class TransactionContext:
         self._groups: list[TransactionGroup] = []
         self._active_txn_fields: dict[str, typing.Any] = {}
         self._inner_txn_groups: list[typing.Sequence[InnerTransactionResultType]] = []
-        self._constructing_itxn_group: list[InnerTransactionResultType] = []
-        self._constructing_itxn: InnerTransactionResultType | None = None
+        self._constructing_itxn_group: list[InnerTransaction] = []
 
     def get_txn(self, index: int) -> algopy.gtxn.Transaction:
         import algopy
@@ -36,21 +36,28 @@ class TransactionContext:
         except IndexError as e:
             raise ValueError(f"No inner transaction group at index {index}!") from e
 
-    def begin_constructing_itxn_group(self) -> None:
-        self._constructing_itxn_group = []
+    @property
+    def constructing_itxn(self) -> InnerTransaction:
+        if not self._constructing_itxn_group:
+            raise RuntimeError("itxn field without itxn begin")
+        return self._constructing_itxn_group[-1]
 
-    def add_to_constructing_itxn_group(self) -> None:
-        if self._constructing_itxn:
-            self._constructing_itxn_group.append(self._constructing_itxn)
-            self._constructing_itxn = None
-
-    def submit_constructing_itxn_group(self) -> None:
-        if self._constructing_itxn:
-            self._constructing_itxn_group.append(self._constructing_itxn)
-            self._constructing_itxn = None
+    def begin_itxn_group(self) -> None:
         if self._constructing_itxn_group:
-            self.add_inner_txn_group(self._constructing_itxn_group)
-            self._constructing_itxn_group = []
+            raise RuntimeError("itxn begin without itxn submit")
+        # TODO: raise error if active txn is clear state
+        self._constructing_itxn_group.append(InnerTransaction())
+
+    def append_itxn_group(self) -> None:
+        if not self._constructing_itxn_group:
+            raise RuntimeError("itxn next without itxn begin")
+        self._constructing_itxn_group.append(InnerTransaction())
+
+    def submit_itxn_group(self) -> None:
+        if not self._constructing_itxn_group:
+            raise RuntimeError("itxn submit without itxn begin")
+        submit_txns(*self._constructing_itxn_group)
+        self._constructing_itxn_group = []
 
     def clear(self, *, group_txns: bool = False, inner_txns: bool = False) -> None:
         if group_txns:
@@ -60,7 +67,6 @@ class TransactionContext:
         if inner_txns:
             self._inner_txn_groups.clear()
             self._constructing_itxn_group.clear()
-            self._constructing_itxn = None
 
     @property
     def last_txn_group(self) -> TransactionGroup:
@@ -81,14 +87,6 @@ class TransactionContext:
         if not self._inner_txn_groups or not self._inner_txn_groups[-1]:
             raise ValueError("No inner transactions in the last group!")
         return ITxnLoader(self._inner_txn_groups[-1][-1])
-
-    @property
-    def constructing_inner_txn(self) -> InnerTransactionResultType | None:
-        return self._constructing_itxn
-
-    @constructing_inner_txn.setter
-    def constructing_inner_txn(self, value: InnerTransactionResultType | None) -> None:
-        self._constructing_itxn = value
 
     @contextmanager
     def scoped_txn_fields(self, **fields: typing.Any) -> typing.Generator[None, None, None]:

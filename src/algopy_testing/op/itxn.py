@@ -1,8 +1,8 @@
+import contextlib
 import typing
 from collections.abc import Callable, Sequence
 
-from algopy_testing._context_storage import get_test_context
-from algopy_testing.itxn import InnerTransactionResult
+from algopy_testing._context_storage import get_test_context, get_txn_context
 from algopy_testing.op.constants import OP_MEMBER_TO_TXN_MEMBER
 
 
@@ -63,25 +63,43 @@ GITxn = _GITxn()
 
 class _ITxnCreate:
     def begin(self) -> None:
-        get_test_context()._txn_context.begin_constructing_itxn_group()
+        get_txn_context().begin_itxn_group()
 
     def next(self) -> None:
-        get_test_context()._txn_context.add_to_constructing_itxn_group()
+        get_txn_context().append_itxn_group()
 
     def submit(self) -> None:
-        get_test_context()._txn_context.submit_constructing_itxn_group()
+        get_txn_context().submit_itxn_group()
 
     def __getattr__(self, name: str) -> Callable[[typing.Any], None]:
-        context = get_test_context()._txn_context
-
-        if context.constructing_inner_txn is None:
-            context.constructing_inner_txn = InnerTransactionResult()
+        context = get_txn_context()
 
         def setter(value: typing.Any) -> None:
             field = OP_MEMBER_TO_TXN_MEMBER.get(
                 name.removeprefix("set_"), name.removeprefix("set_")
             )
-            setattr(context.constructing_inner_txn, field, value)
+            citxn = context.constructing_itxn
+
+            # approval_program and clear_state_program act like a set instead of append
+            if field in ("approval_program", "clear_state_program"):
+                with contextlib.suppress(KeyError):
+                    del citxn.fields[field]
+            # page variants go to a field without a _page suffix
+            elif field in ("approval_program_pages", "clear_state_program_pages"):
+                field = field.removesuffix("_pages")
+            # treat array fields as append
+            if field in (
+                "approval_program",
+                "clear_state_program",
+                "accounts",
+                "assets",
+                "apps",
+                "app_args",
+            ):
+                existing_value = citxn.fields.get(field, ())
+                assert isinstance(existing_value, tuple)
+                value = (*existing_value, value)
+            citxn.set(**{field: value})
 
         return setter
 
