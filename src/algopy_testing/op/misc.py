@@ -23,7 +23,6 @@ from ecdsa import (  # type: ignore  # noqa: PGH003
 from algopy_testing._context_storage import get_account_data, get_test_context
 from algopy_testing.constants import (
     BITS_IN_BYTE,
-    DEFAULT_ACCOUNT_MIN_BALANCE,
     MAX_BOX_SIZE,
     MAX_BYTES_SIZE,
     MAX_UINT64,
@@ -708,9 +707,6 @@ def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
 
     account = _get_account(a)
     balance = account.balance
-    # TODO: add explict properties to account
-    assert isinstance(balance, UInt64)
-
     # Deduct the fee for the current transaction
     if account == active_txn.sender:
         fee = active_txn.fee
@@ -721,35 +717,15 @@ def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
 
 
 def min_balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
-    context = get_test_context()
-    active_txn = context.last_active_txn
-
-    if isinstance(a, Account):
-        account = a
-    elif isinstance(a, (UInt64 | int)):
-        index = int(a)
-        if index == 0:
-            account = active_txn.sender
-        else:
-            accounts = getattr(active_txn, "accounts", None)
-            if not accounts or index >= len(accounts):
-                raise ValueError(f"Invalid account index: {index}")
-            account = accounts[index]
-    else:
-        raise TypeError("Invalid type for account parameter")
-
-    account_data = get_account_data(account.public_key)
-    # Return the pre-set min_balance if available, otherwise use a default value
-    return (
-        account_data.fields["min_balance"]
-        if account_data.fields["min_balance"] is not None
-        else UInt64(DEFAULT_ACCOUNT_MIN_BALANCE)
-    )
+    account = _get_account(a)
+    return account.min_balance
 
 
 def exit(a: UInt64 | int, /) -> typing.Never:  # noqa: A001
     value = UInt64(a) if isinstance(a, int) else a
-    raise SystemExit(int(value))
+    # TODO: this should raise a less severe exception and then be caught by the active txn context
+    #       and used to determine if the overall txn was successful
+    raise RuntimeError(value)
 
 
 def app_opted_in(
@@ -770,26 +746,12 @@ class _AcctParamsGet:
         def get_account_param(
             a: algopy.Account | algopy.UInt64 | int,
         ) -> tuple[algopy.UInt64 | algopy.Account, bool]:
-            context = get_test_context()
-            if isinstance(a, Account):
-                account = context.get_account(a.public_key)
-            elif isinstance(a, UInt64 | int):
-                active_txn = context.last_active_txn
-                try:
-                    account = active_txn.accounts(a)
-                except IndexError as e:
-                    raise ValueError(
-                        f"Invalid account index for accounts in active transaction: {a}"
-                    ) from e
-            else:
-                raise TypeError(f"Invalid type for account parameter: {type(a)}")
+            account = _get_account(a)
+            field = name.removeprefix("acct_")
+            if field == "auth_addr":
+                field = "auth_address"
 
-            param = name.removeprefix("acct_")
-            value = getattr(account, param, None)
-            if value is None:
-                raise AttributeError(f"'AcctParamsGet' has no attribute '{name}'")
-
-            return value, account.balance != 0
+            return getattr(account, field), account.balance != 0
 
         return get_account_param
 

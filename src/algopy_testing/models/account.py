@@ -6,6 +6,7 @@ import typing
 import algosdk
 
 from algopy_testing._context_storage import get_test_context
+from algopy_testing.constants import DEFAULT_ACCOUNT_MIN_BALANCE
 from algopy_testing.primitives import Bytes, UInt64
 from algopy_testing.utils import as_bytes
 
@@ -36,7 +37,7 @@ def get_empty_account() -> AccountContextData:
     return AccountContextData(
         fields={
             "balance": zero,
-            "min_balance": zero,
+            "min_balance": UInt64(DEFAULT_ACCOUNT_MIN_BALANCE),
             "auth_address": Account(),
             "total_num_uint": zero,
             "total_num_byte_slice": zero,
@@ -85,6 +86,14 @@ class Account:
         context = get_test_context()
         return context._ledger_context._account_data[self.public_key]
 
+    @property
+    def balance(self) -> algopy.UInt64:
+        return self.data.fields["balance"]
+
+    @property
+    def min_balance(self) -> algopy.UInt64:
+        return self.data.fields["min_balance"]
+
     def is_opted_in(self, asset_or_app: algopy.Asset | algopy.Application, /) -> bool:
         from algopy_testing.models import Application, Asset
 
@@ -112,20 +121,13 @@ class Account:
     def public_key(self) -> str:
         return algosdk.encoding.encode_address(self._public_key)  # type: ignore[no-any-return]
 
-    def __getattr__(self, name: str) -> object:
-        # When accessing via AcctParamsGet, passed key differ from the one defined on account model
-        # hence the mapping
-        name = name if name != "auth_addr" else "auth_address"
-
-        return_value = self.data.fields.get(name)
-        if return_value is None:
+    def __getattr__(self, name: str) -> typing.Any:
+        try:
+            return self.data.fields[name]  # type: ignore[literal-required]
+        except KeyError:
             raise AttributeError(
-                f"The value for '{name}' in the test context is None. "
-                f"Make sure to patch the global field '{name}' using your `AlgopyTestContext` "
-                "instance."
-            )
-
-        return return_value
+                f"'{self.__class__.__name__}' object has no attribute '{name}'"
+            ) from None
 
     def __repr__(self) -> str:
         return str(algosdk.encoding.encode_address(self._public_key))
