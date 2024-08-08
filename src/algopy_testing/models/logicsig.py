@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import functools
 import typing
-from functools import wraps
 
 if typing.TYPE_CHECKING:
     from collections.abc import Callable
@@ -12,9 +12,9 @@ if typing.TYPE_CHECKING:
 class LogicSig:
     """A logic signature."""
 
-    def __init__(self, func: Callable[[], bool | algopy.UInt64], name: str | None = None):
+    def __init__(self, func: Callable[[], bool | algopy.UInt64], name: str):
         self.func = func
-        self.name = name or func.__name__
+        self.name = name
 
 
 @typing.overload
@@ -29,16 +29,10 @@ def logicsig(
     sub: Callable[[], bool | algopy.UInt64] | None = None, *, name: str | None = None
 ) -> algopy.LogicSig | Callable[[Callable[[], bool | algopy.UInt64]], LogicSig]:
     """Decorator to indicate a function is a logic signature."""
-    import algopy
-
-    def decorator(func: Callable[[], bool | algopy.UInt64]) -> algopy.LogicSig:
-        @wraps(func)
-        def wrapper() -> bool | algopy.UInt64:
-            return func()
-
-        return algopy.LogicSig(wrapper, name=name)
-
     if sub is None:
-        return decorator
-    else:
-        return decorator(sub)
+        return functools.partial(
+            logicsig,
+            name=name,
+        )
+
+    return LogicSig(sub, name=name or sub.__name__)

@@ -28,7 +28,7 @@ from algopy_testing.utils import (
 )
 
 if typing.TYPE_CHECKING:
-    from collections.abc import Callable, Generator, Sequence
+    from collections.abc import Generator, Sequence
 
     import algopy
 
@@ -90,7 +90,6 @@ class AlgopyTestContext:
         self._active_lsig_args: Sequence[algopy.Bytes] = []
         self._arc4 = ARC4Factory(context=self)
         self._template_vars: dict[str, typing.Any] = template_vars or {}
-        self._lsigs: dict[algopy.LogicSig, Callable[[], algopy.UInt64 | bool]] = {}
 
     @property
     def arc4(self) -> ARC4Factory:
@@ -745,34 +744,14 @@ class AlgopyTestContext:
     ) -> bool | algopy.UInt64:
         """Execute a logic signature.
 
-        This method executes the given logic signature. If the logic
-        signature is not already in the context's list of logic
-        signatures, it adds it before execution.
+        This method executes the given logic signature.
 
         :param lsig: The logic signature to execute.
         :type lsig: algopy.LogicSig
         :return: The result of executing the logic signature function.
         :rtype: bool | algopy.UInt64
         """
-        if lsig not in self._lsigs:
-            self._lsigs[lsig] = lsig.func
         return lsig.func()
-
-    def add_logicsig(self, lsig: algopy.LogicSig) -> None:
-        """Add a logic signature to the context.
-
-        This method adds the given logic signature to the context's list of logic signatures.
-
-        :param lsig: The logic signature to add.
-        :type lsig: algopy.LogicSig
-        :return: None
-        :raises TypeError: If `lsig` is not an instance of `algopy.LogicSig`.
-        """
-        if not isinstance(lsig, algopy_testing.LogicSig):
-            raise TypeError("lsig must be an instance of algopy.LogicSig")
-        if lsig in self._lsigs:
-            raise ValueError(f"Logic signature {lsig} already exists in the context!")
-        self._lsigs[lsig] = lsig.func
 
     def clear_active_contract(self) -> None:
         """Clear the active contract."""
@@ -806,7 +785,6 @@ class AlgopyTestContext:
         self._application_logs.clear()
         self._scratch_spaces.clear()
         self._active_contract = None
-        self._lsigs.clear()
         self._template_vars.clear()
         self.clear_transaction_context()
         self.clear_ledger_context()
