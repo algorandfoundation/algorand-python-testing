@@ -227,7 +227,7 @@ def test_ed25519verify(
     approval = get_crypto_ops_avm_result.client.approval
     assert approval
     with algopy_testing_context() as ctx:
-        app_call = ctx.any_application_call_transaction(
+        app_call = ctx.any.txn.application_call(
             approval_program=(algopy.Bytes(approval.raw_binary),)
         )
 
@@ -245,7 +245,7 @@ def test_ed25519verify(
         avm_result = get_crypto_ops_avm_result(
             "verify_ed25519verify", a=message, b=signature, c=public_key, suggested_params=sp
         )
-        ctx.set_transaction_group([app_call], active_transaction_index=0)
+        ctx.txn.add_txn_group([app_call], active_transaction_index=0)
         result = op.ed25519verify(message, signature, public_key)
 
         assert avm_result == result, "The AVM result should match the expected result"
@@ -429,8 +429,8 @@ def test_asset_holding_get(
         suggested_params=sp,
     )
 
-    mock_asset = context.any_asset()
-    mock_account = context.any_account(
+    mock_asset = context.any.asset()
+    mock_account = context.any.account(
         opted_asset_balances={mock_asset.id: algopy.UInt64(expected_balance)}
     )
     mock_contract = StateAssetHoldingContract()
@@ -467,7 +467,7 @@ def test_asset_params_get(
     dummy_account = get_localnet_default_account(algod_client)
     metadata_hash = b"test" + b" " * 28
 
-    mock_asset = context.any_asset(
+    mock_asset = context.any.asset(
         total=algopy.UInt64(100),
         decimals=algopy.UInt64(0),
         name=algopy.Bytes(b"TEST"),
@@ -531,7 +531,7 @@ def test_app_params_get(
         assert client.approval
         assert client.clear
         assert client.app_address
-        app = ctx.any_application(
+        app = ctx.any.application(
             id=app_id,
             approval_program=Bytes(client.approval.raw_binary),
             clear_state_program=Bytes(client.clear.raw_binary),
@@ -586,7 +586,7 @@ def test_acct_params_get(
 ) -> None:
     dummy_account = generate_test_account(algod_client)
 
-    mock_account = context.any_account(
+    mock_account = context.any.account(
         balance=algopy.UInt64(100_100_000),
         min_balance=algopy.UInt64(100_000),
         auth_address=algopy.Account(algosdk.constants.ZERO_ADDRESS),
@@ -885,7 +885,7 @@ def test_app_global_ex_get_arc4(
 def test_set_scratch_slot(
     context: AlgopyTestContext, index: int, value: algopy.Bytes | algopy.UInt64 | bytes | int
 ) -> None:
-    txn = context.any_application_call_transaction()
+    txn = context.any.txn.application_call()
     context.set_scratch_slot(txn, index, value)
     assert context.get_scratch_slot(txn, index) == convert_native_to_stack(value)
 
@@ -904,7 +904,7 @@ def test_set_scratch_slot(
 def test_get_scratch_slot(
     context: AlgopyTestContext, index: int, value: algopy.Bytes | algopy.UInt64 | bytes | int
 ) -> None:
-    txn = context.any_application_call_transaction()
+    txn = context.any.txn.application_call()
     context.set_scratch_slot(txn, index, value)
     retrieved_value = context.get_scratch_slot(txn, index)
     assert retrieved_value == convert_native_to_stack(value)
@@ -914,7 +914,7 @@ def test_scratch_slot_invalid_index(
     context: AlgopyTestContext,
 ) -> None:
     invalid_index = 256
-    txn = context.any_application_call_transaction()
+    txn = context.any.txn.application_call()
 
     with pytest.raises(ValueError, match="invalid scratch slot"):
         context.set_scratch_slot(txn, invalid_index, algopy.Bytes(b"invalid"))
@@ -924,7 +924,7 @@ def test_scratch_slot_invalid_index(
 
 
 def test_overwrite_scratch_slot(context: AlgopyTestContext) -> None:
-    txn = context.any_application_call_transaction()
+    txn = context.any.txn.application_call()
     context.set_scratch_slot(txn, 0, algopy.Bytes(b"initial"))
     context.set_scratch_slot(txn, 0, algopy.UInt64(99))
     assert context.get_scratch_slot(txn, 0) == algopy.UInt64(99)
@@ -938,7 +938,7 @@ def test_itxn_ops(context: AlgopyTestContext) -> None:
     contract.verify_itxn_ops()
 
     # assert
-    itxn_group = context.get_submitted_itxn_group(0)
+    itxn_group = context.txn.get_submitted_itxn_group(0)
     appl_itxn = itxn_group.application_call(0)
     pay_itxn = itxn_group.payment(1)
 

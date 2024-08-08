@@ -10,7 +10,7 @@ This directory contains examples demonstrating how to use algorand-python-testin
 
 1. **Test Environment Setup**: Use the `context` fixture to set up a test environment that emulates AVM behavior.
 2. **Arrange, Act, Assert Pattern**: Examples follow the 'arrange, act, assert' pattern for clear and structured tests.
-3. **Asset and Account Creation**: Easily create test assets and accounts using `context.any_asset` and `context.any_account`.
+3. **Asset and Account Creation**: Easily create test assets and accounts using `context.any.asset` and `context.any.account`.
 4. **State Manipulation**: Test global and local state changes in your smart contracts.
 5. **ABI Method Testing**: Examples of how to test ABI methods in your smart contracts.
 
@@ -32,7 +32,7 @@ Replace `<example_directory>` with the specific example you want to run (e.g., `
 When writing tests for your Algorand smart contracts:
 
 1. Use the `context` fixture to set up your test environment.
-2. Create test assets and accounts as needed using `context.any_asset` and `context.any_account`.
+2. Create test assets and accounts as needed using `context.any.asset` and `context.any.account`.
 3. Interact with your smart contract methods.
 4. Assert the expected outcomes, including state changes and transaction results.
 

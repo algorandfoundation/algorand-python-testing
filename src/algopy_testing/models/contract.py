@@ -4,7 +4,11 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, final
 
 import algopy_testing
-from algopy_testing._context_storage import get_app_data, get_test_context, link_application
+from algopy_testing._context_helpers._context_storage import (
+    get_app_data,
+    get_test_context,
+    link_application,
+)
 
 if TYPE_CHECKING:
     import algopy
@@ -34,7 +38,7 @@ class _ContractMeta(type):
         cls_state_totals = cls._state_totals or StateTotals()  # type: ignore[attr-defined]
         state_totals = _get_state_totals(instance, cls_state_totals)
         context = get_test_context()
-        app_ref = context.any_application(
+        app_ref = context.any.application(
             global_num_bytes=algopy_testing.UInt64(state_totals.global_bytes),
             global_num_uint=algopy_testing.UInt64(state_totals.global_uints),
             local_num_bytes=algopy_testing.UInt64(state_totals.local_bytes),

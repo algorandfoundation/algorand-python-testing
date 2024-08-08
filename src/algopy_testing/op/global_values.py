@@ -6,7 +6,7 @@ from typing import TypedDict, TypeVar
 
 import algosdk
 
-from algopy_testing._context_storage import get_app_data, get_test_context
+from algopy_testing._context_helpers._context_storage import get_app_data, get_test_context
 from algopy_testing.models import Account, Application
 from algopy_testing.primitives import UInt64
 
@@ -43,7 +43,7 @@ class _Global:
     @property
     def _fields(self) -> GlobalFields:
         context = get_test_context()
-        return context._ledger_context._global_fields
+        return context.ledger.global_fields
 
     @property
     def current_application_address(self) -> algopy.Account:
@@ -65,7 +65,7 @@ class _Global:
             app_data = get_app_data(int(app.id))
             if app_data.is_creating:
                 return Application(0)
-            return context.last_active_txn.app_id
+            return context.txn.last_active_txn.app_id
 
     # TODO: move creator_address here
     @property
@@ -82,7 +82,7 @@ class _Global:
         except KeyError:
             context = get_test_context()
             # TODO: active group?
-            return UInt64(len(context.last_txn_group.transactions))
+            return UInt64(len(context.txn.last_txn_group.transactions))
 
     @property
     def zero_address(self) -> algopy.Account:
@@ -97,7 +97,7 @@ class _Global:
         except KeyError:
             raise AttributeError(
                 f"'algopy.Global' object has no value set for attribute named '{name}'. "
-                f"Use `context.patch_global_fields({name}=your_value)` to set the value "
+                f"Use `context.ledger.patch_global_fields({name}=your_value)` to set the value "
                 "in your test setup."
             ) from None
 

@@ -22,7 +22,7 @@ def test_approval_program(context: AlgopyTestContext) -> None:
 
     # Assert
     assert result
-    last_txn = context.last_active_txn
+    last_txn = context.txn.last_active_txn
     scratch_space = context.get_scratch_space(last_txn)
     assert scratch_space[1] == 5
     assert scratch_space[2] == b"Hello World"

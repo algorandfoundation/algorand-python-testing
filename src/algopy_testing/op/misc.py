@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from algopy_testing._context_storage import get_account_data, get_test_context
+from algopy_testing._context_helpers._context_storage import get_account_data, get_test_context
 from algopy_testing.constants import (
     MAX_BOX_SIZE,
 )
@@ -28,15 +28,15 @@ def _get_app(app: algopy.Application | algopy.UInt64 | int) -> Application:
         return app
     context = get_test_context()
     if app >= 1001:
-        return context.get_application(app)
-    txn = context.last_active_txn
+        return context.ledger.get_application(app)
+    txn = context.txn.last_active_txn
     return txn.apps(app)
 
 
 def _get_account(acc: algopy.Account | algopy.UInt64 | int) -> Account:
     if isinstance(acc, Account):
         return acc
-    txn = get_test_context().last_active_txn
+    txn = get_test_context().txn.last_active_txn
     return txn.accounts(acc)
 
 
@@ -45,14 +45,14 @@ def _get_asset(asset: algopy.Asset | algopy.UInt64 | int) -> Asset:
         return asset
     context = get_test_context()
     if asset >= 1001:
-        return context.get_asset(asset)
-    txn = context.last_active_txn
+        return context.ledger.get_asset(asset)
+    txn = context.txn.last_active_txn
     return txn.assets(asset)
 
 
 def _gload(a: UInt64 | int, b: UInt64 | int, /) -> Bytes | UInt64:
     context = get_test_context()
-    txn = context.get_transaction(int(a))
+    txn = context.txn.get_txn(int(a))
     try:
         return context.get_scratch_slot(txn, b)
     except IndexError:
@@ -62,7 +62,7 @@ def _gload(a: UInt64 | int, b: UInt64 | int, /) -> Bytes | UInt64:
 class _Scratch:
     def load_bytes(self, a: UInt64 | int, /) -> Bytes | UInt64:
         context = get_test_context()
-        active_txn = context.last_active_txn
+        active_txn = context.txn.last_active_txn
         return _gload(active_txn.group_index, a)
 
     load_uint64 = load_bytes  # functionally these are the same
@@ -70,7 +70,7 @@ class _Scratch:
     @staticmethod
     def store(a: algopy.UInt64 | int, b: algopy.Bytes | algopy.UInt64 | bytes | int, /) -> None:
         context = get_test_context()
-        active_txn = context.last_active_txn
+        active_txn = context.txn.last_active_txn
         context.set_scratch_slot(active_txn, a, b)
 
 
@@ -82,7 +82,7 @@ gload_bytes = _gload
 def gaid(a: algopy.UInt64 | int, /) -> algopy.Application:
     # TODO: add tests
     context = get_test_context()
-    txn = context.get_transaction(int(a))
+    txn = context.txn.get_txn(int(a))
 
     if not txn.type == TransactionType.ApplicationCall:
         raise TypeError(f"Transaction at index {a} is not an ApplicationCallTransaction")
@@ -91,13 +91,13 @@ def gaid(a: algopy.UInt64 | int, /) -> algopy.Application:
     if app_id is None:
         raise ValueError(f"Transaction at index {a} did not create an application")
 
-    return context.get_application(typing.cast(int, app_id))
+    return context.ledger.get_application(typing.cast(int, app_id))
 
 
 def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     # TODO: add tests
     context = get_test_context()
-    active_txn = context.last_active_txn
+    active_txn = context.txn.last_active_txn
 
     account = _get_account(a)
     balance = account.balance
@@ -201,7 +201,7 @@ class _AssetHoldingGet:
             return asset_balance, True
         elif field == "frozen":
             try:
-                asset_data = context.get_asset(asset.id)
+                asset_data = context.ledger.get_asset(asset.id)
             except KeyError:
                 return UInt64(0), False
             return asset_data.default_frozen, True
@@ -480,17 +480,17 @@ class Box:
         size = int(b)
         if not name_bytes or size > MAX_BOX_SIZE:
             raise ValueError("Invalid box name or size")
-        if context.get_box(name_bytes):
+        if context.ledger.get_box(name_bytes):
             return False
-        context.set_box(name_bytes, b"\x00" * size)
+        context.ledger.set_box(name_bytes, b"\x00" * size)
         return True
 
     @staticmethod
     def delete(a: algopy.Bytes | bytes, /) -> bool:
         context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
-        if context.get_box(name_bytes):
-            context.delete_box(name_bytes)
+        if context.ledger.get_box(name_bytes):
+            context.ledger.delete_box(name_bytes)
             return True
         return False
 
@@ -502,7 +502,7 @@ class Box:
         name_bytes = a.value if isinstance(a, Bytes) else a
         start = int(b)
         length = int(c)
-        box_content = context.get_box(name_bytes)
+        box_content = context.ledger.get_box(name_bytes)
         if not box_content:
             raise RuntimeError("Box does not exist")
         result = box_content[start : start + length]
@@ -512,16 +512,16 @@ class Box:
     def get(a: algopy.Bytes | bytes, /) -> tuple[algopy.Bytes, bool]:
         context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
-        box_content = Bytes(context.get_box(name_bytes))
-        box_exists = context.box_exists(name_bytes)
+        box_content = Bytes(context.ledger.get_box(name_bytes))
+        box_exists = context.ledger.box_exists(name_bytes)
         return box_content, box_exists
 
     @staticmethod
     def length(a: algopy.Bytes | bytes, /) -> tuple[algopy.UInt64, bool]:
         context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
-        box_content = context.get_box(name_bytes)
-        box_exists = context.box_exists(name_bytes)
+        box_content = context.ledger.get_box(name_bytes)
+        box_exists = context.ledger.box_exists(name_bytes)
         return UInt64(len(box_content)), box_exists
 
     @staticmethod
@@ -529,10 +529,10 @@ class Box:
         context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
         content = b.value if isinstance(b, Bytes) else b
-        existing_content = context.get_box(name_bytes)
+        existing_content = context.ledger.get_box(name_bytes)
         if existing_content and len(existing_content) != len(content):
             raise ValueError("New content length does not match existing box length")
-        context.set_box(name_bytes, Bytes(content))
+        context.ledger.set_box(name_bytes, Bytes(content))
 
     @staticmethod
     def replace(
@@ -542,7 +542,7 @@ class Box:
         name_bytes = a.value if isinstance(a, Bytes) else a
         start = int(b)
         new_content = c.value if isinstance(c, Bytes) else c
-        box_content = context.get_box(name_bytes)
+        box_content = context.ledger.get_box(name_bytes)
         if not box_content:
             raise RuntimeError("Box does not exist")
         if start + len(new_content) > len(box_content):
@@ -550,7 +550,7 @@ class Box:
         updated_content = (
             box_content[:start] + new_content + box_content[start + len(new_content) :]
         )
-        context.set_box(name_bytes, updated_content)
+        context.ledger.set_box(name_bytes, updated_content)
 
     @staticmethod
     def resize(a: algopy.Bytes | bytes, b: algopy.UInt64 | int, /) -> None:
@@ -559,14 +559,14 @@ class Box:
         new_size = int(b)
         if not name_bytes or new_size > MAX_BOX_SIZE:
             raise ValueError("Invalid box name or size")
-        box_content = context.get_box(name_bytes)
+        box_content = context.ledger.get_box(name_bytes)
         if not box_content:
             raise RuntimeError("Box does not exist")
         if new_size > len(box_content):
             updated_content = box_content + b"\x00" * (new_size - len(box_content))
         else:
             updated_content = box_content[:new_size]
-        context.set_box(name_bytes, updated_content)
+        context.ledger.set_box(name_bytes, updated_content)
 
     @staticmethod
     def splice(
@@ -581,7 +581,7 @@ class Box:
         start = int(b)
         delete_count = int(c)
         insert_content = d.value if isinstance(d, Bytes) else d
-        box_content = context.get_box(name_bytes)
+        box_content = context.ledger.get_box(name_bytes)
 
         if not box_content:
             raise RuntimeError("Box does not exist")
@@ -604,4 +604,4 @@ class Box:
             new_content += b"\x00" * (len(box_content) - len(new_content))
 
         # Update the box with the new content
-        context.set_box(name_bytes, new_content)
+        context.ledger.set_box(name_bytes, new_content)

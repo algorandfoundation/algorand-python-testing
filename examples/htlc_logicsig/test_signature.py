@@ -17,9 +17,9 @@ def context() -> Generator[AlgopyTestContext, None, None]:
 
 def test_seller_receives_payment(context: AlgopyTestContext) -> None:
     # Arrange
-    context.set_transaction_group(
+    context.txn.add_txn_group(
         [
-            context.any_payment_transaction(
+            context.any.txn.payment(
                 fee=algopy.UInt64(500),
                 first_valid=algopy.UInt64(1000),
                 close_remainder_to=algopy.Account(algosdk.constants.ZERO_ADDRESS),

@@ -71,9 +71,9 @@ def test_emit(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
         "greetings",
     )
 
-    dummy_app = context.any_application()
-    context.set_transaction_group(
-        [context.any_application_call_transaction(app_id=dummy_app)], active_transaction_index=0
+    dummy_app = context.any.application()
+    context.txn.add_txn_group(
+        [context.any.txn.application_call(app_id=dummy_app)], active_transaction_index=0
     )
 
     _test_data_arc4 = SwappedArc4(

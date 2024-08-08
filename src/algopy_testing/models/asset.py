@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, TypedDict, TypeVar
 
-from algopy_testing._context_storage import get_test_context
+from algopy_testing._context_helpers._context_storage import get_test_context
 
 if TYPE_CHECKING:
     import algopy
@@ -38,14 +38,14 @@ class Asset:
 
     def balance(self, account: algopy.Account) -> algopy.UInt64:
         context = get_test_context()
-        if account not in context._ledger_context._account_data:
+        if account not in context.ledger.account_data:
             raise ValueError(
                 "The account is not present in the test context! "
-                "Use `context.add_account()` or `context.any_account()` to add the account to "
+                "Use `context.add_account()` or `context.any.account()` to add the account to "
                 "your test setup."
             )
 
-        account_data = context._ledger_context._account_data.get(str(account), None)
+        account_data = context.ledger.account_data.get(str(account), None)
 
         if not account_data:
             raise ValueError("Account not found in testing context!")
@@ -66,7 +66,7 @@ class Asset:
 
     def __getattr__(self, name: str) -> object:
         context = get_test_context()
-        if int(self.id) not in context._ledger_context._asset_data:
+        if int(self.id) not in context.ledger.asset_data:
             # check if its not 0 (which means its not
             # instantiated/opted-in yet, and instantiated directly
             # without invoking any_asset).
@@ -83,11 +83,11 @@ class Asset:
 
             raise ValueError(
                 "`algopy.Asset` is not present in the test context! "
-                "Use `context.add_asset()` or `context.any_asset()` to add the asset to "
+                "Use `context.add_asset()` or `context.any.asset()` to add the asset to "
                 "your test setup."
             )
 
-        return_value = context._ledger_context._asset_data[int(self.id)].get(name)
+        return_value = context.ledger.asset_data[int(self.id)].get(name)
         if return_value is None:
             raise AttributeError(
                 f"The value for '{name}' in the test context is None. "

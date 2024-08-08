@@ -23,7 +23,7 @@ def context() -> Generator[AlgopyTestContext, None, None]:
 
 
 def test_mocking_required_for_abi_call(context: AlgopyTestContext) -> None:
-    dummy_app = context.any_application()
+    dummy_app = context.any.application()
 
     with pytest.raises(NotImplementedError, match="'abi_call' is not available"):
         arc4.abi_call("echo(string)string", "untyped + ignore", app_id=dummy_app)
@@ -36,7 +36,7 @@ def test_mocking_required_for_abi_call(context: AlgopyTestContext) -> None:
 
 
 def test_abi_call_can_be_mocked(context: AlgopyTestContext, mocker: MockerFixture) -> None:
-    dummy_app = context.any_application()
+    dummy_app = context.any.application()
 
     def run_mocked_echo(
         *args: typing.Any, **_kwargs: typing.Any

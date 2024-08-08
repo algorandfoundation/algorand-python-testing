@@ -3,17 +3,22 @@ from __future__ import annotations
 import typing
 from contextlib import contextmanager
 
+import algosdk
+
 if typing.TYPE_CHECKING:
     import algopy
 
     from algopy_testing._itxn_loader import InnerTransactionResultType
+    from algopy_testing.context import AlgopyTestContext
 
+import algopy_testing
 from algopy_testing._itxn_loader import ITxnGroupLoader, ITxnLoader
 from algopy_testing.itxn import InnerTransaction, submit_txns
 
 
 class TransactionContext:
-    def __init__(self) -> None:
+    def __init__(self, context: AlgopyTestContext) -> None:
+        self.context = context
         self._groups: list[TransactionGroup] = []
         self._active_txn_fields: dict[str, typing.Any] = {}
         self._inner_txn_groups: list[typing.Sequence[InnerTransactionResultType]] = []
@@ -24,8 +29,43 @@ class TransactionContext:
 
         return typing.cast(algopy.gtxn.Transaction, self.last_txn_group.transactions[index])
 
-    def add_txn_group(self, group: TransactionGroup) -> None:
-        self._groups.append(group)
+    def add_txn_group(
+        self,
+        gtxns: typing.Sequence[algopy.gtxn.TransactionBase],
+        active_transaction_index: int | None = None,
+    ) -> None:
+        """Adds a new transaction group using a list of transactions and an
+        optional index to indicate the active transaction within the group.
+
+        :param gtxns: List of transactions.
+        :type gtxns: list[algopy.gtxn.TransactionBase]
+        :param active_transaction_index: Index of the active
+            transaction.
+        :type active_transaction_index: int
+        :param active_transaction_index: Index of the active
+            transaction. Defaults to None.
+        :type active_transaction_index: int
+        :param gtxn: list[algopy.gtxn.TransactionBase]:
+        :param active_transaction_index: int | None: (Default value =
+            None)
+        """
+        if not all(isinstance(txn, algopy_testing.gtxn.TransactionBase) for txn in gtxns):
+            raise ValueError("All transactions must be instances of TransactionBase")
+
+        if len(gtxns) > algosdk.constants.TX_GROUP_LIMIT:
+            raise ValueError(
+                f"Transaction group can have at most {algosdk.constants.TX_GROUP_LIMIT} "
+                "transactions, as per AVM limits."
+            )
+
+        for i, txn in enumerate(gtxns):
+            txn.fields["group_index"] = algopy_testing.UInt64(i)
+
+        txn_group = TransactionGroup(
+            transactions=gtxns,
+            active_transaction_index=active_transaction_index,
+        )
+        self._groups.append(txn_group)
 
     def add_inner_txn_group(self, group: typing.Sequence[InnerTransactionResultType]) -> None:
         self._inner_txn_groups.append(group)
@@ -59,14 +99,13 @@ class TransactionContext:
         submit_txns(*self._constructing_itxn_group)
         self._constructing_itxn_group = []
 
-    def clear(self, *, group_txns: bool = False, inner_txns: bool = False) -> None:
-        if group_txns:
-            self._groups.clear()
-            self._active_txn_fields.clear()
-
-        if inner_txns:
-            self._inner_txn_groups.clear()
-            self._constructing_itxn_group.clear()
+    def clear(
+        self,
+    ) -> None:
+        self._groups.clear()
+        self._active_txn_fields.clear()
+        self._inner_txn_groups.clear()
+        self._constructing_itxn_group.clear()
 
     @property
     def last_txn_group(self) -> TransactionGroup:

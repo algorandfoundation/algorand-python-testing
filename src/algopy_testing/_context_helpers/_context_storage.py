@@ -9,7 +9,7 @@ if typing.TYPE_CHECKING:
 
     import algopy
 
-    from algopy_testing._txn_context import TransactionContext
+    from algopy_testing._context_helpers._txn_context import TransactionContext
     from algopy_testing.context import AlgopyTestContext
     from algopy_testing.models.account import AccountContextData
     from algopy_testing.models.application import ApplicationContextData
@@ -39,7 +39,7 @@ def get_txn_context() -> TransactionContext:
 def link_application(contract: algopy.Contract, app_id: int) -> None:
     context = get_test_context()
     context._contract_app_ids[contract] = app_id
-    app_data = context._ledger_context._application_data[app_id]
+    app_data = context.ledger.application_data[app_id]
     app_data.contract = contract
 
 
@@ -49,7 +49,7 @@ def get_app_data(app: int | algopy.Contract) -> ApplicationContextData:
         # attempt to get app_id, fall back to invalid id if not found
         app = context._contract_app_ids.get(app, -1)
     try:
-        return context._ledger_context._application_data[app]
+        return context.ledger.application_data[app]
     except KeyError:
         raise ValueError("Unknown application, check correct testing context is active") from None
 
@@ -57,7 +57,7 @@ def get_app_data(app: int | algopy.Contract) -> ApplicationContextData:
 def get_asset_data(asset_id: int) -> AssetFields:
     context = get_test_context()
     try:
-        return context._ledger_context._asset_data[asset_id]
+        return context.ledger.asset_data[asset_id]
     except KeyError:
         raise ValueError("Unknown asset, check correct testing context is active") from None
 
@@ -65,7 +65,7 @@ def get_asset_data(asset_id: int) -> AssetFields:
 def get_account_data(account_public_key: str) -> AccountContextData:
     context = get_test_context()
     try:
-        return context._ledger_context._account_data[account_public_key]
+        return context.ledger.account_data[account_public_key]
     except KeyError:
         raise ValueError("Unknown account, check correct testing context is active") from None
 

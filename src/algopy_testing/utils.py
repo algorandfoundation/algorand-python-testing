@@ -152,3 +152,10 @@ def get_default_global_fields(creator_address: algopy.Account) -> GlobalFields:
         "asset_opt_in_min_balance": algopy.UInt64(DEFAULT_ASSET_OPT_IN_MIN_BALANCE),
         "genesis_hash": algopy.Bytes(DEFAULT_GLOBAL_GENESIS_HASH),
     }
+
+
+def get_new_scratch_space() -> list[algopy.Bytes | algopy.UInt64]:
+    """Return a list of empty scratch slots for the AVM."""
+    import algopy
+
+    return [algopy.UInt64(0)] * 256

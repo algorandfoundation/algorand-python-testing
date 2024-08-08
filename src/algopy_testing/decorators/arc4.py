@@ -8,7 +8,7 @@ import typing
 import algosdk
 
 import algopy_testing
-from algopy_testing._context_storage import get_app_data, get_test_context
+from algopy_testing._context_helpers._context_storage import get_app_data, get_test_context
 from algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM
 from algopy_testing.primitives import BigUInt, Bytes, String, UInt64
 
@@ -46,7 +46,7 @@ def check_create(contract: algopy.Contract, create: _CreateValues) -> None:
 
 def check_oca(actions: Sequence[_AllowActions]) -> None:
     context = get_test_context()
-    txn = context.last_active_txn
+    txn = context.txn.last_active_txn
     allowed_actions = [action if isinstance(action, str) else action.name for action in actions]
     if txn.on_completion.name not in allowed_actions:
         raise RuntimeError(
@@ -111,7 +111,7 @@ def abimethod(  # noqa: PLR0913
             arc4_signature=arc4_signature,
             args=ordered_args,
         )
-        context.set_transaction_group(txns)
+        context.txn.add_txn_group(txns)
 
         check_create(contract, create)
         check_oca(allow_actions)
@@ -158,7 +158,7 @@ def _extract_group_txns(
         "clear_state_program_pages", [algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)]
     )
 
-    app_txn = context.any_application_call_transaction(**txn_fields)
+    app_txn = context.any.txn.application_call(**txn_fields)
     return [*txn_arrays.txns, app_txn]
 
 
@@ -318,14 +318,14 @@ def baremethod(
         context.set_active_contract(contract)
         # TODO: handle custom txn groups
         txns = [
-            context.any_application_call_transaction(
+            context.any.txn.application_call(
                 # TODO: fill out other fields where possible (see abimethod)
                 sender=context.default_sender,
                 app_id=context.get_active_application(),
             ),
         ]
 
-        context.set_transaction_group(txns)
+        context.txn.add_txn_group(txns)
 
         check_create(contract, create)
         check_oca(allow_actions)

@@ -3,7 +3,6 @@ from __future__ import annotations
 import secrets
 import string
 import typing
-from dataclasses import dataclass
 
 import algosdk
 
@@ -17,19 +16,18 @@ if typing.TYPE_CHECKING:
     from algopy_testing import AlgopyTestContext
 
 
-@dataclass
-class ARC4Factory:
+class ARC4ValueGenerator:
     """Factory for generating ARC4-compliant test data."""
 
-    def __init__(self, *, context: AlgopyTestContext) -> None:
-        """Initializes the ARC4Factory with the given testing context.
+    def __init__(self, context: AlgopyTestContext) -> None:
+        """Initializes the ARC4ValueGenerator with the given testing context.
 
         Args:
             context (AlgopyTestContext): The testing context for generating test data.
         """
         self._context = context
 
-    def any_address(self) -> algopy.arc4.Address:
+    def address(self) -> algopy.arc4.Address:
         """Generate a random Algorand address.
 
         :returns: A new, random Algorand address.
@@ -38,7 +36,7 @@ class ARC4Factory:
 
         return arc4.Address(algosdk.account.generate_account()[1])
 
-    def any_uint8(self, min_value: int = 0, max_value: int = MAX_UINT8) -> algopy.arc4.UInt8:
+    def uint8(self, min_value: int = 0, max_value: int = MAX_UINT8) -> algopy.arc4.UInt8:
         """Generate a random UInt8 within the specified range.
 
         :param min_value: Minimum value (inclusive). Defaults to 0.
@@ -54,7 +52,7 @@ class ARC4Factory:
         """
         return arc4.UInt8(generate_random_int(min_value, max_value))
 
-    def any_uint16(self, min_value: int = 0, max_value: int = MAX_UINT16) -> algopy.arc4.UInt16:
+    def uint16(self, min_value: int = 0, max_value: int = MAX_UINT16) -> algopy.arc4.UInt16:
         """Generate a random UInt16 within the specified range.
 
         :param min_value: Minimum value (inclusive). Defaults to 0.
@@ -70,7 +68,7 @@ class ARC4Factory:
         """
         return arc4.UInt16(generate_random_int(min_value, max_value))
 
-    def any_uint32(self, min_value: int = 0, max_value: int = MAX_UINT32) -> algopy.arc4.UInt32:
+    def uint32(self, min_value: int = 0, max_value: int = MAX_UINT32) -> algopy.arc4.UInt32:
         """Generate a random UInt32 within the specified range.
 
         :param min_value: Minimum value (inclusive). Defaults to 0.
@@ -86,7 +84,7 @@ class ARC4Factory:
         """
         return arc4.UInt32(generate_random_int(min_value, max_value))
 
-    def any_uint64(self, min_value: int = 0, max_value: int = MAX_UINT64) -> algopy.arc4.UInt64:
+    def uint64(self, min_value: int = 0, max_value: int = MAX_UINT64) -> algopy.arc4.UInt64:
         """Generate a random UInt64 within the specified range.
 
         :param min_value: Minimum value (inclusive). Defaults to 0.
@@ -102,7 +100,7 @@ class ARC4Factory:
         """
         return arc4.UInt64(generate_random_int(min_value, max_value))
 
-    def any_biguint128(
+    def biguint128(
         self, min_value: int = 0, max_value: int = (1 << 128) - 1
     ) -> algopy.arc4.UInt128:
         """Generate a random UInt128 within the specified range.
@@ -119,7 +117,7 @@ class ARC4Factory:
         """
         return arc4.UInt128(generate_random_int(min_value, max_value))
 
-    def any_biguint256(
+    def biguint256(
         self, min_value: int = 0, max_value: int = (1 << 256) - 1
     ) -> algopy.arc4.UInt256:
         """Generate a random UInt256 within the specified range.
@@ -136,9 +134,7 @@ class ARC4Factory:
         """
         return arc4.UInt256(generate_random_int(min_value, max_value))
 
-    def any_biguint512(
-        self, min_value: int = 0, max_value: int = MAX_UINT512
-    ) -> algopy.arc4.UInt512:
+    def biguint512(self, min_value: int = 0, max_value: int = MAX_UINT512) -> algopy.arc4.UInt512:
         """Generate a random UInt512 within the specified range.
 
         :param min_value: Minimum value (inclusive). Defaults to 0.
@@ -154,7 +150,7 @@ class ARC4Factory:
         """
         return arc4.UInt512(generate_random_int(min_value, max_value))
 
-    def any_dynamic_bytes(self, n: int) -> algopy.arc4.DynamicBytes:
+    def dynamic_bytes(self, n: int) -> algopy.arc4.DynamicBytes:
         """Generate a random dynamic bytes of size `n` bits.
 
         :param n: The number of bits for the dynamic bytes. Must be a multiple of 8, otherwise
@@ -176,7 +172,7 @@ class ARC4Factory:
 
         return arc4.DynamicBytes(random_bytes)
 
-    def any_string(self, n: int) -> algopy.arc4.String:
+    def string(self, n: int) -> algopy.arc4.String:
         """Generate a random string of size `n` bits.
 
         :param n: The number of bits for the string.

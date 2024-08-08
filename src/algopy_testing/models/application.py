@@ -4,7 +4,7 @@ import dataclasses
 import inspect
 import typing
 
-from algopy_testing._context_storage import get_app_data
+from algopy_testing._context_helpers._context_storage import get_app_data
 from algopy_testing.primitives import UInt64
 from algopy_testing.utils import as_int64
 
@@ -51,7 +51,7 @@ class Application:
                 return {}
             raise ValueError(
                 "`algopy.Application` is not present in the test context! "
-                "Use `context.add_application()` or `context.any_application()` to add the "
+                "Use `context.add_application()` or `context.any.application()` to add the "
                 "application to your test setup."
             ) from None
 

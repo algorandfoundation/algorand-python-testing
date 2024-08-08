@@ -1,4 +1,4 @@
-from algopy_testing._context_storage import get_test_context
+from algopy_testing._context_helpers._context_storage import get_test_context
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.uint64 import UInt64
 from algopy_testing.protocols import BytesBacked
@@ -41,7 +41,7 @@ def log(
     else:
         separator = sep
 
-    active_txn = context.last_active_txn
+    active_txn = context.txn.last_active_txn
     if active_txn.type != algopy.TransactionType.ApplicationCall:
         raise ValueError("Cannot emit events outside of application call context!")
     if not active_txn.app_id:

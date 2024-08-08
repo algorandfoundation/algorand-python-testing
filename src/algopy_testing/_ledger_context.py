@@ -5,7 +5,7 @@ from collections import ChainMap, defaultdict
 
 import algosdk
 
-from algopy_testing._context_storage import get_test_context
+from algopy_testing._context_helpers._context_storage import get_test_context
 from algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM
 from algopy_testing.models.account import AccountContextData, AccountFields, get_empty_account
 from algopy_testing.models.application import ApplicationContextData, ApplicationFields
@@ -41,6 +41,7 @@ class LedgerContext:
     def get_account(self, address: str) -> algopy.Account:
         import algopy
 
+        assert_address_is_valid(address)
         if address not in self._account_data:
             raise ValueError("Account not found in testing context!")
 
@@ -155,7 +156,7 @@ class LedgerContext:
         if address in self._account_data:
             raise ValueError(
                 "Account with such address already exists in testing context! "
-                "Use `context.get_account(address)` to retrieve the existing account."
+                "Use `context.ledger.get_account(address)` to retrieve the existing account."
             )
 
         for key in account_fields:
@@ -198,13 +199,13 @@ class LedgerContext:
         context = get_test_context()
         new_asset = algopy.Asset(asset_id or next(self._asset_id))
         default_asset_fields = {
-            "total": context.any_uint64(),
-            "decimals": context.any_uint64(1, 6),
+            "total": context.any.uint64(),
+            "decimals": context.any.uint64(1, 6),
             "default_frozen": False,
-            "unit_name": context.any_bytes(4),
-            "name": context.any_bytes(32),
-            "url": context.any_bytes(10),
-            "metadata_hash": context.any_bytes(32),
+            "unit_name": context.any.bytes(4),
+            "name": context.any.bytes(32),
+            "url": context.any.bytes(10),
+            "metadata_hash": context.any.bytes(32),
             "manager": algopy.Account(algosdk.constants.ZERO_ADDRESS),
             "freeze": algopy.Account(algosdk.constants.ZERO_ADDRESS),
             "clawback": algopy.Account(algosdk.constants.ZERO_ADDRESS),

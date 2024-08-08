@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from algopy_testing._context_storage import get_test_context
+from algopy_testing._context_helpers._context_storage import get_test_context
 
 _T = typing.TypeVar("_T")
 

@@ -15,47 +15,47 @@ _ARC4_PREFIX_LEN = 2
 
 def test_patch_global_fields() -> None:
     with algopy_testing_context() as context:
-        context.patch_global_fields(min_txn_fee=UInt64(100), min_balance=UInt64(10))
-        assert context._ledger_context._global_fields["min_txn_fee"] == 100
-        assert context._ledger_context._global_fields["min_balance"] == 10
+        context.ledger.patch_global_fields(min_txn_fee=UInt64(100), min_balance=UInt64(10))
+        assert context.ledger.global_fields["min_txn_fee"] == 100
+        assert context.ledger.global_fields["min_balance"] == 10
 
         with pytest.raises(AttributeError, match="InvalidField"):
-            context.patch_global_fields(InvalidField=123)  # type: ignore   # noqa: PGH003
+            context.ledger.patch_global_fields(InvalidField=123)  # type: ignore   # noqa: PGH003
 
 
 def test_account_management() -> None:
     with algopy_testing_context() as context:
         address: str = algosdk.account.generate_account()[1]
-        account = context.any_account(address=address, balance=UInt64(1000))
-        assert context.get_account(account.public_key).balance == 1000
+        account = context.any.account(address=address, balance=UInt64(1000))
+        assert context.ledger.get_account(account.public_key).balance == 1000
 
-        context.update_account(account.public_key, balance=UInt64(2000))
-        assert context.get_account(account.public_key).balance == 2000
+        context.ledger.update_account(account.public_key, balance=UInt64(2000))
+        assert context.ledger.get_account(account.public_key).balance == 2000
 
         with pytest.raises(AssertionError, match="Invalid Algorand address"):
-            context.update_account("invalid_address", balance=UInt64(2000))
+            context.ledger.update_account("invalid_address", balance=UInt64(2000))
 
 
 def test_asset_management() -> None:
     with algopy_testing_context() as context:
-        asset = context.any_asset(name=Bytes(b"TestAsset"), total=UInt64(1000))
-        assert context.get_asset(int(asset.id)).name == b"TestAsset"
+        asset = context.any.asset(name=Bytes(b"TestAsset"), total=UInt64(1000))
+        assert context.ledger.get_asset(int(asset.id)).name == b"TestAsset"
 
-        context.update_asset(int(asset.id), name=Bytes(b"UpdatedAsset"))
-        assert context.get_asset(int(asset.id)).name == b"UpdatedAsset"
+        context.ledger.update_asset(int(asset.id), name=Bytes(b"UpdatedAsset"))
+        assert context.ledger.get_asset(int(asset.id)).name == b"UpdatedAsset"
 
         with pytest.raises(ValueError, match="Asset not found"):
-            context.update_asset(9999, name=Bytes(b"NonExistentAsset"))
+            context.ledger.update_asset(9999, name=Bytes(b"NonExistentAsset"))
 
 
 def test_application_management() -> None:
     with algopy_testing_context() as context:
-        app = context.any_application(
+        app = context.any.application(
             approval_program=Bytes(b"TestApp"),
             clear_state_program=Bytes(b"TestClear"),
         )
 
-        application = context.get_application(app.id)
+        application = context.ledger.get_application(app.id)
 
         assert application.approval_program == b"TestApp"
         assert application.clear_state_program == b"TestClear"
@@ -63,33 +63,33 @@ def test_application_management() -> None:
 
 def test_transaction_group_management() -> None:
     with algopy_testing_context() as context:
-        txn1 = context.any_payment_transaction(
+        txn1 = context.any.txn.payment(
             sender=context.default_sender,
             receiver=context.default_sender,
             amount=UInt64(1000),
         )
-        txn2 = context.any_payment_transaction(
+        txn2 = context.any.txn.payment(
             sender=context.default_sender,
             receiver=context.default_sender,
             amount=UInt64(2000),
         )
-        context.set_transaction_group([txn1, txn2])
-        assert len(context.last_txn_group.transactions) == 2
+        context.txn.add_txn_group([txn1, txn2])
+        assert len(context.txn.last_txn_group.transactions) == 2
 
         context.clear_transaction_context()
         with pytest.raises(ValueError, match="No group transactions"):
-            assert len(context.last_txn_group.transactions) == 0
+            assert len(context.txn.last_txn_group.transactions) == 0
 
 
 def test_last_itxn_access() -> None:
     with algopy_testing_context() as context:
         contract = Arc4InnerTxnsContract()
-        dummy_asset = context.any_asset()
+        dummy_asset = context.any.asset()
         contract.opt_in_dummy_asset(dummy_asset)
 
-        assert len(context.get_submitted_itxn_group(0)) == 1
+        assert len(context.txn.get_submitted_itxn_group(0)) == 1
         itxn: algopy.itxn.AssetTransferInnerTransaction = (
-            context.last_submitted_itxn.asset_transfer
+            context.txn.last_submitted_itxn.asset_transfer
         )
         app = context.get_application_for_contract(contract)
         assert itxn.asset_sender == app.address
@@ -100,18 +100,18 @@ def test_last_itxn_access() -> None:
 
 def test_context_clearing() -> None:
     with algopy_testing_context() as context:
-        context.any_account(balance=UInt64(1000))
-        context.any_asset(name=Bytes(b"TestAsset"), total=UInt64(1000))
-        context.any_application(
+        context.any.account(balance=UInt64(1000))
+        context.any.asset(name=Bytes(b"TestAsset"), total=UInt64(1000))
+        context.any.application(
             approval_program=Bytes(b"TestApp"),
             clear_state_program=Bytes(b"TestClear"),
         )
         context.clear()
-        assert len(context._ledger_context._account_data) == 0
-        assert len(context._ledger_context._asset_data) == 0
-        assert len(context._ledger_context._application_data) == 0
+        assert len(context.ledger.account_data) == 0
+        assert len(context.ledger.asset_data) == 0
+        assert len(context.ledger.application_data) == 0
         with pytest.raises(ValueError, match="No inner transaction group at index"):
-            context.get_submitted_itxn_group(0)
+            context.txn.get_submitted_itxn_group(0)
         with pytest.raises(ValueError, match="No group transactions found"):
             assert len(context._txn_context.last_txn_group.transactions) == 0
         assert len(context._application_logs) == 0
@@ -120,34 +120,34 @@ def test_context_clearing() -> None:
 
 def test_context_reset() -> None:
     with algopy_testing_context() as context:
-        context.any_account(balance=UInt64(1000))
-        context.any_asset(name=Bytes(b"TestAsset"), total=UInt64(1000))
-        context.any_application(
+        context.any.account(balance=UInt64(1000))
+        context.any.asset(name=Bytes(b"TestAsset"), total=UInt64(1000))
+        context.any.application(
             approval_program=Bytes(b"TestApp"),
             clear_state_program=Bytes(b"TestClear"),
         )
         context.reset()
-        assert len(context._ledger_context._account_data) == 0
-        assert len(context._ledger_context._asset_data) == 0
-        assert len(context._ledger_context._application_data) == 0
+        assert len(context.ledger.account_data) == 0
+        assert len(context.ledger.asset_data) == 0
+        assert len(context.ledger.application_data) == 0
         with pytest.raises(ValueError, match="No inner transaction group at index"):
-            context.get_submitted_itxn_group(0)
+            context.txn.get_submitted_itxn_group(0)
         with pytest.raises(ValueError, match="No group transactions found"):
-            assert context.last_txn_group
+            assert context.txn.last_txn_group
         assert len(context._application_logs) == 0
         assert len(context._scratch_spaces) == 0
-        assert next(context._ledger_context._asset_id) == 1001
-        assert next(context._ledger_context._app_id) == 1001
+        assert next(context.ledger.asset_id) == 1001
+        assert next(context.ledger.app_id) == 1001
 
 
 def test_algopy_testing_context() -> None:
     with algopy_testing_context() as context:
         assert isinstance(context, AlgopyTestContext)
-        assert context._ledger_context.get_account(
+        assert context.ledger.get_account(
             context.default_sender.public_key
         )  # reserved for default creator
-        account = context.any_account(balance=UInt64(1000))
-        assert context._ledger_context.get_account(account.public_key)
+        account = context.any.account(balance=UInt64(1000))
+        assert context.ledger.get_account(account.public_key)
 
     # When called outside of a context manager, it should raise an error
     with pytest.raises(ValueError, match="Test context is not initialized!"):
@@ -167,7 +167,7 @@ def test_get_last_submitted_itxn_loader() -> None:
             amount=UInt64(2000),
         )
         context._txn_context.add_inner_txn_group([itxn1, itxn2])
-        last_itxn = context.last_submitted_itxn.payment
+        last_itxn = context.txn.last_submitted_itxn.payment
         assert last_itxn.amount == 2000
 
 
@@ -186,7 +186,7 @@ def test_clear_inner_transaction_groups() -> None:
         context._txn_context.add_inner_txn_group([itxn1, itxn2])
         context.clear_transaction_context()
         with pytest.raises(ValueError, match="No inner transaction group at index"):
-            context.get_submitted_itxn_group(0)
+            context.txn.get_submitted_itxn_group(0)
 
 
 def test_misc_global_state_access() -> None:
@@ -198,18 +198,18 @@ def test_misc_global_state_access() -> None:
 @pytest.mark.parametrize(
     ("method", "type_", "min_val", "max_val"),
     [
-        ("any_uint8", arc4.UInt8, 0, MAX_UINT8),
-        ("any_uint16", arc4.UInt16, 0, MAX_UINT16),
-        ("any_uint32", arc4.UInt32, 0, MAX_UINT32),
-        ("any_uint64", arc4.UInt64, 0, MAX_UINT64),
-        ("any_biguint128", arc4.UInt128, 0, (1 << 128) - 1),
-        ("any_biguint256", arc4.UInt256, 0, (1 << 256) - 1),
-        ("any_biguint512", arc4.UInt512, 0, MAX_UINT512),
+        ("uint8", arc4.UInt8, 0, MAX_UINT8),
+        ("uint16", arc4.UInt16, 0, MAX_UINT16),
+        ("uint32", arc4.UInt32, 0, MAX_UINT32),
+        ("uint64", arc4.UInt64, 0, MAX_UINT64),
+        ("biguint128", arc4.UInt128, 0, (1 << 128) - 1),
+        ("biguint256", arc4.UInt256, 0, (1 << 256) - 1),
+        ("biguint512", arc4.UInt512, 0, MAX_UINT512),
     ],
 )
 def test_arc4_uint_methods(method: str, type_: type, min_val: int, max_val: int) -> None:
     with algopy_testing_context() as context:
-        func = getattr(context.arc4, method)
+        func = getattr(context.any.arc4, method)
         value = func(min_val, max_val)
         assert isinstance(value, type_)
         assert min_val <= value.native <= max_val  # type: ignore[attr-defined]
@@ -220,7 +220,7 @@ def test_arc4_uint_methods(method: str, type_: type, min_val: int, max_val: int)
 
 def test_arc4_any_address() -> None:
     with algopy_testing_context() as context:
-        address = context.arc4.any_address()
+        address = context.any.arc4.address()
         assert isinstance(address, arc4.Address)
         assert len(address.bytes) == 32
 
@@ -228,17 +228,17 @@ def test_arc4_any_address() -> None:
 @pytest.mark.parametrize(
     ("method", "type_", "bit_length", "expected_length"),
     [
-        ("any_dynamic_bytes", arc4.DynamicBytes, 64, 8),
-        ("any_dynamic_bytes", arc4.DynamicBytes, 20, 3),
-        ("any_string", arc4.String, 32, 4),
-        ("any_string", arc4.String, 20, 3),
+        ("dynamic_bytes", arc4.DynamicBytes, 64, 8),
+        ("dynamic_bytes", arc4.DynamicBytes, 20, 3),
+        ("string", arc4.String, 32, 4),
+        ("string", arc4.String, 20, 3),
     ],
 )
 def test_arc4_variable_length_methods(
     method: str, type_: type, bit_length: int, expected_length: int
 ) -> None:
     with algopy_testing_context() as context:
-        func = getattr(context.arc4, method)
+        func = getattr(context.any.arc4, method)
         value = func(bit_length)
         assert isinstance(value, type_)
         assert len(value.bytes) == expected_length + _ARC4_PREFIX_LEN  # type: ignore[attr-defined]

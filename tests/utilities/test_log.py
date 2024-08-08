@@ -52,8 +52,8 @@ def test_log(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
         n=n.bytes.value,
     )
 
-    context.set_transaction_group(
-        [context.any_payment_transaction()],
+    context.txn.add_txn_group(
+        [context.any.txn.payment()],
         active_transaction_index=0,
     )
     with pytest.raises(
@@ -61,9 +61,9 @@ def test_log(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
     ):
         log(a, b, c, d, e, f, g, h, i, j, k, m, n, sep=b"-")
 
-    dummy_app = context.any_application()
-    context.set_transaction_group(
-        [context.any_application_call_transaction(app_id=dummy_app)], active_transaction_index=0
+    dummy_app = context.any.application()
+    context.txn.add_txn_group(
+        [context.any.txn.application_call(app_id=dummy_app)], active_transaction_index=0
     )
     log(a, b, c, d, e, f, g, h, i, j, k, m, n, sep=b"-")
     arc4_result = [

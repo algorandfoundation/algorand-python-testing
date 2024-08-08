@@ -6,7 +6,7 @@ from copy import deepcopy
 
 import algosdk
 
-from algopy_testing._context_storage import get_test_context
+from algopy_testing._context_helpers._context_storage import get_test_context
 from algopy_testing.enums import TransactionType
 from algopy_testing.models import Account, Asset
 from algopy_testing.models.txn_fields import (
@@ -223,7 +223,7 @@ def _on_asset_config(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
     # if it is a txn to create an asset then ensure this is reflected in the context
     if fields.get("config_asset") == Asset():
         context = get_test_context()
-        created_asset = context.any_asset(
+        created_asset = context.any.asset(
             total=fields["total"],
             decimals=fields["decimals"],
             default_frozen=fields["default_frozen"],

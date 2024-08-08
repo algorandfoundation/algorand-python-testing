@@ -18,7 +18,7 @@ def context() -> Generator[AlgopyTestContext, None, None]:
 @pytest.fixture()
 def contract(context: AlgopyTestContext) -> ProofOfAttendance:
     contract = ProofOfAttendance()
-    contract.init(context.any_uint64(1, 100))
+    contract.init(context.any.uint64(1, 100))
 
     return contract
 
@@ -26,7 +26,7 @@ def contract(context: AlgopyTestContext) -> ProofOfAttendance:
 def test_init(context: AlgopyTestContext) -> None:
     # Arrange
     contract = ProofOfAttendance()
-    max_attendees = context.any_uint64(1, 100)
+    max_attendees = context.any.uint64(1, 100)
 
     # Act
     contract.init(max_attendees)
@@ -57,7 +57,9 @@ def test_confirm_attendance(
     confirm()
 
     # Assert
-    assert context.get_box(key_prefix + context.default_sender.bytes) == algopy.op.itob(1001)
+    assert context.ledger.get_box(key_prefix + context.default_sender.bytes) == algopy.op.itob(
+        1001
+    )
 
 
 @pytest.mark.parametrize(
@@ -76,8 +78,8 @@ def test_claim_poa(
     key_prefix: bytes,
 ) -> None:
     # Arrange
-    dummy_poa = context.any_asset()
-    opt_in_txn = context.any_asset_transfer_transaction(
+    dummy_poa = context.any.asset()
+    opt_in_txn = context.any.txn.asset_transfer(
         sender=context.default_sender,
         asset_receiver=context.default_sender,
         asset_close_to=algopy.Account(algosdk.constants.ZERO_ADDRESS),
@@ -86,13 +88,13 @@ def test_claim_poa(
         fee=algopy.UInt64(0),
         asset_amount=algopy.UInt64(0),
     )
-    context.set_box(key_prefix + context.default_sender.bytes, algopy.op.itob(dummy_poa.id))
+    context.ledger.set_box(key_prefix + context.default_sender.bytes, algopy.op.itob(dummy_poa.id))
 
     # Act
     claim = getattr(contract, claim_poa)
     claim(opt_in_txn)
 
     # Assert
-    axfer_itxn = context.get_submitted_itxn_group(-1).asset_transfer(0)
+    axfer_itxn = context.txn.get_submitted_itxn_group(-1).asset_transfer(0)
     assert axfer_itxn.asset_receiver == context.default_sender
     assert axfer_itxn.asset_amount == algopy.UInt64(1)

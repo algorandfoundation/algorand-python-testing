@@ -2,7 +2,7 @@ import contextlib
 import typing
 from collections.abc import Callable, Sequence
 
-from algopy_testing._context_storage import get_test_context, get_txn_context
+from algopy_testing._context_helpers._context_storage import get_test_context, get_txn_context
 from algopy_testing.op.constants import OP_MEMBER_TO_TXN_MEMBER
 
 

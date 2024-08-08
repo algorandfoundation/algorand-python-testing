@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from algopy_testing._context_storage import get_app_data, get_test_context
+from algopy_testing._context_helpers._context_storage import get_app_data, get_test_context
 from algopy_testing.enums import TransactionType
 from algopy_testing.models import Application
 from algopy_testing.models.txn_fields import TransactionFieldsBase
@@ -41,7 +41,7 @@ class TransactionBase(TransactionFieldsBase):
         if self._fields is not None:
             return self
 
-        return get_test_context().last_txn_group.transactions[self._group_index]
+        return get_test_context().txn.last_txn_group.transactions[self._group_index]
 
     @property
     def fields(self) -> dict[str, object]:

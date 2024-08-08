@@ -22,5 +22,5 @@ def test_enums(context: AlgopyTestContext) -> None:
     oca, txn = contract.read_enums()
 
     # Assert
-    assert context.get_box(b"oca") == op.itob(oca.native)
-    assert context.get_box(b"txn") == op.itob(txn.native)
+    assert context.ledger.get_box(b"oca") == op.itob(oca.native)
+    assert context.ledger.get_box(b"txn") == op.itob(txn.native)

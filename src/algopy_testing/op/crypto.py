@@ -68,7 +68,7 @@ def ed25519verify(a: Bytes | bytes, b: Bytes | bytes, c: Bytes | bytes, /) -> bo
     from algopy_testing.utils import as_bytes
 
     ctx = get_test_context()
-    txn = ctx.last_active_txn
+    txn = ctx.txn.last_active_txn
 
     program_pages = typing.cast(
         Sequence[Bytes],
