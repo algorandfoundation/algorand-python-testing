@@ -176,3 +176,24 @@ def vrf_verify(
     raise NotImplementedError(
         "'op.vrf_verify' is not implemented. Mock using preferred testing tools."
     )
+
+
+class EC(enum.StrEnum):
+    """Available values for the `EC` enum."""
+
+    BN254g1 = "BN254g1"
+    BN254g2 = "BN254g2"
+    BLS12_381g1 = "BLS12_381g1"
+    BLS12_381g2 = "BLS12_381g2"
+
+
+class _EllipticCurve:
+    def __getattr__(self, name: str) -> typing.Any:
+        raise NotImplementedError(
+            f"EllipticCurve.{name} is currently not available as a native "
+            "`algorand-python-testing` type. Use your own preferred testing "
+            "framework of choice to mock the behaviour."
+        )
+
+
+EllipticCurve = _EllipticCurve()

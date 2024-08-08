@@ -1,14 +1,10 @@
 from __future__ import annotations
 
-import base64
-import enum
-import json
 import typing
 
 from algopy_testing._context_storage import get_account_data, get_test_context
 from algopy_testing.constants import (
     MAX_BOX_SIZE,
-    MAX_UINT64,
 )
 from algopy_testing.enums import TransactionType
 from algopy_testing.models import Account, Application, Asset
@@ -16,10 +12,6 @@ from algopy_testing.models.contract import get_global_states, get_local_states
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.uint64 import UInt64
 from algopy_testing.state import GlobalState
-from algopy_testing.utils import (
-    as_bytes,
-    as_int,
-)
 
 if typing.TYPE_CHECKING:
     import algopy
@@ -27,40 +19,8 @@ if typing.TYPE_CHECKING:
     from algopy_testing.models.contract import ARC4Contract, Contract
 
 
-class Base64(enum.Enum):
-    URLEncoding = 0
-    StdEncoding = 1
-
-
-class EC(enum.StrEnum):
-    """Available values for the `EC` enum."""
-
-    BN254g1 = "BN254g1"
-    BN254g2 = "BN254g2"
-    BLS12_381g1 = "BLS12_381g1"
-    BLS12_381g2 = "BLS12_381g2"
-
-
-def base64_decode(e: Base64, a: Bytes | bytes, /) -> Bytes:
-    a_str = _bytes_to_string(a, "illegal base64 data")
-    a_str = a_str + "="  # append padding to ensure there is at least one
-
-    result = (
-        base64.urlsafe_b64decode(a_str) if e == Base64.URLEncoding else base64.b64decode(a_str)
-    )
-    return Bytes(result)
-
-
 def err() -> None:
     raise RuntimeError("err opcode executed")
-
-
-def _bytes_to_string(a: Bytes | bytes, err_msg: str) -> str:
-    a = as_bytes(a)
-    try:
-        return a.decode()
-    except UnicodeDecodeError:
-        raise ValueError(err_msg) from None
 
 
 def _get_app(app: algopy.Application | algopy.UInt64 | int) -> Application:
@@ -88,103 +48,6 @@ def _get_asset(asset: algopy.Asset | algopy.UInt64 | int) -> Asset:
         return context.get_asset(asset)
     txn = context.last_active_txn
     return txn.assets(asset)
-
-
-class _MultiKeyDict(dict[typing.Any, typing.Any]):
-    def __init__(self, items: list[typing.Any]):
-        self[""] = ""
-        items = [
-            (
-                (i[0], _MultiKeyDict(i[1]))
-                if isinstance(i[1], list) and all(isinstance(j, tuple) for j in i[1])
-                else i
-            )
-            for i in items
-        ]
-        self._items = items
-
-    def items(self) -> typing.Any:
-        return self._items
-
-
-class JsonRef:
-    @staticmethod
-    def _load_json(a: Bytes | bytes) -> dict[typing.Any, typing.Any]:
-        a = as_bytes(a)
-        try:
-            # load the whole json payload as an array of key value pairs
-            pairs = json.loads(a, object_pairs_hook=lambda x: x)
-        except json.JSONDecodeError:
-            raise ValueError("error while parsing JSON text, invalid json text") from None
-
-        # turn the pairs into the dictionay for the top level,
-        # all other levels remain as key value pairs
-        # e.g.
-        # input bytes: b'{"key0": 1,"key1": {"key2":2,"key2":"10"}, "key2": "test"}'
-        # output dict: {'key0': 1, 'key1': [('key2', 2), ('key2', '10')], 'key2': 'test'}
-        result = dict(pairs)
-        if len(pairs) != len(result):
-            raise ValueError(
-                "error while parsing JSON text, invalid json text, duplicate keys found"
-            )
-
-        return result
-
-    @staticmethod
-    def _raise_key_error(key: str) -> None:
-        raise ValueError(f"key {key} not found in JSON text")
-
-    @staticmethod
-    def json_string(a: Bytes | bytes, b: Bytes | bytes, /) -> Bytes:
-        b_str = _bytes_to_string(b, "can't decode bytes as string")
-        obj = JsonRef._load_json(a)
-        result = None
-
-        try:
-            result = obj[b_str]
-        except KeyError:
-            JsonRef._raise_key_error(b_str)
-
-        if not isinstance(result, str):
-            raise TypeError(f"value must be a string type, not {type(result).__name__!r}")
-
-        # encode with `surrogatepass` to allow sequences such as `\uD800`
-        # decode with `replace` to replace with official replacement character `U+FFFD`
-        # encode with default settings to get the final bytes result
-        result = result.encode("utf-16", "surrogatepass").decode("utf-16", "replace").encode()
-        return Bytes(result)
-
-    @staticmethod
-    def json_uint64(a: Bytes | bytes, b: Bytes | bytes, /) -> UInt64:
-        b_str = _bytes_to_string(b, "can't decode bytes as string")
-        obj = JsonRef._load_json(a)
-        result = None
-
-        try:
-            result = obj[b_str]
-        except KeyError:
-            JsonRef._raise_key_error(b_str)
-
-        result = as_int(result, max=MAX_UINT64)
-        return UInt64(result)
-
-    @staticmethod
-    def json_object(a: Bytes | bytes, b: Bytes | bytes, /) -> Bytes:
-        b_str = _bytes_to_string(b, "can't decode bytes as string")
-        obj = JsonRef._load_json(a)
-        result = None
-        try:
-            # using a custom dict object to allow duplicate keys which is essentially a list
-            result = obj[b_str]
-        except KeyError:
-            JsonRef._raise_key_error(b_str)
-
-        if not isinstance(result, list) or not all(isinstance(i, tuple) for i in result):
-            raise TypeError(f"value must be an object type, not {type(result).__name__!r}")
-
-        result = _MultiKeyDict(result)
-        result_string = json.dumps(result, separators=(",", ":"))
-        return Bytes(result_string.encode())
 
 
 def _gload(a: UInt64 | int, b: UInt64 | int, /) -> Bytes | UInt64:
@@ -607,18 +470,6 @@ def arg(a: UInt64 | int, /) -> Bytes:
         raise ValueError("Test context is not initialized!")
 
     return context._active_lsig_args[int(a)]
-
-
-class _EllipticCurve:
-    def __getattr__(self, name: str) -> typing.Any:
-        raise NotImplementedError(
-            f"EllipticCurve.{name} is currently not available as a native "
-            "`algorand-python-testing` type. Use your own preferred testing "
-            "framework of choice to mock the behaviour."
-        )
-
-
-EllipticCurve = _EllipticCurve()
 
 
 class Box:

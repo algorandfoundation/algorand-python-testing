@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import base64
+import enum
+import json
 import math
 import typing
 
@@ -296,3 +299,123 @@ def _set_bit(v: int, index: int, x: int) -> int:
     if x:
         v |= mask  # If x was True, set the bit indicated by the mask.
     return v
+
+
+class Base64(enum.Enum):
+    URLEncoding = 0
+    StdEncoding = 1
+
+
+def _bytes_to_string(a: Bytes | bytes, err_msg: str) -> str:
+    a = as_bytes(a)
+    try:
+        return a.decode()
+    except UnicodeDecodeError:
+        raise ValueError(err_msg) from None
+
+
+class _MultiKeyDict(dict[typing.Any, typing.Any]):
+    def __init__(self, items: list[typing.Any]):
+        self[""] = ""
+        items = [
+            (
+                (i[0], _MultiKeyDict(i[1]))
+                if isinstance(i[1], list) and all(isinstance(j, tuple) for j in i[1])
+                else i
+            )
+            for i in items
+        ]
+        self._items = items
+
+    def items(self) -> typing.Any:
+        return self._items
+
+
+class JsonRef:
+    @staticmethod
+    def _load_json(a: Bytes | bytes) -> dict[typing.Any, typing.Any]:
+        a = as_bytes(a)
+        try:
+            # load the whole json payload as an array of key value pairs
+            pairs = json.loads(a, object_pairs_hook=lambda x: x)
+        except json.JSONDecodeError:
+            raise ValueError("error while parsing JSON text, invalid json text") from None
+
+        # turn the pairs into the dictionay for the top level,
+        # all other levels remain as key value pairs
+        # e.g.
+        # input bytes: b'{"key0": 1,"key1": {"key2":2,"key2":"10"}, "key2": "test"}'
+        # output dict: {'key0': 1, 'key1': [('key2', 2), ('key2', '10')], 'key2': 'test'}
+        result = dict(pairs)
+        if len(pairs) != len(result):
+            raise ValueError(
+                "error while parsing JSON text, invalid json text, duplicate keys found"
+            )
+
+        return result
+
+    @staticmethod
+    def _raise_key_error(key: str) -> None:
+        raise ValueError(f"key {key} not found in JSON text")
+
+    @staticmethod
+    def json_string(a: Bytes | bytes, b: Bytes | bytes, /) -> Bytes:
+        b_str = _bytes_to_string(b, "can't decode bytes as string")
+        obj = JsonRef._load_json(a)
+        result = None
+
+        try:
+            result = obj[b_str]
+        except KeyError:
+            JsonRef._raise_key_error(b_str)
+
+        if not isinstance(result, str):
+            raise TypeError(f"value must be a string type, not {type(result).__name__!r}")
+
+        # encode with `surrogatepass` to allow sequences such as `\uD800`
+        # decode with `replace` to replace with official replacement character `U+FFFD`
+        # encode with default settings to get the final bytes result
+        result = result.encode("utf-16", "surrogatepass").decode("utf-16", "replace").encode()
+        return Bytes(result)
+
+    @staticmethod
+    def json_uint64(a: Bytes | bytes, b: Bytes | bytes, /) -> UInt64:
+        b_str = _bytes_to_string(b, "can't decode bytes as string")
+        obj = JsonRef._load_json(a)
+        result = None
+
+        try:
+            result = obj[b_str]
+        except KeyError:
+            JsonRef._raise_key_error(b_str)
+
+        result = as_int(result, max=MAX_UINT64)
+        return UInt64(result)
+
+    @staticmethod
+    def json_object(a: Bytes | bytes, b: Bytes | bytes, /) -> Bytes:
+        b_str = _bytes_to_string(b, "can't decode bytes as string")
+        obj = JsonRef._load_json(a)
+        result = None
+        try:
+            # using a custom dict object to allow duplicate keys which is essentially a list
+            result = obj[b_str]
+        except KeyError:
+            JsonRef._raise_key_error(b_str)
+
+        if not isinstance(result, list) or not all(isinstance(i, tuple) for i in result):
+            raise TypeError(f"value must be an object type, not {type(result).__name__!r}")
+
+        result = _MultiKeyDict(result)
+        result_string = json.dumps(result, separators=(",", ":"))
+        return Bytes(result_string.encode())
+
+
+def base64_decode(e: Base64, a: Bytes | bytes, /) -> Bytes:
+    a_str = _bytes_to_string(a, "illegal base64 data")
+    a_str = a_str + "="  # append padding to ensure there is at least one
+
+    result = (
+        base64.urlsafe_b64decode(a_str) if e == Base64.URLEncoding else base64.b64decode(a_str)
+    )
+    return Bytes(result)

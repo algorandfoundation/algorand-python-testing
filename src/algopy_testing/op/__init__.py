@@ -1,6 +1,8 @@
 from algopy_testing.op.block import Block
 from algopy_testing.op.crypto import (
+    EC,
     ECDSA,
+    EllipticCurve,
     VrfVerify,
     ecdsa_pk_decompress,
     ecdsa_pk_recover,
@@ -16,22 +18,17 @@ from algopy_testing.op.crypto import (
 from algopy_testing.op.global_values import Global
 from algopy_testing.op.itxn import GITxn, ITxn, ITxnCreate
 from algopy_testing.op.misc import (
-    EC,
     AcctParamsGet,
     AppGlobal,
     AppLocal,
     AppParamsGet,
     AssetHoldingGet,
     AssetParamsGet,
-    Base64,
     Box,
-    EllipticCurve,
-    JsonRef,
     Scratch,
     app_opted_in,
     arg,
     balance,
-    base64_decode,
     err,
     exit,
     gaid,
@@ -40,7 +37,10 @@ from algopy_testing.op.misc import (
     min_balance,
 )
 from algopy_testing.op.pure import (
+    Base64,
+    JsonRef,
     addw,
+    base64_decode,
     bitlen,
     bsqrt,
     btoi,
