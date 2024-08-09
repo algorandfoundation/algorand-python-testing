@@ -187,12 +187,12 @@ def _get_state_totals(contract: Contract, cls_state_totals: StateTotals) -> _Sta
 
     global_bytes = global_uints = local_bytes = local_uints = 0
     for type_ in get_global_states(contract).values():
-        if issubclass(type_, UInt64 | UInt64Backed):
+        if issubclass(type_, UInt64 | UInt64Backed | bool):
             global_uints += 1
         else:
             global_bytes += 1
     for type_ in get_local_states(contract).values():
-        if issubclass(type_, UInt64 | UInt64Backed):
+        if issubclass(type_, UInt64 | UInt64Backed | bool):
             local_uints += 1
         else:
             local_bytes += 1
@@ -246,9 +246,7 @@ def get_global_states(contract: Contract) -> dict[bytes, type]:
             continue
         if isinstance(attribute, algopy_testing.GlobalState):
             global_states[attribute.key.value] = attribute.type_
-        elif isinstance(attribute, UInt64Backed | BytesBacked | UInt64 | Bytes):
+        elif isinstance(attribute, UInt64Backed | BytesBacked | UInt64 | Bytes | bool):
             global_states[key.encode()] = type(attribute)
-        else:
-            pass
 
     return global_states
