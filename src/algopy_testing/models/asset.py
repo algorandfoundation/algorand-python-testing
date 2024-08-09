@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 from dataclasses import dataclass
 
-from algopy_testing._context_helpers._context_storage import get_test_context
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.protocols import UInt64Backed
 
 if typing.TYPE_CHECKING:
@@ -46,15 +46,7 @@ class Asset(UInt64Backed):
         return cls(value)
 
     def balance(self, account: algopy.Account) -> algopy.UInt64:
-        context = get_test_context()
-        if account not in context.ledger.account_data:
-            raise ValueError(
-                "The account is not present in the test context! "
-                "Use `context.add_account()` or `context.any.account()` to add the account to "
-                "your test setup."
-            )
-
-        account_data = context.ledger.account_data.get(str(account), None)
+        account_data = lazy_context.get_account_data(account.public_key)
 
         if not account_data:
             raise ValueError("Account not found in testing context!")
@@ -74,8 +66,7 @@ class Asset(UInt64Backed):
         )
 
     def __getattr__(self, name: str) -> object:
-        context = get_test_context()
-        if int(self.id) not in context.ledger.asset_data:
+        if int(self.id) not in lazy_context.ledger.asset_data:
             # check if its not 0 (which means its not
             # instantiated/opted-in yet, and instantiated directly
             # without invoking any_asset).
@@ -96,7 +87,7 @@ class Asset(UInt64Backed):
                 "your test setup."
             )
 
-        return_value = context.ledger.asset_data[int(self.id)].get(name)
+        return_value = lazy_context.get_asset_data(self.id).get(name)
         if return_value is None:
             raise AttributeError(
                 f"The value for '{name}' in the test context is None. "

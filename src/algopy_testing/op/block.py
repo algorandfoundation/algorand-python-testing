@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from algopy_testing import op
-from algopy_testing._context_helpers._context_storage import get_test_context
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.primitives import UInt64
 
 if TYPE_CHECKING:
@@ -13,20 +13,16 @@ if TYPE_CHECKING:
 class Block:
     @staticmethod
     def blk_seed(a: algopy.UInt64 | int, /) -> algopy.Bytes:
-        context = get_test_context()
-
         try:
             index = int(a)
-            return op.itob(context.ledger.get_block_content(index, "seed"))
+            return op.itob(lazy_context.ledger.get_block_content(index, "seed"))
         except KeyError as e:
             raise KeyError(f"Block {a} not set") from e
 
     @staticmethod
     def blk_timestamp(a: algopy.UInt64 | int, /) -> algopy.UInt64:
-        context = get_test_context()
-
         try:
             index = int(a)
-            return UInt64(context.ledger.get_block_content(index, "timestamp"))
+            return UInt64(lazy_context.ledger.get_block_content(index, "timestamp"))
         except KeyError as e:
             raise KeyError(f"Block {a} not set") from e

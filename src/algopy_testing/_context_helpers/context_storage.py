@@ -9,8 +9,8 @@ if typing.TYPE_CHECKING:
 
     import algopy
 
-    from algopy_testing._context_helpers._ledger_context import LedgerContext
-    from algopy_testing._context_helpers._txn_context import TransactionContext, TransactionGroup
+    from algopy_testing._context_helpers.ledger_context import LedgerContext
+    from algopy_testing._context_helpers.txn_context import TransactionContext, TransactionGroup
     from algopy_testing.context import AlgopyTestContext
     from algopy_testing.models.account import AccountContextData
     from algopy_testing.models.application import ApplicationContextData
@@ -68,7 +68,7 @@ class _InternalContext:
 
     @property
     def active_application(self) -> algopy.Application:
-        return self.value.ledger.get_application(self.active_group.active_app_id)
+        return self.ledger.get_application(self.active_group.active_app_id)
 
     def get_app_data(
         self,
@@ -90,19 +90,19 @@ class _InternalContext:
         if app_id == 0:
             app_id = self.maybe_active_app_id or -1
         try:
-            return self.value.ledger.application_data[app_id]
+            return self.ledger.application_data[app_id]
         except KeyError:
             raise ValueError("Unknown app id, is there an active transaction?") from None
 
-    def get_asset_data(self, asset_id: int) -> AssetFields:
+    def get_asset_data(self, asset_id: int | algopy.UInt64) -> AssetFields:
         try:
-            return self.value.ledger.asset_data[asset_id]
+            return self.ledger.asset_data[int(asset_id)]
         except KeyError:
             raise ValueError("Unknown asset, check correct testing context is active") from None
 
     def get_account_data(self, account_public_key: str) -> AccountContextData:
         try:
-            return self.value.ledger.account_data[account_public_key]
+            return self.ledger.account_data[account_public_key]
         except KeyError:
             raise ValueError("Unknown account, check correct testing context is active") from None
 

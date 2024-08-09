@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 
 import algopy_testing
-from algopy_testing._context_helpers._context_storage import get_test_context
+from algopy_testing._context_helpers.context_storage import get_test_context
 from algopy_testing.constants import MAX_BOX_SIZE
 from algopy_testing.state.utils import cast_from_bytes, cast_to_bytes
 from algopy_testing.utils import as_bytes, as_string

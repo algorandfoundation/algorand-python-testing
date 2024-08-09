@@ -2,7 +2,8 @@ import algopy.itxn
 import algosdk
 import pytest
 from algopy import Bytes, TransactionType, UInt64
-from algopy_testing import algopy_testing_context, arc4, get_test_context
+from algopy_testing import algopy_testing_context, arc4
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import MAX_UINT8, MAX_UINT16, MAX_UINT32, MAX_UINT64, MAX_UINT512
 from algopy_testing.context import AlgopyTestContext
 from algopy_testing.itxn import PaymentInnerTransaction
@@ -132,9 +133,9 @@ def test_algopy_testing_context() -> None:
         account = context.any.account(balance=UInt64(1000))
         assert context.ledger.get_account(account.public_key)
 
-    # When called outside of a context manager, it should raise an error
+    # When accessed outside of a context manager, it should raise an error
     with pytest.raises(ValueError, match="Test context is not initialized!"):
-        get_test_context()
+        context = lazy_context.value
 
 
 def test_get_last_submitted_itxn_loader() -> None:

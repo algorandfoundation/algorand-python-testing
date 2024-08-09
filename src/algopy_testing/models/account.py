@@ -5,7 +5,7 @@ import typing
 
 import algosdk
 
-from algopy_testing._context_helpers._context_storage import get_test_context
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import DEFAULT_ACCOUNT_MIN_BALANCE
 from algopy_testing.primitives import Bytes, UInt64
 from algopy_testing.protocols import BytesBacked
@@ -84,8 +84,7 @@ class Account(BytesBacked):
 
     @property
     def data(self) -> AccountContextData:
-        context = get_test_context()
-        return context.ledger.account_data[self.public_key]
+        return lazy_context.ledger.account_data[self.public_key]
 
     @property
     def balance(self) -> algopy.UInt64:
