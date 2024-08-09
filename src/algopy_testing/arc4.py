@@ -89,7 +89,7 @@ class _TypeInfo:
         return hash(self.arc4_name)
 
     def __repr__(self) -> str:
-        return self.typ.__name__
+        return self.arc4_name
 
 
 def _get_int_literal(literal_type: type) -> int:
@@ -101,8 +101,25 @@ def _get_int_literal(literal_type: type) -> int:
     return int(int_arg)
 
 
+def _create_int_literal(value: int) -> type:
+    return typing.cast(type, typing.Literal[value])
+
+
+def _paramatize_type(typ: type, *params: type) -> type:
+    if len(params) == 1:
+        return typing.cast(type, typ[params[0]])  # type: ignore[index]
+    return typing.cast(type, typ[params])  # type: ignore[index]
+
+
 def _get_cls_name(cls: type, type_params: tuple[type, ...]) -> str:
-    return f"{cls.__name__}[{','.join(t.__name__ for t in type_params)}]"
+    return f"{cls.__name__}[{','.join(_get_type_param_name(t) for t in type_params)}]"
+
+
+def _get_type_param_name(typ: type) -> str:
+    if typ.__name__ == "Literal":
+        int_arg = _get_int_literal(typ)
+        return str(int_arg)
+    return typ.__name__
 
 
 def _check_is_arc4(items: Sequence[typing.Any]) -> Sequence[_ABIEncoded]:
@@ -116,21 +133,10 @@ class _ABIEncoded(BytesBacked):
     type_info: _TypeInfo
     _value: bytes
 
-    def __init__(self, *, type_info: _TypeInfo | None = None):
-        if type_info:
-            self.type_info = type_info
-        else:
-            try:
-                self.type_info = self.type_info
-            except AttributeError:
-                self.type_info = None  # type: ignore[assignment]
-
     @classmethod
-    def from_bytes(
-        cls, value: algopy.Bytes | bytes, /, *, type_info: _TypeInfo | None = None
-    ) -> typing.Self:
+    def from_bytes(cls, value: algopy.Bytes | bytes, /) -> typing.Self:
         """Construct an instance from the underlying bytes (no validation)"""
-        instance = cls(type_info=type_info)
+        instance = cls()
         instance._value = as_bytes(value)
         return instance
 
@@ -180,10 +186,7 @@ class String(_ABIEncoded):
     type_info = _StringTypeInfo()
     _value: bytes
 
-    def __init__(
-        self, value: algopy.String | str = "", /, *, type_info: _TypeInfo | None = None
-    ) -> None:
-        super().__init__(type_info=type_info)
+    def __init__(self, value: algopy.String | str = "", /) -> None:
         import algopy
 
         match value:
@@ -221,7 +224,7 @@ class String(_ABIEncoded):
 
 
 class _UIntTypeInfo(_TypeInfo):
-    def __init__(self, size: int, alias: str | None = None) -> None:
+    def __init__(self, size: int) -> None:
         self.bit_size = size
         if size <= UINT64_SIZE:
             self.max_bits_len = UINT64_SIZE
@@ -231,15 +234,14 @@ class _UIntTypeInfo(_TypeInfo):
             self._type = BigUIntN
         self.max_int = 2**self.bit_size - 1
         self.max_bytes_len = self.bit_size // BITS_IN_BYTE
-        self.alias = alias
 
     @property
     def typ(self) -> type:
-        return self._type
+        return _paramatize_type(self._type, _create_int_literal(self.bit_size))
 
     @property
     def arc4_name(self) -> str:
-        return self.alias or f"uint{self.bit_size}"
+        return f"uint{self.bit_size}"
 
 
 # https://stackoverflow.com/a/75395800
@@ -270,10 +272,7 @@ class _UIntN(_ABIEncoded, typing.Generic[_TBitSize], metaclass=_UIntNMeta):
         self,
         value: algopy.BigUInt | algopy.UInt64 | int = 0,
         /,
-        *,
-        type_info: _TypeInfo | None = None,
     ) -> None:
-        super().__init__(type_info=type_info)
         value = as_int(value, max=self.type_info.max_int)
         bytes_value = int_to_bytes(value, self.type_info.max_bytes_len)
         self._value = as_bytes(bytes_value)
@@ -405,7 +404,9 @@ class _UFixedTypeInfo(_UIntTypeInfo):
 
     @property
     def typ(self) -> type:
-        return _UFixedNxM
+        return _paramatize_type(
+            _UFixedNxM, _create_int_literal(self.bit_size), _create_int_literal(self.precision)
+        )
 
     @property
     def arc4_name(self) -> str:
@@ -443,11 +444,10 @@ class _UFixedNxM(
     type_info: _UFixedTypeInfo
     _value: bytes  # underlying 'bytes' value representing the UFixedNxM
 
-    def __init__(self, value: str = "0.0", /, *, type_info: _TypeInfo | None = None) -> None:
+    def __init__(self, value: str = "0.0", /) -> None:
         """Construct an instance of UFixedNxM where value (v) is determined
         from the original decimal value (d) by the formula v = round(d *
         (10^M))"""
-        super().__init__(type_info=type_info)
         value = as_string(value)
         with decimal.localcontext(
             decimal.Context(
@@ -488,10 +488,24 @@ UFixedNxM = _UFixedNxM
 BigUFixedNxM = _UFixedNxM
 
 
+class _ByteTypeInfo(_UIntTypeInfo):
+
+    def __init__(self) -> None:
+        super().__init__(8)
+
+    @property
+    def typ(self) -> type:
+        return Byte
+
+    @property
+    def arc4_name(self) -> str:
+        return "byte"
+
+
 class Byte(UIntN[typing.Literal[8]]):
     """An ARC4 alias for a UInt8."""
 
-    type_info = _UIntTypeInfo(size=8, alias="byte")
+    type_info = _ByteTypeInfo()
 
 
 UInt8: typing.TypeAlias = UIntN[typing.Literal[8]]
@@ -536,14 +550,7 @@ class Bool(_ABIEncoded):
     _true_int_value = 128
     _false_int_value = 0
 
-    def __init__(
-        self,
-        value: bool = False,  # noqa: FBT001, FBT002
-        /,
-        *,
-        type_info: _TypeInfo | None = None,
-    ) -> None:
-        super().__init__(type_info=type_info)
+    def __init__(self, value: bool = False, /) -> None:  # noqa: FBT001, FBT002
         self._value = int_to_bytes(self._true_int_value if value else self._false_int_value, 1)
 
     def __bool__(self) -> bool:
@@ -562,18 +569,17 @@ _TArrayLength = typing.TypeVar("_TArrayLength", bound=int)
 
 
 class _StaticArrayTypeInfo(_TypeInfo):
-    def __init__(self, item_type: _TypeInfo, size: int, alias: str | None = None):
+    def __init__(self, item_type: _TypeInfo, size: int):
         self.item_type = item_type
         self.size = size
-        self.alias = alias
 
     @property
     def typ(self) -> type:
-        return StaticArray
+        return _paramatize_type(StaticArray, self.item_type.typ, _create_int_literal(self.size))
 
     @property
     def arc4_name(self) -> str:
-        return self.alias or f"{self.item_type.arc4_name}[{self.size}]"
+        return f"{self.item_type.arc4_name}[{self.size}]"
 
     @property
     def is_dynamic(self) -> bool:
@@ -615,15 +621,21 @@ class StaticArray(
     type_info: _StaticArrayTypeInfo
     _value: bytes
 
-    def __init__(self, *_items: _TArrayItem, type_info: _TypeInfo | None = None):
-        super().__init__(type_info=type_info)
-        type_info = self.type_info  # from class
+    def __new__(cls, *items: _TArrayItem) -> typing.Self:
+        try:
+            assert cls.type_info
+        except AttributeError:
+            try:
+                item = items[0]
+            except IndexError:
+                raise TypeError("array must have an item type") from None
+            size = len(items)
+            cls = _paramatize_type(cls, type(item), _create_int_literal(size))
+        instance = super().__new__(cls)
+        return instance
+
+    def __init__(self, *_items: _TArrayItem):
         items = _check_is_arc4(_items)
-        if not type_info and items:
-            item_type = items[0].type_info
-            self.type_info = type_info = _StaticArrayTypeInfo(item_type=item_type, size=len(items))
-        if self.type_info != type_info:
-            raise TypeError(f"expected type {self.type_info!r}, not {type_info!r}")
         for item in items:
             if self.type_info.item_type != item.type_info:
                 raise TypeError(
@@ -673,18 +685,27 @@ class StaticArray(
         return _decode_tuple_items(self._value, [self.type_info.item_type] * self.type_info.size)
 
 
+class _AddressTypeInfo(_StaticArrayTypeInfo):
+
+    def __init__(self) -> None:
+        super().__init__(Byte.type_info, 32)
+
+    @property
+    def typ(self) -> type:
+        return Address
+
+    @property
+    def arc4_name(self) -> str:
+        return "address"
+
+
 class Address(StaticArray[Byte, typing.Literal[32]]):
     """An alias for an array containing 32 bytes representing an Algorand
     address."""
 
-    type_info = _StaticArrayTypeInfo(Byte.type_info, size=32, alias="address")
+    type_info = _AddressTypeInfo()
 
-    def __init__(
-        self,
-        value: Account | str | algopy.Bytes = algosdk.constants.ZERO_ADDRESS,
-        *,
-        type_info: _TypeInfo | None = None,
-    ):
+    def __init__(self, value: Account | str | algopy.Bytes = algosdk.constants.ZERO_ADDRESS):
         """If `value` is a string, it should be a 58 character base32 string,
 
         ie a base32 string-encoded 32 bytes public key + 4 bytes checksum.
@@ -692,7 +713,6 @@ class Address(StaticArray[Byte, typing.Literal[32]]):
         check, use `Address.from_bytes(...)` instead.
         Defaults to the zero-address.
         """
-        super().__init__(type_info=type_info)
         if isinstance(value, str):
             try:
                 bytes_value = algosdk.encoding.decode_address(value)
@@ -731,7 +751,7 @@ class _DynamicArrayTypeInfo(_TypeInfo):
 
     @property
     def typ(self) -> type:
-        return DynamicArray
+        return _paramatize_type(DynamicArray, self.item_type.typ)
 
     @property
     def arc4_name(self) -> str:
@@ -771,17 +791,20 @@ class DynamicArray(  # TODO: inherit from StaticArray?
     type_info: _DynamicArrayTypeInfo
     _value: bytes
 
-    def __init__(self, *_items: _TArrayItem, type_info: _TypeInfo | None = None):
-        super().__init__(type_info=type_info)
-        type_info = self.type_info
+    def __new__(cls, *items: _TArrayItem) -> typing.Self:
+        try:
+            assert cls.type_info
+        except AttributeError:
+            try:
+                item = items[0]
+            except IndexError:
+                raise TypeError("array must have an item type") from None
+            cls = _paramatize_type(cls, type(item))
+        instance = super().__new__(cls)
+        return instance
+
+    def __init__(self, *_items: _TArrayItem):
         items = _check_is_arc4(_items)
-        if not type_info and items:
-            item_type = items[0].type_info
-            self.type_info = type_info = _DynamicArrayTypeInfo(
-                item_type=item_type,
-            )
-        if self.type_info != type_info:
-            raise TypeError(f"expected type {self.type_info!r}, not {type_info!r}")
         for item in items:
             if self.type_info.item_type != item.type_info:
                 raise TypeError(
@@ -834,8 +857,12 @@ class DynamicArray(  # TODO: inherit from StaticArray?
 
     def extend(self, other: Iterable[_TArrayItem], /) -> None:
         """Extend this array with the contents of another array."""
-        if any(o.type_info != self.type_info.item_type for o in other):
-            raise TypeError(f"items must be of type {self.type_info.item_type!r}")
+        incorrect_types = [o.type_info for o in other if o.type_info != self.type_info.item_type]
+        if incorrect_types:
+            other_types_str = ", ".join(sorted(set(map(str, incorrect_types))))
+            raise TypeError(
+                f"items must be of type {self.type_info.item_type!r}: {other_types_str}"
+            )
         x = self._list()
         x.extend(other)
         self._value = self._encode_with_length(x)
@@ -876,9 +903,7 @@ class DynamicBytes(DynamicArray[Byte]):
     @typing.overload
     def __init__(self, value: algopy.Bytes | bytes, /): ...
 
-    def __init__(
-        self, *value: algopy.Bytes | bytes | Byte | UInt8 | int, type_info: _TypeInfo | None = None
-    ):
+    def __init__(self, *value: algopy.Bytes | bytes | Byte | UInt8 | int):
         items = []
         for x in value:
             match x:
@@ -892,7 +917,7 @@ class DynamicBytes(DynamicArray[Byte]):
                     items.append(Byte(int_value))
                 case _:
                     raise TypeError("expected algopy.Bytes | bytes | Byte | UInt8 | int")
-        super().__init__(*items, type_info=type_info)
+        super().__init__(*items)
 
     @property
     def native(self) -> algopy.Bytes:
@@ -908,7 +933,7 @@ class _TupleTypeInfo(_TypeInfo):
 
     @property
     def typ(self) -> type:
-        return Tuple
+        return _paramatize_type(Tuple, *(t.typ for t in self.child_types))
 
     @property
     def arc4_name(self) -> str:
@@ -951,24 +976,24 @@ class Tuple(
     type_info: _TupleTypeInfo
     _value: bytes
 
-    def __init__(
-        self,
-        _items: tuple[typing.Unpack[_TTuple]] = (),  # type: ignore[assignment]
-        /,
-        *,
-        type_info: _TypeInfo | None = None,
-    ):
+    def __new__(
+        cls,
+        items: tuple[typing.Unpack[_TTuple]] = (),  # type: ignore[assignment]
+    ) -> typing.Self:
+        try:
+            assert cls.type_info
+        except AttributeError:
+            if not items:
+                raise TypeError("empty tuple not supported") from None
+            cls = _paramatize_type(cls, *map(type, items))
+        instance = super().__new__(cls)
+        return instance
+
+    def __init__(self, _items: tuple[typing.Unpack[_TTuple]] = (), /):  # type: ignore[assignment]
         """Construct an ARC4 tuple from a python tuple."""
-        super().__init__(type_info=type_info)
-        type_info = self.type_info  # from class
         items = _check_is_arc4(_items)
-        if not type_info:
-            child_types = [item.type_info for item in items]
-            self.type_info = type_info = _TupleTypeInfo(child_types)
-        if self.type_info != type_info:
-            raise TypeError(f"item must be of type {self.type_info!r}, not {type_info!r}")
         if items:
-            for item, expected_type in zip(items, type_info.child_types, strict=True):
+            for item, expected_type in zip(items, self.type_info.child_types, strict=True):
                 item_type_info = item.type_info
                 if expected_type != item_type_info:
                     raise TypeError(
@@ -1016,11 +1041,9 @@ class Struct(metaclass=_StructMeta):
         cls.type_info = _tuple_type_from_struct(cls).type_info
 
     @classmethod
-    def from_bytes(
-        cls, value: algopy.Bytes | bytes, /, *, type_info: _TypeInfo | None = None
-    ) -> typing.Self:
+    def from_bytes(cls, value: algopy.Bytes | bytes, /) -> typing.Self:
         tuple_type = _tuple_type_from_struct(cls)
-        tuple_value = tuple_type.from_bytes(value, type_info=type_info)
+        tuple_value = tuple_type.from_bytes(value)
         return cls(*tuple_value.native)
 
     @classmethod
@@ -1397,7 +1420,7 @@ def _decode_tuple_items(  # noqa: PLR0912
         cls = child_type.typ
         assert issubclass(cls, _ABIEncoded), "expected ARC4 type"
         assert child_value is not None, "expected ARC4 value"
-        val = cls.from_bytes(child_value, type_info=child_type)
+        val = cls.from_bytes(child_value)
         values.append(val)
     return values
 

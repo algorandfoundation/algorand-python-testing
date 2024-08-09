@@ -42,7 +42,7 @@ def test_init_without_key_prefix(
         (BigUInt, String, Bytes(b"key_prefix")),
         (arc4.String, BigUInt, String("key_prefix")),
         (UInt64, arc4.String, "key_prefix"),
-        (String, arc4.DynamicArray, b"key_prefix"),
+        (String, arc4.DynamicArray[arc4.DynamicBytes], b"key_prefix"),
     ],
 )
 def test_init_with_key_prefix(
