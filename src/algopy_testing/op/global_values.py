@@ -6,7 +6,7 @@ from typing import TypedDict, TypeVar
 
 import algosdk
 
-from algopy_testing._context_helpers._context_storage import get_app_data, get_test_context
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.models import Account, Application
 from algopy_testing.primitives import UInt64
 
@@ -23,14 +23,10 @@ class GlobalFields(TypedDict, total=False):
     min_balance: algopy.UInt64
     max_txn_life: algopy.UInt64
     zero_address: algopy.Account
-    group_size: algopy.UInt64
     logic_sig_version: algopy.UInt64
     round: algopy.UInt64
     latest_timestamp: algopy.UInt64
-    current_application_id: algopy.Application
-    creator_address: algopy.Account
-    current_application_address: algopy.Account
-    group_id: algopy.Bytes
+    group_id: algopy.Bytes  # TODO: mock/infer from active txn group?
     caller_application_id: algopy.Application
     caller_application_address: algopy.Account
     asset_create_min_balance: algopy.UInt64
@@ -42,47 +38,39 @@ class GlobalFields(TypedDict, total=False):
 class _Global:
     @property
     def _fields(self) -> GlobalFields:
-        context = get_test_context()
-        return context.ledger.global_fields
+        return lazy_context.ledger.global_fields
 
     @property
     def current_application_address(self) -> algopy.Account:
-        try:
-            return self._fields["current_application_address"]
-        except KeyError:
-            app_address = algosdk.logic.get_application_address(
-                int(self.current_application_id.id)
-            )
-            return Account(app_address)
+        app_address = algosdk.logic.get_application_address(int(self.current_application_id.id))
+        return Account(app_address)
 
     @property
     def current_application_id(self) -> algopy.Application:
-        try:
-            return self._fields["current_application_id"]
-        except KeyError:
-            context = get_test_context()
-            app = context.get_active_application()
-            app_data = get_app_data(int(app.id))
-            if app_data.is_creating:
-                return Application(0)
-            return context.txn.last_active_txn.app_id
+        app = lazy_context.active_application
+        app_data = lazy_context.get_app_data(app)
+        if app_data.is_creating:
+            return Application(0)
+        return app
 
-    # TODO: move creator_address here
+    @property
+    def creator_address(self) -> algopy.Account:
+        app = lazy_context.active_application
+        app_data = lazy_context.get_app_data(app)
+        return app_data.fields["creator"]
+
     @property
     def latest_timestamp(self) -> algopy.UInt64:
         try:
             return self._fields["latest_timestamp"]
         except KeyError:
+            # TODO: cache this for the active txn? this value shouldn't change during execution
             return UInt64(int(time.time()))
 
     @property
     def group_size(self) -> algopy.UInt64:
-        try:
-            return self._fields["group_size"]
-        except KeyError:
-            context = get_test_context()
-            # TODO: active group?
-            return UInt64(len(context.txn.last_txn_group.transactions))
+        group = lazy_context.active_group
+        return UInt64(len(group.transactions))
 
     @property
     def zero_address(self) -> algopy.Account:

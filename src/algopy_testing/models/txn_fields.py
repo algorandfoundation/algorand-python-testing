@@ -254,7 +254,7 @@ class TransactionFieldsBase(abc.ABC):
 
     @property
     def app_args(self) -> Callable[[algopy.UInt64 | int], algopy.Bytes]:
-        return lambda i: self._app_args[int(i)]
+        return _create_array_accessor(self._app_args)
 
     @property
     def type(self) -> algopy.TransactionType:

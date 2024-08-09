@@ -1,18 +1,19 @@
 from __future__ import annotations
 
+import typing
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypedDict, TypeVar
 
 from algopy_testing._context_helpers._context_storage import get_test_context
+from algopy_testing.protocols import UInt64Backed
 
-if TYPE_CHECKING:
+if typing.TYPE_CHECKING:
     import algopy
 
 
-T = TypeVar("T")
+T = typing.TypeVar("T")
 
 
-class AssetFields(TypedDict, total=False):
+class AssetFields(typing.TypedDict, total=False):
     total: algopy.UInt64
     decimals: algopy.UInt64
     default_frozen: bool
@@ -28,13 +29,21 @@ class AssetFields(TypedDict, total=False):
 
 
 @dataclass
-class Asset:
+class Asset(UInt64Backed):
     id: algopy.UInt64
 
     def __init__(self, asset_id: algopy.UInt64 | int = 0):
         from algopy import UInt64
 
         self.id = asset_id if isinstance(asset_id, UInt64) else UInt64(asset_id)
+
+    @property
+    def int_(self) -> int:
+        return self.id.value
+
+    @classmethod
+    def from_int(cls, value: int, /) -> typing.Self:
+        return cls(value)
 
     def balance(self, account: algopy.Account) -> algopy.UInt64:
         context = get_test_context()

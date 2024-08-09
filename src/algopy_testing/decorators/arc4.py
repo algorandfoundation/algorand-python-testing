@@ -8,7 +8,7 @@ import typing
 import algosdk
 
 import algopy_testing
-from algopy_testing._context_helpers._context_storage import get_app_data, get_test_context
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM
 from algopy_testing.primitives import BigUInt, Bytes, String, UInt64
 
@@ -35,7 +35,7 @@ _CreateValues = typing.Literal["allow", "require", "disallow"]
 
 
 def check_create(contract: algopy.Contract, create: _CreateValues) -> None:
-    app_data = get_app_data(contract)
+    app_data = lazy_context.get_app_data(contract)
 
     is_creating = app_data.is_creating
     if is_creating and create == "disallow":
@@ -45,8 +45,7 @@ def check_create(contract: algopy.Contract, create: _CreateValues) -> None:
 
 
 def check_oca(actions: Sequence[_AllowActions]) -> None:
-    context = get_test_context()
-    txn = context.txn.last_active_txn
+    txn = lazy_context.active_group.active_txn
     allowed_actions = [action if isinstance(action, str) else action.name for action in actions]
     if txn.on_completion.name not in allowed_actions:
         raise RuntimeError(
@@ -98,10 +97,11 @@ def abimethod(  # noqa: PLR0913
     @functools.wraps(fn)
     def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
         contract, *app_args = args
-        assert isinstance(contract, algopy_testing.ARC4Contract)
+        assert isinstance(contract, algopy_testing.ARC4Contract), "expected ARC4 contract"
+        assert fn is not None, "expected function"
 
-        context = get_test_context()
-        context.set_active_contract(contract)
+        context = lazy_context.value
+        # TODO: does contract need to be active here?
         # TODO: handle custom txn groups
         # TODO: order kwargs correctly based on fn signature
         ordered_args = [*app_args, *kwargs.values()]
@@ -111,16 +111,12 @@ def abimethod(  # noqa: PLR0913
             arc4_signature=arc4_signature,
             args=ordered_args,
         )
-        context.txn.add_txn_group(txns)
-
-        check_create(contract, create)
-        check_oca(allow_actions)
-        try:
+        with context.txn._maybe_implicit_txn_group(txns):
+            check_create(contract, create)
+            check_oca(allow_actions)
             result = fn(*args, **kwargs)
-        finally:
-            context.clear_active_contract()
-        # TODO: add result along with ARC4 log prefix to application logs?
-        return result
+            # TODO: add result along with ARC4 log prefix to application logs?
+            return result
 
     return wrapper
 
@@ -133,18 +129,21 @@ def _extract_group_txns(
 ) -> list[algopy.gtxn.TransactionBase]:
     method = algosdk.abi.Method.from_signature(arc4_signature)
     method_selector = Bytes(method.get_selector())
-    txn_fields = context._txn_context._active_txn_fields.copy()
+    txn_fields = lazy_context.get_active_txn_fields()
 
-    app = txn_fields.get("app_id", context.get_application_for_contract(contract))
+    contract_app = context.ledger.get_application(contract.__app_id__)
+    txn_app = txn_fields.get("app_id", contract_app)
+    if contract_app != txn_app:
+        raise ValueError("txn app_id does not match contract")
     txn_arrays = _extract_arrays_from_args(
         args,
         method_selector=method_selector,
         sender=context.default_sender,
-        app=app,
+        app=contract_app,
     )
 
     txn_fields.setdefault("sender", context.default_sender)
-    txn_fields.setdefault("app_id", app)
+    txn_fields.setdefault("app_id", contract_app)
     txn_fields.setdefault("accounts", txn_arrays.accounts)
     txn_fields.setdefault("assets", txn_arrays.assets)
     txn_fields.setdefault("apps", txn_arrays.apps)
@@ -312,27 +311,21 @@ def baremethod(
     @functools.wraps(fn)
     def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
         contract, *app_args = args
-        assert isinstance(contract, algopy_testing.ARC4Contract)
+        assert isinstance(contract, algopy_testing.ARC4Contract), "expected ARC4 contract"
+        assert fn is not None, "expected function"
 
-        context = get_test_context()
-        context.set_active_contract(contract)
         # TODO: handle custom txn groups
+        contract_app = lazy_context.ledger.get_application(contract.__app_id__)
         txns = [
-            context.any.txn.application_call(
+            lazy_context.value.any.txn.application_call(
                 # TODO: fill out other fields where possible (see abimethod)
-                sender=context.default_sender,
-                app_id=context.get_active_application(),
+                app_id=contract_app,
             ),
         ]
 
-        context.txn.add_txn_group(txns)
-
-        check_create(contract, create)
-        check_oca(allow_actions)
-        try:
-            result = fn(*args, **kwargs)
-        finally:
-            context.clear_active_contract()
-        return result
+        with lazy_context.txn._maybe_implicit_txn_group(txns):
+            check_create(contract, create)
+            check_oca(allow_actions)
+            return fn(*args, **kwargs)
 
     return wrapper

@@ -3,7 +3,6 @@ from __future__ import annotations
 import typing
 
 import algopy_testing
-from algopy_testing._context_helpers._context_storage import get_app_data
 from algopy_testing.gtxn import TransactionBase
 from algopy_testing.models.txn_fields import get_txn_defaults
 
@@ -58,8 +57,6 @@ class TxnValueGenerator:
 
         if not isinstance(app, algopy_testing.Application):
             raise TypeError("`app_id` must be an instance of algopy.Application")
-        if not get_app_data(int(app.id)):
-            raise ValueError(f"algopy.Application with ID {app.id} not found in testing context!")
 
         new_txn = self._new_gtxn(algopy_testing.gtxn.ApplicationCallTransaction, **fields)
         self.context.set_scratch_space(new_txn, scratch_space or [])

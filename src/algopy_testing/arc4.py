@@ -9,7 +9,7 @@ import typing
 import algosdk
 from Cryptodome.Hash import SHA512
 
-from algopy_testing._context_helpers._context_storage import get_test_context
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import (
     ARC4_RETURN_PREFIX,
     BITS_IN_BYTE,
@@ -1105,8 +1105,7 @@ def emit(event: str | Struct, /, *args: object) -> None:
     """  # noqa: E501
     import algopy
 
-    context = get_test_context()
-    active_txn = context.txn.last_active_txn
+    active_txn = lazy_context.active_group.active_txn
 
     if active_txn.type != algopy.TransactionType.ApplicationCall:
         raise ValueError("Cannot emit events outside of application call context!")
@@ -1130,7 +1129,7 @@ def emit(event: str | Struct, /, *args: object) -> None:
         raise TypeError("expected str or Struct for event")
 
     event_hash = SHA512.new(event_str.encode(), truncate="256").digest()
-    context.add_application_logs(
+    lazy_context.value.add_application_logs(
         app_id=active_txn.app_id,
         logs=event_hash[:4] + event_data.value,
     )

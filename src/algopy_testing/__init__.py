@@ -13,9 +13,6 @@ from algopy_testing.models import (
     Application,
     ARC4Contract,
     Asset,
-    Box,
-    BoxMap,
-    BoxRef,
     Contract,
     LogicSig,
     StateTotals,
@@ -25,7 +22,7 @@ from algopy_testing.models import (
     urange,
 )
 from algopy_testing.primitives import BigUInt, Bytes, String, UInt64
-from algopy_testing.state import GlobalState, LocalState
+from algopy_testing.state import Box, BoxMap, BoxRef, GlobalState, LocalState
 
 __all__ = [
     "ARC4Contract",

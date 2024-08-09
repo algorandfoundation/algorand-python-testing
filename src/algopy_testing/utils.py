@@ -138,7 +138,7 @@ def assert_address_is_valid(address: str) -> None:
     assert algosdk.encoding.is_valid_address(address), "Invalid Algorand address supplied!"
 
 
-def get_default_global_fields(creator_address: algopy.Account) -> GlobalFields:
+def get_default_global_fields() -> GlobalFields:
     """Return the default global fields for the context."""
     import algopy
 
@@ -147,7 +147,6 @@ def get_default_global_fields(creator_address: algopy.Account) -> GlobalFields:
         "min_balance": algopy.UInt64(DEFAULT_ACCOUNT_MIN_BALANCE),
         "max_txn_life": algopy.UInt64(DEFAULT_MAX_TXN_LIFE),
         "zero_address": algopy.Account(algosdk.constants.ZERO_ADDRESS),
-        "creator_address": creator_address,
         "asset_create_min_balance": algopy.UInt64(DEFAULT_ASSET_CREATE_MIN_BALANCE),
         "asset_opt_in_min_balance": algopy.UInt64(DEFAULT_ASSET_OPT_IN_MIN_BALANCE),
         "genesis_hash": algopy.Bytes(DEFAULT_GLOBAL_GENESIS_HASH),

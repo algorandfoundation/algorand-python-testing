@@ -1,7 +1,6 @@
 from algopy_testing.models.account import Account
 from algopy_testing.models.application import Application
 from algopy_testing.models.asset import Asset
-from algopy_testing.models.box import Box, BoxMap, BoxRef
 from algopy_testing.models.contract import ARC4Contract, Contract, StateTotals
 from algopy_testing.models.logicsig import LogicSig, logicsig
 from algopy_testing.models.template_variable import TemplateVar
@@ -12,9 +11,6 @@ __all__ = [
     "Account",
     "Application",
     "Asset",
-    "Box",
-    "BoxMap",
-    "BoxRef",
     "Contract",
     "LogicSig",
     "StateTotals",

@@ -2,21 +2,17 @@ from __future__ import annotations
 
 import typing
 
-from algopy_testing._context_helpers._context_storage import get_account_data, get_test_context
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import (
     MAX_BOX_SIZE,
 )
 from algopy_testing.enums import TransactionType
 from algopy_testing.models import Account, Application, Asset
-from algopy_testing.models.contract import get_global_states, get_local_states
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.uint64 import UInt64
-from algopy_testing.state import GlobalState
 
 if typing.TYPE_CHECKING:
     import algopy
-
-    from algopy_testing.models.contract import ARC4Contract, Contract
 
 
 def err() -> None:
@@ -26,52 +22,51 @@ def err() -> None:
 def _get_app(app: algopy.Application | algopy.UInt64 | int) -> Application:
     if isinstance(app, Application):
         return app
-    context = get_test_context()
     if app >= 1001:
-        return context.ledger.get_application(app)
-    txn = context.txn.last_active_txn
+        return lazy_context.ledger.get_application(app)
+    txn = lazy_context.active_group.active_txn
     return txn.apps(app)
 
 
 def _get_account(acc: algopy.Account | algopy.UInt64 | int) -> Account:
     if isinstance(acc, Account):
         return acc
-    txn = get_test_context().txn.last_active_txn
+    txn = lazy_context.active_group.active_txn
     return txn.accounts(acc)
 
 
 def _get_asset(asset: algopy.Asset | algopy.UInt64 | int) -> Asset:
     if isinstance(asset, Asset):
         return asset
-    context = get_test_context()
     if asset >= 1001:
-        return context.ledger.get_asset(asset)
-    txn = context.txn.last_active_txn
+        return lazy_context.ledger.get_asset(asset)
+    txn = lazy_context.active_group.active_txn
     return txn.assets(asset)
 
 
+def _get_bytes(b: algopy.Bytes | bytes) -> bytes:
+    return b.value if isinstance(b, Bytes) else b
+
+
 def _gload(a: UInt64 | int, b: UInt64 | int, /) -> Bytes | UInt64:
-    context = get_test_context()
-    txn = context.txn.get_txn(int(a))
+    txn = lazy_context.active_group.get_txn(a)
     try:
-        return context.get_scratch_slot(txn, b)
+        return lazy_context.value.get_scratch_slot(txn, b)
     except IndexError:
         raise ValueError("invalid scratch slot") from None
 
 
 class _Scratch:
     def load_bytes(self, a: UInt64 | int, /) -> Bytes | UInt64:
-        context = get_test_context()
-        active_txn = context.txn.last_active_txn
+        active_txn = lazy_context.active_group.active_txn
         return _gload(active_txn.group_index, a)
 
     load_uint64 = load_bytes  # functionally these are the same
 
     @staticmethod
     def store(a: algopy.UInt64 | int, b: algopy.Bytes | algopy.UInt64 | bytes | int, /) -> None:
-        context = get_test_context()
-        active_txn = context.txn.last_active_txn
-        context.set_scratch_slot(active_txn, a, b)
+        active_txn = lazy_context.active_group.active_txn
+        lazy_context.value.set_scratch_slot(active_txn, a, b)
 
 
 Scratch = _Scratch()
@@ -80,24 +75,22 @@ gload_bytes = _gload
 
 
 def gaid(a: algopy.UInt64 | int, /) -> algopy.Application:
-    # TODO: add tests
-    context = get_test_context()
-    txn = context.txn.get_txn(int(a))
+    group = lazy_context.active_group
+    if a >= group.active_transaction_index:
+        raise ValueError("can only get id's for transactions earlier in the group")
 
-    if not txn.type == TransactionType.ApplicationCall:
-        raise TypeError(f"Transaction at index {a} is not an ApplicationCallTransaction")
+    txn = group.get_txn(a)
+    if txn.type not in (TransactionType.ApplicationCall, TransactionType.AssetConfig):
+        raise ValueError(f"transaction at index {a} is not an Application Call or Asset Config")
 
-    app_id = txn.created_application_id
-    if app_id is None:
-        raise ValueError(f"Transaction at index {a} did not create an application")
-
-    return context.ledger.get_application(typing.cast(int, app_id))
+    # TODO: when mocking group transactions, allow specifying the resulting app/asset id
+    #       then return it here
+    raise NotImplementedError
 
 
 def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     # TODO: add tests
-    context = get_test_context()
-    active_txn = context.txn.last_active_txn
+    active_txn = lazy_context.active_group.active_txn
 
     account = _get_account(a)
     balance = account.balance
@@ -185,14 +178,13 @@ class _AssetHoldingGet:
         field: str,
     ) -> tuple[typing.Any, bool]:
         # Resolve account
-        context = get_test_context()
         account = _get_account(account_or_index)
         try:
             asset = _get_asset(asset_or_index)
         except ValueError:
             return UInt64(0), False
 
-        account_data = get_account_data(account.public_key)
+        account_data = lazy_context.get_account_data(account.public_key)
         asset_balance = account_data.opted_asset_balances.get(asset.id)
         if asset_balance is None:
             return UInt64(0), False
@@ -201,7 +193,7 @@ class _AssetHoldingGet:
             return asset_balance, True
         elif field == "frozen":
             try:
-                asset_data = context.ledger.get_asset(asset.id)
+                asset_data = lazy_context.ledger.get_asset(asset.id)
             except KeyError:
                 return UInt64(0), False
             return asset_data.default_frozen, True
@@ -285,48 +277,13 @@ class _AppParamsGet:
 AppParamsGet = _AppParamsGet()
 
 
-# TODO: backing state should be on context rather than contract instances
 class _AppLocal:
-    def _get_local_state(self, key: bytes) -> algopy.LocalState[typing.Any]:
-        test_context = get_test_context()
-        if not test_context or not test_context._active_contract:
-            raise ValueError("No active contract or test context found.")
-
-        local_states = get_local_states(test_context._active_contract)
-        local_state = local_states.get(key)
-        if local_state is None:
-            key_repr = key.decode("utf-8", errors="backslashreplace")
-            raise ValueError(f"Local state with key {key_repr!r} not found")
-        return local_state
-
-    def _get_key(self, b: algopy.Bytes | bytes) -> bytes:
-        return b.value if isinstance(b, Bytes) else b
-
-    def _parse_local_state_value(self, value: typing.Any) -> algopy.Bytes:
-        if hasattr(value, "bytes"):
-            value = value.bytes
-        assert isinstance(value, Bytes)
-        return value
-
     def get_bytes(
         self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
-    ) -> algopy.Bytes:
-        try:
-            key = self._get_key(b)
-            local_state = self._get_local_state(key)[a]
-        except (ValueError, KeyError):
-            # returning UInt64 on key error matches AVM behaviour
-            return UInt64(0)  # type: ignore[return-value]
-        return self._parse_local_state_value(local_state)
+    ) -> algopy.Bytes | algopy.UInt64:
+        return self.get_ex_bytes(a, 0, b)[0]
 
-    def get_uint64(
-        self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
-    ) -> algopy.UInt64:
-        try:
-            local_state = self._get_local_state(self._get_key(b))
-        except (ValueError, KeyError):
-            return UInt64(0)
-        return local_state.get(a)  # type: ignore[no-any-return]
+    get_uint64 = get_bytes
 
     def get_ex_bytes(
         self,
@@ -334,36 +291,29 @@ class _AppLocal:
         b: algopy.Application | algopy.UInt64 | int,
         c: algopy.Bytes | bytes,
         /,
-    ) -> tuple[algopy.Bytes, bool]:
-        contract = _get_contract(b)  # TODO: check if b might also be an array offset
-        local_states = get_local_states(contract)
-        local_state = local_states.get(self._get_key(c))
-
-        if local_state and a in local_state and local_state[a] is not None:
-            return self._parse_local_state_value(local_state[a]), True
+    ) -> tuple[algopy.Bytes | algopy.UInt64, bool]:
+        account = _get_account(a)
+        app = _get_app(b)
+        app_data = lazy_context.get_app_data(app)
+        key = _get_bytes(c)
+        try:
+            native = app_data.get_local_state(account, key)
+        except KeyError:
+            # note: returns uint64 when not found, to match AVM
+            value: Bytes | UInt64 = UInt64()
+            found = False
         else:
-            # note: returns uint64 when not founds, to match AVM
-            return UInt64(), False  # type: ignore[return-value]
+            value = UInt64(native) if isinstance(native, int) else Bytes(native)
+            found = True
+        return value, found
 
-    def get_ex_uint64(
-        self,
-        a: algopy.Account | algopy.UInt64 | int,
-        b: algopy.Application | algopy.UInt64 | int,
-        c: algopy.Bytes | bytes,
-        /,
-    ) -> tuple[algopy.UInt64, bool]:
-        contract = _get_contract(b)
-        local_states = get_local_states(contract)
-        local_state = local_states.get(self._get_key(c))
-
-        if local_state and a in local_state:
-            return UInt64(local_state[a]), True
-        else:
-            return UInt64(), False
+    get_ex_uint64 = get_ex_bytes
 
     def delete(self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /) -> None:
-        local_state = self._get_local_state(self._get_key(b))
-        del local_state[a]
+        app_data = lazy_context.get_app_data(0)
+        account = _get_account(a)
+        key = _get_bytes(b)
+        app_data.set_local_state(account, key, None)
 
     def put(
         self,
@@ -372,125 +322,86 @@ class _AppLocal:
         c: algopy.Bytes | algopy.UInt64 | bytes | int,
         /,
     ) -> None:
-        local_state = self._get_local_state(self._get_key(b))
-        local_state[a] = c
-
-
-def _get_contract(app_id: algopy.Application | algopy.UInt64 | int) -> Contract | ARC4Contract:
-    context = get_test_context()
-
-    app = _get_app(app_id)
-    contract = context.get_contract_for_app(app)
-    if contract is None:
-        raise ValueError(f"Contract with app id {app_id} not found")
-    return contract
+        app_data = lazy_context.get_app_data(0)
+        account = _get_account(a)
+        key = _get_bytes(b)
+        value = c.value if isinstance(c, Bytes | UInt64) else c
+        app_data.set_local_state(account, key, value)
 
 
 AppLocal = _AppLocal()
 
 
 class _AppGlobal:
-    def _get_global_state(self, key: bytes) -> algopy.GlobalState[typing.Any]:
-        test_context = get_test_context()
-        if not test_context._active_contract:
-            raise ValueError(
-                "No active contract found in test context. Make sure you are calling an contract "
-                "method inside a test context."
-            )
+    def get_bytes(self, a: algopy.Bytes | bytes, /) -> algopy.Bytes | algopy.UInt64:
+        return self.get_ex_bytes(0, a)[0]
 
-        global_states = get_global_states(test_context._active_contract)
-        return global_states[key]
-
-    def _get_key(self, b: algopy.Bytes | bytes) -> bytes:
-        return b.value if isinstance(b, Bytes) else b
-
-    def _parse_global_state_value(self, value: typing.Any) -> algopy.Bytes:
-        if hasattr(value, "bytes"):
-            value = value.bytes
-        assert isinstance(value, Bytes)
-        return value
-
-    def get_bytes(self, b: algopy.Bytes | bytes, /) -> algopy.Bytes:
-        try:
-            global_state = self._get_global_state(self._get_key(b))
-            return self._parse_global_state_value(global_state.get(b))
-        except (ValueError, KeyError):
-            return UInt64(0)  # type: ignore[return-value]
-
-    def get_uint64(self, b: algopy.Bytes | bytes, /) -> algopy.UInt64:
-        try:
-            global_state = self._get_global_state(self._get_key(b))
-        except (ValueError, KeyError):
-            return UInt64(0)
-        value = global_state.get(b)
-        # TODO: this might not be a UInt64
-        return value  # type: ignore[no-any-return]
+    get_uint64 = get_bytes
 
     def get_ex_bytes(
-        self, a: algopy.Application | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
-    ) -> tuple[algopy.Bytes, bool]:
-        contract = _get_contract(a)
-        global_states = get_global_states(contract)
-        global_state = global_states.get(self._get_key(b))
-        # TODO: this is subtly different than AVM behaviour
-        value = self._parse_global_state_value(
-            global_state if not isinstance(global_state, GlobalState) else global_state.value
-        )
-        return value or Bytes(), value is not None
+        self,
+        a: algopy.Application | algopy.UInt64 | int,
+        b: algopy.Bytes | bytes,
+        /,
+    ) -> tuple[algopy.Bytes | algopy.UInt64, bool]:
+        app = _get_app(a)
+        app_data = lazy_context.get_app_data(app)
+        key = _get_bytes(b)
+        try:
+            native = app_data.get_global_state(key)
+        except KeyError:
+            # note: returns uint64 when not found, to match AVM
+            value: Bytes | UInt64 = UInt64()
+            found = False
+        else:
+            value = UInt64(native) if isinstance(native, int) else Bytes(native)
+            found = True
+        return value, found
 
-    def get_ex_uint64(
-        self, a: algopy.Application | algopy.UInt64 | int, b: algopy.Bytes | bytes, /
-    ) -> tuple[algopy.UInt64, bool]:
-        contract = _get_contract(a)
-        global_state = contract._get_global_state()
-        value = global_state.get(self._get_key(b))
-        # TODO: this wont work for Application, Asset state
-        return UInt64(value or 0), value is None
+    get_ex_uint64 = get_ex_bytes
 
-    def delete(self, b: algopy.Bytes | bytes, /) -> None:
-        test_context = get_test_context()
-        if not test_context or not test_context._active_contract:
-            raise ValueError("No active contract or test context found.")
-
-        delattr(test_context._active_contract, self._get_key(b).decode("utf-8"))
+    def delete(self, a: algopy.Bytes | bytes, /) -> None:
+        app_data = lazy_context.get_app_data(0)
+        key = _get_bytes(a)
+        app_data.set_global_state(key, None)
 
     def put(
-        self, a: algopy.Bytes | bytes, b: algopy.Bytes | algopy.UInt64 | bytes | int, /
+        self,
+        a: algopy.Bytes | bytes,
+        b: algopy.Bytes | algopy.UInt64 | bytes | int,
+        /,
     ) -> None:
-        global_state = self._get_global_state(self._get_key(a))
-        global_state.value = b
+        app_data = lazy_context.get_app_data(0)
+        key = _get_bytes(a)
+        value = b.value if isinstance(b, Bytes | UInt64) else b
+        app_data.set_global_state(key, value)
 
 
 AppGlobal = _AppGlobal()
 
 
 def arg(a: UInt64 | int, /) -> Bytes:
-    context = get_test_context()
-    if not context:
-        raise ValueError("Test context is not initialized!")
-
-    return context._active_lsig_args[int(a)]
+    # TODO: read from active group
+    return lazy_context.value._active_lsig_args[int(a)]
 
 
 class Box:
     @staticmethod
     def create(a: algopy.Bytes | bytes, b: algopy.UInt64 | int, /) -> bool:
-        context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
         size = int(b)
         if not name_bytes or size > MAX_BOX_SIZE:
             raise ValueError("Invalid box name or size")
-        if context.ledger.get_box(name_bytes):
+        if lazy_context.ledger.get_box(name_bytes):
             return False
-        context.ledger.set_box(name_bytes, b"\x00" * size)
+        lazy_context.ledger.set_box(name_bytes, b"\x00" * size)
         return True
 
     @staticmethod
     def delete(a: algopy.Bytes | bytes, /) -> bool:
-        context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
-        if context.ledger.get_box(name_bytes):
-            context.ledger.delete_box(name_bytes)
+        if lazy_context.ledger.get_box(name_bytes):
+            lazy_context.ledger.delete_box(name_bytes)
             return True
         return False
 
@@ -498,11 +409,10 @@ class Box:
     def extract(
         a: algopy.Bytes | bytes, b: algopy.UInt64 | int, c: algopy.UInt64 | int, /
     ) -> algopy.Bytes:
-        context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
         start = int(b)
         length = int(c)
-        box_content = context.ledger.get_box(name_bytes)
+        box_content = lazy_context.ledger.get_box(name_bytes)
         if not box_content:
             raise RuntimeError("Box does not exist")
         result = box_content[start : start + length]
@@ -510,39 +420,35 @@ class Box:
 
     @staticmethod
     def get(a: algopy.Bytes | bytes, /) -> tuple[algopy.Bytes, bool]:
-        context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
-        box_content = Bytes(context.ledger.get_box(name_bytes))
-        box_exists = context.ledger.box_exists(name_bytes)
+        box_content = Bytes(lazy_context.ledger.get_box(name_bytes))
+        box_exists = lazy_context.ledger.box_exists(name_bytes)
         return box_content, box_exists
 
     @staticmethod
     def length(a: algopy.Bytes | bytes, /) -> tuple[algopy.UInt64, bool]:
-        context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
-        box_content = context.ledger.get_box(name_bytes)
-        box_exists = context.ledger.box_exists(name_bytes)
+        box_content = lazy_context.ledger.get_box(name_bytes)
+        box_exists = lazy_context.ledger.box_exists(name_bytes)
         return UInt64(len(box_content)), box_exists
 
     @staticmethod
     def put(a: algopy.Bytes | bytes, b: algopy.Bytes | bytes, /) -> None:
-        context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
         content = b.value if isinstance(b, Bytes) else b
-        existing_content = context.ledger.get_box(name_bytes)
+        existing_content = lazy_context.ledger.get_box(name_bytes)
         if existing_content and len(existing_content) != len(content):
             raise ValueError("New content length does not match existing box length")
-        context.ledger.set_box(name_bytes, Bytes(content))
+        lazy_context.ledger.set_box(name_bytes, Bytes(content))
 
     @staticmethod
     def replace(
         a: algopy.Bytes | bytes, b: algopy.UInt64 | int, c: algopy.Bytes | bytes, /
     ) -> None:
-        context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
         start = int(b)
         new_content = c.value if isinstance(c, Bytes) else c
-        box_content = context.ledger.get_box(name_bytes)
+        box_content = lazy_context.ledger.get_box(name_bytes)
         if not box_content:
             raise RuntimeError("Box does not exist")
         if start + len(new_content) > len(box_content):
@@ -550,23 +456,22 @@ class Box:
         updated_content = (
             box_content[:start] + new_content + box_content[start + len(new_content) :]
         )
-        context.ledger.set_box(name_bytes, updated_content)
+        lazy_context.ledger.set_box(name_bytes, updated_content)
 
     @staticmethod
     def resize(a: algopy.Bytes | bytes, b: algopy.UInt64 | int, /) -> None:
-        context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
         new_size = int(b)
         if not name_bytes or new_size > MAX_BOX_SIZE:
             raise ValueError("Invalid box name or size")
-        box_content = context.ledger.get_box(name_bytes)
+        box_content = lazy_context.ledger.get_box(name_bytes)
         if not box_content:
             raise RuntimeError("Box does not exist")
         if new_size > len(box_content):
             updated_content = box_content + b"\x00" * (new_size - len(box_content))
         else:
             updated_content = box_content[:new_size]
-        context.ledger.set_box(name_bytes, updated_content)
+        lazy_context.ledger.set_box(name_bytes, updated_content)
 
     @staticmethod
     def splice(
@@ -576,12 +481,11 @@ class Box:
         d: algopy.Bytes | bytes,
         /,
     ) -> None:
-        context = get_test_context()
         name_bytes = a.value if isinstance(a, Bytes) else a
         start = int(b)
         delete_count = int(c)
         insert_content = d.value if isinstance(d, Bytes) else d
-        box_content = context.ledger.get_box(name_bytes)
+        box_content = lazy_context.ledger.get_box(name_bytes)
 
         if not box_content:
             raise RuntimeError("Box does not exist")
@@ -604,4 +508,4 @@ class Box:
             new_content += b"\x00" * (len(box_content) - len(new_content))
 
         # Update the box with the new content
-        context.ledger.set_box(name_bytes, new_content)
+        lazy_context.ledger.set_box(name_bytes, new_content)

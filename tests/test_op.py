@@ -245,8 +245,8 @@ def test_ed25519verify(
         avm_result = get_crypto_ops_avm_result(
             "verify_ed25519verify", a=message, b=signature, c=public_key, suggested_params=sp
         )
-        ctx.txn.add_txn_group([app_call], active_transaction_index=0)
-        result = op.ed25519verify(message, signature, public_key)
+        with ctx.txn.enter_txn_group([app_call], active_transaction_index=0):
+            result = op.ed25519verify(message, signature, public_key)
 
         assert avm_result == result, "The AVM result should match the expected result"
 

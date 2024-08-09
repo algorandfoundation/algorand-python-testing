@@ -33,7 +33,7 @@ def test_vote(context: AlgopyTestContext) -> None:
     contract.votes.value = algopy.UInt64(0)
     voter = context.default_sender
 
-    context.txn.add_txn_group(
+    with context.txn.enter_txn_group(
         gtxns=[
             context.any.txn.application_call(
                 sender=voter,
@@ -46,10 +46,9 @@ def test_vote(context: AlgopyTestContext) -> None:
             ),
         ],
         active_transaction_index=0,
-    )
-
-    # Act
-    result = contract.approval_program()
+    ):
+        # Act
+        result = contract.approval_program()
 
     # Assert
     assert result == algopy.UInt64(1)
@@ -63,7 +62,7 @@ def test_vote_already_voted(context: AlgopyTestContext) -> None:
     voter = context.any.account()
     contract.voted[voter] = algopy.UInt64(1)
 
-    context.txn.add_txn_group(
+    with context.txn.enter_txn_group(
         gtxns=[
             context.any.txn.application_call(
                 sender=voter,
@@ -76,10 +75,8 @@ def test_vote_already_voted(context: AlgopyTestContext) -> None:
             ),
         ],
         active_transaction_index=0,
-    )
-
-    # Act
-    with context.txn.scoped_txn_fields(sender=voter):
+    ):
+        # Act
         result = contract.vote(voter)
 
     # Assert

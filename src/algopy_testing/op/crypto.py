@@ -17,7 +17,9 @@ from ecdsa import (  # type: ignore  # noqa: PGH003
     VerifyingKey,
 )
 
-from algopy_testing import Bytes, OnCompleteAction, UInt64, get_test_context
+from algopy_testing._context_helpers import lazy_context
+from algopy_testing.enums import OnCompleteAction
+from algopy_testing.primitives import Bytes, UInt64
 from algopy_testing.utils import as_bytes
 
 
@@ -67,8 +69,7 @@ def ed25519verify_bare(a: Bytes | bytes, b: Bytes | bytes, c: Bytes | bytes, /) 
 def ed25519verify(a: Bytes | bytes, b: Bytes | bytes, c: Bytes | bytes, /) -> bool:
     from algopy_testing.utils import as_bytes
 
-    ctx = get_test_context()
-    txn = ctx.txn.last_active_txn
+    txn = lazy_context.active_group.active_txn
 
     program_pages = typing.cast(
         Sequence[Bytes],

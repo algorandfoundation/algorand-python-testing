@@ -6,7 +6,7 @@ from copy import deepcopy
 
 import algosdk
 
-from algopy_testing._context_helpers._context_storage import get_test_context
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.enums import TransactionType
 from algopy_testing.models import Account, Asset
 from algopy_testing.models.txn_fields import (
@@ -65,9 +65,8 @@ class _BaseInnerTransactionResult(TransactionFieldsBase):
 
     @property
     def _logs(self) -> list[bytes]:
-        context = get_test_context()
         try:
-            return context._application_logs[int(self.app_id.id)]
+            return lazy_context.value._application_logs[int(self.app_id.id)]
         except KeyError:
             return []
 
@@ -122,12 +121,11 @@ class _BaseInnerTransactionFields:
 
     def __init__(self, **fields: typing.Any) -> None:
         _check_fields(fields)
-        context = get_test_context()
         txn_type = self.txn_class.txn_type or TransactionType.Payment
         fields = {
             **get_txn_defaults(),
             "type": txn_type,
-            "sender": context.get_active_application().address,
+            "sender": lazy_context.active_application.address,
             **fields,
         }
         _narrow_covariant_types(fields)
@@ -139,9 +137,8 @@ class _BaseInnerTransactionFields:
         self.fields.update(fields)
 
     def submit(self) -> typing.Any:
-        context = get_test_context()
         result = _get_itxn_result(self)
-        context._txn_context.add_inner_txn_group([result])  # type: ignore[list-item]
+        lazy_context.txn.add_inner_txn_group([result])  # type: ignore[list-item]
         return result
 
     def copy(self) -> typing.Self:
@@ -191,13 +188,11 @@ def submit_txns(
 
     :returns: A tuple of the resulting inner transactions
     """
-    context = get_test_context()
-
     if len(transactions) > algosdk.constants.TX_GROUP_LIMIT:
         raise ValueError("Cannot submit more than 16 inner transactions at once")
 
     results = tuple(_get_itxn_result(tx) for tx in transactions)
-    context._txn_context.add_inner_txn_group(results)  # type: ignore[arg-type]
+    lazy_context.txn.add_inner_txn_group(results)  # type: ignore[arg-type]
 
     return results
 
@@ -222,8 +217,7 @@ def _on_keyreg(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
 def _on_asset_config(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
     # if it is a txn to create an asset then ensure this is reflected in the context
     if fields.get("config_asset") == Asset():
-        context = get_test_context()
-        created_asset = context.any.asset(
+        created_asset = lazy_context.value.any.asset(
             total=fields["total"],
             decimals=fields["decimals"],
             default_frozen=fields["default_frozen"],

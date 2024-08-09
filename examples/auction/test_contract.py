@@ -136,10 +136,11 @@ def test_delete_application(
 ) -> None:
     # Arrange
     account = context.any.account()
-    context.ledger.patch_global_fields(creator_address=account)
 
     # Act
-    contract = AuctionContract()
+    # setting sender will determine creator
+    with context.txn.scoped_txn_fields(sender=account):
+        contract = AuctionContract()
 
     with context.txn.scoped_txn_fields(on_completion=algopy.OnCompleteAction.DeleteApplication):
         contract.delete_application()

@@ -5,11 +5,11 @@ import algopy
 import pytest
 from algopy_testing import algopy_testing_context, arc4
 from algopy_testing.context import AlgopyTestContext
-from algopy_testing.models.box import Box
 from algopy_testing.primitives.biguint import BigUInt
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.string import String
 from algopy_testing.primitives.uint64 import UInt64
+from algopy_testing.state.box import Box
 from algopy_testing.utils import as_bytes, as_string
 
 BOX_NOT_CREATED_ERROR = "Box has not been created"

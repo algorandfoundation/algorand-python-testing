@@ -73,12 +73,15 @@ def test_transaction_group_management() -> None:
             receiver=context.default_sender,
             amount=UInt64(2000),
         )
-        context.txn.add_txn_group([txn1, txn2])
+        with context.txn.enter_txn_group([txn1, txn2]):
+            assert context.txn._active_group is not None
+            assert len(context.txn._active_group.transactions) == 2
+        assert context.txn._active_group is None
         assert len(context.txn.last_txn_group.transactions) == 2
 
         context.clear_transaction_context()
         with pytest.raises(ValueError, match="No group transactions"):
-            assert len(context.txn.last_txn_group.transactions) == 0
+            assert context.txn.last_txn_group
 
 
 def test_last_itxn_access() -> None:
@@ -96,26 +99,6 @@ def test_last_itxn_access() -> None:
         assert itxn.asset_receiver == app.address
         assert itxn.asset_amount == UInt64(0)
         assert itxn.type == TransactionType.AssetTransfer
-
-
-def test_context_clearing() -> None:
-    with algopy_testing_context() as context:
-        context.any.account(balance=UInt64(1000))
-        context.any.asset(name=Bytes(b"TestAsset"), total=UInt64(1000))
-        context.any.application(
-            approval_program=Bytes(b"TestApp"),
-            clear_state_program=Bytes(b"TestClear"),
-        )
-        context.clear()
-        assert len(context.ledger.account_data) == 0
-        assert len(context.ledger.asset_data) == 0
-        assert len(context.ledger.application_data) == 0
-        with pytest.raises(ValueError, match="No inner transaction group at index"):
-            context.txn.get_submitted_itxn_group(0)
-        with pytest.raises(ValueError, match="No group transactions found"):
-            assert len(context._txn_context.last_txn_group.transactions) == 0
-        assert len(context._application_logs) == 0
-        assert len(context._scratch_spaces) == 0
 
 
 def test_context_reset() -> None:
@@ -169,24 +152,6 @@ def test_get_last_submitted_itxn_loader() -> None:
         context._txn_context.add_inner_txn_group([itxn1, itxn2])
         last_itxn = context.txn.last_submitted_itxn.payment
         assert last_itxn.amount == 2000
-
-
-def test_clear_inner_transaction_groups() -> None:
-    with algopy_testing_context() as context:
-        itxn1 = PaymentInnerTransaction(
-            sender=context.default_sender,
-            receiver=context.default_sender,
-            amount=UInt64(1000),
-        )
-        itxn2 = PaymentInnerTransaction(
-            sender=context.default_sender,
-            receiver=context.default_sender,
-            amount=UInt64(2000),
-        )
-        context._txn_context.add_inner_txn_group([itxn1, itxn2])
-        context.clear_transaction_context()
-        with pytest.raises(ValueError, match="No inner transaction group at index"):
-            context.txn.get_submitted_itxn_group(0)
 
 
 def test_misc_global_state_access() -> None:

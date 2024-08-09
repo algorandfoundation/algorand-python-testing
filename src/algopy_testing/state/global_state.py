@@ -1,10 +1,15 @@
 from __future__ import annotations
 
 import typing
-from typing import cast, overload
+from typing import overload
+
+from algopy_testing._context_helpers import lazy_context
+from algopy_testing.primitives import Bytes, String
+from algopy_testing.state.utils import deserialize, serialize
 
 if typing.TYPE_CHECKING:
     import algopy
+
 
 _T = typing.TypeVar("_T")
 
@@ -16,7 +21,7 @@ class GlobalState(typing.Generic[_T]):
         type_: type[_T],
         /,
         *,
-        key: bytes | str = "",
+        key: Bytes | String | bytes | str = "",
         description: str = "",
     ) -> None: ...
 
@@ -26,7 +31,7 @@ class GlobalState(typing.Generic[_T]):
         initial_value: _T,
         /,
         *,
-        key: bytes | str = "",
+        key: Bytes | String | bytes | str = "",
         description: str = "",
     ) -> None: ...
 
@@ -35,27 +40,27 @@ class GlobalState(typing.Generic[_T]):
         type_or_value: type[_T] | _T,
         /,
         *,
-        key: bytes | str = "",
+        key: Bytes | String | bytes | str = "",
         description: str = "",
     ) -> None:
-        import algopy
-
+        self.description = description
+        self.app_id = lazy_context.maybe_active_app_id
+        match key:
+            case bytes(bytes_key):
+                self._key: algopy.Bytes = Bytes(bytes_key)
+            case Bytes() as key_bytes:
+                self._key = key_bytes
+            case str(str_key):
+                self._key = String(str_key).bytes
+            case String() as key_str:
+                self._key = key_str.bytes
+            case _:
+                raise ValueError("Key must be bytes or str")
         if isinstance(type_or_value, type):
-            self.type_ = type_or_value
-            self._value: _T | None = None
+            self.type_: type[_T] = type_or_value
         else:
             self.type_ = type(type_or_value)
             self._value = type_or_value
-
-        match key:
-            case bytes(key):
-                self._key = algopy.Bytes(key)
-            case str(key):
-                self._key = algopy.String(key).bytes
-            case _:
-                raise ValueError("Key must be bytes or str")
-
-        self.description = description
 
     @property
     def key(self) -> algopy.Bytes:
@@ -76,6 +81,22 @@ class GlobalState(typing.Generic[_T]):
     def value(self) -> None:
         self._value = None
 
+    @property
+    def _value(self) -> _T | None:
+        app_data = lazy_context.get_app_data(self.app_id)
+        try:
+            native = app_data.get_global_state(self._key.value)
+        except KeyError:
+            return None
+        else:
+            return deserialize(self.type_, native)
+
+    @_value.setter
+    def _value(self, value: _T | None) -> None:
+        native = None if value is None else serialize(value)
+        app_data = lazy_context.get_app_data(self.app_id)
+        app_data.set_global_state(self._key.value, native)
+
     def __bool__(self) -> bool:
         return self._value is not None
 
@@ -84,7 +105,7 @@ class GlobalState(typing.Generic[_T]):
             return self._value
         if default is not None:
             return default
-        return cast(_T, self.type_())
+        return self.type_()
 
     def maybe(self) -> tuple[_T | None, bool]:
         return self._value, self._value is not None

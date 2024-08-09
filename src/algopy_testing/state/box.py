@@ -5,6 +5,7 @@ import typing
 import algopy_testing
 from algopy_testing._context_helpers._context_storage import get_test_context
 from algopy_testing.constants import MAX_BOX_SIZE
+from algopy_testing.state.utils import cast_from_bytes, cast_to_bytes
 from algopy_testing.utils import as_bytes, as_string
 
 _TKey = typing.TypeVar("_TKey")
@@ -54,7 +55,7 @@ class Box(typing.Generic[_TValue]):
         context = get_test_context()
         if not context.ledger.box_exists(self.key):
             raise RuntimeError("Box has not been created")
-        return _cast_to_value_type(self._type, context.ledger.get_box(self.key))
+        return cast_from_bytes(self._type, context.ledger.get_box(self.key))
 
     @value.setter
     def value(self, value: _TValue) -> None:
@@ -63,7 +64,7 @@ class Box(typing.Generic[_TValue]):
         Creates the box if it does not exist.
         """
         context = get_test_context()
-        bytes_value = _cast_to_bytes(value)
+        bytes_value = cast_to_bytes(value)
         context.ledger.set_box(self.key, bytes_value)
 
     @value.deleter
@@ -88,7 +89,7 @@ class Box(typing.Generic[_TValue]):
         context = get_test_context()
         box_exists = context.ledger.box_exists(self.key)
         box_content_bytes = context.ledger.get_box(self.key)
-        box_content = _cast_to_value_type(self._type, box_content_bytes)
+        box_content = cast_from_bytes(self._type, box_content_bytes)
         return box_content, box_exists
 
     @property
@@ -380,7 +381,7 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         """
         context = get_test_context()
         key_bytes = self._full_key(key)
-        bytes_value = _cast_to_bytes(value)
+        bytes_value = cast_to_bytes(value)
         context.ledger.set_box(key_bytes, bytes_value)
 
     def __delitem__(self, key: _TKey) -> None:
@@ -416,7 +417,7 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         key_bytes = self._full_key(key)
         box_exists = context.ledger.box_exists(key_bytes)
         box_content_bytes = context.ledger.get_box(key_bytes)
-        box_content = _cast_to_value_type(self._value_type, box_content_bytes)
+        box_content = cast_from_bytes(self._value_type, box_content_bytes)
         return box_content, box_exists
 
     def length(self, key: _TKey) -> algopy.UInt64:
@@ -434,70 +435,4 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         return algopy_testing.UInt64(len(box_content_bytes))
 
     def _full_key(self, key: _TKey) -> algopy.Bytes:
-        return self.key_prefix + _cast_to_bytes(key)
-
-
-def _cast_to_value_type(t: type[_TValue], value: bytes) -> _TValue:  # noqa: PLR0911
-    """
-    assuming _TValue to be one of the followings:
-        - bool,
-        - algopy.Bytes,
-        - algopy.UInt64
-        - algopy.Asset,
-        - algopy.Application,
-        - algopy.UInt64 enums
-        - algopy.arc4.Struct
-        - algopy_testing.BytesBacked
-            - any type with `from_bytes` class method and `bytes` property
-            - .e.g algopy.String, algopy.Address, algopy.arc4.DynamicArray etc.
-    """
-    context = get_test_context()
-
-    if t is bool:
-        return algopy_testing.op.btoi(value) == 1  # type: ignore[return-value]
-    elif t is algopy_testing.Bytes:
-        return algopy_testing.Bytes(value)  # type: ignore[return-value]
-    elif t is algopy_testing.UInt64:
-        return algopy_testing.op.btoi(value)  # type: ignore[return-value]
-    elif t is algopy_testing.OnCompleteAction:
-        return algopy_testing.OnCompleteAction(algopy_testing.op.btoi(value).value)  # type: ignore[return-value]
-    elif t is algopy_testing.TransactionType:
-        return algopy_testing.TransactionType(algopy_testing.op.btoi(value).value)  # type: ignore[return-value]
-    elif t is algopy_testing.Asset:
-        asset_id = algopy_testing.op.btoi(value)
-        return context.ledger.get_asset(asset_id)  # type: ignore[return-value]
-    elif t is algopy_testing.Application:
-        application_id = algopy_testing.op.btoi(value)
-        return context.ledger.get_application(application_id)  # type: ignore[return-value]
-    elif hasattr(t, "from_bytes"):
-        return t.from_bytes(value)  # type: ignore[attr-defined, no-any-return]
-
-    raise ValueError(f"Unsupported type: {t}")
-
-
-def _cast_to_bytes(value: _TValue) -> algopy_testing.Bytes:
-    """
-    assuming _TValue to be one of the followings:
-        - bool,
-        - algopy.Bytes,
-        - algopy.UInt64
-        - algopy.Asset,
-        - algopy.Application,
-        - algopy.UInt64 enums
-        - algopy.arc4.Struct
-        - algopy_testing.BytesBacked
-            - any type with `from_bytes` class method and `bytes` property
-            - .e.g algopy.String, algopy.Address, algopy.arc4.DynamicArray etc.
-    """
-    if isinstance(value, bool):
-        return algopy_testing.op.itob(1 if value else 0)
-    elif isinstance(value, algopy_testing.Bytes):
-        return value
-    elif isinstance(value, algopy_testing.UInt64):
-        return algopy_testing.op.itob(value)
-    elif isinstance(value, algopy_testing.Asset | algopy_testing.Application):
-        return algopy_testing.op.itob(value.id)
-    elif hasattr(value, "bytes"):
-        return typing.cast(algopy_testing.Bytes, value.bytes)
-
-    raise ValueError(f"Unsupported type: {type(value)}")
+        return self.key_prefix + cast_to_bytes(key)

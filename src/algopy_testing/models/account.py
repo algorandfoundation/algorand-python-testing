@@ -8,6 +8,7 @@ import algosdk
 from algopy_testing._context_helpers._context_storage import get_test_context
 from algopy_testing.constants import DEFAULT_ACCOUNT_MIN_BALANCE
 from algopy_testing.primitives import Bytes, UInt64
+from algopy_testing.protocols import BytesBacked
 from algopy_testing.utils import as_bytes
 
 if typing.TYPE_CHECKING:
@@ -69,7 +70,7 @@ class AccountContextData:
     fields: AccountFields = dataclasses.field(default_factory=AccountFields)  # type: ignore[arg-type]
 
 
-class Account:
+class Account(BytesBacked):
     _public_key: bytes
 
     def __init__(self, value: str | Bytes = algosdk.constants.ZERO_ADDRESS, /):

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from algopy_testing._context_helpers._context_storage import get_app_data, get_test_context
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.enums import TransactionType
 from algopy_testing.models import Application
 from algopy_testing.models.txn_fields import TransactionFieldsBase
@@ -41,7 +41,7 @@ class TransactionBase(TransactionFieldsBase):
         if self._fields is not None:
             return self
 
-        return get_test_context().txn.last_txn_group.transactions[self._group_index]
+        return lazy_context.active_group.transactions[self._group_index]
 
     @property
     def fields(self) -> dict[str, object]:
@@ -56,7 +56,7 @@ class TransactionBase(TransactionFieldsBase):
     @property
     def app_id(self) -> algopy.Application:
         app_id: algopy.Application = self.fields["app_id"]  # type: ignore[assignment]
-        app_data = get_app_data(int(app_id.id))
+        app_data = lazy_context.get_app_data(app_id)
         if app_data.is_creating:
             # return zero app while creating
             return Application(0)

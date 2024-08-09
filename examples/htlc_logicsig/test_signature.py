@@ -17,7 +17,7 @@ def context() -> Generator[AlgopyTestContext, None, None]:
 
 def test_seller_receives_payment(context: AlgopyTestContext) -> None:
     # Arrange
-    context.txn.add_txn_group(
+    with context.txn.enter_txn_group(  # noqa: SIM117
         [
             context.any.txn.payment(
                 fee=algopy.UInt64(500),
@@ -29,12 +29,10 @@ def test_seller_receives_payment(context: AlgopyTestContext) -> None:
                 ),
             ),
         ],
-        active_transaction_index=0,
-    )
-
-    # Act
-    with context.scoped_lsig_args([algopy.Bytes(b"secret")]):
-        result = context.execute_logicsig(hashed_time_locked_lsig)
+    ):
+        # Act
+        with context.scoped_lsig_args([algopy.Bytes(b"secret")]):
+            result = context.execute_logicsig(hashed_time_locked_lsig)
 
     # Assert
     assert result is True

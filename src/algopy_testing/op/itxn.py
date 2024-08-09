@@ -2,7 +2,7 @@ import contextlib
 import typing
 from collections.abc import Callable, Sequence
 
-from algopy_testing._context_helpers._context_storage import get_test_context, get_txn_context
+from algopy_testing._context_helpers._context_storage import get_test_context
 from algopy_testing.op.constants import OP_MEMBER_TO_TXN_MEMBER
 
 
@@ -63,22 +63,25 @@ GITxn = _GITxn()
 
 class _ITxnCreate:
     def begin(self) -> None:
-        get_txn_context().begin_itxn_group()
+        context = get_test_context()
+        context.txn.begin_itxn_group()
 
     def next(self) -> None:
-        get_txn_context().append_itxn_group()
+        context = get_test_context()
+        context.txn.append_itxn_group()
 
     def submit(self) -> None:
-        get_txn_context().submit_itxn_group()
+        context = get_test_context()
+        context.txn.submit_itxn_group()
 
     def __getattr__(self, name: str) -> Callable[[typing.Any], None]:
-        context = get_txn_context()
+        context = get_test_context()
 
         def setter(value: typing.Any) -> None:
             field = OP_MEMBER_TO_TXN_MEMBER.get(
                 name.removeprefix("set_"), name.removeprefix("set_")
             )
-            citxn = context.constructing_itxn
+            citxn = context.txn.constructing_itxn
 
             # approval_program and clear_state_program act like a set instead of append
             if field in ("approval_program", "clear_state_program"):

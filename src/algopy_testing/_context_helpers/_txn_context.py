@@ -1,39 +1,62 @@
 from __future__ import annotations
 
+import contextlib
 import typing
-from contextlib import contextmanager
 
 import algosdk
 
 if typing.TYPE_CHECKING:
+    from collections.abc import Iterator
+
     import algopy
 
     from algopy_testing._itxn_loader import InnerTransactionResultType
-    from algopy_testing.context import AlgopyTestContext
 
-import algopy_testing
+from algopy_testing import gtxn
 from algopy_testing._itxn_loader import ITxnGroupLoader, ITxnLoader
 from algopy_testing.itxn import InnerTransaction, submit_txns
+from algopy_testing.models import Application
+from algopy_testing.primitives import UInt64
 
 
 class TransactionContext:
-    def __init__(self, context: AlgopyTestContext) -> None:
-        self.context = context
+    def __init__(self) -> None:
         self._groups: list[TransactionGroup] = []
+        self._active_group: TransactionGroup | None = None
+        # active group is for use by implementations to get the current active group.
+        # Once an app call is complete the active group is added to the list of groups.
+        # It should not be accessed directly by user code, and should be None when
+        # not executing an app call.
+        # User code should use the "last" group properties to do assertions about a recently
+        # executed app call
+
+        # TODO: move the following on to TransactionGroup, to be accessed via _active_group
         self._active_txn_fields: dict[str, typing.Any] = {}
         self._inner_txn_groups: list[typing.Sequence[InnerTransactionResultType]] = []
         self._constructing_itxn_group: list[InnerTransaction] = []
 
-    def get_txn(self, index: int) -> algopy.gtxn.Transaction:
-        import algopy
-
-        return typing.cast(algopy.gtxn.Transaction, self.last_txn_group.transactions[index])
-
-    def add_txn_group(
+    @contextlib.contextmanager
+    def _maybe_implicit_txn_group(
         self,
         gtxns: typing.Sequence[algopy.gtxn.TransactionBase],
         active_transaction_index: int | None = None,
-    ) -> None:
+    ) -> Iterator[None]:
+        """Only creates a group if there isn't one already active."""
+        if self._active_group is None:
+            ctx: typing.ContextManager[None] = self.enter_txn_group(
+                gtxns, active_transaction_index=active_transaction_index
+            )
+        else:
+            ctx = contextlib.nullcontext()
+        with ctx:
+            yield
+
+    @contextlib.contextmanager
+    def enter_txn_group(
+        self,
+        gtxns: typing.Sequence[algopy.gtxn.TransactionBase],
+        active_transaction_index: int | None = None,
+    ) -> Iterator[None]:
         """Adds a new transaction group using a list of transactions and an
         optional index to indicate the active transaction within the group.
 
@@ -49,7 +72,9 @@ class TransactionContext:
         :param active_transaction_index: int | None: (Default value =
             None)
         """
-        if not all(isinstance(txn, algopy_testing.gtxn.TransactionBase) for txn in gtxns):
+        if self._active_group is not None:
+            raise RuntimeError("Existing active group")
+        if not all(isinstance(txn, gtxn.TransactionBase) for txn in gtxns):
             raise ValueError("All transactions must be instances of TransactionBase")
 
         if len(gtxns) > algosdk.constants.TX_GROUP_LIMIT:
@@ -59,13 +84,18 @@ class TransactionContext:
             )
 
         for i, txn in enumerate(gtxns):
-            txn.fields["group_index"] = algopy_testing.UInt64(i)
+            txn.fields["group_index"] = UInt64(i)
 
-        txn_group = TransactionGroup(
+        previous_group = self._active_group
+        self._active_group = TransactionGroup(
             transactions=gtxns,
             active_transaction_index=active_transaction_index,
         )
-        self._groups.append(txn_group)
+        try:
+            yield
+        finally:
+            self._groups.append(self._active_group)
+            self._active_group = previous_group
 
     def add_inner_txn_group(self, group: typing.Sequence[InnerTransactionResultType]) -> None:
         self._inner_txn_groups.append(group)
@@ -76,6 +106,7 @@ class TransactionContext:
         except IndexError as e:
             raise ValueError(f"No inner transaction group at index {index}!") from e
 
+    # TODO: make these private and move onto active group
     @property
     def constructing_itxn(self) -> InnerTransaction:
         if not self._constructing_itxn_group:
@@ -99,14 +130,6 @@ class TransactionContext:
         submit_txns(*self._constructing_itxn_group)
         self._constructing_itxn_group = []
 
-    def clear(
-        self,
-    ) -> None:
-        self._groups.clear()
-        self._active_txn_fields.clear()
-        self._inner_txn_groups.clear()
-        self._constructing_itxn_group.clear()
-
     @property
     def last_txn_group(self) -> TransactionGroup:
         if not self._groups:
@@ -127,8 +150,8 @@ class TransactionContext:
             raise ValueError("No inner transactions in the last group!")
         return ITxnLoader(self._inner_txn_groups[-1][-1])
 
-    @contextmanager
-    def scoped_txn_fields(self, **fields: typing.Any) -> typing.Generator[None, None, None]:
+    @contextlib.contextmanager
+    def scoped_txn_fields(self, **fields: typing.Any) -> Iterator[None]:
         last_txn = self._active_txn_fields
         self._active_txn_fields = fields
         try:
@@ -147,6 +170,19 @@ class TransactionGroup:
         self.active_transaction_index = (
             len(transactions) - 1 if active_transaction_index is None else active_transaction_index
         )
+
+    def get_txn(self, index: int | algopy.UInt64) -> algopy.gtxn.Transaction:
+        try:
+            return self.transactions[int(index)]  # type: ignore[return-value]
+        except IndexError:
+            raise ValueError("invalid group index") from None
+
+    @property
+    def active_app_id(self) -> int:
+        # this should return the true app_id and not 0 if the app is in the creation phase
+        app_id = self.active_txn.fields["app_id"]
+        assert isinstance(app_id, Application)
+        return int(app_id.id)
 
     @property
     def active_txn(self) -> algopy.gtxn.Transaction:

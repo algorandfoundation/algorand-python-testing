@@ -9,24 +9,19 @@ from algopy_testing.utils import assert_address_is_valid, get_default_global_fie
 if typing.TYPE_CHECKING:
     import algopy
 
-    from algopy_testing.context import AlgopyTestContext
     from algopy_testing.models.application import ApplicationContextData, ApplicationFields
     from algopy_testing.models.asset import AssetFields
     from algopy_testing.op.global_values import GlobalFields
 
 
 class LedgerContext:
-    def __init__(self, context: AlgopyTestContext) -> None:
-        self.context = context
+    def __init__(self) -> None:
         self.account_data = defaultdict[str, AccountContextData](get_empty_account)
-        self.account_data[self.context.default_sender.public_key] = get_empty_account()
         self.application_data: dict[int, ApplicationContextData] = {}
         self.asset_data: dict[int, AssetFields] = {}
         self.boxes: dict[bytes, bytes] = {}
         self.blocks: dict[int, dict[str, int]] = {}
-        self.global_fields: GlobalFields = get_default_global_fields(
-            creator_address=self.context.default_sender
-        )
+        self.global_fields: GlobalFields = get_default_global_fields()
 
         self.asset_id = iter(range(1001, 2**64))
         self.app_id = iter(range(1001, 2**64))
@@ -35,9 +30,6 @@ class LedgerContext:
         import algopy
 
         assert_address_is_valid(address)
-        if address not in self.account_data:
-            raise ValueError("Account not found in testing context!")
-
         return algopy.Account(address)
 
     def account_exists(self, address: str) -> bool:
@@ -136,13 +128,3 @@ class LedgerContext:
             )
 
         self.global_fields.update(global_fields)
-
-    def clear(self) -> None:
-        self.account_data.clear()
-        self.application_data.clear()
-        self.asset_data.clear()
-        self.boxes.clear()
-        self.blocks.clear()
-        self.global_fields = get_default_global_fields(creator_address=self.context.default_sender)
-        self.asset_id = iter(range(1001, 2**64))
-        self.app_id = iter(range(1001, 2**64))

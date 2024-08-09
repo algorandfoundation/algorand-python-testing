@@ -1,16 +1,15 @@
 from __future__ import annotations
 
+import typing
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, final
 
 import algopy_testing
-from algopy_testing._context_helpers._context_storage import (
-    get_app_data,
-    get_test_context,
-    link_application,
-)
+from algopy_testing._context_helpers import lazy_context
+from algopy_testing.primitives import Bytes, UInt64
+from algopy_testing.protocols import BytesBacked, UInt64Backed
+from algopy_testing.state.utils import deserialize, serialize
 
-if TYPE_CHECKING:
+if typing.TYPE_CHECKING:
     import algopy
 
 
@@ -31,33 +30,48 @@ class _StateTotals:
 
 
 class _ContractMeta(type):
-    def __call__(cls, *args: Any, **kwargs: dict[str, Any]) -> object:
-        instance = super().__call__(*args, **kwargs)
+    def __init__(cls, *args: typing.Any, **kwargs: typing.Any) -> None:
+        super().__init__(*args, **kwargs)
+        cls.global_state_types = dict[str, type]()
+
+    def __call__(cls, *args: typing.Any, **kwargs: dict[str, typing.Any]) -> object:
+        context = lazy_context.value
+        app_ref = context.any.application()  # new reference to get a unique app_id
+        app_id = app_ref.id.value
+        # TODO: this provides a dummy txn to provide app_id during construction
+        #       however this isn't quite right if the user needs to provide other transactions
+        #       during construction
+        fields = lazy_context.get_active_txn_fields()
+        fields["app_id"] = app_ref
+        txn = context.any.txn.application_call(**fields)
+        with context.txn.enter_txn_group([txn]):
+            instance = super().__call__(*args, **kwargs)
+            instance.__app_id__ = app_id
 
         assert isinstance(instance, Contract)
         cls_state_totals = cls._state_totals or StateTotals()  # type: ignore[attr-defined]
         state_totals = _get_state_totals(instance, cls_state_totals)
-        context = get_test_context()
-        app_ref = context.any.application(
+        context.ledger.update_application(
+            app_id,
             global_num_bytes=algopy_testing.UInt64(state_totals.global_bytes),
             global_num_uint=algopy_testing.UInt64(state_totals.global_uints),
             local_num_bytes=algopy_testing.UInt64(state_totals.local_bytes),
             local_num_uint=algopy_testing.UInt64(state_totals.local_uints),
-            # TODO: this should come from the active txn if available
-            creator=context.default_sender,
+            creator=txn.sender,
         )
-        app_id = int(app_ref.id)
-        link_application(instance, app_id)
-        app_data = get_app_data(app_id)
+
+        app_data = lazy_context.get_app_data(app_id)
+        app_data.contract = instance
         app_data.is_creating = _has_create_methods(cls)
 
         return instance
 
 
 class Contract(metaclass=_ContractMeta):
-    _name: str
-    _scratch_slots: Any | None
-    _state_totals: StateTotals | None
+    __app_id__: int
+    _name: typing.ClassVar[str]
+    _scratch_slots: typing.ClassVar[typing.Any | None]
+    _state_totals: typing.ClassVar[StateTotals | None]
 
     def __init_subclass__(
         cls,
@@ -80,54 +94,80 @@ class Contract(metaclass=_ContractMeta):
     def clear_state_program(self) -> algopy.UInt64 | bool:
         raise NotImplementedError("`clear_state_program` is not implemented.")
 
-    def __getattribute__(self, name: str) -> Any:
+    def __getattribute__(self, name: str) -> typing.Any:
         attr = super().__getattribute__(name)
         # wrap direct calls to approval and clear programs
         # TODO: find a less convoluted pattern
         if name in ("approval_program", "clear_state_program"):
 
-            def set_active_contract(*args: Any, **kwargs: dict[str, Any]) -> Any:
-                # TODO: this should also set up the current txn like abimethod does
-                context = get_test_context()
-                context.set_active_contract(self)
-                try:
-                    return attr(*args, **kwargs)
-                finally:
-                    get_app_data(self).is_creating = False
-                    context.clear_active_contract()
+            def set_active_contract(
+                *args: typing.Any, **kwargs: dict[str, typing.Any]
+            ) -> typing.Any:
+                context = lazy_context.value
+                # TODO: this should populate the app txn as much as possible like abimethod does
+                app = context.ledger.get_application(self.__app_id__)
+                txns = [context.any.txn.application_call(app_id=app)]
+                with context.txn._maybe_implicit_txn_group(txns):
+                    try:
+                        return attr(*args, **kwargs)
+                    finally:
+                        lazy_context.get_app_data(self).is_creating = False
 
             return set_active_contract
 
         if callable(attr) and not name.startswith("__"):
 
-            def set_is_creating(*args: Any, **kwargs: dict[str, Any]) -> Any:
+            def set_is_creating(*args: typing.Any, **kwargs: dict[str, typing.Any]) -> typing.Any:
                 try:
                     return attr(*args, **kwargs)
                 finally:
-                    get_app_data(self).is_creating = False
+                    lazy_context.get_app_data(self).is_creating = False
 
             return set_is_creating
 
-        return attr
+        cls = type(self)
+        assert isinstance(cls, _ContractMeta)
+        try:
+            unproxied_global_state_type = cls.global_state_types[name]
+        except KeyError:
+            return attr
+        app_data = lazy_context.get_app_data(self.__app_id__)
+        value = app_data.get_global_state(name.encode("utf8"))
+        return deserialize(unproxied_global_state_type, value)
 
-    def __setattr__(self, name: str, value: Any) -> None:
+    def __setattr__(self, name: str, value: typing.Any) -> None:
         name_bytes = algopy_testing.String(name).bytes
         match value:
-            case (
-                algopy_testing.Box()
-                | algopy_testing.BoxRef()
-                | algopy_testing.GlobalState()
-                | algopy_testing.LocalState()
-            ) as state if not state._key:
-                value._key = name_bytes
-            case algopy_testing.BoxMap() as state if state._key_prefix is None:
-                value._key_prefix = name_bytes
+            case (algopy_testing.Box() | algopy_testing.BoxRef()) as box if not box._key:
+                box._key = name_bytes
+            case (algopy_testing.GlobalState() | algopy_testing.LocalState()) as state:
+                # ensure assigned states have the contracts app_id
+                state.app_id = _get_self_or_ambient_app_id(self)
+                if not state._key:
+                    state._key = name_bytes
+            case algopy_testing.BoxMap() as box_map if box_map._key_prefix is None:
+                box_map._key_prefix = name_bytes
+            case Bytes() | UInt64() | BytesBacked() | UInt64Backed() | bool():
+                app_id = _get_self_or_ambient_app_id(self)
+                app = lazy_context.get_app_data(app_id)
+                app.set_global_state(name_bytes.value, serialize(value))
+                cls = type(self)
+                assert isinstance(cls, _ContractMeta)
+                cls.global_state_types[name] = type(value)
 
         super().__setattr__(name, value)
 
 
+def _get_self_or_ambient_app_id(contract: Contract) -> int:
+    try:
+        return contract.__app_id__
+    # during construction app_id is not available, get from context instead
+    except AttributeError:
+        return lazy_context.maybe_active_app_id
+
+
 class ARC4Contract(Contract):
-    @final
+    @typing.final
     def approval_program(self) -> algopy.UInt64 | bool:
         raise NotImplementedError(
             "`approval_program` is not implemented. To test ARC4 specific logic, "
@@ -138,25 +178,18 @@ class ARC4Contract(Contract):
         return True
 
 
-def _is_uint64_backed_type(typ: type) -> bool:
-    return issubclass(
-        typ, algopy_testing.UInt64 | algopy_testing.Application | algopy_testing.Asset | bool
-    )
-
-
 def _get_state_totals(contract: Contract, cls_state_totals: StateTotals) -> _StateTotals:
+    from algopy_testing.primitives import UInt64
+    from algopy_testing.protocols import UInt64Backed
+
     global_bytes = global_uints = local_bytes = local_uints = 0
-    for value in get_global_states(contract).values():
-        if isinstance(value, algopy_testing.GlobalState):
-            type_ = value.type_
-        else:
-            type_ = type(value)
-        if _is_uint64_backed_type(type_):
+    for type_ in get_global_states(contract).values():
+        if issubclass(type_, UInt64 | UInt64Backed):
             global_uints += 1
         else:
             global_bytes += 1
-    for local_state in get_local_states(contract).values():
-        if _is_uint64_backed_type(local_state.type_):
+    for type_ in get_local_states(contract).values():
+        if issubclass(type_, UInt64 | UInt64Backed):
             local_uints += 1
         else:
             local_bytes += 1
@@ -187,9 +220,9 @@ def _has_create_methods(contract_cls: _ContractMeta) -> bool:
     return False
 
 
-def get_local_states(contract: Contract) -> dict[bytes, algopy_testing.LocalState[Any]]:
+def get_local_states(contract: Contract) -> dict[bytes, type]:
     local_states = {
-        attribute._key.value: attribute
+        attribute._key.value: attribute.type_
         for _, attribute in vars(contract).items()
         if isinstance(attribute, algopy_testing.LocalState)
     }
@@ -197,7 +230,7 @@ def get_local_states(contract: Contract) -> dict[bytes, algopy_testing.LocalStat
     return local_states
 
 
-def get_global_states(contract: Contract) -> dict[bytes, algopy_testing.GlobalState[Any]]:
+def get_global_states(contract: Contract) -> dict[bytes, type]:
     global_states = {}
     for key, attribute in vars(contract).items():
         if isinstance(
@@ -207,10 +240,12 @@ def get_global_states(contract: Contract) -> dict[bytes, algopy_testing.GlobalSt
             | algopy_testing.BoxMap
             | algopy_testing.BoxRef,
         ) or callable(attribute):
-            pass
+            continue
         if isinstance(attribute, algopy_testing.GlobalState):
-            global_states[attribute._key.value] = attribute
+            global_states[attribute.key.value] = attribute.type_
+        elif isinstance(attribute, UInt64Backed | BytesBacked | UInt64 | Bytes):
+            global_states[key.encode()] = type(attribute)
         else:
-            global_states[key.encode()] = algopy_testing.GlobalState(attribute, key=key)
+            pass
 
     return global_states

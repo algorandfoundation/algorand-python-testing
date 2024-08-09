@@ -8,7 +8,6 @@ import algosdk
 
 import algopy_testing
 from algopy_testing._context_helpers import LedgerContext, TransactionContext
-from algopy_testing._context_helpers._context_storage import get_app_data
 from algopy_testing._value_generators import (
     AlgopyValueGenerator,
     ARC4ValueGenerator,
@@ -48,23 +47,24 @@ class AlgopyTestContext:
     ) -> None:
         import algopy
 
-        self._active_contract: algopy_testing.Contract | None = None
-        self._scratch_spaces = defaultdict[
-            algopy_testing.gtxn.TransactionBase, list[algopy.Bytes | algopy.UInt64]
-        ](get_new_scratch_space)
         # TODO: remove direct reads of data mappings outside of context_storage
-        self._contract_app_ids = dict[algopy.Contract, int]()
-        # TODO: this map is from app_id to logs, should probably instead be stored against
-        #       the appropriate txn
         self._default_sender = default_sender or algopy.Account(
             algosdk.account.generate_account()[1]
         )
-        self._application_logs: dict[int, list[bytes]] = {}
-        self._active_lsig_args: Sequence[algopy.Bytes] = []
         self._template_vars: dict[str, typing.Any] = template_vars or {}
 
-        self._ledger_context = LedgerContext(self)
-        self._txn_context = TransactionContext(self)
+        # TODO: this map is a global mapping of app_id to logs
+        #       should instead be a mapping within a txn group
+        self._application_logs: dict[int, list[bytes]] = {}
+        # TODO: move onto TransactionGroup
+        self._scratch_spaces = defaultdict[
+            algopy_testing.gtxn.TransactionBase, list[algopy.Bytes | algopy.UInt64]
+        ](get_new_scratch_space)
+        # TODO: remove and pass args directly via execute_logicsig
+        self._active_lsig_args: Sequence[algopy.Bytes] = []
+
+        self._ledger_context = LedgerContext()
+        self._txn_context = TransactionContext()
         self._value_generator = AlgopyValueGenerator(self)
 
     @property
@@ -90,15 +90,7 @@ class AlgopyTestContext:
     def get_application_for_contract(
         self, contract: algopy.Contract | algopy.ARC4Contract
     ) -> algopy.Application:
-        try:
-            app_id = self._contract_app_ids[contract]
-        except KeyError:
-            raise ValueError("Contract not found in testing context!") from None
-        return self.ledger.get_application(app_id)
-
-    def get_contract_for_app(self, app: algopy.Application) -> algopy.Contract | None:
-        app_data = get_app_data(int(app.id))
-        return app_data.contract
+        return self.ledger.get_application(contract.__app_id__)
 
     def set_scratch_space(
         self,
@@ -145,18 +137,6 @@ class AlgopyTestContext:
         :returns: List of scratch space values.
         """
         return self._scratch_spaces[txn]
-
-    def set_active_contract(self, contract: algopy.Contract | algopy.ARC4Contract) -> None:
-        """Set the active contract for the current context. By default, invoked
-        automatically as part of invocation of any app calls against instances
-        of Contract or ARC4Contract classes.
-
-        :param contract: The contract to set as active.
-        :type contract: algopy.Contract | algopy.ARC4Contract
-        :param contract: algopy.Contract | algopy.ARC4Contract:
-        :returns: None
-        """
-        self._active_contract = contract
 
     def set_template_var(self, name: str, value: typing.Any) -> None:
         """Set a template variable for the current context.
@@ -232,19 +212,6 @@ class AlgopyTestContext:
 
         return self._application_logs[app_id]
 
-    # TODO: should not expose this to the user, "active" transactions/apps should only
-    #       be while a function is executing
-    def get_active_application(self) -> algopy.Application:
-        """Gets the Application associated with the active contract.
-
-        :returns: The Application instance for the active contract.
-        :rtype: algopy.Application
-        :raises ValueError: If no active contract is set.
-        """
-        if self._active_contract is None:
-            raise ValueError("No active contract")
-        return self.get_application_for_contract(self._active_contract)
-
     @contextmanager
     def scoped_lsig_args(
         self, lsig_args: Sequence[algopy.Bytes] | None = None
@@ -284,32 +251,16 @@ class AlgopyTestContext:
         """
         return lsig.func()
 
-    def clear_active_contract(self) -> None:
-        """Clear the active contract."""
-        self._active_contract = None
-
-    def clear_ledger_context(self) -> None:
-        """Clear the ledger context."""
-        self._ledger_context.clear()
-
     def clear_transaction_context(self) -> None:
         """Clear the transaction context."""
-        self._txn_context.clear()
-
-    def clear(self) -> None:
-        """Clear all data, including accounts, applications, assets, inner
-        transactions, transaction groups, and application_logs."""
-        self._application_logs.clear()
-        self._scratch_spaces.clear()
-        self._active_contract = None
-        self._template_vars.clear()
-        self.clear_transaction_context()
-        self.clear_ledger_context()
+        self._txn_context = TransactionContext()
 
     def reset(self) -> None:
         """Reset the test context to its initial state, clearing all data and
         resetting ID counters."""
 
-        self.clear()
-        self._txn_context = TransactionContext(self)
-        self._ledger_contex = LedgerContext(self)
+        self._application_logs.clear()
+        self._scratch_spaces.clear()
+        self._template_vars.clear()
+        self._txn_context = TransactionContext()
+        self._ledger_context = LedgerContext()

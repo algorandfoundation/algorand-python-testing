@@ -2,14 +2,13 @@ from __future__ import annotations
 
 import typing
 
-from algopy_testing._context_helpers._context_storage import get_test_context
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.op.constants import OP_MEMBER_TO_TXN_MEMBER
 
 
 class _Txn:
     def __getattr__(self, name: str) -> typing.Any:
-        context = get_test_context()
-        active_txn = context.txn.last_active_txn
+        active_txn = lazy_context.active_group.active_txn
         txn_name = OP_MEMBER_TO_TXN_MEMBER.get(name, name)
         field = getattr(active_txn, txn_name)
         # fields with multiple values are exposed as functions in the stubs
@@ -28,8 +27,7 @@ class _Txn:
 
 class _GTxn:
     def __getattr__(self, name: str) -> typing.Any:
-        context = get_test_context()
-        txn_group = context.txn.last_txn_group
+        txn_group = lazy_context.active_group
 
         # for gtxn all fields are functions with at least one argument (the group_index)
         def get_field(group_index: int, array_index: int | None = None) -> typing.Any:
