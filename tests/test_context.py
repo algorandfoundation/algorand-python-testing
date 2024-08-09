@@ -4,6 +4,7 @@ import pytest
 from algopy import Bytes, TransactionType, UInt64
 from algopy_testing import algopy_testing_context, arc4
 from algopy_testing._context_helpers import lazy_context
+from algopy_testing._context_helpers.txn_context import TransactionGroup
 from algopy_testing.constants import MAX_UINT8, MAX_UINT16, MAX_UINT32, MAX_UINT64, MAX_UINT512
 from algopy_testing.context import AlgopyTestContext
 from algopy_testing.itxn import PaymentInnerTransaction
@@ -91,9 +92,9 @@ def test_last_itxn_access() -> None:
         dummy_asset = context.any.asset()
         contract.opt_in_dummy_asset(dummy_asset)
 
-        assert len(context.txn.get_submitted_itxn_group(0)) == 1
+        assert len(context.txn.last_txn_group.get_submitted_itxn_group(0)) == 1
         itxn: algopy.itxn.AssetTransferInnerTransaction = (
-            context.txn.last_submitted_itxn.asset_transfer
+            context.txn.last_txn_group.last_submitted_itxn.asset_transfer
         )
         app = context.get_application_for_contract(contract)
         assert itxn.asset_sender == app.address
@@ -114,8 +115,6 @@ def test_context_reset() -> None:
         assert len(context.ledger.account_data) == 0
         assert len(context.ledger.asset_data) == 0
         assert len(context.ledger.application_data) == 0
-        with pytest.raises(ValueError, match="No inner transaction group at index"):
-            context.txn.get_submitted_itxn_group(0)
         with pytest.raises(ValueError, match="No group transactions found"):
             assert context.txn.last_txn_group
         assert len(context._application_logs) == 0
@@ -150,8 +149,9 @@ def test_get_last_submitted_itxn_loader() -> None:
             receiver=context.default_sender,
             amount=UInt64(2000),
         )
-        context._txn_context.add_inner_txn_group([itxn1, itxn2])
-        last_itxn = context.txn.last_submitted_itxn.payment
+        group = TransactionGroup([], 0)
+        group._add_inner_txn_group([itxn1, itxn2])
+        last_itxn = group.last_submitted_itxn.payment
         assert last_itxn.amount == 2000
 
 

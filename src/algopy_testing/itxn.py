@@ -138,7 +138,7 @@ class _BaseInnerTransactionFields:
 
     def submit(self) -> typing.Any:
         result = _get_itxn_result(self)
-        lazy_context.txn.add_inner_txn_group([result])  # type: ignore[list-item]
+        lazy_context.active_group._add_inner_txn_group([result])  # type: ignore[list-item]
         return result
 
     def copy(self) -> typing.Self:
@@ -192,7 +192,7 @@ def submit_txns(
         raise ValueError("Cannot submit more than 16 inner transactions at once")
 
     results = tuple(_get_itxn_result(tx) for tx in transactions)
-    lazy_context.txn.add_inner_txn_group(results)  # type: ignore[arg-type]
+    lazy_context.active_group._add_inner_txn_group(results)  # type: ignore[arg-type]
 
     return results
 

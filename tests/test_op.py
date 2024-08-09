@@ -938,7 +938,7 @@ def test_itxn_ops(context: AlgopyTestContext) -> None:
     contract.verify_itxn_ops()
 
     # assert
-    itxn_group = context.txn.get_submitted_itxn_group(0)
+    itxn_group = context.txn.last_txn_group.get_submitted_itxn_group(0)
     appl_itxn = itxn_group.application_call(0)
     pay_itxn = itxn_group.payment(1)
 

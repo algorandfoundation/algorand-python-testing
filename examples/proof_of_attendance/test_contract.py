@@ -95,6 +95,6 @@ def test_claim_poa(
     claim(opt_in_txn)
 
     # Assert
-    axfer_itxn = context.txn.get_submitted_itxn_group(-1).asset_transfer(0)
+    axfer_itxn = context.txn.last_txn_group.get_submitted_itxn_group(-1).asset_transfer(0)
     assert axfer_itxn.asset_receiver == context.default_sender
     assert axfer_itxn.asset_amount == algopy.UInt64(1)
