@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import typing
 from collections import defaultdict
-from contextlib import contextmanager
 
 import algosdk
 
@@ -21,7 +20,7 @@ from algopy_testing.utils import (
 )
 
 if typing.TYPE_CHECKING:
-    from collections.abc import Generator, Sequence
+    from collections.abc import Sequence
 
     import algopy
 
@@ -60,9 +59,7 @@ class AlgopyTestContext:
         self._scratch_spaces = defaultdict[
             algopy_testing.gtxn.TransactionBase, list[algopy.Bytes | algopy.UInt64]
         ](get_new_scratch_space)
-        # TODO: remove and pass args directly via execute_logicsig
-        self._active_lsig_args: Sequence[algopy.Bytes] = []
-
+        self._active_lsig_args: Sequence[algopy.Bytes] = ()
         self._ledger_context = LedgerContext()
         self._txn_context = TransactionContext()
         self._value_generator = AlgopyValueGenerator(self)
@@ -212,44 +209,21 @@ class AlgopyTestContext:
 
         return self._application_logs[app_id]
 
-    @contextmanager
-    def scoped_lsig_args(
-        self, lsig_args: Sequence[algopy.Bytes] | None = None
-    ) -> Generator[None, None, None]:
-        """Temporarily set the active logic signature arguments within a
-        context.
-
-        This context manager allows you to set logic signature arguments
-        for the duration of a specific block of code. When the context
-        is exited, the previous arguments are restored.
-
-        :param lsig_args: The logic signature arguments to set. If None,
-            an empty list will be used.
-        :type lsig_args: Sequence[algopy.Bytes] | None
-        :yield: None
-        :rtype: Generator[None, None, None]
-        """
-        last_lsig_args = self._active_lsig_args
-        self._active_lsig_args = lsig_args or []
-        try:
-            yield
-        finally:
-            self._active_lsig_args = last_lsig_args
-
-    def execute_logicsig(
-        self,
-        lsig: algopy.LogicSig,
-    ) -> bool | algopy.UInt64:
-        """Execute a logic signature.
-
-        This method executes the given logic signature.
+    def execute_logicsig(self, lsig: algopy.LogicSig, *args: algopy.Bytes) -> bool | algopy.UInt64:
+        """Execute a logic signature using provided args.
 
         :param lsig: The logic signature to execute.
         :type lsig: algopy.LogicSig
+        :param args: The logic signature arguments to use
+        :type args: algopy.Bytes
         :return: The result of executing the logic signature function.
         :rtype: bool | algopy.UInt64
         """
-        return lsig.func()
+        self._active_lsig_args = args
+        try:
+            return lsig.func()
+        finally:
+            self._active_lsig_args = ()
 
     def clear_transaction_context(self) -> None:
         """Clear the transaction context."""
