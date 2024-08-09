@@ -1,43 +1,162 @@
 # Coverage
 
-See which `algorand-python` stubs are implemented by the `algorand-python-testing` library. There are 3 general categories:
+See which `algorand-python` stubs are implemented by the `algorand-python-testing` library. See the [Concepts](testing-guide/concepts.md#types-of-algopy-stub-implementations) section for more details on the implementation categories.
 
-1. **Implemented**: Full native Python equivalent matching AVM computation. For example, `algopy.op.sha256` and other cryptographic operations behave identically in AVM and unit tests written with this library.
+Based on the definitions provided and the implementation details in the `src` directory, here is the classification for the abstractions outlined in the table under the `Name` column:
 
-2. **Emulated**: Implemented with the aid of the `AlgopyTestContext` manager, which mimics major AVM behavior to allow this abstraction to function as expected in a test context. For example, when you call `Box.put` on an `algopy.Box` object within a test context, it won't interact with the real Algorand network. Instead, it will store the data in the test context manager behind the scenes, while still providing the same interface as the real `Box` class.
-
-3. **Mockable**: No implementation provided, but can be easily mocked or patched to inject intended behavior. For example, `algopy.abi_call` can be mocked to return or act as needed; otherwise, it will raise a "not implemented" exception. Mockable types are exceptional cases where behavior or functionality does not make sense within a unit testing context or would require an unnecessary amount of complexity without significant benefit to the end user (a developer writing offline unit tests).
-
-> Note, below table not exhaustive yet, but will be expanded along with initial stable release.
-
-| Name                                                         | Implementation Status |
-| ------------------------------------------------------------ | --------------------- |
-| Primitives (UInt64, BigUInt, Bytes, String)                  | Implemented           |
-| urange                                                       | Implemented           |
-| All crypto ops in op.\* namespace (to be expanded in detail) | Implemented           |
-| arc4.\* namespace (to be expanded in detail)                 | Implemented           |
-| uenumerate                                                   | Implemented           |
-| StateTotals                                                  | Implemented           |
-| Txn, GTxn, ITxn                                              | Emulated              |
-| Asset                                                        | Emulated              |
-| Account                                                      | Emulated              |
-| Application                                                  | Emulated              |
-| subroutine                                                   | Emulated              |
-| Global                                                       | Emulated              |
-| op.Box.\*                                                    | Emulated              |
-| Box                                                          | Emulated              |
-| BoxRef                                                       | Emulated              |
-| BoxMap                                                       | Emulated              |
-| Block                                                        | Emulated              |
-| logicsig                                                     | Emulated              |
-| log                                                          | Emulated              |
-| itxn.\* namespace (inner transactions)                       | Emulated              |
-| gtxn.\* namespace (group transactions)                       | Emulated              |
-| op.ITxnCreate                                                | Emulated              |
-| ensure_budget                                                | Mockable              |
-| op.EllipticCurve                                             | Mockable              |
-| op.AssetParamsGet                                            | Emulated              |
-| op.AppParamsGet                                              | Emulated              |
-| op.AppLocal                                                  | Emulated              |
-| op.AppGlobal                                                 | Emulated              |
-| op.AcctParamsGet                                             | Emulated              |
+| Name                                        | Implementation type |
+| ------------------------------------------- | ------------------- |
+| algopy.UInt64                               | Native              |
+| algopy.BigUInt                              | Native              |
+| algopy.Bytes                                | Native              |
+| algopy.String                               | Native              |
+| algopy.arc4.Bool                            | Native              |
+| algopy.Application                          | Emulated            |
+| algopy.Asset                                | Emulated            |
+| algopy.Account                              | Emulated            |
+| algopy.urange                               | Native              |
+| algopy.subroutine                           | Native              |
+| algopy.op.vrf_verify                        | Mockable            |
+| algopy.op.substring                         | Native              |
+| algopy.op.sqrt                              | Native              |
+| algopy.op.shr                               | Native              |
+| algopy.op.shl                               | Native              |
+| algopy.op.sha512_256                        | Native              |
+| algopy.op.sha3_256                          | Native              |
+| algopy.op.sha256                            | Native              |
+| algopy.op.setbyte                           | Native              |
+| algopy.op.setbit_uint64                     | Native              |
+| algopy.op.setbit_bytes                      | Native              |
+| algopy.op.select_uint64                     | Native              |
+| algopy.op.select_bytes                      | Native              |
+| algopy.op.replace                           | Native              |
+| algopy.op.mulw                              | Native              |
+| algopy.op.min_balance                       | Emulated            |
+| algopy.op.keccak256                         | Native              |
+| algopy.op.itob                              | Native              |
+| algopy.op.gload_uint64                      | Emulated            |
+| algopy.op.gload_bytes                       | Emulated            |
+| algopy.op.getbyte                           | Native              |
+| algopy.op.getbit                            | Native              |
+| algopy.op.gaid                              | Emulated            |
+| algopy.op.extract_uint64                    | Native              |
+| algopy.op.extract_uint32                    | Native              |
+| algopy.op.extract_uint16                    | Native              |
+| algopy.op.extract                           | Native              |
+| algopy.op.expw                              | Native              |
+| algopy.op.exp                               | Native              |
+| algopy.op.exit                              | Native              |
+| algopy.op.err                               | Native              |
+| algopy.op.ed25519verify_bare                | Native              |
+| algopy.op.ed25519verify                     | Native              |
+| algopy.op.ecdsa_verify                      | Native              |
+| algopy.op.ecdsa_pk_recover                  | Native              |
+| algopy.op.ecdsa_pk_decompress               | Native              |
+| algopy.op.divw                              | Native              |
+| algopy.op.divmodw                           | Native              |
+| algopy.op.concat                            | Native              |
+| algopy.op.bzero                             | Native              |
+| algopy.op.btoi                              | Native              |
+| algopy.op.bsqrt                             | Native              |
+| algopy.op.bitlen                            | Native              |
+| algopy.op.base64_decode                     | Native              |
+| algopy.op.balance                           | Emulated            |
+| algopy.op.arg                               | Emulated            |
+| algopy.op.app_opted_in                      | Emulated            |
+| algopy.op.addw                              | Native              |
+| algopy.op.VrfVerify                         | Mockable            |
+| algopy.op.Txn                               | Emulated            |
+| algopy.op.Scratch                           | Emulated            |
+| algopy.op.JsonRef                           | Native              |
+| algopy.op.ITxn                              | Emulated            |
+| algopy.op.Global                            | Emulated            |
+| algopy.op.GTxn                              | Emulated            |
+| algopy.op.GITxn                             | Emulated            |
+| algopy.op.ECDSA                             | Native              |
+| algopy.op.EC                                | Mockable            |
+| algopy.op.Box                               | Emulated            |
+| algopy.op.Block                             | Emulated            |
+| algopy.op.Base64                            | Native              |
+| algopy.logicsig                             | Emulated            |
+| algopy.log                                  | Emulated            |
+| algopy.itxn.submit_txns                     | Emulated            |
+| algopy.itxn.PaymentInnerTransaction         | Emulated            |
+| algopy.itxn.Payment                         | Emulated            |
+| algopy.itxn.KeyRegistrationInnerTransaction | Emulated            |
+| algopy.itxn.KeyRegistration                 | Emulated            |
+| algopy.itxn.InnerTransactionResult          | Emulated            |
+| algopy.itxn.InnerTransaction                | Emulated            |
+| algopy.itxn.AssetTransferInnerTransaction   | Emulated            |
+| algopy.itxn.AssetTransfer                   | Emulated            |
+| algopy.itxn.AssetFreezeInnerTransaction     | Emulated            |
+| algopy.itxn.AssetFreeze                     | Emulated            |
+| algopy.itxn.AssetConfigInnerTransaction     | Emulated            |
+| algopy.itxn.AssetConfig                     | Emulated            |
+| algopy.itxn.ApplicationCall                 | Emulated            |
+| algopy.gtxn.TransactionBase                 | Emulated            |
+| algopy.gtxn.Transaction                     | Emulated            |
+| algopy.gtxn.PaymentTransaction              | Emulated            |
+| algopy.gtxn.KeyRegistrationTransaction      | Emulated            |
+| algopy.gtxn.AssetTransferTransaction        | Emulated            |
+| algopy.gtxn.AssetFreezeTransaction          | Emulated            |
+| algopy.gtxn.AssetConfigTransaction          | Emulated            |
+| algopy.gtxn.ApplicationCallTransaction      | Emulated            |
+| algopy.ensure_budget                        | Mockable            |
+| algopy.arc4.emit                            | Emulated            |
+| algopy.arc4.baremethod                      | Emulated            |
+| algopy.arc4.arc4_signature                  | Native              |
+| algopy.arc4.abimethod                       | Emulated            |
+| algopy.arc4.abi_call                        | Mockable            |
+| algopy.arc4.UIntN                           | Native              |
+| algopy.arc4.UInt8                           | Native              |
+| algopy.arc4.UInt64                          | Native              |
+| algopy.arc4.UInt512                         | Native              |
+| algopy.arc4.UInt32                          | Native              |
+| algopy.arc4.UInt256                         | Native              |
+| algopy.arc4.UInt16                          | Native              |
+| algopy.arc4.UInt128                         | Native              |
+| algopy.arc4.Tuple                           | Native              |
+| algopy.arc4.Struct                          | Native              |
+| algopy.arc4.String                          | Native              |
+| algopy.arc4.StaticArray                     | Native              |
+| algopy.arc4.DynamicBytes                    | Native              |
+| algopy.arc4.DynamicArray                    | Native              |
+| algopy.arc4.Byte                            | Native              |
+| algopy.arc4.BigUIntN                        | Native              |
+| algopy.arc4.Address                         | Native              |
+| algopy.arc4.ARC4Client                      | Mockable            |
+| algopy.Txn                                  | Emulated            |
+| algopy.TransactionType                      | Native              |
+| algopy.TemplateVar                          | Emulated            |
+| algopy.StateTotals                          | Emulated            |
+| algopy.OpUpFeeSource                        | Native              |
+| algopy.OnCompleteAction                     | Native              |
+| algopy.LogicSig                             | Emulated            |
+| algopy.LocalState                           | Emulated            |
+| algopy.GlobalState                          | Emulated            |
+| algopy.Global                               | Emulated            |
+| algopy.Contract                             | Emulated            |
+| algopy.BytesBacked                          | Native              |
+| algopy.BoxRef                               | Emulated            |
+| algopy.BoxMap                               | Emulated            |
+| algopy.Box                                  | Emulated            |
+| algopy.ARC4Contract                         | Emulated            |
+| algopy.uenumerate                           | Native              |
+| algopy.op.ITxnCreate                        | Emulated            |
+| algopy.op.EllipticCurve                     | Mockable            |
+| algopy.op.AssetParamsGet                    | Emulated            |
+| algopy.op.AssetHoldingGet                   | Emulated            |
+| algopy.op.AppParamsGet                      | Emulated            |
+| algopy.op.AppLocal                          | Emulated            |
+| algopy.op.AppGlobal                         | Emulated            |
+| algopy.op.AcctParamsGet                     | Emulated            |
+| algopy.itxn.ApplicationCallInnerTransaction | Emulated            |
+| algopy.compile_logicsig                     | Mockable            |
+| algopy.compile_contract                     | Mockable            |
+| algopy.arc4.arc4_update                     | Mockable            |
+| algopy.arc4.arc4_create                     | Mockable            |
+| algopy.arc4.UFixedNxM                       | Native              |
+| algopy.arc4.BigUFixedNxM                    | Native              |
+| algopy.arc4.ARC4Contract                    | Emulated            |
+| algopy.CompiledLogicSig                     | Mockable            |
+| algopy.CompiledContract                     | Mockable            |

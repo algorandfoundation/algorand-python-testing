@@ -8,17 +8,15 @@ The `algorand-python-testing` package provides:
 -   An offline testing environment that simulates core AVM functionality
 -   A familiar Pythonic experience, compatible with testing frameworks like [pytest](https://docs.pytest.org/en/latest/), [unittest](https://docs.python.org/3/library/unittest.html), and [hypothesis](https://hypothesis.readthedocs.io/en/latest/)
 
-> **NOTE**: This package is currently in **preview** and should be used with caution until the first stable release.
-
 ## Quick Start
 
-The `algorand-python` package is a main prerequisite for using `algorand-python-testing`. It provides stubs and type annotations for the Algorand Python syntax, offering valuable code completion and type checking capabilities when writing smart contracts. However, it's important to note that you cannot directly execute this Python code in a standard Python interpreter. This is because the code is designed to be compiled by the [`puya`](https://github.com/algorandfoundation/puya) compiler into [TEAL](https://developer.algorand.org/docs/reference/teal/index.html) code, which is then deployed on the Algorand Network.
+`algorand-python` is a prerequisite for `algorand-python-testing`, providing stubs and type annotations for Algorand Python syntax. It enhances code completion and type checking when writing smart contracts. Note that this code isn't directly executable in standard Python interpreters; it's compiled by `puya` into TEAL for Algorand Network deployment.
 
-Traditionally, testing Algorand smart contracts involved deploying them on sandboxed Algorand Networks and interacting with actual application instances. While this approach is extremely valuable and robust, it may not always be the most efficient, requires network connection and can't offer a lot of versatility when it comes to testing Algorand Python code.
+Traditionally, testing Algorand smart contracts involved deployment on sandboxed networks and interacting with live instances. While robust, this approach can be inefficient and lacks versatility for testing Algorand Python code.
 
-This is where `algorand-python-testing` comes into play. It allows developers to leverage the rich ecosystem of Python testing frameworks and perform unit tests on their code without the need for deployment on the Algorand Network. This approach enables faster iteration cycles and more granular testing of smart contract logic.
+Enter `algorand-python-testing`: it leverages Python's rich testing ecosystem for unit testing without network deployment. This enables rapid iteration and granular logic testing.
 
-> **NOTE**: While unit testing capabilities of `algorand-python-testing` are highly beneficial and recommended, it's important to note that this package does not advocate for only writing unit tests for Algorand Python code. It adds a new dimension to the testing capabilities of the smart contracts and is highly recommended to be used in conjunction with other test types, especially the ones that run against **real** Algorand Network.
+> **NOTE**: While `algorand-python-testing` offers valuable unit testing capabilities, it's not a replacement for comprehensive testing. Use it alongside other test types, particularly those running against the actual Algorand Network, for thorough contract validation.
 
 ### Prerequisites
 
@@ -27,16 +25,16 @@ This is where `algorand-python-testing` comes into play. It allows developers to
 
 ### Installation
 
-To get started with unit testing your `Algorand Python` smart contracts, install the package:
+`algorand-python-testing` is distributed via [pypi](https://pypi.org/project/algorand-python-testing/),
 
-#### using `pip`
+install the package using `pip`:
 
 ```bash
 pip install algopy-python-testing
 
 ```
 
-#### using `poetry`
+or using `poetry`
 
 ```bash
 poetry add algopy-python-testing
@@ -44,7 +42,7 @@ poetry add algopy-python-testing
 
 ### Testing your first contract
 
-Let's write an introductory "Hello World" contract and test it using the `algopy-testing-python` framework.
+Let's write a "Hello World" contract and test it using the `algopy-testing-python` framework.
 
 Assume the following starter contract (available as starter on all `algokit init -t python` based templates):
 
@@ -69,7 +67,7 @@ def test_hello_world():
     with algopy_testing_context() as ctx:
         # Arrange
         input_size = 10
-        random_input = ctx.any_string(input_size)
+        random_input = ctx.any_string(length=input_size)
         contract = HelloWorld()
 
         # Act
@@ -79,26 +77,26 @@ def test_hello_world():
         assert result == f"Hello, {random_input}"
 ```
 
-Let's analyze the `test_hello_world()` function:
+The `test_hello_world()` function demonstrates key aspects of testing with `algopy-testing-python`, following the Arrange-Act-Assert pattern:
 
-1. Function Definition: Tests the `HelloWorld` contract.
-2. Testing Context: Uses `algopy_testing_context()` to simulate an Algorand environment.
-3. Test Setup:
-    - Generates a random 10-character string input of type `algopy.String`.
-    - Instantiates the `HelloWorld` contract.
-4. Contract Interaction:
-   Invokes the contract's `hello()` method with the random input. This occurs within a Python interpreter, not on the actual Algorand network. This provides the ability to inspect the contract's state and debug execution as a regular Python program.
-5. Assertion:
-   Verifies the expected behavior: `assert result == f"Hello, {random_input}"`.
+1. Arrange:
 
-Key features of `algopy_testing_context`:
+    - Simulated Environment: Utilizes `algopy_testing_context()` to mimic the Algorand Virtual Machine. It also provides access to an array of utilities and so called [_value generators_](testing-guide/concepts.md#value-generators) which allow quick instantiation of random values of specific types where the value itself is not important, it also serves as a backbone for property based testing capabilities.
+    - Test Data Generation: Leverages `ctx.any_string()` for creating random, typed inputs of type `algopy.String`. Note that this differs from `algopy.arc4` types, for which context manager provides separate `any_*` methods accessible via `arc4` property on context instance.
+    - Contract Instantiation: Creates an instance of `HelloWorld` contract within the test context. Test context automatically instantiates a corresponding `algopy.Application` and links it with the class instance which is loaded in the python interpreter.
 
--   Simulated AVM environment
--   Random, type-specific test data generation
--   Contract instantiation and interaction in a simulated deployment
--   Behavior assertion without live blockchain deployment
+2. Act:
 
-The `any_*` methods (e.g., `any_string()`) are powerful tools for generating diverse test inputs, enabling comprehensive test suites across various potential inputs.
+    - Method Invocation: Calls `hello()` in a Python interpreter, enabling state inspection and debugging. When you run methods decorated with `abimethod` or `baremethod`, test context will automatically assemble a respective `appl` transaction which can be accessed via `context.get_active_transaction`, note that it will also automatically pre populate foreign references passed, as include the appropriate method signature in the application args.
+
+3. Assert:
+    - Behavior Verification: Asserts the expected output matches the actual result.
+
+Additionally, the `any_*` methods facilitate diverse random input generation. This approach aligns well with the "Arrange, Act, Assert" testing pattern, which forces developers to think about the contract's behaviour in a more self-contained manner.
+
+```{hint}
+Keep in mind the critical role of thorough testing in smart contract development. Given their often immutable nature once deployed, comprehensive unit and integration tests are essential for ensuring contract validity and reliability. Additionally, optimizing your contracts for efficiency can significantly impact user experience by reducing transaction fees and simplifying interactions. Investing time in robust testing and optimization practices will pay dividends in the long run, both for you as a smart contract developer and for the users of the deployed contracts.
+```
 
 ### Next steps
 
@@ -111,7 +109,9 @@ caption: Contents
 hidden: true
 ---
 
-usage
+testing-guide/index
 examples
 coverage
+glossary
+api
 ```
