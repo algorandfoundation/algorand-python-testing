@@ -44,7 +44,7 @@ class GlobalState(typing.Generic[_T]):
         description: str = "",
     ) -> None:
         self.description = description
-        self.app_id = lazy_context.maybe_active_app_id
+        self.app_id = lazy_context.active_group.active_app_id
         match key:
             case bytes(bytes_key):
                 self._key: algopy.Bytes = Bytes(bytes_key)

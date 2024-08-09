@@ -23,7 +23,7 @@ class LocalState(typing.Generic[_T]):
         key: Bytes | String | bytes | str = "",
         description: str = "",
     ) -> None:
-        self.app_id = lazy_context.maybe_active_app_id
+        self.app_id = lazy_context.active_group.active_app_id
         self.type_ = type_
         match key:
             case bytes(bytes_key):

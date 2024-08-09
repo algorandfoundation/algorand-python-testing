@@ -68,6 +68,9 @@ class _ContractMeta(type):
 
 
 class Contract(metaclass=_ContractMeta):
+    # note: it is import to minimize any additional attributes (including methods)
+    #       on this class, that aren't part of the official stubs
+    #       to reduce the potential for clashes with classes that inherit from this
     __app_id__: int
     _name: typing.ClassVar[str]
     _scratch_slots: typing.ClassVar[typing.Any | None]
@@ -105,7 +108,7 @@ class Contract(metaclass=_ContractMeta):
             ) -> typing.Any:
                 context = lazy_context.value
                 # TODO: this should populate the app txn as much as possible like abimethod does
-                app = context.ledger.get_application(self.__app_id__)
+                app = context.ledger.get_application(_get_self_or_active_app_id(self))
                 txns = [context.any.txn.application_call(app_id=app)]
                 with context.txn._maybe_implicit_txn_group(txns):
                     try:
@@ -131,7 +134,7 @@ class Contract(metaclass=_ContractMeta):
             unproxied_global_state_type = cls.global_state_types[name]
         except KeyError:
             return attr
-        app_data = lazy_context.get_app_data(self.__app_id__)
+        app_data = lazy_context.get_app_data(_get_self_or_active_app_id(self))
         value = app_data.get_global_state(name.encode("utf8"))
         return deserialize(unproxied_global_state_type, value)
 
@@ -142,13 +145,13 @@ class Contract(metaclass=_ContractMeta):
                 box._key = name_bytes
             case (algopy_testing.GlobalState() | algopy_testing.LocalState()) as state:
                 # ensure assigned states have the contracts app_id
-                state.app_id = _get_self_or_ambient_app_id(self)
+                state.app_id = _get_self_or_active_app_id(self)
                 if not state._key:
                     state._key = name_bytes
             case algopy_testing.BoxMap() as box_map if box_map._key_prefix is None:
                 box_map._key_prefix = name_bytes
             case Bytes() | UInt64() | BytesBacked() | UInt64Backed() | bool():
-                app_id = _get_self_or_ambient_app_id(self)
+                app_id = _get_self_or_active_app_id(self)
                 app = lazy_context.get_app_data(app_id)
                 app.set_global_state(name_bytes.value, serialize(value))
                 cls = type(self)
@@ -158,12 +161,12 @@ class Contract(metaclass=_ContractMeta):
         super().__setattr__(name, value)
 
 
-def _get_self_or_ambient_app_id(contract: Contract) -> int:
+def _get_self_or_active_app_id(contract: Contract) -> int:
     try:
         return contract.__app_id__
     # during construction app_id is not available, get from context instead
     except AttributeError:
-        return lazy_context.maybe_active_app_id
+        return lazy_context.active_group.active_app_id
 
 
 class ARC4Contract(Contract):

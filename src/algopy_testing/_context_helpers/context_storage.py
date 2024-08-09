@@ -59,13 +59,6 @@ class _InternalContext:
             raise ValueError("no active txn group")
         return group
 
-    # TODO: remove maybe and just throw if no active app_id?
-    @property
-    def maybe_active_app_id(self) -> int:
-        if self.value.txn._active_group is None:
-            return 0
-        return self.active_group.active_app_id
-
     @property
     def active_application(self) -> algopy.Application:
         return self.ledger.get_application(self.active_group.active_app_id)
@@ -88,7 +81,7 @@ class _InternalContext:
         else:
             raise TypeError("invalid type")
         if app_id == 0:
-            app_id = self.maybe_active_app_id or -1
+            app_id = self.active_group.active_app_id
         try:
             return self.ledger.application_data[app_id]
         except KeyError:
