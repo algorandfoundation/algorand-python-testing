@@ -87,7 +87,7 @@ validate_g_args:
     ==
     assert
     // tests/artifacts/GlobalStateValidator/contract.py:12
-    // assert op.GTxn.application_args(Txn.group_index, 1) == arg1.bytes  # type: ignore[call-arg, unused-ignore]
+    // assert op.GTxn.application_args(Txn.group_index, 1) == arg1.bytes
     txn GroupIndex
     gtxnsa ApplicationArgs 1
     frame_dig -2

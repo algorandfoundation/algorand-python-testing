@@ -1,0 +1,7 @@
+#pragma version 10
+
+tests.artifacts.StateOps.contract.StateAppGlobalContract.clear_state_program:
+    // tests/artifacts/StateOps/contract.py:294
+    // class StateAppGlobalContract(ARC4Contract):
+    int 1
+    return

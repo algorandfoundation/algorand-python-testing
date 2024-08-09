@@ -1,0 +1,7 @@
+#pragma version 10
+
+tests.artifacts.StateOps.contract.ITxnOpsContract.clear_state_program:
+    // tests/artifacts/StateOps/contract.py:337
+    // class ITxnOpsContract(ARC4Contract):
+    int 1
+    return

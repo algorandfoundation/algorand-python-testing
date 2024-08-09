@@ -1,0 +1,77 @@
+#pragma version 10
+
+tests.artifacts.StateOps.contract.StateAppLocalExContract.approval_program:
+    // tests/artifacts/StateOps/contract.py:200
+    // class StateAppLocalExContract(ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@5
+    method "opt_in()void"
+    txna ApplicationArgs 0
+    match main_opt_in_route@2
+    err // reject transaction
+
+main_opt_in_route@2:
+    // tests/artifacts/StateOps/contract.py:217
+    // @arc4.abimethod(allow_actions=["OptIn"])
+    txn OnCompletion
+    int OptIn
+    ==
+    assert // OnCompletion is OptIn
+    txn ApplicationID
+    assert // is not creating
+    callsub opt_in
+    int 1
+    return
+
+main_bare_routing@5:
+    // tests/artifacts/StateOps/contract.py:200
+    // class StateAppLocalExContract(ARC4Contract):
+    txn OnCompletion
+    !
+    assert // reject transaction
+    txn ApplicationID
+    !
+    assert // is creating
+    int 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAppLocalExContract.opt_in() -> void:
+opt_in:
+    // tests/artifacts/StateOps/contract.py:217-218
+    // @arc4.abimethod(allow_actions=["OptIn"])
+    // def opt_in(self) -> None:
+    proto 0 0
+    // tests/artifacts/StateOps/contract.py:219
+    // self.local_bytes[Global.creator_address] = Bytes(b"dummy_bytes_from_external_contract")
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:209
+    // key="local_bytes",
+    byte "local_bytes"
+    // tests/artifacts/StateOps/contract.py:219
+    // self.local_bytes[Global.creator_address] = Bytes(b"dummy_bytes_from_external_contract")
+    byte 0x64756d6d795f62797465735f66726f6d5f65787465726e616c5f636f6e7472616374
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:220
+    // self.local_uint64[Global.creator_address] = UInt64(99)
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:204
+    // key="local_uint64",
+    byte "local_uint64"
+    // tests/artifacts/StateOps/contract.py:220
+    // self.local_uint64[Global.creator_address] = UInt64(99)
+    int 99
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:221
+    // self.local_arc4_bytes[Global.creator_address] = algopy.arc4.DynamicBytes(
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:214
+    // key="local_arc4_bytes",
+    byte "local_arc4_bytes"
+    // tests/artifacts/StateOps/contract.py:221-223
+    // self.local_arc4_bytes[Global.creator_address] = algopy.arc4.DynamicBytes(
+    //     b"dummy_arc4_bytes"
+    // )
+    byte 0x001064756d6d795f617263345f6279746573
+    app_local_put
+    retsub

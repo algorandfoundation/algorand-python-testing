@@ -15,11 +15,10 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | Primitives (UInt64, BigUInt, Bytes, String)                  | Implemented           |
 | urange                                                       | Implemented           |
 | All crypto ops in op.\* namespace (to be expanded in detail) | Implemented           |
-| Txn, GTxn, ITxn                                              | Implemented           |
 | arc4.\* namespace (to be expanded in detail)                 | Implemented           |
 | uenumerate                                                   | Implemented           |
-| op.ITxnCreate                                                | Implemented           |
 | StateTotals                                                  | Implemented           |
+| Txn, GTxn, ITxn                                              | Emulated              |
 | Asset                                                        | Emulated              |
 | Account                                                      | Emulated              |
 | Application                                                  | Emulated              |
@@ -34,10 +33,11 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | log                                                          | Emulated              |
 | itxn.\* namespace (inner transactions)                       | Emulated              |
 | gtxn.\* namespace (group transactions)                       | Emulated              |
+| op.ITxnCreate                                                | Emulated              |
 | ensure_budget                                                | Mockable              |
 | op.EllipticCurve                                             | Mockable              |
-| op.AssetParamsGet                                            | Mockable              |
-| op.AppParamsGet                                              | Mockable              |
-| op.AppLocal                                                  | Mockable              |
-| op.AppGlobal                                                 | Mockable              |
-| op.AcctParamsGet                                             | Mockable              |
+| op.AssetParamsGet                                            | Emulated              |
+| op.AppParamsGet                                              | Emulated              |
+| op.AppLocal                                                  | Emulated              |
+| op.AppGlobal                                                 | Emulated              |
+| op.AcctParamsGet                                             | Emulated              |

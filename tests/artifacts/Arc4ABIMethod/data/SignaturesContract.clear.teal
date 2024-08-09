@@ -1,0 +1,7 @@
+#pragma version 10
+
+tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.clear_state_program:
+    // tests/artifacts/Arc4ABIMethod/contract.py:25
+    // class SignaturesContract(ARC4Contract):
+    int 1
+    return

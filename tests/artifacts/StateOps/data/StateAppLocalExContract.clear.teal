@@ -1,0 +1,7 @@
+#pragma version 10
+
+tests.artifacts.StateOps.contract.StateAppLocalExContract.clear_state_program:
+    // tests/artifacts/StateOps/contract.py:200
+    // class StateAppLocalExContract(ARC4Contract):
+    int 1
+    return

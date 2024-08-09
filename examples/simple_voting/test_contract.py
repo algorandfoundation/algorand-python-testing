@@ -31,25 +31,24 @@ def test_vote(context: AlgopyTestContext) -> None:
     # Arrange
     contract = VotingContract()
     contract.votes.value = algopy.UInt64(0)
-    voter = context.default_creator
+    voter = context.default_sender
 
-    context.set_transaction_group(
-        gtxn=[
-            context.any_application_call_transaction(
+    with context.txn.enter_txn_group(
+        gtxns=[
+            context.any.txn.application_call(
                 sender=voter,
-                app_id=context.any_application(),
+                app_id=context.any.application(),
                 app_args=[algopy.Bytes(b"vote"), voter.bytes],
             ),
-            context.any_payment_transaction(
+            context.any.txn.payment(
                 sender=voter,
                 amount=algopy.UInt64(10_000),
             ),
         ],
         active_transaction_index=0,
-    )
-
-    # Act
-    result = contract.approval_program()
+    ):
+        # Act
+        result = contract.approval_program()
 
     # Assert
     assert result == algopy.UInt64(1)
@@ -60,27 +59,25 @@ def test_vote(context: AlgopyTestContext) -> None:
 def test_vote_already_voted(context: AlgopyTestContext) -> None:
     # Arrange
     contract = VotingContract()
-    voter = context.any_account()
+    voter = context.any.account()
     contract.voted[voter] = algopy.UInt64(1)
-    context.patch_txn_fields(sender=voter)
 
-    context.set_transaction_group(
-        gtxn=[
-            context.any_application_call_transaction(
+    with context.txn.enter_txn_group(
+        gtxns=[
+            context.any.txn.application_call(
                 sender=voter,
-                app_id=context.any_application(),
+                app_id=context.any.application(),
                 app_args=[algopy.Bytes(b"vote"), voter.bytes],
             ),
-            context.any_payment_transaction(
+            context.any.txn.payment(
                 sender=voter,
                 amount=algopy.UInt64(10_000),
             ),
         ],
         active_transaction_index=0,
-    )
-
-    # Act
-    result = contract.vote(voter)
+    ):
+        # Act
+        result = contract.vote(voter)
 
     # Assert
     assert result is False

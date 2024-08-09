@@ -1,0 +1,7 @@
+#pragma version 10
+
+tests.artifacts.StateOps.contract.StateAcctParamsGet.clear_state_program:
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    int 1
+    return

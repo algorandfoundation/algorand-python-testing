@@ -3,13 +3,13 @@ from collections.abc import Generator
 
 import algopy
 import pytest
-from algopy_testing import arc4
-from algopy_testing.context import AlgopyTestContext, algopy_testing_context
-from algopy_testing.models.box import BoxMap
+from algopy_testing import algopy_testing_context, arc4
+from algopy_testing.context import AlgopyTestContext
 from algopy_testing.primitives.biguint import BigUInt
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.string import String
 from algopy_testing.primitives.uint64 import UInt64
+from algopy_testing.state.box import BoxMap
 from algopy_testing.utils import as_bytes, as_string
 
 BOX_NOT_CREATED_ERROR = "Box has not been created"
@@ -42,7 +42,7 @@ def test_init_without_key_prefix(
         (BigUInt, String, Bytes(b"key_prefix")),
         (arc4.String, BigUInt, String("key_prefix")),
         (UInt64, arc4.String, "key_prefix"),
-        (String, arc4.DynamicArray, b"key_prefix"),
+        (String, arc4.DynamicArray[arc4.DynamicBytes], b"key_prefix"),
     ],
 )
 def test_init_with_key_prefix(
