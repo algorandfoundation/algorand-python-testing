@@ -1026,9 +1026,8 @@ class _StructMeta(type):
 
 
 def _tuple_type_from_struct(struct: type[Struct]) -> type[Tuple]:  # type: ignore[type-arg]
-    tuple_field_types = [f.type for f in dataclasses.fields(struct)]
-    tuple_inner = tuple(tuple_field_types)
-    return Tuple[tuple_inner]  # type: ignore[valid-type]
+    field_types = [f.type for f in dataclasses.fields(struct)]
+    return _paramatize_type(Tuple, *field_types)
 
 
 class Struct(metaclass=_StructMeta):
