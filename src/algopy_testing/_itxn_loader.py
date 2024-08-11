@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import typing
 
-import algopy_testing
 from algopy_testing import itxn
+from algopy_testing.enums import TransactionType
 
 if typing.TYPE_CHECKING:
     from collections.abc import Sequence
@@ -33,12 +33,12 @@ class ITxnLoader:
     """
 
     _TXN_TYPE_MAP: typing.ClassVar = {
-        itxn.PaymentInnerTransaction: algopy_testing.enums.TransactionType.Payment,
-        itxn.AssetConfigInnerTransaction: algopy_testing.enums.TransactionType.AssetConfig,
-        itxn.AssetTransferInnerTransaction: algopy_testing.enums.TransactionType.AssetTransfer,
-        itxn.AssetFreezeInnerTransaction: algopy_testing.enums.TransactionType.AssetFreeze,
-        itxn.ApplicationCallInnerTransaction: algopy_testing.enums.TransactionType.ApplicationCall,
-        itxn.KeyRegistrationInnerTransaction: algopy_testing.enums.TransactionType.KeyRegistration,
+        itxn.PaymentInnerTransaction: TransactionType.Payment,
+        itxn.AssetConfigInnerTransaction: TransactionType.AssetConfig,
+        itxn.AssetTransferInnerTransaction: TransactionType.AssetTransfer,
+        itxn.AssetFreezeInnerTransaction: TransactionType.AssetFreeze,
+        itxn.ApplicationCallInnerTransaction: TransactionType.ApplicationCall,
+        itxn.KeyRegistrationInnerTransaction: TransactionType.KeyRegistration,
         itxn.InnerTransactionResult: -1,
     }
 

@@ -3,6 +3,8 @@ name: Check Python Code (algopy_testing)
 on:
   workflow_call:
   pull_request:
+  schedule:
+    - cron: "0 8 * * 1" # Each monday 8 AM UTC
 
 jobs:
   check-python:

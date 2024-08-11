@@ -25,7 +25,7 @@ def test_opt_into_asset(context: AlgopyTestContext) -> None:
 
     # Assert
     assert contract.asa.id == asset.id
-    inner_txn = context.txn.last_txn_group.last_submitted_itxn.asset_transfer
+    inner_txn = context.txn.last_group.last_itxn.asset_transfer
     assert (
         inner_txn.asset_receiver == context.get_application_for_contract(contract).address
     ), "Asset receiver does not match"
@@ -51,7 +51,7 @@ def test_start_auction(
     )
 
     # Act
-    with context.txn.scoped_txn_fields(sender=context.default_sender):
+    with context.txn.scoped_execution(txn_op_fields={"sender": context.default_sender}):
         contract.start_auction(
             starting_price,
             auction_duration,
@@ -98,12 +98,12 @@ def test_claim_bids(
     contract.previous_bid = previous_bid
 
     # Act
-    with context.txn.scoped_txn_fields(sender=account):
+    with context.txn.scoped_execution(txn_op_fields={"sender": account}):
         contract.claim_bids()
 
     # Assert
     expected_payment = claimable_amount - previous_bid
-    last_inner_txn = context.txn.last_txn_group.last_submitted_itxn.payment
+    last_inner_txn = context.txn.last_group.last_itxn.payment
 
     assert last_inner_txn.amount == expected_payment
     assert last_inner_txn.receiver == account
@@ -124,7 +124,7 @@ def test_claim_asset(context: AlgopyTestContext) -> None:
     contract.claim_asset(asset)
 
     # Assert
-    last_inner_txn = context.txn.last_txn_group.last_submitted_itxn.asset_transfer
+    last_inner_txn = context.txn.last_group.last_itxn.asset_transfer
     assert last_inner_txn.xfer_asset == asset
     assert last_inner_txn.asset_close_to == context.default_sender
     assert last_inner_txn.asset_receiver == context.default_sender
@@ -139,14 +139,16 @@ def test_delete_application(
 
     # Act
     # setting sender will determine creator
-    with context.txn.scoped_txn_fields(sender=account):
+    with context.txn.scoped_execution(txn_op_fields={"sender": account}):
         contract = AuctionContract()
 
-    with context.txn.scoped_txn_fields(on_completion=algopy.OnCompleteAction.DeleteApplication):
+    with context.txn.scoped_execution(
+        txn_op_fields={"on_completion": algopy.OnCompleteAction.DeleteApplication}
+    ):
         contract.delete_application()
 
     # Assert
-    inner_transactions = context.txn.last_txn_group.last_submitted_itxn.payment
+    inner_transactions = context.txn.last_group.last_itxn.payment
     assert inner_transactions
     assert inner_transactions.type == algopy.TransactionType.Payment
     assert inner_transactions.receiver == account

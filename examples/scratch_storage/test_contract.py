@@ -3,7 +3,7 @@ from collections.abc import Generator
 import pytest
 from algopy_testing import AlgopyTestContext, algopy_testing_context
 
-from .contract import ScratchSlotsContract
+from .contract import ScratchSlotsContract, SimpleScratchSlotsContract
 
 
 @pytest.fixture()
@@ -13,7 +13,7 @@ def context() -> Generator[AlgopyTestContext, None, None]:
         ctx.reset()
 
 
-def test_approval_program(context: AlgopyTestContext) -> None:
+def test_arc4_contract(context: AlgopyTestContext) -> None:
     # Arrange
     contract = ScratchSlotsContract()
 
@@ -22,7 +22,21 @@ def test_approval_program(context: AlgopyTestContext) -> None:
 
     # Assert
     assert result
-    last_txn = context.txn.last_active_txn
-    scratch_space = context.get_scratch_space(last_txn)
+    scratch_space = context.txn.get_scratch_space(context.txn.last_active)
     assert scratch_space[1] == 5
     assert scratch_space[2] == b"Hello World"
+
+
+def test_simple_contract(context: AlgopyTestContext) -> None:
+    # Arrange
+
+    contract = SimpleScratchSlotsContract()
+
+    # Act
+    with context.txn.scoped_execution(
+        gtxns=[context.any.txn.application_call(scratch_space=[0, 5, b"Hello World"])]
+    ):
+        result = contract.approval_program()
+
+    # Assert
+    assert result

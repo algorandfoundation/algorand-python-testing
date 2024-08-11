@@ -14,6 +14,8 @@ from algokit_utils import (
 )
 from algosdk.v2client.algod import AlgodClient
 
+INITIAL_BALANCE_MICRO_ALGOS = int(20e6)
+
 
 class AVMInvoker:
     """Protocol used in global test fixtures to simplify invocation of AVM methods via an Algokit
@@ -132,7 +134,8 @@ def generate_test_account(algod_client: AlgodClient) -> Account:
     ensure_funded(
         algod_client,
         EnsureBalanceParameters(
-            account_to_fund=account, min_spending_balance_micro_algos=int(100e6)
+            account_to_fund=account,
+            min_spending_balance_micro_algos=INITIAL_BALANCE_MICRO_ALGOS,
         ),
     )
 

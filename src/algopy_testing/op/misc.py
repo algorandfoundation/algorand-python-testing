@@ -51,7 +51,7 @@ def _get_bytes(b: algopy.Bytes | bytes) -> bytes:
 def _gload(a: UInt64 | int, b: UInt64 | int, /) -> Bytes | UInt64:
     txn = lazy_context.active_group.get_txn(a)
     try:
-        return lazy_context.value.get_scratch_slot(txn, b)
+        return lazy_context.txn.get_scratch_slot(txn, b)
     except IndexError:
         raise ValueError("invalid scratch slot") from None
 
@@ -66,7 +66,7 @@ class _Scratch:
     @staticmethod
     def store(a: algopy.UInt64 | int, b: algopy.Bytes | algopy.UInt64 | bytes | int, /) -> None:
         active_txn = lazy_context.active_group.active_txn
-        lazy_context.value.set_scratch_slot(active_txn, a, b)
+        lazy_context.txn.set_scratch_slot(active_txn, a, b)
 
 
 Scratch = _Scratch()
@@ -76,7 +76,7 @@ gload_bytes = _gload
 
 def gaid(a: algopy.UInt64 | int, /) -> algopy.Application:
     group = lazy_context.active_group
-    if a >= group.active_transaction_index:
+    if a >= group.active_txn_index:
         raise ValueError("can only get id's for transactions earlier in the group")
 
     txn = group.get_txn(a)

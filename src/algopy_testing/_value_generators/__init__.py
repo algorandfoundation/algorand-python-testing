@@ -1,5 +1,3 @@
-import typing
-
 from .arc4 import ARC4ValueGenerator
 from .avm import AVMValueGenerator
 from .txn import TxnValueGenerator
@@ -8,14 +6,9 @@ from .txn import TxnValueGenerator
 class AlgopyValueGenerator(AVMValueGenerator):
     """Proxy class holding refs to all value generators."""
 
-    def __init__(self, context: object):
-        import algopy_testing
-
-        context = typing.cast(algopy_testing.AlgopyTestContext, context)
-
-        super().__init__(context)
-        self._txn = TxnValueGenerator(context)
-        self._arc4 = ARC4ValueGenerator(context)
+    def __init__(self) -> None:
+        self._txn = TxnValueGenerator()
+        self._arc4 = ARC4ValueGenerator()
 
     @property
     def txn(self) -> TxnValueGenerator:

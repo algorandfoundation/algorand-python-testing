@@ -41,7 +41,7 @@ class TransactionBase(TransactionFieldsBase):
         if self._fields is not None:
             return self
 
-        return lazy_context.active_group.transactions[self._group_index]
+        return lazy_context.active_group.txns[self._group_index]
 
     @property
     def fields(self) -> dict[str, object]:

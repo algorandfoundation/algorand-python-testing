@@ -44,7 +44,7 @@ def check_create(contract: algopy.Contract, create: _CreateValues) -> None:
         raise RuntimeError("method can only be called while creating")
 
 
-def check_oca(actions: Sequence[_AllowActions]) -> None:
+def check_on_completion_action(actions: Sequence[_AllowActions]) -> None:
     txn = lazy_context.active_group.active_txn
     allowed_actions = [action if isinstance(action, str) else action.name for action in actions]
     if txn.on_completion.name not in allowed_actions:
@@ -113,7 +113,7 @@ def abimethod(  # noqa: PLR0913
         )
         with context.txn._maybe_implicit_txn_group(txns):
             check_create(contract, create)
-            check_oca(allow_actions)
+            check_on_completion_action(allow_actions)
             result = fn(*args, **kwargs)
             # TODO: add result along with ARC4 log prefix to application logs?
             return result
@@ -129,7 +129,7 @@ def _extract_group_txns(
 ) -> list[algopy.gtxn.TransactionBase]:
     method = algosdk.abi.Method.from_signature(arc4_signature)
     method_selector = Bytes(method.get_selector())
-    txn_fields = lazy_context.get_active_txn_fields()
+    txn_fields = lazy_context.get_txn_op_fields()
 
     contract_app = context.ledger.get_application(contract.__app_id__)
     txn_app = txn_fields.get("app_id", contract_app)
@@ -325,7 +325,7 @@ def baremethod(
 
         with lazy_context.txn._maybe_implicit_txn_group(txns):
             check_create(contract, create)
-            check_oca(allow_actions)
+            check_on_completion_action(allow_actions)
             return fn(*args, **kwargs)
 
     return wrapper

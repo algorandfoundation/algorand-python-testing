@@ -32,7 +32,7 @@ class _GTxn:
         # for gtxn all fields are functions with at least one argument (the group_index)
         def get_field(group_index: int, array_index: int | None = None) -> typing.Any:
             try:
-                txn = txn_group.transactions[group_index]
+                txn = txn_group.txns[group_index]
             except IndexError:
                 raise ValueError("invalid group index") from None
 

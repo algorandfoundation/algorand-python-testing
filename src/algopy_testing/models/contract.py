@@ -41,10 +41,10 @@ class _ContractMeta(type):
         # TODO: this provides a dummy txn to provide app_id during construction
         #       however this isn't quite right if the user needs to provide other transactions
         #       during construction
-        fields = lazy_context.get_active_txn_fields()
+        fields = lazy_context.get_txn_op_fields()
         fields["app_id"] = app_ref
         txn = context.any.txn.application_call(**fields)
-        with context.txn.enter_txn_group([txn]):
+        with context.txn.scoped_execution([txn]):
             instance = super().__call__(*args, **kwargs)
             instance.__app_id__ = app_id
 

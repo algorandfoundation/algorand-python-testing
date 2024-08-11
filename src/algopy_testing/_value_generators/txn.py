@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import typing
 
-import algopy_testing
-from algopy_testing.gtxn import TransactionBase
+from algopy_testing import gtxn
+from algopy_testing._context_helpers import lazy_context
+from algopy_testing.models.application import Application
 from algopy_testing.models.txn_fields import get_txn_defaults
 
 if typing.TYPE_CHECKING:
     import algopy
 
-    from algopy_testing import AlgopyTestContext
     from algopy_testing.models.txn_fields import (
         ApplicationCallFields,
         AssetConfigFields,
@@ -21,19 +21,11 @@ if typing.TYPE_CHECKING:
     )
 
 
-_TGlobalTxn = typing.TypeVar("_TGlobalTxn", bound=TransactionBase)
+_TGlobalTxn = typing.TypeVar("_TGlobalTxn", bound=gtxn.TransactionBase)
 
 
 class TxnValueGenerator:
     """Factory for generating test data for transactions."""
-
-    def __init__(self, context: AlgopyTestContext) -> None:
-        """Initializes the ARC4ValueGenerator with the given testing context.
-
-        Args:
-            context (AlgopyTestContext): The testing context for generating test data.
-        """
-        self.context = context
 
     def application_call(
         self,
@@ -53,13 +45,15 @@ class TxnValueGenerator:
         try:
             app = fields["app_id"]
         except KeyError:
-            app = fields["app_id"] = self.context.any.application()
+            app = fields["app_id"] = lazy_context.any.application()
 
-        if not isinstance(app, algopy_testing.Application):
+        if not isinstance(app, Application):
             raise TypeError("`app_id` must be an instance of algopy.Application")
 
-        new_txn = self._new_gtxn(algopy_testing.gtxn.ApplicationCallTransaction, **fields)
-        self.context.set_scratch_space(new_txn, scratch_space or [])
+        new_txn = self._new_gtxn(gtxn.ApplicationCallTransaction, **fields)
+
+        if scratch_space is not None:
+            lazy_context.txn.set_scratch_space(new_txn, scratch_space)
 
         return new_txn
 
@@ -74,7 +68,7 @@ class TxnValueGenerator:
         :returns: The newly generated asset transfer transaction.
         :rtype: algopy.gtxn.AssetTransferTransaction
         """
-        return self._new_gtxn(algopy_testing.gtxn.AssetTransferTransaction, **fields)
+        return self._new_gtxn(gtxn.AssetTransferTransaction, **fields)
 
     def payment(self, **fields: typing.Unpack[PaymentFields]) -> algopy.gtxn.PaymentTransaction:
         """Generate a new payment transaction with specified fields.
@@ -85,7 +79,7 @@ class TxnValueGenerator:
         :returns: The newly generated payment transaction.
         :rtype: algopy.gtxn.PaymentTransaction
         """
-        return self._new_gtxn(algopy_testing.gtxn.PaymentTransaction, **fields)
+        return self._new_gtxn(gtxn.PaymentTransaction, **fields)
 
     def asset_config(
         self, **fields: typing.Unpack[AssetConfigFields]
@@ -94,7 +88,7 @@ class TxnValueGenerator:
 
         :param **fields: Unpack[AssetConfigFields]:
         """
-        return self._new_gtxn(algopy_testing.gtxn.AssetConfigTransaction, **fields)
+        return self._new_gtxn(gtxn.AssetConfigTransaction, **fields)
 
     def key_registration(
         self, **fields: typing.Unpack[KeyRegistrationFields]
@@ -103,7 +97,7 @@ class TxnValueGenerator:
 
         :param **fields: Unpack[KeyRegistrationFields]:
         """
-        return self._new_gtxn(algopy_testing.gtxn.KeyRegistrationTransaction, **fields)
+        return self._new_gtxn(gtxn.KeyRegistrationTransaction, **fields)
 
     def asset_freeze(
         self, **fields: typing.Unpack[AssetFreezeFields]
@@ -112,7 +106,7 @@ class TxnValueGenerator:
 
         :param **fields: Unpack[AssetFreezeFields]:
         """
-        return self._new_gtxn(algopy_testing.gtxn.AssetFreezeTransaction, **fields)
+        return self._new_gtxn(gtxn.AssetFreezeTransaction, **fields)
 
     def transaction(
         self,
@@ -126,12 +120,12 @@ class TxnValueGenerator:
         :returns: The newly generated transaction.
         :rtype: algopy.gtxn.Transaction
         """
-        return self._new_gtxn(algopy_testing.gtxn.Transaction, **fields)
+        return self._new_gtxn(gtxn.Transaction, **fields)
 
     def _new_gtxn(self, txn_type: type[_TGlobalTxn], **fields: object) -> _TGlobalTxn:
         # TODO: check reference types are known?
         fields.setdefault("type", txn_type.type_enum)
-        fields.setdefault("sender", self.context.default_sender)
+        fields.setdefault("sender", lazy_context.value.default_sender)
 
         fields = {**get_txn_defaults(), **fields}
         return txn_type(fields)

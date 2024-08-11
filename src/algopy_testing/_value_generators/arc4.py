@@ -13,19 +13,9 @@ from algopy_testing.utils import generate_random_int
 if typing.TYPE_CHECKING:
     import algopy
 
-    from algopy_testing import AlgopyTestContext
-
 
 class ARC4ValueGenerator:
     """Factory for generating ARC4-compliant test data."""
-
-    def __init__(self, context: AlgopyTestContext) -> None:
-        """Initializes the ARC4ValueGenerator with the given testing context.
-
-        Args:
-            context (AlgopyTestContext): The testing context for generating test data.
-        """
-        self._context = context
 
     def address(self) -> algopy.arc4.Address:
         """Generate a random Algorand address.

@@ -66,7 +66,7 @@ class _BaseInnerTransactionResult(TransactionFieldsBase):
     @property
     def _logs(self) -> list[bytes]:
         try:
-            return lazy_context.value._application_logs[int(self.app_id.id)]
+            return lazy_context.txn.get_app_logs(self.app_id.id)
         except KeyError:
             return []
 
@@ -138,7 +138,7 @@ class _BaseInnerTransactionFields:
 
     def submit(self) -> typing.Any:
         result = _get_itxn_result(self)
-        lazy_context.active_group._add_inner_txn_group([result])  # type: ignore[list-item]
+        lazy_context.active_group._add_itxn_group([result])  # type: ignore[list-item]
         return result
 
     def copy(self) -> typing.Self:
@@ -192,7 +192,7 @@ def submit_txns(
         raise ValueError("Cannot submit more than 16 inner transactions at once")
 
     results = tuple(_get_itxn_result(tx) for tx in transactions)
-    lazy_context.active_group._add_inner_txn_group(results)  # type: ignore[arg-type]
+    lazy_context.active_group._add_itxn_group(results)  # type: ignore[arg-type]
 
     return results
 
@@ -225,7 +225,7 @@ def _on_asset_config(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
             name=fields["asset_name"],
             url=fields["url"],
             metadata_hash=fields["metadata_hash"],
-            manager=fields["manager"],  # TODO: set to sender?
+            manager=fields.get("manager", fields["sender"]),
             reserve=fields["reserve"],
             freeze=fields["freeze"],
             clawback=fields["clawback"],

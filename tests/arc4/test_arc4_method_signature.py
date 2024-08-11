@@ -32,7 +32,7 @@ def test_app_args_is_correct_with_simple_args(context: algopy_testing.AlgopyTest
     contract.sink(arc4.String("hello"), UInt8Array(arc4.UInt8(1), arc4.UInt8(2)))
 
     # assert
-    txn = context.txn.last_active_txn
+    txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
         algosdk.abi.Method.from_signature("sink(string,uint8[])void").get_selector(),
@@ -50,7 +50,7 @@ def test_app_args_is_correct_with_alias(context: algopy_testing.AlgopyTestContex
     contract.sink2(arc4.String("hello"), UInt8Array(arc4.UInt8(1), arc4.UInt8(2)))
 
     # assert
-    txn = context.txn.last_active_txn
+    txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
         algosdk.abi.Method.from_signature("alias(string,uint8[])void").get_selector(),
@@ -72,7 +72,7 @@ def test_app_args_is_correct_with_txn(context: algopy_testing.AlgopyTestContext)
     )
 
     # asset
-    txn = context.txn.last_active_txn
+    txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(3)]
     assert app_args == [
         algosdk.abi.Method.from_signature("with_txn(string,acfg,uint8[])void").get_selector(),
@@ -95,7 +95,7 @@ def test_app_args_is_correct_with_asset(
     )
 
     # assert
-    txn = context.txn.last_active_txn
+    txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
         algosdk.abi.Method.from_signature("with_asset(string,asset,uint8[])void").get_selector(),
@@ -121,7 +121,7 @@ def test_app_args_is_correct_with_application(context: algopy_testing.AlgopyTest
     )
 
     # assert
-    txn = context.txn.last_active_txn
+    txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     app_foreign_apps = [txn.apps(i) for i in range(int(txn.num_apps))]
     assert app_args == [
@@ -157,7 +157,7 @@ def test_app_args_is_correct_with_complex(context: algopy_testing.AlgopyTestCont
     result = contract.complex_sig(struct, txn, account, five)
 
     # assert
-    txn = context.txn.last_active_txn
+    txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
         algosdk.abi.Method.from_signature(

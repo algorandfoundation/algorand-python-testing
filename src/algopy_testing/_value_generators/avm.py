@@ -8,6 +8,7 @@ from collections import ChainMap
 import algosdk
 
 import algopy_testing
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM, MAX_BYTES_SIZE, MAX_UINT64
 from algopy_testing.models.account import AccountContextData, AccountFields
 from algopy_testing.models.application import ApplicationContextData, ApplicationFields
@@ -17,20 +18,10 @@ from algopy_testing.utils import generate_random_int
 if typing.TYPE_CHECKING:
     import algopy
 
-    from algopy_testing import AlgopyTestContext
-
 
 class AVMValueGenerator:
     """Factory for generating test data for AVM abstractions (uint64, bytes,
     string, accounts, assets and applications)."""
-
-    def __init__(self, context: AlgopyTestContext) -> None:
-        """Initializes the ARC4ValueGenerator with the given testing context.
-
-        Args:
-            context (AlgopyTestContext): The testing context for generating test data.
-        """
-        self.context = context
 
     def uint64(self, min_value: int = 0, max_value: int = MAX_UINT64) -> algopy.UInt64:
         """Generate a random UInt64 value within a specified range.
@@ -82,7 +73,7 @@ class AVMValueGenerator:
     ) -> algopy.Account:
         import algopy
 
-        if address is not None and self.context.ledger.account_exists(address):
+        if address is not None and lazy_context.ledger.account_exists(address):
             raise ValueError(
                 "Account with such address already exists in testing context! "
                 "Use `context.ledger.get_account(address)` to retrieve the existing account."
@@ -101,7 +92,7 @@ class AVMValueGenerator:
             opted_apps={app.id: app for app in opted_apps},
         )
 
-        self.context.ledger.account_data[new_account_address] = new_account_data
+        lazy_context.ledger.account_data[new_account_address] = new_account_data
         return new_account
 
     def asset(
@@ -120,27 +111,27 @@ class AVMValueGenerator:
         """
         import algopy
 
-        if asset_id and asset_id in self.context.ledger.asset_data:
+        if asset_id and asset_id in lazy_context.ledger.asset_data:
             raise ValueError("Asset with such ID already exists in testing context!")
 
         # TODO: ensure passed fields are valid names and types
-        new_asset = algopy.Asset(asset_id or next(self.context.ledger.asset_id))
+        new_asset = algopy.Asset(asset_id or next(lazy_context.ledger.asset_id))
         default_asset_fields = {
-            "total": self.context.any.uint64(),
-            "decimals": self.context.any.uint64(1, 6),
+            "total": lazy_context.any.uint64(),
+            "decimals": lazy_context.any.uint64(1, 6),
             "default_frozen": False,
-            "unit_name": self.context.any.bytes(4),
-            "name": self.context.any.bytes(32),
-            "url": self.context.any.bytes(10),
-            "metadata_hash": self.context.any.bytes(32),
+            "unit_name": lazy_context.any.bytes(4),
+            "name": lazy_context.any.bytes(32),
+            "url": lazy_context.any.bytes(10),
+            "metadata_hash": lazy_context.any.bytes(32),
             "manager": algopy.Account(algosdk.constants.ZERO_ADDRESS),
             "freeze": algopy.Account(algosdk.constants.ZERO_ADDRESS),
             "clawback": algopy.Account(algosdk.constants.ZERO_ADDRESS),
-            "creator": self.context.default_sender,
+            "creator": lazy_context.value.default_sender,
             "reserve": algopy.Account(algosdk.constants.ZERO_ADDRESS),
         }
         merged_fields = dict(ChainMap(asset_fields, default_asset_fields))  # type: ignore[arg-type]
-        self.context.ledger.asset_data[int(new_asset.id)] = AssetFields(**merged_fields)  # type: ignore[typeddict-item]
+        lazy_context.ledger.asset_data[int(new_asset.id)] = AssetFields(**merged_fields)  # type: ignore[typeddict-item]
         return new_asset
 
     def application(  # type: ignore[misc]
@@ -169,9 +160,9 @@ class AVMValueGenerator:
         """
         import algopy_testing
 
-        new_app_id = id if id is not None else next(self.context.ledger.app_id)
+        new_app_id = id if id is not None else next(lazy_context.ledger.app_id)
 
-        if new_app_id in self.context.ledger.application_data:
+        if new_app_id in lazy_context.ledger.application_data:
             raise ValueError(
                 f"Application id {new_app_id} has already been configured in test context!"
             )
@@ -187,7 +178,7 @@ class AVMValueGenerator:
             "local_num_uint": algopy_testing.UInt64(0),
             "local_num_bytes": algopy_testing.UInt64(0),
             "extra_program_pages": algopy_testing.UInt64(0),
-            "creator": self.context.default_sender,
+            "creator": lazy_context.value.default_sender,
             "address": address
             or algopy_testing.Account(algosdk.logic.get_application_address(new_app_id)),
         }
@@ -202,7 +193,7 @@ class AVMValueGenerator:
                 raise TypeError(f"incorrect type for {field!r}")
             app_fields[field] = value  # type: ignore[literal-required]
 
-        self.context.ledger.application_data[new_app_id] = ApplicationContextData(
+        lazy_context.ledger.application_data[new_app_id] = ApplicationContextData(
             fields=app_fields,
             app_id=new_app_id,
         )

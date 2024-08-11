@@ -70,7 +70,7 @@ class _Global:
     @property
     def group_size(self) -> algopy.UInt64:
         group = lazy_context.active_group
-        return UInt64(len(group.transactions))
+        return UInt64(len(group.txns))
 
     @property
     def zero_address(self) -> algopy.Account:

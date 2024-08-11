@@ -105,10 +105,10 @@ def _create_int_literal(value: int) -> type:
     return typing.cast(type, typing.Literal[value])
 
 
-def _paramatize_type(typ: type, *params: type) -> type:
+def _parameterize_type(type_: type, *params: type) -> type:
     if len(params) == 1:
-        return typing.cast(type, typ[params[0]])  # type: ignore[index]
-    return typing.cast(type, typ[params])  # type: ignore[index]
+        return typing.cast(type, type_[params[0]])  # type: ignore[index]
+    return typing.cast(type, type_[params])  # type: ignore[index]
 
 
 def _get_cls_name(cls: type, type_params: tuple[type, ...]) -> str:
@@ -237,7 +237,7 @@ class _UIntTypeInfo(_TypeInfo):
 
     @property
     def typ(self) -> type:
-        return _paramatize_type(self._type, _create_int_literal(self.bit_size))
+        return _parameterize_type(self._type, _create_int_literal(self.bit_size))
 
     @property
     def arc4_name(self) -> str:
@@ -404,7 +404,7 @@ class _UFixedTypeInfo(_UIntTypeInfo):
 
     @property
     def typ(self) -> type:
-        return _paramatize_type(
+        return _parameterize_type(
             _UFixedNxM, _create_int_literal(self.bit_size), _create_int_literal(self.precision)
         )
 
@@ -489,7 +489,6 @@ BigUFixedNxM = _UFixedNxM
 
 
 class _ByteTypeInfo(_UIntTypeInfo):
-
     def __init__(self) -> None:
         super().__init__(8)
 
@@ -575,7 +574,7 @@ class _StaticArrayTypeInfo(_TypeInfo):
 
     @property
     def typ(self) -> type:
-        return _paramatize_type(StaticArray, self.item_type.typ, _create_int_literal(self.size))
+        return _parameterize_type(StaticArray, self.item_type.typ, _create_int_literal(self.size))
 
     @property
     def arc4_name(self) -> str:
@@ -630,7 +629,7 @@ class StaticArray(
             except IndexError:
                 raise TypeError("array must have an item type") from None
             size = len(items)
-            cls = _paramatize_type(cls, type(item), _create_int_literal(size))
+            cls = _parameterize_type(cls, type(item), _create_int_literal(size))
         instance = super().__new__(cls)
         return instance
 
@@ -686,7 +685,6 @@ class StaticArray(
 
 
 class _AddressTypeInfo(_StaticArrayTypeInfo):
-
     def __init__(self) -> None:
         super().__init__(Byte.type_info, 32)
 
@@ -751,7 +749,7 @@ class _DynamicArrayTypeInfo(_TypeInfo):
 
     @property
     def typ(self) -> type:
-        return _paramatize_type(DynamicArray, self.item_type.typ)
+        return _parameterize_type(DynamicArray, self.item_type.typ)
 
     @property
     def arc4_name(self) -> str:
@@ -799,7 +797,7 @@ class DynamicArray(  # TODO: inherit from StaticArray?
                 item = items[0]
             except IndexError:
                 raise TypeError("array must have an item type") from None
-            cls = _paramatize_type(cls, type(item))
+            cls = _parameterize_type(cls, type(item))
         instance = super().__new__(cls)
         return instance
 
@@ -933,7 +931,7 @@ class _TupleTypeInfo(_TypeInfo):
 
     @property
     def typ(self) -> type:
-        return _paramatize_type(Tuple, *(t.typ for t in self.child_types))
+        return _parameterize_type(Tuple, *(t.typ for t in self.child_types))
 
     @property
     def arc4_name(self) -> str:
@@ -985,7 +983,7 @@ class Tuple(
         except AttributeError:
             if not items:
                 raise TypeError("empty tuple not supported") from None
-            cls = _paramatize_type(cls, *map(type, items))
+            cls = _parameterize_type(cls, *map(type, items))
         instance = super().__new__(cls)
         return instance
 
@@ -1027,7 +1025,7 @@ class _StructMeta(type):
 
 def _tuple_type_from_struct(struct: type[Struct]) -> type[Tuple]:  # type: ignore[type-arg]
     field_types = [f.type for f in dataclasses.fields(struct)]
-    return _paramatize_type(Tuple, *field_types)
+    return _parameterize_type(Tuple, *field_types)
 
 
 class Struct(metaclass=_StructMeta):
@@ -1151,7 +1149,7 @@ def emit(event: str | Struct, /, *args: object) -> None:
         raise TypeError("expected str or Struct for event")
 
     event_hash = SHA512.new(event_str.encode(), truncate="256").digest()
-    lazy_context.value.add_application_logs(
+    lazy_context.txn.add_app_logs(
         app_id=active_txn.app_id,
         logs=event_hash[:4] + event_data.value,
     )

@@ -82,7 +82,11 @@ check = [
 ]
 # type checks algorand-python-testing code
 mypy_testing = "mypy . --exclude examples"
-tests = "pytest --cov --cov-report xml"
+tests = "pytest --cov=src --cov-report xml"
+tests_cov = [
+    "pytest --cov=src --cov-report=html",
+    "python -m webbrowser -t 'file://{root:uri}/htmlcov/index.html'"
+]
 
 # isolated environments for dev tooling
 [tool.hatch.envs.lint]

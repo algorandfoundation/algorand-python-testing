@@ -32,7 +32,13 @@ from tests.artifacts.StateOps.contract import (
     StateAssetHoldingContract,
     StateAssetParamsContract,
 )
-from tests.common import AVMInvoker, create_avm_invoker, generate_test_account, generate_test_asset
+from tests.common import (
+    INITIAL_BALANCE_MICRO_ALGOS,
+    AVMInvoker,
+    create_avm_invoker,
+    generate_test_account,
+    generate_test_asset,
+)
 
 ARTIFACTS_DIR = Path(__file__).parent / "artifacts"
 CRYPTO_OPS_APP_SPEC = ARTIFACTS_DIR / "CryptoOps" / "data" / "CryptoOpsContract.arc32.json"
@@ -245,7 +251,7 @@ def test_ed25519verify(
         avm_result = get_crypto_ops_avm_result(
             "verify_ed25519verify", a=message, b=signature, c=public_key, suggested_params=sp
         )
-        with ctx.txn.enter_txn_group([app_call], active_transaction_index=0):
+        with ctx.txn.scoped_execution([app_call], active_txn_index=0):
             result = op.ed25519verify(message, signature, public_key)
 
         assert avm_result == result, "The AVM result should match the expected result"
@@ -563,7 +569,7 @@ def test_app_params_get(
 @pytest.mark.parametrize(
     ("method_name", "expected_value"),
     [
-        ("verify_acct_balance", 100_100_000),
+        ("verify_acct_balance", INITIAL_BALANCE_MICRO_ALGOS + 100_000),
         ("verify_acct_min_balance", 100_000),
         ("verify_acct_auth_addr", algosdk.encoding.decode_address(algosdk.constants.ZERO_ADDRESS)),
         ("verify_acct_total_num_uint", 0),
@@ -886,8 +892,8 @@ def test_set_scratch_slot(
     context: AlgopyTestContext, index: int, value: algopy.Bytes | algopy.UInt64 | bytes | int
 ) -> None:
     txn = context.any.txn.application_call()
-    context.set_scratch_slot(txn, index, value)
-    assert context.get_scratch_slot(txn, index) == convert_native_to_stack(value)
+    context.txn.set_scratch_slot(txn, index, value)
+    assert context.txn.get_scratch_slot(txn, index) == convert_native_to_stack(value)
 
 
 @pytest.mark.parametrize(
@@ -905,8 +911,8 @@ def test_get_scratch_slot(
     context: AlgopyTestContext, index: int, value: algopy.Bytes | algopy.UInt64 | bytes | int
 ) -> None:
     txn = context.any.txn.application_call()
-    context.set_scratch_slot(txn, index, value)
-    retrieved_value = context.get_scratch_slot(txn, index)
+    context.txn.set_scratch_slot(txn, index, value)
+    retrieved_value = context.txn.get_scratch_slot(txn, index)
     assert retrieved_value == convert_native_to_stack(value)
 
 
@@ -917,17 +923,17 @@ def test_scratch_slot_invalid_index(
     txn = context.any.txn.application_call()
 
     with pytest.raises(ValueError, match="invalid scratch slot"):
-        context.set_scratch_slot(txn, invalid_index, algopy.Bytes(b"invalid"))
+        context.txn.set_scratch_slot(txn, invalid_index, algopy.Bytes(b"invalid"))
 
     with pytest.raises(ValueError, match="invalid scratch slot"):
-        context.get_scratch_slot(txn, invalid_index)
+        context.txn.get_scratch_slot(txn, invalid_index)
 
 
 def test_overwrite_scratch_slot(context: AlgopyTestContext) -> None:
     txn = context.any.txn.application_call()
-    context.set_scratch_slot(txn, 0, algopy.Bytes(b"initial"))
-    context.set_scratch_slot(txn, 0, algopy.UInt64(99))
-    assert context.get_scratch_slot(txn, 0) == algopy.UInt64(99)
+    context.txn.set_scratch_slot(txn, 0, algopy.Bytes(b"initial"))
+    context.txn.set_scratch_slot(txn, 0, algopy.UInt64(99))
+    assert context.txn.get_scratch_slot(txn, 0) == algopy.UInt64(99)
 
 
 def test_itxn_ops(context: AlgopyTestContext) -> None:
@@ -938,7 +944,7 @@ def test_itxn_ops(context: AlgopyTestContext) -> None:
     contract.verify_itxn_ops()
 
     # assert
-    itxn_group = context.txn.last_txn_group.get_submitted_itxn_group(0)
+    itxn_group = context.txn.last_group.get_itxn_group(0)
     appl_itxn = itxn_group.application_call(0)
     pay_itxn = itxn_group.payment(1)
 

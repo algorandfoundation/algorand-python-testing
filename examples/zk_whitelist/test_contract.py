@@ -36,14 +36,15 @@ def test_add_address_to_whitelist(
     )
     dummy_verifier_app = context.any.application()
     context.set_template_var("VERIFIER_APP_ID", dummy_verifier_app.id)
-    context.add_application_logs(
-        app_id=dummy_verifier_app.id,
-        logs=b"\x80",
-        prepend_arc4_prefix=True,
-    )
 
     # Act
-    result = contract.add_address_to_whitelist(address, proof)
+    with context.txn.scoped_execution(
+        gtxns=[context.any.txn.application_call(app_id=dummy_verifier_app)]
+    ):
+        context.txn.add_app_logs(
+            app_id=dummy_verifier_app.id, logs=b"\x80", prepend_arc4_prefix=True
+        )
+        result = contract.add_address_to_whitelist(address, proof)
 
     # Assert
     assert result == algopy.arc4.String("")
@@ -64,7 +65,7 @@ def test_add_address_to_whitelist_invalid_proof(
     )
     dummy_verifier_app = context.any.application()
     context.set_template_var("VERIFIER_APP_ID", dummy_verifier_app.id)
-    context.add_application_logs(
+    context.txn.add_app_logs(
         app_id=dummy_verifier_app.id,
         logs=b"",
         prepend_arc4_prefix=True,

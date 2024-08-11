@@ -8,7 +8,7 @@ from algopy_testing.op.constants import OP_MEMBER_TO_TXN_MEMBER
 
 class _ITxn:
     def __getattr__(self, name: str) -> Callable[[], typing.Any]:
-        inner_txn_groups = lazy_context.active_group.inner_txn_groups
+        inner_txn_groups = lazy_context.active_group.itxn_groups
         if not inner_txn_groups or not inner_txn_groups[-1]:
             raise RuntimeError("no previous inner transactions")
 
@@ -28,7 +28,7 @@ ITxn = _ITxn()
 
 class _GITxn:
     def __getattr__(self, name: str) -> Callable[[int], typing.Any]:
-        inner_txn_groups = lazy_context.active_group.inner_txn_groups
+        inner_txn_groups = lazy_context.active_group.itxn_groups
         if not inner_txn_groups or not inner_txn_groups[-1]:
             raise RuntimeError("no previous inner transactions")
         last_itxn_group = inner_txn_groups[-1]

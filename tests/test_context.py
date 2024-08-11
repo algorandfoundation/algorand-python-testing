@@ -75,15 +75,15 @@ def test_transaction_group_management() -> None:
             receiver=context.default_sender,
             amount=UInt64(2000),
         )
-        with context.txn.enter_txn_group([txn1, txn2]):
+        with context.txn.scoped_execution([txn1, txn2]):
             assert context.txn._active_group is not None
-            assert len(context.txn._active_group.transactions) == 2
+            assert len(context.txn._active_group.txns) == 2
         assert context.txn._active_group is None
-        assert len(context.txn.last_txn_group.transactions) == 2
+        assert len(context.txn.last_group.txns) == 2
 
         context.clear_transaction_context()
         with pytest.raises(ValueError, match="No group transactions"):
-            assert context.txn.last_txn_group
+            assert context.txn.last_group
 
 
 def test_last_itxn_access() -> None:
@@ -92,9 +92,9 @@ def test_last_itxn_access() -> None:
         dummy_asset = context.any.asset()
         contract.opt_in_dummy_asset(dummy_asset)
 
-        assert len(context.txn.last_txn_group.get_submitted_itxn_group(0)) == 1
+        assert len(context.txn.last_group.get_itxn_group(0)) == 1
         itxn: algopy.itxn.AssetTransferInnerTransaction = (
-            context.txn.last_txn_group.last_submitted_itxn.asset_transfer
+            context.txn.last_group.last_itxn.asset_transfer
         )
         app = context.get_application_for_contract(contract)
         assert itxn.asset_sender == app.address
@@ -116,9 +116,9 @@ def test_context_reset() -> None:
         assert len(context.ledger.asset_data) == 0
         assert len(context.ledger.application_data) == 0
         with pytest.raises(ValueError, match="No group transactions found"):
-            assert context.txn.last_txn_group
-        assert len(context._application_logs) == 0
-        assert len(context._scratch_spaces) == 0
+            assert context.txn.last_group
+        assert len(context.txn._groups) == 0
+        assert len(context.txn._scratch_spaces) == 0
         assert next(context.ledger.asset_id) == 1001
         assert next(context.ledger.app_id) == 1001
 
@@ -150,8 +150,8 @@ def test_get_last_submitted_itxn_loader() -> None:
             amount=UInt64(2000),
         )
         group = TransactionGroup([], 0)
-        group._add_inner_txn_group([itxn1, itxn2])
-        last_itxn = group.last_submitted_itxn.payment
+        group._add_itxn_group([itxn1, itxn2])
+        last_itxn = group.last_itxn.payment
         assert last_itxn.amount == 2000
 
 

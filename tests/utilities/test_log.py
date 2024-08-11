@@ -52,18 +52,18 @@ def test_log(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
         n=n.bytes.value,
     )
 
-    with context.txn.enter_txn_group([context.any.txn.payment()]):  # noqa: SIM117
+    with context.txn.scoped_execution([context.any.txn.payment()]):  # noqa: SIM117
         with pytest.raises(
             ValueError, match="Cannot emit events outside of application call context!"
         ):
             log(a, b, c, d, e, f, g, h, i, j, k, m, n, sep=b"-")
 
     dummy_app = context.any.application()
-    with context.txn.enter_txn_group(
-        [context.any.txn.application_call(app_id=dummy_app)], active_transaction_index=0
+    with context.txn.scoped_execution(
+        [context.any.txn.application_call(app_id=dummy_app)], active_txn_index=0
     ):
         log(a, b, c, d, e, f, g, h, i, j, k, m, n, sep=b"-")
         arc4_result = [
-            base64.b64encode(log).decode() for log in context.get_application_logs(dummy_app.id)
+            base64.b64encode(log).decode() for log in context.txn.get_app_logs(dummy_app.id)
         ]
         assert avm_result == arc4_result

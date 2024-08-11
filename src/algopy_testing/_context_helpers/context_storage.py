@@ -11,6 +11,7 @@ if typing.TYPE_CHECKING:
 
     from algopy_testing._context_helpers.ledger_context import LedgerContext
     from algopy_testing._context_helpers.txn_context import TransactionContext, TransactionGroup
+    from algopy_testing._value_generators import AlgopyValueGenerator
     from algopy_testing.context import AlgopyTestContext
     from algopy_testing.models.account import AccountContextData
     from algopy_testing.models.application import ApplicationContextData
@@ -20,7 +21,6 @@ _var: ContextVar[AlgopyTestContext] = ContextVar("_var")
 
 
 # functions for use by algopy_testing implementations that shouldn't be exposed to the user
-# TODO: might be nicer to wrap all this into a single interface that can be imported
 def get_test_context() -> AlgopyTestContext:
     try:
         result = _var.get()
@@ -49,8 +49,15 @@ class _InternalContext:
     def txn(self) -> TransactionContext:
         return self.value.txn
 
-    def get_active_txn_fields(self) -> dict[str, typing.Any]:
-        return (self.txn._active_txn_fields or {}).copy()
+    @property
+    def any(self) -> AlgopyValueGenerator:
+        return self.value.any
+
+    def get_txn_op_fields(self) -> dict[str, typing.Any]:
+        active_group = self.txn._active_group
+        if active_group is None:
+            return {}
+        return (active_group._txn_op_fields or {}).copy()
 
     @property
     def active_group(self) -> TransactionGroup:
