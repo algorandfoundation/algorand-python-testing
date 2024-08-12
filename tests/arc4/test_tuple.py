@@ -13,7 +13,7 @@ _abi_bool = True
 
 _arc4_string = arc4.String("hello")
 _arc4_uint8 = arc4.UInt8(42)
-_arc4_bool = arc4.Bool(True)  # noqa: FBT003
+_arc4_bool = arc4.Bool(True)
 
 _test_data = [
     (

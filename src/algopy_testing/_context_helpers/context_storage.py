@@ -113,7 +113,7 @@ lazy_context = _InternalContext()
 @contextmanager
 def algopy_testing_context(
     *,
-    default_sender: algopy.Account | None = None,
+    default_sender: str | None = None,
 ) -> Generator[AlgopyTestContext, None, None]:
     from algopy_testing.context import AlgopyTestContext
 

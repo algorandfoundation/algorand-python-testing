@@ -68,7 +68,7 @@ def test_emit(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
             MAX_UINT64,
             algopy.Bytes(b"world"),
             16,
-            False,  # noqa: FBT003
+            False,
             b"test",
             "greetings",
         )
@@ -78,7 +78,7 @@ def test_emit(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
             arc4.BigUIntN[typing.Literal[256]](512),
             arc4.UFixedNxM[typing.Literal[32], typing.Literal[8]]("42.94967295"),
             arc4.BigUFixedNxM[typing.Literal[256], typing.Literal[16]]("25.5"),
-            arc4.Bool(True),  # noqa: FBT003
+            arc4.Bool(True),
             arc4.StaticArray(arc4.UInt8(1), arc4.UInt8(2), arc4.UInt8(3)),
             arc4.DynamicArray(arc4.UInt16(1), arc4.UInt16(2), arc4.UInt16(3)),
             arc4.Tuple((arc4.UInt32(1), arc4.UInt64(2), arc4.String("hello"))),

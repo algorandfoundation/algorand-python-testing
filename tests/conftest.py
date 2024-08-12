@@ -27,5 +27,10 @@ def indexer_client() -> IndexerClient:
 
 
 @pytest.fixture()
-def localnet_creator(algod_client: AlgodClient) -> algopy.Account:
-    return algopy.Account(get_localnet_default_account(algod_client).address)
+def localnet_creator_address(algod_client: AlgodClient) -> str:
+    return get_localnet_default_account(algod_client).address
+
+
+@pytest.fixture()
+def localnet_creator(localnet_creator_address: str) -> algopy.Account:
+    return algopy.Account(localnet_creator_address)

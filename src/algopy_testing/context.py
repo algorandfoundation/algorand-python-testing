@@ -32,14 +32,14 @@ class AlgopyTestContext:
     def __init__(
         self,
         *,
-        default_sender: algopy.Account | None = None,
+        default_sender: str | None = None,
         template_vars: dict[str, typing.Any] | None = None,
     ) -> None:
         import algopy
 
         # TODO: remove direct reads of data mappings outside of context_storage
-        self._default_sender = default_sender or algopy.Account(
-            algosdk.account.generate_account()[1]
+        self._default_sender = algopy.Account(
+            default_sender or algosdk.account.generate_account()[1]
         )
         self._template_vars: dict[str, typing.Any] = template_vars or {}
 

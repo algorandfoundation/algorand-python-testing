@@ -23,7 +23,7 @@ def test_log(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
     b = algopy.UInt64(MAX_UINT64)
     c = algopy.Bytes(b"world")
     d = algopy.BigUInt(MAX_UINT512)
-    e = arc4.Bool(True)  # noqa: FBT003
+    e = arc4.Bool(True)
     f = arc4.String("greetings")
     g: arc4.UIntN[typing.Literal[64]] = arc4.UIntN[typing.Literal[64]](42)
     h: arc4.BigUIntN[typing.Literal[256]] = arc4.BigUIntN[typing.Literal[256]](512)

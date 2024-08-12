@@ -246,6 +246,9 @@ unfixable = [
 "src/**" = [
     "PT", # no pytest rules
 ]
+"tests/**" = [
+    "FBT003", # allow boolean positional arguments
+]
 "src/algopy_testing/models/logicsig.py" = ["ARG002"]
 "scripts/**/*.py" = ["T201"]
 "scripts/refresh_test_artifacts.py" = ["S603"]
