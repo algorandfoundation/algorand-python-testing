@@ -3,11 +3,15 @@ from __future__ import annotations
 import contextlib
 import typing
 from collections import defaultdict
+from dataclasses import dataclass
+from inspect import signature
 
 import algosdk
 
 from algopy_testing.constants import ARC4_RETURN_PREFIX
+from algopy_testing.decorators.arc4 import _extract_group_txns, _generate_arc4_signature_from_fn
 from algopy_testing.enums import OnCompleteAction
+from algopy_testing.models.contract import Contract
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.utils import convert_native_to_stack, get_new_scratch_space
 
@@ -17,7 +21,7 @@ if typing.TYPE_CHECKING:
     import algopy
 
     from algopy_testing._itxn_loader import InnerTransactionResultType
-    from algopy_testing.models.txn_fields import TransactionFields
+    from algopy_testing.models.txn_fields import ApplicationCallFields, TransactionFields
 
 
 from algopy_testing import gtxn
@@ -25,6 +29,19 @@ from algopy_testing._itxn_loader import ITxnGroupLoader, ITxnLoader
 from algopy_testing.itxn import InnerTransaction, submit_txns
 from algopy_testing.models import Application
 from algopy_testing.primitives import UInt64
+
+
+@dataclass
+class PreparedAppCall:
+    txns: list[algopy.gtxn.TransactionBase]
+    app_txn: algopy.gtxn.ApplicationCallTransaction
+    method: typing.Callable[..., typing.Any]
+    args: tuple
+    kwargs: dict
+
+    def submit(self) -> object:
+        # This method will be called to execute the prepared call
+        return self.method(*self.args, **self.kwargs)
 
 
 class TransactionContext:
@@ -58,6 +75,64 @@ class TransactionContext:
             ctx = contextlib.nullcontext()
         with ctx:
             yield
+
+    def txn_group_for(
+        self, method: typing.Callable[..., typing.Any], *args: typing.Any, **kwargs: typing.Any
+    ) -> PreparedAppCall:
+        """Prepare an application call transaction group for a contract method
+        without executing it.
+
+        :param method: The decorated contract method (baremethod or
+            abimethod).
+        :param args: Positional arguments for the method.
+        :param kwargs: Keyword arguments for the method.
+        :return: A PreparedAppCall object containing the transaction
+            group and method info.
+        """
+
+        import algopy
+
+        if not hasattr(method, "__wrapped__"):
+            raise ValueError("The provided method must be decorated with baremethod or abimethod")
+
+        contract = method.__self__
+        if not isinstance(contract, Contract):
+            raise TypeError("The method must be bound to a Contract instance")
+
+        # Extract method signature
+        sig = signature(method)
+        bound_args = sig.bind(contract, *args, **kwargs)
+        bound_args.apply_defaults()
+
+        # Prepare transaction fields
+        txn_fields: ApplicationCallFields = {}
+
+        if hasattr(method, "is_create"):
+            txn_fields["on_completion"] = (
+                OnCompleteAction.NoOp
+                if not method.is_create  # type: ignore[attr-defined]
+                else OnCompleteAction.OptIn
+            )
+
+        # Handle ABI methods
+        if hasattr(method, "__name__"):
+            arc4_name = getattr(method, "__arc4_name__", method.__name__)
+            arc4_signature = _generate_arc4_signature_from_fn(method.__wrapped__, arc4_name)  # type: ignore[attr-defined]
+            txns = _extract_group_txns(
+                self,
+                contract=contract,
+                arc4_signature=arc4_signature,
+                args=bound_args.args[1:],  # Exclude 'self' argument
+            )
+            app_txn = next(
+                txn for txn in txns if isinstance(txn, algopy.gtxn.ApplicationCallTransaction)
+            )
+            return PreparedAppCall(txns, app_txn, method, args, kwargs)
+
+        # Handle bare methods
+        txn_fields["app_id"] = contract.__app_id__
+        app_txn = self.any.txn.application_call(**txn_fields)
+        return PreparedAppCall([app_txn], app_txn, method, args, kwargs)
 
     @contextlib.contextmanager
     def scoped_execution(
