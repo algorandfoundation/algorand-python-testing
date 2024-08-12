@@ -17,6 +17,7 @@ if typing.TYPE_CHECKING:
     import algopy
 
     from algopy_testing._itxn_loader import InnerTransactionResultType
+    from algopy_testing.models.txn_fields import TransactionFields
 
 
 from algopy_testing import gtxn
@@ -63,7 +64,7 @@ class TransactionContext:
         self,
         gtxns: typing.Sequence[algopy.gtxn.TransactionBase] | None = None,
         active_txn_index: int | None = None,
-        txn_op_fields: dict[str, typing.Any] | None = None,
+        txn_op_fields: TransactionFields | None = None,
     ) -> Iterator[None]:
         """Adds a new transaction group using a list of transactions and an
         optional index to indicate the active transaction within the group.
@@ -100,7 +101,7 @@ class TransactionContext:
         self._active_group = TransactionGroup(
             txns=gtxns,
             active_txn_index=active_txn_index,
-            txn_op_fields=txn_op_fields,
+            txn_op_fields=typing.cast(dict[str, typing.Any], txn_op_fields),
         )
         try:
             yield

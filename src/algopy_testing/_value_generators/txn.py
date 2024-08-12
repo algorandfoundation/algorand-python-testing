@@ -127,5 +127,8 @@ class TxnValueGenerator:
         fields.setdefault("type", txn_type.type_enum)
         fields.setdefault("sender", lazy_context.value.default_sender)
 
-        fields = {**get_txn_defaults(), **fields}
+        fields = {
+            **get_txn_defaults(),
+            **fields,
+        }
         return txn_type(fields)

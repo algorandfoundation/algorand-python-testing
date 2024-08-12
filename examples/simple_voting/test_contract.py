@@ -60,6 +60,7 @@ def test_vote_already_voted(context: AlgopyTestContext) -> None:
     # Arrange
     contract = VotingContract()
     voter = context.any.account()
+    contract.votes.value = algopy.UInt64(1)
     contract.voted[voter] = algopy.UInt64(1)
 
     with context.txn.scoped_execution(
@@ -81,7 +82,7 @@ def test_vote_already_voted(context: AlgopyTestContext) -> None:
 
     # Assert
     assert result is False
-    assert contract.votes.value == algopy.UInt64(0)
+    assert contract.votes.value == algopy.UInt64(1)
 
 
 @pytest.mark.usefixtures("context")

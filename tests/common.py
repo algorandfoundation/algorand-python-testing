@@ -24,13 +24,19 @@ class AVMInvoker:
     def __init__(self, client: ApplicationClient):
         self.client = client
 
-    def __call__(self, method: str, **kwargs: typing.Any) -> object:
+    def __call__(
+        self,
+        method: str,
+        on_complete: algosdk.transaction.OnComplete = algosdk.transaction.OnComplete.NoOpOC,
+        **kwargs: typing.Any,
+    ) -> object:
         response = self.client.call(
             method,
             transaction_parameters={
                 # random note avoids duplicate txn if tests are running concurrently
                 "note": _random_note(),
                 "suggested_params": kwargs.pop("suggested_params", None),
+                "on_complete": on_complete,
             },
             **kwargs,
         )

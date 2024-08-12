@@ -83,11 +83,6 @@ def context() -> typing.Generator[AlgopyTestContext, None, None]:
         ctx.reset()
 
 
-@pytest.fixture()
-def localnet_creator(algod_client: AlgodClient) -> algopy.Account:
-    return algopy.Account(get_localnet_default_account(algod_client).address)
-
-
 @pytest.fixture(scope="module")
 def get_crypto_ops_avm_result(algod_client: AlgodClient) -> AVMInvoker:
     return create_avm_invoker(CRYPTO_OPS_APP_SPEC, algod_client)

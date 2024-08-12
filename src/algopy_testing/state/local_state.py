@@ -25,17 +25,20 @@ class LocalState(typing.Generic[_T]):
     ) -> None:
         self.app_id = lazy_context.active_group.active_app_id
         self.type_ = type_
-        match key:
-            case bytes(bytes_key):
-                self._key: algopy.Bytes = Bytes(bytes_key)
-            case Bytes() as key_bytes:
-                self._key = key_bytes
-            case str(str_key):
-                self._key = String(str_key).bytes
-            case String() as key_str:
-                self._key = key_str.bytes
-            case _:
-                raise ValueError("Key must be bytes or str")
+        if key == "":
+            self._key: algopy.Bytes = Bytes()
+        else:
+            match key:
+                case bytes(bytes_key):
+                    self._key = Bytes(bytes_key)
+                case Bytes() as key_bytes:
+                    self._key = key_bytes
+                case str(str_key):
+                    self._key = String(str_key).bytes
+                case String() as key_str:
+                    self._key = key_str.bytes
+                case _:
+                    raise ValueError("Key must be bytes or str")
         self.description = description
         self.app_id = 0  # TODO: set from contract instance
 

@@ -49,7 +49,8 @@ class ApplicationContextData:
     def set_global_state(self, key: algopy.Bytes | bytes, value: StateValueType | None) -> None:
         key_bytes = as_bytes(key)
         if value is None:
-            del self.global_state[key_bytes]
+            if key_bytes in self.global_state:
+                del self.global_state[key_bytes]
         else:
             self.global_state[key_bytes] = value
 

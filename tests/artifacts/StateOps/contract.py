@@ -357,3 +357,40 @@ class ITxnOpsContract(ARC4Contract):
 
         assert algopy.op.GITxn.type_enum(0) == algopy.TransactionType.ApplicationCall
         assert algopy.op.GITxn.type_enum(1) == algopy.TransactionType.Payment
+
+
+class GlobalStateContract(ARC4Contract):
+    def __init__(self) -> None:
+        self.implicit_key_arc4_uint = GlobalState(arc4.UInt64(1337))
+        self.implicit_key_arc4_string = GlobalState(arc4.String("Hello"))
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_uint(self) -> arc4.UInt64:
+        return self.implicit_key_arc4_uint.value
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_string(self) -> arc4.String:
+        return self.implicit_key_arc4_string.value
+
+
+class LocalStateContract(ARC4Contract):
+    def __init__(self) -> None:
+        self.implicit_key_arc4_uint = LocalState(
+            arc4.UInt64,
+        )
+        self.implicit_key_arc4_string = LocalState(
+            arc4.String,
+        )
+
+    @arc4.abimethod(allow_actions=["OptIn"])
+    def opt_in(self) -> None:
+        self.implicit_key_arc4_uint[Global.creator_address] = arc4.UInt64(1337)
+        self.implicit_key_arc4_string[Global.creator_address] = arc4.String("Hello")
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_uint(self, a: Account) -> arc4.UInt64:
+        return self.implicit_key_arc4_uint[a]
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_string(self, a: Account) -> arc4.String:
+        return self.implicit_key_arc4_string[a]

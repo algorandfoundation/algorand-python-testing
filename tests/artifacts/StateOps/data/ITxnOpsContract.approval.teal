@@ -56,57 +56,62 @@ verify_itxn_ops:
     // algopy.op.ITxnCreate.set_approval_program(Bytes.from_hex("068101"))
     byte 0x068101
     itxn_field ApprovalProgram
-    // tests/artifacts/StateOps/contract.py:344
+    // tests/artifacts/StateOps/contract.py:344-345
+    // # pages essentially appends
+    // algopy.op.ITxnCreate.set_approval_program_pages(Bytes.from_hex("068101"))
+    byte 0x068101
+    itxn_field ApprovalProgramPages
+    // tests/artifacts/StateOps/contract.py:346
     // algopy.op.ITxnCreate.set_clear_state_program(Bytes.from_hex("068101"))
     byte 0x068101
     itxn_field ClearStateProgram
-    // tests/artifacts/StateOps/contract.py:345
+    // tests/artifacts/StateOps/contract.py:347
     // algopy.op.ITxnCreate.set_fee(algopy.op.Global.min_txn_fee)
     global MinTxnFee
     itxn_field Fee
-    // tests/artifacts/StateOps/contract.py:346
+    // tests/artifacts/StateOps/contract.py:348
     // algopy.op.ITxnCreate.next()
     itxn_next
-    // tests/artifacts/StateOps/contract.py:347
+    // tests/artifacts/StateOps/contract.py:349
     // algopy.op.ITxnCreate.set_type_enum(algopy.TransactionType.Payment)
     int pay
     itxn_field TypeEnum
-    // tests/artifacts/StateOps/contract.py:348
+    // tests/artifacts/StateOps/contract.py:350
     // algopy.op.ITxnCreate.set_receiver(algopy.op.Global.creator_address)
     global CreatorAddress
     itxn_field Receiver
-    // tests/artifacts/StateOps/contract.py:349
+    // tests/artifacts/StateOps/contract.py:351
     // algopy.op.ITxnCreate.set_amount(algopy.UInt64(1000))
     int 1000
     itxn_field Amount
-    // tests/artifacts/StateOps/contract.py:350
+    // tests/artifacts/StateOps/contract.py:352
     // algopy.op.ITxnCreate.submit()
     itxn_submit
-    // tests/artifacts/StateOps/contract.py:352
+    // tests/artifacts/StateOps/contract.py:354
     // assert algopy.op.ITxn.receiver() == algopy.op.Global.creator_address
     itxn Receiver
     global CreatorAddress
     ==
     assert
-    // tests/artifacts/StateOps/contract.py:353
+    // tests/artifacts/StateOps/contract.py:355
     // assert algopy.op.ITxn.amount() == algopy.UInt64(1000)
     itxn Amount
     int 1000
     ==
     assert
-    // tests/artifacts/StateOps/contract.py:354
+    // tests/artifacts/StateOps/contract.py:356
     // assert algopy.op.ITxn.type_enum() == algopy.TransactionType.Payment
     itxn TypeEnum
     int pay
     ==
     assert
-    // tests/artifacts/StateOps/contract.py:356
+    // tests/artifacts/StateOps/contract.py:358
     // assert algopy.op.GITxn.type_enum(0) == algopy.TransactionType.ApplicationCall
     gitxn 0 TypeEnum
     int appl
     ==
     assert
-    // tests/artifacts/StateOps/contract.py:357
+    // tests/artifacts/StateOps/contract.py:359
     // assert algopy.op.GITxn.type_enum(1) == algopy.TransactionType.Payment
     gitxn 1 TypeEnum
     int pay
