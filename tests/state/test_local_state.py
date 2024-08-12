@@ -24,6 +24,8 @@ def context() -> Generator[AlgopyTestContext, None, None]:
     [
         ("get_implicit_key_arc4_uint", algopy_testing.arc4.UInt64),
         ("get_implicit_key_arc4_string", algopy_testing.arc4.String),
+        ("get_arc4_uint", algopy_testing.arc4.UInt64),
+        ("get_arc4_string", algopy_testing.arc4.String),
     ],
 )
 def test_get_local_arc4_value(

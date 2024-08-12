@@ -363,6 +363,8 @@ class GlobalStateContract(ARC4Contract):
     def __init__(self) -> None:
         self.implicit_key_arc4_uint = GlobalState(arc4.UInt64(1337))
         self.implicit_key_arc4_string = GlobalState(arc4.String("Hello"))
+        self.arc4_uint = GlobalState(arc4.UInt64(1337), key="explicit_key_arc4_uint")
+        self.arc4_string = GlobalState(arc4.String("Hello"), key="explicit_key_arc4_string")
 
     @arc4.abimethod()
     def get_implicit_key_arc4_uint(self) -> arc4.UInt64:
@@ -371,6 +373,14 @@ class GlobalStateContract(ARC4Contract):
     @arc4.abimethod()
     def get_implicit_key_arc4_string(self) -> arc4.String:
         return self.implicit_key_arc4_string.value
+
+    @arc4.abimethod()
+    def get_arc4_uint(self) -> arc4.UInt64:
+        return self.arc4_uint.value
+
+    @arc4.abimethod()
+    def get_arc4_string(self) -> arc4.String:
+        return self.arc4_string.value
 
 
 class LocalStateContract(ARC4Contract):
@@ -381,11 +391,15 @@ class LocalStateContract(ARC4Contract):
         self.implicit_key_arc4_string = LocalState(
             arc4.String,
         )
+        self.arc4_uint = LocalState(arc4.UInt64, key="explicit_key_arc4_uint")
+        self.arc4_string = LocalState(arc4.String, key="explicit_key_arc4_string")
 
     @arc4.abimethod(allow_actions=["OptIn"])
     def opt_in(self) -> None:
         self.implicit_key_arc4_uint[Global.creator_address] = arc4.UInt64(1337)
         self.implicit_key_arc4_string[Global.creator_address] = arc4.String("Hello")
+        self.arc4_uint[Global.creator_address] = arc4.UInt64(1337)
+        self.arc4_string[Global.creator_address] = arc4.String("Hello")
 
     @arc4.abimethod()
     def get_implicit_key_arc4_uint(self, a: Account) -> arc4.UInt64:
@@ -394,3 +408,11 @@ class LocalStateContract(ARC4Contract):
     @arc4.abimethod()
     def get_implicit_key_arc4_string(self, a: Account) -> arc4.String:
         return self.implicit_key_arc4_string[a]
+
+    @arc4.abimethod()
+    def get_arc4_uint(self, a: Account) -> arc4.UInt64:
+        return self.arc4_uint[a]
+
+    @arc4.abimethod()
+    def get_arc4_string(self, a: Account) -> arc4.String:
+        return self.arc4_string[a]

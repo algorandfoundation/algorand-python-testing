@@ -143,17 +143,14 @@ class Contract(metaclass=_ContractMeta):
         match value:
             case (algopy_testing.Box() | algopy_testing.BoxRef()) as box if not box._key:
                 box._key = name_bytes
-            case (algopy_testing.GlobalState() | algopy_testing.LocalState()) as state:
+            case algopy_testing.GlobalState() as state:
+                state.app_id = _get_self_or_active_app_id(self)
+                if not state._key:
+                    state.set_key(name_bytes)
+            case algopy_testing.LocalState() as state:
                 state.app_id = _get_self_or_active_app_id(self)
                 if not state._key:
                     state._key = name_bytes
-                    if isinstance(state, algopy_testing.GlobalState) and hasattr(
-                        state, "_initial_value"
-                    ):
-                        state._value = state._initial_value
-                        del state._initial_value
-                elif hasattr(state, "_value"):
-                    state._value = state._value
             case algopy_testing.BoxMap() as box_map if box_map._key_prefix is None:
                 box_map._key_prefix = name_bytes
             case Bytes() | UInt64() | BytesBacked() | UInt64Backed() | bool():
