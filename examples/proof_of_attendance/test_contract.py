@@ -15,10 +15,18 @@ def context() -> Generator[AlgopyTestContext, None, None]:
         ctx.reset()
 
 
+@pytest.fixture()
+def contract(context: AlgopyTestContext) -> ProofOfAttendance:
+    contract = ProofOfAttendance()
+    contract.init(context.any.uint64(1, 100))
+
+    return contract
+
+
 def test_init(context: AlgopyTestContext) -> None:
     # Arrange
     contract = ProofOfAttendance()
-    max_attendees = context.any_uint64(1, 100)
+    max_attendees = context.any.uint64(1, 100)
 
     # Act
     contract.init(max_attendees)
@@ -38,19 +46,20 @@ def test_init(context: AlgopyTestContext) -> None:
 )
 def test_confirm_attendance(
     context: AlgopyTestContext,
+    contract: ProofOfAttendance,
     confirm_attendance: str,
     key_prefix: bytes,
 ) -> None:
     # Arrange
-    contract = ProofOfAttendance()
-    contract.max_attendees = context.any_uint64(1, 100)
 
     # Act
     confirm = getattr(contract, confirm_attendance)
     confirm()
 
     # Assert
-    assert context.get_box(key_prefix + context.default_creator.bytes) == algopy.op.itob(1)
+    assert context.ledger.get_box(key_prefix + context.default_sender.bytes) == algopy.op.itob(
+        1001
+    )
 
 
 @pytest.mark.parametrize(
@@ -64,28 +73,28 @@ def test_confirm_attendance(
 )
 def test_claim_poa(
     context: AlgopyTestContext,
+    contract: ProofOfAttendance,
     claim_poa: str,
     key_prefix: bytes,
 ) -> None:
     # Arrange
-    contract = ProofOfAttendance()
-    dummy_poa = context.any_asset()
-    opt_in_txn = context.any_asset_transfer_transaction(
-        sender=context.default_creator,
-        asset_receiver=context.default_creator,
+    dummy_poa = context.any.asset()
+    opt_in_txn = context.any.txn.asset_transfer(
+        sender=context.default_sender,
+        asset_receiver=context.default_sender,
         asset_close_to=algopy.Account(algosdk.constants.ZERO_ADDRESS),
         rekey_to=algopy.Account(algosdk.constants.ZERO_ADDRESS),
         xfer_asset=dummy_poa,
         fee=algopy.UInt64(0),
         asset_amount=algopy.UInt64(0),
     )
-    context.set_box(key_prefix + context.default_creator.bytes, algopy.op.itob(dummy_poa.id))
+    context.ledger.set_box(key_prefix + context.default_sender.bytes, algopy.op.itob(dummy_poa.id))
 
     # Act
     claim = getattr(contract, claim_poa)
     claim(opt_in_txn)
 
     # Assert
-    axfer_itxn = context.get_submitted_itxn_group(-1).asset_transfer(0)
-    assert axfer_itxn.asset_receiver == context.default_creator
+    axfer_itxn = context.txn.last_group.get_itxn_group(-1).asset_transfer(0)
+    assert axfer_itxn.asset_receiver == context.default_sender
     assert axfer_itxn.asset_amount == algopy.UInt64(1)

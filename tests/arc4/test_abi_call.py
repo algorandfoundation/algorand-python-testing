@@ -2,8 +2,8 @@ import typing
 from collections.abc import Generator
 
 import pytest
-from algopy_testing import arc4
-from algopy_testing.context import AlgopyTestContext, algopy_testing_context
+from algopy_testing import algopy_testing_context, arc4
+from algopy_testing.context import AlgopyTestContext
 from algopy_testing.itxn import ApplicationCallInnerTransaction
 from algopy_testing.models.contract import ARC4Contract
 from pytest_mock import MockerFixture
@@ -23,20 +23,20 @@ def context() -> Generator[AlgopyTestContext, None, None]:
 
 
 def test_mocking_required_for_abi_call(context: AlgopyTestContext) -> None:
-    dummy_app = context.any_application()
+    dummy_app = context.any.application()
 
-    with pytest.raises(NotImplementedError, match="abi_call is not implemented"):
+    with pytest.raises(NotImplementedError, match="'abi_call' is not available"):
         arc4.abi_call("echo(string)string", "untyped + ignore", app_id=dummy_app)
 
-    with pytest.raises(NotImplementedError, match="abi_call is not implemented"):
+    with pytest.raises(NotImplementedError, match="'abi_call' is not available"):
         arc4.abi_call[arc4.String]("echo", "test3", app_id=dummy_app)
 
-    with pytest.raises(NotImplementedError, match="abi_call is not implemented"):
+    with pytest.raises(NotImplementedError, match="'abi_call' is not available"):
         arc4.abi_call(Logger.echo, arc4.String("test1"), app_id=dummy_app)
 
 
 def test_abi_call_can_be_mocked(context: AlgopyTestContext, mocker: MockerFixture) -> None:
-    dummy_app = context.any_application()
+    dummy_app = context.any.application()
 
     def run_mocked_echo(
         *args: typing.Any, **_kwargs: typing.Any

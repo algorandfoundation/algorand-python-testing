@@ -39,17 +39,13 @@ class CryptoOpsContract(ARC4Contract):
         return arc4.Bool(result)
 
     @arc4.abimethod()
-    def verify_ecdsa_verify_k1(  # noqa: PLR0913
-        self, a: Bytes, b: Bytes, c: Bytes, d: Bytes, e: Bytes
-    ) -> bool:
+    def verify_ecdsa_verify_k1(self, a: Bytes, b: Bytes, c: Bytes, d: Bytes, e: Bytes) -> bool:
         ensure_budget(3000, OpUpFeeSource.GroupCredit)
         result_k1 = op.ecdsa_verify(op.ECDSA.Secp256k1, a, b, c, d, e)
         return result_k1
 
     @arc4.abimethod()
-    def verify_ecdsa_verify_r1(  # noqa: PLR0913
-        self, a: Bytes, b: Bytes, c: Bytes, d: Bytes, e: Bytes
-    ) -> bool:
+    def verify_ecdsa_verify_r1(self, a: Bytes, b: Bytes, c: Bytes, d: Bytes, e: Bytes) -> bool:
         ensure_budget(3000, OpUpFeeSource.GroupCredit)
         result_r1 = op.ecdsa_verify(op.ECDSA.Secp256r1, a, b, c, d, e)
         return result_r1

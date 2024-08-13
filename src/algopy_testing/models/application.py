@@ -1,19 +1,21 @@
 from __future__ import annotations
 
+import dataclasses
+import inspect
 import typing
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypedDict, TypeVar
 
-from algopy_testing.utils import as_int64
+from algopy_testing._context_helpers import lazy_context
+from algopy_testing.primitives import UInt64
+from algopy_testing.protocols import UInt64Backed
+from algopy_testing.utils import as_bytes, as_int64
 
-if TYPE_CHECKING:
+if typing.TYPE_CHECKING:
     import algopy
 
+    from algopy_testing.models.contract import Contract
 
-T = TypeVar("T")
 
-
-class ApplicationFields(TypedDict, total=False):
+class ApplicationFields(typing.TypedDict, total=False):
     approval_program: algopy.Bytes
     clear_state_program: algopy.Bytes
     global_num_uint: algopy.UInt64
@@ -25,48 +27,95 @@ class ApplicationFields(TypedDict, total=False):
     address: algopy.Account
 
 
-@dataclass()
-class Application:
-    id: algopy.UInt64
+AccountKey = str
+Key = bytes
+StateValueType = int | bytes
 
+
+@dataclasses.dataclass
+class ApplicationContextData:
+    app_id: int
+    fields: ApplicationFields
+    global_state: dict[Key, StateValueType] = dataclasses.field(default_factory=dict)
+    local_state: dict[tuple[AccountKey, Key], StateValueType] = dataclasses.field(
+        default_factory=dict
+    )
+    is_creating: bool = False
+    contract: Contract | None = None
+
+    def get_global_state(self, key: algopy.Bytes | bytes) -> StateValueType:
+        return self.global_state[as_bytes(key)]
+
+    def set_global_state(self, key: algopy.Bytes | bytes, value: StateValueType | None) -> None:
+        key_bytes = as_bytes(key)
+        if value is None:
+            if key_bytes in self.global_state:
+                del self.global_state[key_bytes]
+        else:
+            self.global_state[key_bytes] = value
+
+    def get_local_state(
+        self, account: algopy.Account | str, key: algopy.Bytes | bytes
+    ) -> StateValueType:
+        account_public_key = account if isinstance(account, str) else account.public_key
+        return self.local_state[(account_public_key, as_bytes(key))]
+
+    def set_local_state(
+        self,
+        account: algopy.Account | str,
+        key: algopy.Bytes | bytes,
+        value: StateValueType | None,
+    ) -> None:
+        account_public_key = account if isinstance(account, str) else account.public_key
+        key_bytes = as_bytes(key)
+        if value is None:
+            del self.local_state[(account_public_key, key_bytes)]
+        else:
+            self.local_state[(account_public_key, key_bytes)] = value
+
+
+class Application(UInt64Backed):
     def __init__(self, application_id: algopy.UInt64 | int = 0, /):
-        from algopy import UInt64
+        self._id = as_int64(application_id)
 
-        self.id = application_id if isinstance(application_id, UInt64) else UInt64(application_id)
+    @property
+    def id(self) -> algopy.UInt64:
+        return UInt64(self._id)
+
+    @property
+    def int_(self) -> int:
+        return self._id
+
+    @classmethod
+    def from_int(cls, value: int, /) -> typing.Self:
+        return cls(value)
+
+    @property
+    def fields(self) -> ApplicationFields:
+        if self._id == 0:
+            raise ValueError("cannot access properties of an app with an id of 0") from None
+        return lazy_context.get_app_data(self._id).fields
 
     def __getattr__(self, name: str) -> typing.Any:
-        from algopy_testing.context import get_test_context
-
-        context = get_test_context()
-        if not context:
-            raise ValueError(
-                "Test context is not initialized! Use `with algopy_testing_context()` to access "
-                "the context manager."
-            )
-        if int(self.id) not in context._application_data:
-            raise ValueError(
-                "`algopy.Application` is not present in the test context! "
-                "Use `context.add_application()` or `context.any_application()` to add the "
-                "application to your test setup."
-            )
-
-        return_value = context._application_data[int(self.id)].get(name)
-        if return_value is None:
-            raise AttributeError(
-                f"The value for '{name}' in the test context is None. "
-                f"Make sure to patch the global field '{name}' using your `AlgopyTestContext` "
-                "instance."
-            )
-
-        return return_value
+        if name in inspect.get_annotations(ApplicationFields):
+            value = self.fields.get(name)
+            # TODO: ensure reasonable default values are present (like account does)
+            if value is None:
+                raise ValueError(
+                    f"The Application value '{name}' has not been defined on the test context. "
+                    f"Make sure to patch the field '{name}' using your `AlgopyTestContext` "
+                    "instance."
+                )
+            return value
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Application):
-            return self.id == other.id
-        return self.id == as_int64(other)
+            return self._id == other._id
+        return self._id == as_int64(other)
 
     def __bool__(self) -> bool:
-        return self.id != 0
+        return self._id != 0
 
     def __hash__(self) -> int:
-        return hash(self.id)
+        return hash(self._id)

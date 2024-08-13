@@ -1,16 +1,19 @@
 from __future__ import annotations
 
+import typing
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypedDict, TypeVar
 
-if TYPE_CHECKING:
+from algopy_testing._context_helpers import lazy_context
+from algopy_testing.protocols import UInt64Backed
+
+if typing.TYPE_CHECKING:
     import algopy
 
 
-T = TypeVar("T")
+T = typing.TypeVar("T")
 
 
-class AssetFields(TypedDict, total=False):
+class AssetFields(typing.TypedDict, total=False):
     total: algopy.UInt64
     decimals: algopy.UInt64
     default_frozen: bool
@@ -26,7 +29,7 @@ class AssetFields(TypedDict, total=False):
 
 
 @dataclass
-class Asset:
+class Asset(UInt64Backed):
     id: algopy.UInt64
 
     def __init__(self, asset_id: algopy.UInt64 | int = 0):
@@ -34,24 +37,16 @@ class Asset:
 
         self.id = asset_id if isinstance(asset_id, UInt64) else UInt64(asset_id)
 
+    @property
+    def int_(self) -> int:
+        return self.id.value
+
+    @classmethod
+    def from_int(cls, value: int, /) -> typing.Self:
+        return cls(value)
+
     def balance(self, account: algopy.Account) -> algopy.UInt64:
-        from algopy_testing.context import get_test_context
-
-        context = get_test_context()
-        if not context:
-            raise ValueError(
-                "Test context is not initialized! Use `with algopy_testing_context()` to access "
-                "the context manager."
-            )
-
-        if account not in context._account_data:
-            raise ValueError(
-                "The account is not present in the test context! "
-                "Use `context.add_account()` or `context.any_account()` to add the account to "
-                "your test setup."
-            )
-
-        account_data = context._account_data.get(str(account), None)
+        account_data = lazy_context.get_account_data(account.public_key)
 
         if not account_data:
             raise ValueError("Account not found in testing context!")
@@ -71,23 +66,28 @@ class Asset:
         )
 
     def __getattr__(self, name: str) -> object:
-        from algopy_testing.context import get_test_context
+        if int(self.id) not in lazy_context.ledger.asset_data:
+            # check if its not 0 (which means its not
+            # instantiated/opted-in yet, and instantiated directly
+            # without invoking any_asset).
+            if self.id == 0:
+                # Handle dunder methods specially
+                if name.startswith("__") and name.endswith("__"):
+                    return getattr(type(self), name)
+                # For non-dunder attributes, check in __dict__
+                if name in self.__dict__:
+                    return self.__dict__[name]
+                raise AttributeError(
+                    f"'{self.__class__.__name__}' object has no attribute '{name}'"
+                )
 
-        context = get_test_context()
-        if not context:
-            raise ValueError(
-                "Test context is not initialized! Use `with algopy_testing_context()` to access "
-                "the context manager."
-            )
-
-        if int(self.id) not in context._asset_data:
             raise ValueError(
                 "`algopy.Asset` is not present in the test context! "
-                "Use `context.add_asset()` or `context.any_asset()` to add the asset to "
+                "Use `context.add_asset()` or `context.any.asset()` to add the asset to "
                 "your test setup."
             )
 
-        return_value = context._asset_data[int(self.id)].get(name)
+        return_value = lazy_context.get_asset_data(self.id).get(name)
         if return_value is None:
             raise AttributeError(
                 f"The value for '{name}' in the test context is None. "

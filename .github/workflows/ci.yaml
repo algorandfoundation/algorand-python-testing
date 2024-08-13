@@ -3,6 +3,8 @@ name: Check Python Code (algopy_testing)
 on:
   workflow_call:
   pull_request:
+  schedule:
+    - cron: "0 8 * * 1" # Each monday 8 AM UTC
 
 jobs:
   check-python:
@@ -21,13 +23,16 @@ jobs:
           cache: "pip"
 
       - name: Start LocalNet
-        run: hatch run cicd:localnet_start
+        run: pipx install algokit && algokit localnet start
 
       - name: Check pre-commits
         run: hatch run check
 
       - name: Check pre-commits (examples)
         run: hatch run examples:check
+
+      - name: Validate examples folder
+        run: hatch run validate_examples
 
       - name: Check wheels can be built
         run: hatch build

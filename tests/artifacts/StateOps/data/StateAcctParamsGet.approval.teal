@@ -1,0 +1,519 @@
+#pragma version 10
+
+tests.artifacts.StateOps.contract.StateAcctParamsGet.approval_program:
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@16
+    method "verify_acct_balance(account)uint64"
+    method "verify_acct_min_balance(account)uint64"
+    method "verify_acct_auth_addr(account)byte[]"
+    method "verify_acct_total_num_uint(account)uint64"
+    method "verify_acct_total_num_byte_slice(account)uint64"
+    method "verify_acct_total_extra_app_pages(account)uint64"
+    method "verify_acct_total_apps_created(account)uint64"
+    method "verify_acct_total_apps_opted_in(account)uint64"
+    method "verify_acct_total_assets_created(account)uint64"
+    method "verify_acct_total_assets(account)uint64"
+    method "verify_acct_total_boxes(account)uint64"
+    method "verify_acct_total_box_bytes(account)uint64"
+    txna ApplicationArgs 0
+    match main_verify_acct_balance_route@2 main_verify_acct_min_balance_route@3 main_verify_acct_auth_addr_route@4 main_verify_acct_total_num_uint_route@5 main_verify_acct_total_num_byte_slice_route@6 main_verify_acct_total_extra_app_pages_route@7 main_verify_acct_total_apps_created_route@8 main_verify_acct_total_apps_opted_in_route@9 main_verify_acct_total_assets_created_route@10 main_verify_acct_total_assets_route@11 main_verify_acct_total_boxes_route@12 main_verify_acct_total_box_bytes_route@13
+    err // reject transaction
+
+main_verify_acct_balance_route@2:
+    // tests/artifacts/StateOps/contract.py:18
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:18
+    // @arc4.abimethod()
+    callsub verify_acct_balance
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_acct_min_balance_route@3:
+    // tests/artifacts/StateOps/contract.py:23
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:23
+    // @arc4.abimethod()
+    callsub verify_acct_min_balance
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_acct_auth_addr_route@4:
+    // tests/artifacts/StateOps/contract.py:28
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:28
+    // @arc4.abimethod()
+    callsub verify_acct_auth_addr
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_acct_total_num_uint_route@5:
+    // tests/artifacts/StateOps/contract.py:33
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:33
+    // @arc4.abimethod()
+    callsub verify_acct_total_num_uint
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_acct_total_num_byte_slice_route@6:
+    // tests/artifacts/StateOps/contract.py:38
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:38
+    // @arc4.abimethod()
+    callsub verify_acct_total_num_byte_slice
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_acct_total_extra_app_pages_route@7:
+    // tests/artifacts/StateOps/contract.py:43
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:43
+    // @arc4.abimethod()
+    callsub verify_acct_total_extra_app_pages
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_acct_total_apps_created_route@8:
+    // tests/artifacts/StateOps/contract.py:48
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:48
+    // @arc4.abimethod()
+    callsub verify_acct_total_apps_created
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_acct_total_apps_opted_in_route@9:
+    // tests/artifacts/StateOps/contract.py:53
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:53
+    // @arc4.abimethod()
+    callsub verify_acct_total_apps_opted_in
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_acct_total_assets_created_route@10:
+    // tests/artifacts/StateOps/contract.py:58
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:58
+    // @arc4.abimethod()
+    callsub verify_acct_total_assets_created
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_acct_total_assets_route@11:
+    // tests/artifacts/StateOps/contract.py:63
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:63
+    // @arc4.abimethod()
+    callsub verify_acct_total_assets
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_acct_total_boxes_route@12:
+    // tests/artifacts/StateOps/contract.py:68
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:68
+    // @arc4.abimethod()
+    callsub verify_acct_total_boxes
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_verify_acct_total_box_bytes_route@13:
+    // tests/artifacts/StateOps/contract.py:73
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:73
+    // @arc4.abimethod()
+    callsub verify_acct_total_box_bytes
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_bare_routing@16:
+    // tests/artifacts/StateOps/contract.py:17
+    // class StateAcctParamsGet(ARC4Contract):
+    txn OnCompletion
+    !
+    assert // reject transaction
+    txn ApplicationID
+    !
+    assert // is creating
+    int 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAcctParamsGet.verify_acct_balance(a: bytes) -> uint64:
+verify_acct_balance:
+    // tests/artifacts/StateOps/contract.py:18-19
+    // @arc4.abimethod()
+    // def verify_acct_balance(self, a: algopy.Account) -> algopy.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:20
+    // balance, _val = op.AcctParamsGet.acct_balance(a)
+    frame_dig -1
+    acct_params_get AcctBalance
+    pop
+    // tests/artifacts/StateOps/contract.py:21
+    // return balance
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateAcctParamsGet.verify_acct_min_balance(a: bytes) -> uint64:
+verify_acct_min_balance:
+    // tests/artifacts/StateOps/contract.py:23-24
+    // @arc4.abimethod()
+    // def verify_acct_min_balance(self, a: algopy.Account) -> algopy.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:25
+    // min_balance, _val = op.AcctParamsGet.acct_min_balance(a)
+    frame_dig -1
+    acct_params_get AcctMinBalance
+    pop
+    // tests/artifacts/StateOps/contract.py:26
+    // return min_balance
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateAcctParamsGet.verify_acct_auth_addr(a: bytes) -> bytes:
+verify_acct_auth_addr:
+    // tests/artifacts/StateOps/contract.py:28-29
+    // @arc4.abimethod()
+    // def verify_acct_auth_addr(self, a: algopy.Account) -> algopy.Bytes:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:30
+    // auth_addr, _val = op.AcctParamsGet.acct_auth_addr(a)
+    frame_dig -1
+    acct_params_get AcctAuthAddr
+    pop
+    // tests/artifacts/StateOps/contract.py:31
+    // return auth_addr.bytes
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateAcctParamsGet.verify_acct_total_num_uint(a: bytes) -> uint64:
+verify_acct_total_num_uint:
+    // tests/artifacts/StateOps/contract.py:33-34
+    // @arc4.abimethod()
+    // def verify_acct_total_num_uint(self, a: algopy.Account) -> algopy.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:35
+    // total_num_uint, _val = op.AcctParamsGet.acct_total_num_uint(a)
+    frame_dig -1
+    acct_params_get AcctTotalNumUint
+    pop
+    // tests/artifacts/StateOps/contract.py:36
+    // return total_num_uint
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateAcctParamsGet.verify_acct_total_num_byte_slice(a: bytes) -> uint64:
+verify_acct_total_num_byte_slice:
+    // tests/artifacts/StateOps/contract.py:38-39
+    // @arc4.abimethod()
+    // def verify_acct_total_num_byte_slice(self, a: algopy.Account) -> algopy.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:40
+    // total_num_byte_slice, _val = op.AcctParamsGet.acct_total_num_byte_slice(a)
+    frame_dig -1
+    acct_params_get AcctTotalNumByteSlice
+    pop
+    // tests/artifacts/StateOps/contract.py:41
+    // return total_num_byte_slice
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateAcctParamsGet.verify_acct_total_extra_app_pages(a: bytes) -> uint64:
+verify_acct_total_extra_app_pages:
+    // tests/artifacts/StateOps/contract.py:43-44
+    // @arc4.abimethod()
+    // def verify_acct_total_extra_app_pages(self, a: algopy.Account) -> algopy.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:45
+    // total_extra_app_pages, _val = op.AcctParamsGet.acct_total_extra_app_pages(a)
+    frame_dig -1
+    acct_params_get AcctTotalExtraAppPages
+    pop
+    // tests/artifacts/StateOps/contract.py:46
+    // return total_extra_app_pages
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateAcctParamsGet.verify_acct_total_apps_created(a: bytes) -> uint64:
+verify_acct_total_apps_created:
+    // tests/artifacts/StateOps/contract.py:48-49
+    // @arc4.abimethod()
+    // def verify_acct_total_apps_created(self, a: algopy.Account) -> algopy.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:50
+    // total_apps_created, _val = op.AcctParamsGet.acct_total_apps_created(a)
+    frame_dig -1
+    acct_params_get AcctTotalAppsCreated
+    pop
+    // tests/artifacts/StateOps/contract.py:51
+    // return total_apps_created
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateAcctParamsGet.verify_acct_total_apps_opted_in(a: bytes) -> uint64:
+verify_acct_total_apps_opted_in:
+    // tests/artifacts/StateOps/contract.py:53-54
+    // @arc4.abimethod()
+    // def verify_acct_total_apps_opted_in(self, a: algopy.Account) -> algopy.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:55
+    // total_apps_opted_in, _val = op.AcctParamsGet.acct_total_apps_opted_in(a)
+    frame_dig -1
+    acct_params_get AcctTotalAppsOptedIn
+    pop
+    // tests/artifacts/StateOps/contract.py:56
+    // return total_apps_opted_in
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateAcctParamsGet.verify_acct_total_assets_created(a: bytes) -> uint64:
+verify_acct_total_assets_created:
+    // tests/artifacts/StateOps/contract.py:58-59
+    // @arc4.abimethod()
+    // def verify_acct_total_assets_created(self, a: algopy.Account) -> algopy.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:60
+    // total_assets_created, _val = op.AcctParamsGet.acct_total_assets_created(a)
+    frame_dig -1
+    acct_params_get AcctTotalAssetsCreated
+    pop
+    // tests/artifacts/StateOps/contract.py:61
+    // return total_assets_created
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateAcctParamsGet.verify_acct_total_assets(a: bytes) -> uint64:
+verify_acct_total_assets:
+    // tests/artifacts/StateOps/contract.py:63-64
+    // @arc4.abimethod()
+    // def verify_acct_total_assets(self, a: algopy.Account) -> algopy.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:65
+    // total_assets, _val = op.AcctParamsGet.acct_total_assets(a)
+    frame_dig -1
+    acct_params_get AcctTotalAssets
+    pop
+    // tests/artifacts/StateOps/contract.py:66
+    // return total_assets
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateAcctParamsGet.verify_acct_total_boxes(a: bytes) -> uint64:
+verify_acct_total_boxes:
+    // tests/artifacts/StateOps/contract.py:68-69
+    // @arc4.abimethod()
+    // def verify_acct_total_boxes(self, a: algopy.Account) -> algopy.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:70
+    // total_boxes, _val = op.AcctParamsGet.acct_total_boxes(a)
+    frame_dig -1
+    acct_params_get AcctTotalBoxes
+    pop
+    // tests/artifacts/StateOps/contract.py:71
+    // return total_boxes
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateAcctParamsGet.verify_acct_total_box_bytes(a: bytes) -> uint64:
+verify_acct_total_box_bytes:
+    // tests/artifacts/StateOps/contract.py:73-74
+    // @arc4.abimethod()
+    // def verify_acct_total_box_bytes(self, a: algopy.Account) -> algopy.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:75
+    // total_box_bytes, _val = op.AcctParamsGet.acct_total_box_bytes(a)
+    frame_dig -1
+    acct_params_get AcctTotalBoxBytes
+    pop
+    // tests/artifacts/StateOps/contract.py:76
+    // return total_box_bytes
+    retsub

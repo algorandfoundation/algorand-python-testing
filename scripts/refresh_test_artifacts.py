@@ -1,4 +1,5 @@
 import logging
+import multiprocessing
 import os
 import subprocess
 from collections.abc import Iterator
@@ -27,50 +28,34 @@ def compile_contract(folder: Path) -> None:
         "hatch",
         "run",
         "puyapy",
-        "--log-level",
-        "debug",
         str(contract_path),
         "--out-dir",
         "data",
     ]
     subprocess.run(
-        compile_cmd,  # noqa: S603
+        compile_cmd,
         check=True,
         env=ENV_WITH_NO_COLOR,
         encoding="utf-8",
     )
 
 
-def generate_client(folder: Path) -> None:
-    logger.info(f"Generating typed client for: {folder}")
-    avm_dir = folder / "data"
-    client_path = folder / "client.py"
-    generate_cmd = [
-        "algokit",
-        "generate",
-        "client",
-        str(avm_dir),
-        "--language",
-        "python",
-        "--output",
-        str(client_path),
-    ]
-    subprocess.run(
-        generate_cmd,  # noqa: S603
-        check=True,
-        env=ENV_WITH_NO_COLOR,
-        encoding="utf-8",
-    )
+def compile_folder(folder: Path) -> None:
+    try:
+        compile_contract(folder)
+    except subprocess.CalledProcessError:
+        logger.exception(f"Error processing folder {folder}")
 
 
 def main() -> None:
     artifacts_dir = "tests/artifacts"
-    try:
-        for folder in get_artifact_folders(artifacts_dir):
-            compile_contract(folder)
-            # generate_client(folder)
-    except subprocess.CalledProcessError as e:
-        print(f"Error: {e}")
+    folders = list(get_artifact_folders(artifacts_dir))
+
+    with multiprocessing.Pool() as pool:
+        try:
+            pool.map(compile_folder, folders)
+        except Exception:
+            logger.exception("An error occurred during parallel processing")
 
 
 if __name__ == "__main__":

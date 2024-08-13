@@ -1,0 +1,817 @@
+#pragma version 10
+
+tests.artifacts.StateOps.contract.LocalStateContract.approval_program:
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@19
+    method "opt_in()void"
+    method "get_implicit_key_arc4_uint(account)uint64"
+    method "get_implicit_key_arc4_string(account)string"
+    method "get_implicit_key_arc4_byte(account)byte"
+    method "get_implicit_key_arc4_bool(account)bool"
+    method "get_implicit_key_arc4_address(account)address"
+    method "get_implicit_key_arc4_uint128(account)uint128"
+    method "get_implicit_key_arc4_dynamic_bytes(account)byte[]"
+    method "get_arc4_uint(account)uint64"
+    method "get_arc4_string(account)string"
+    method "get_arc4_byte(account)byte"
+    method "get_arc4_bool(account)bool"
+    method "get_arc4_address(account)address"
+    method "get_arc4_uint128(account)uint128"
+    method "get_arc4_dynamic_bytes(account)byte[]"
+    txna ApplicationArgs 0
+    match main_opt_in_route@2 main_get_implicit_key_arc4_uint_route@3 main_get_implicit_key_arc4_string_route@4 main_get_implicit_key_arc4_byte_route@5 main_get_implicit_key_arc4_bool_route@6 main_get_implicit_key_arc4_address_route@7 main_get_implicit_key_arc4_uint128_route@8 main_get_implicit_key_arc4_dynamic_bytes_route@9 main_get_arc4_uint_route@10 main_get_arc4_string_route@11 main_get_arc4_byte_route@12 main_get_arc4_bool_route@13 main_get_arc4_address_route@14 main_get_arc4_uint128_route@15 main_get_arc4_dynamic_bytes_route@16
+    err // reject transaction
+
+main_opt_in_route@2:
+    // tests/artifacts/StateOps/contract.py:525
+    // @arc4.abimethod(allow_actions=["OptIn"])
+    txn OnCompletion
+    int OptIn
+    ==
+    assert // OnCompletion is OptIn
+    txn ApplicationID
+    assert // is not creating
+    callsub opt_in
+    int 1
+    return
+
+main_get_implicit_key_arc4_uint_route@3:
+    // tests/artifacts/StateOps/contract.py:547-548
+    // # Getter methods for implicit key state variables
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:547-548
+    // # Getter methods for implicit key state variables
+    // @arc4.abimethod()
+    callsub get_implicit_key_arc4_uint
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_implicit_key_arc4_string_route@4:
+    // tests/artifacts/StateOps/contract.py:552
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:552
+    // @arc4.abimethod()
+    callsub get_implicit_key_arc4_string
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_implicit_key_arc4_byte_route@5:
+    // tests/artifacts/StateOps/contract.py:556
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:556
+    // @arc4.abimethod()
+    callsub get_implicit_key_arc4_byte
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_implicit_key_arc4_bool_route@6:
+    // tests/artifacts/StateOps/contract.py:560
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:560
+    // @arc4.abimethod()
+    callsub get_implicit_key_arc4_bool
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_implicit_key_arc4_address_route@7:
+    // tests/artifacts/StateOps/contract.py:564
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:564
+    // @arc4.abimethod()
+    callsub get_implicit_key_arc4_address
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_implicit_key_arc4_uint128_route@8:
+    // tests/artifacts/StateOps/contract.py:568
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:568
+    // @arc4.abimethod()
+    callsub get_implicit_key_arc4_uint128
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_implicit_key_arc4_dynamic_bytes_route@9:
+    // tests/artifacts/StateOps/contract.py:572
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:572
+    // @arc4.abimethod()
+    callsub get_implicit_key_arc4_dynamic_bytes
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_arc4_uint_route@10:
+    // tests/artifacts/StateOps/contract.py:576-577
+    // # Getter methods for explicit key state variables
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:576-577
+    // # Getter methods for explicit key state variables
+    // @arc4.abimethod()
+    callsub get_arc4_uint
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_arc4_string_route@11:
+    // tests/artifacts/StateOps/contract.py:581
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:581
+    // @arc4.abimethod()
+    callsub get_arc4_string
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_arc4_byte_route@12:
+    // tests/artifacts/StateOps/contract.py:585
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:585
+    // @arc4.abimethod()
+    callsub get_arc4_byte
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_arc4_bool_route@13:
+    // tests/artifacts/StateOps/contract.py:589
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:589
+    // @arc4.abimethod()
+    callsub get_arc4_bool
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_arc4_address_route@14:
+    // tests/artifacts/StateOps/contract.py:593
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:593
+    // @arc4.abimethod()
+    callsub get_arc4_address
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_arc4_uint128_route@15:
+    // tests/artifacts/StateOps/contract.py:597
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:597
+    // @arc4.abimethod()
+    callsub get_arc4_uint128
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_get_arc4_dynamic_bytes_route@16:
+    // tests/artifacts/StateOps/contract.py:601
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
+    // tests/artifacts/StateOps/contract.py:601
+    // @arc4.abimethod()
+    callsub get_arc4_dynamic_bytes
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_bare_routing@19:
+    // tests/artifacts/StateOps/contract.py:503
+    // class LocalStateContract(ARC4Contract):
+    txn OnCompletion
+    !
+    assert // reject transaction
+    txn ApplicationID
+    !
+    assert // is creating
+    int 1
+    return
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.opt_in() -> void:
+opt_in:
+    // tests/artifacts/StateOps/contract.py:525-526
+    // @arc4.abimethod(allow_actions=["OptIn"])
+    // def opt_in(self) -> None:
+    proto 0 0
+    // tests/artifacts/StateOps/contract.py:527
+    // self.implicit_key_arc4_uint[Global.creator_address] = arc4.UInt64(1337)
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:505-506
+    // # Implicit key state variables
+    // self.implicit_key_arc4_uint = LocalState(arc4.UInt64)
+    byte "implicit_key_arc4_uint"
+    // tests/artifacts/StateOps/contract.py:527
+    // self.implicit_key_arc4_uint[Global.creator_address] = arc4.UInt64(1337)
+    byte 0x0000000000000539
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:528
+    // self.implicit_key_arc4_string[Global.creator_address] = arc4.String("Hello")
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:507
+    // self.implicit_key_arc4_string = LocalState(arc4.String)
+    byte "implicit_key_arc4_string"
+    // tests/artifacts/StateOps/contract.py:528
+    // self.implicit_key_arc4_string[Global.creator_address] = arc4.String("Hello")
+    byte 0x000548656c6c6f
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:529
+    // self.implicit_key_arc4_byte[Global.creator_address] = arc4.Byte(0)
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:508
+    // self.implicit_key_arc4_byte = LocalState(arc4.Byte)
+    byte "implicit_key_arc4_byte"
+    // tests/artifacts/StateOps/contract.py:529
+    // self.implicit_key_arc4_byte[Global.creator_address] = arc4.Byte(0)
+    byte 0x00
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:530
+    // self.implicit_key_arc4_bool[Global.creator_address] = arc4.Bool(True)
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:509
+    // self.implicit_key_arc4_bool = LocalState(arc4.Bool)
+    byte "implicit_key_arc4_bool"
+    // tests/artifacts/StateOps/contract.py:530
+    // self.implicit_key_arc4_bool[Global.creator_address] = arc4.Bool(True)
+    byte 0x80
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:531
+    // self.implicit_key_arc4_address[Global.creator_address] = arc4.Address(
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:510
+    // self.implicit_key_arc4_address = LocalState(arc4.Address)
+    byte "implicit_key_arc4_address"
+    // tests/artifacts/StateOps/contract.py:532
+    // Global.creator_address
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:531-533
+    // self.implicit_key_arc4_address[Global.creator_address] = arc4.Address(
+    //     Global.creator_address
+    // )
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:534
+    // self.implicit_key_arc4_uint128[Global.creator_address] = arc4.UInt128(2**100)
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:511
+    // self.implicit_key_arc4_uint128 = LocalState(arc4.UInt128)
+    byte "implicit_key_arc4_uint128"
+    // tests/artifacts/StateOps/contract.py:534
+    // self.implicit_key_arc4_uint128[Global.creator_address] = arc4.UInt128(2**100)
+    byte 0x00000010000000000000000000000000
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:535
+    // self.implicit_key_arc4_dynamic_bytes[Global.creator_address] = arc4.DynamicBytes(
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:512
+    // self.implicit_key_arc4_dynamic_bytes = LocalState(arc4.DynamicBytes)
+    byte "implicit_key_arc4_dynamic_bytes"
+    // tests/artifacts/StateOps/contract.py:535-537
+    // self.implicit_key_arc4_dynamic_bytes[Global.creator_address] = arc4.DynamicBytes(
+    //     b"dynamic bytes"
+    // )
+    byte 0x000d64796e616d6963206279746573
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:539
+    // self.arc4_uint[Global.creator_address] = arc4.UInt64(1337)
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:514-515
+    // # Explicit key state variables
+    // self.arc4_uint = LocalState(arc4.UInt64, key="explicit_key_arc4_uint")
+    byte "explicit_key_arc4_uint"
+    // tests/artifacts/StateOps/contract.py:539
+    // self.arc4_uint[Global.creator_address] = arc4.UInt64(1337)
+    byte 0x0000000000000539
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:540
+    // self.arc4_string[Global.creator_address] = arc4.String("Hello")
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:516
+    // self.arc4_string = LocalState(arc4.String, key="explicit_key_arc4_string")
+    byte "explicit_key_arc4_string"
+    // tests/artifacts/StateOps/contract.py:540
+    // self.arc4_string[Global.creator_address] = arc4.String("Hello")
+    byte 0x000548656c6c6f
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:541
+    // self.arc4_byte[Global.creator_address] = arc4.Byte(0)
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:517
+    // self.arc4_byte = LocalState(arc4.Byte, key="explicit_key_arc4_byte")
+    byte "explicit_key_arc4_byte"
+    // tests/artifacts/StateOps/contract.py:541
+    // self.arc4_byte[Global.creator_address] = arc4.Byte(0)
+    byte 0x00
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:542
+    // self.arc4_bool[Global.creator_address] = arc4.Bool(True)
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:518
+    // self.arc4_bool = LocalState(arc4.Bool, key="explicit_key_arc4_bool")
+    byte "explicit_key_arc4_bool"
+    // tests/artifacts/StateOps/contract.py:542
+    // self.arc4_bool[Global.creator_address] = arc4.Bool(True)
+    byte 0x80
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:543
+    // self.arc4_address[Global.creator_address] = arc4.Address(Global.creator_address)
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:519
+    // self.arc4_address = LocalState(arc4.Address, key="explicit_key_arc4_address")
+    byte "explicit_key_arc4_address"
+    // tests/artifacts/StateOps/contract.py:543
+    // self.arc4_address[Global.creator_address] = arc4.Address(Global.creator_address)
+    global CreatorAddress
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:544
+    // self.arc4_uint128[Global.creator_address] = arc4.UInt128(2**100)
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:520
+    // self.arc4_uint128 = LocalState(arc4.UInt128, key="explicit_key_arc4_uint128")
+    byte "explicit_key_arc4_uint128"
+    // tests/artifacts/StateOps/contract.py:544
+    // self.arc4_uint128[Global.creator_address] = arc4.UInt128(2**100)
+    byte 0x00000010000000000000000000000000
+    app_local_put
+    // tests/artifacts/StateOps/contract.py:545
+    // self.arc4_dynamic_bytes[Global.creator_address] = arc4.DynamicBytes(b"dynamic bytes")
+    global CreatorAddress
+    // tests/artifacts/StateOps/contract.py:522
+    // arc4.DynamicBytes, key="explicit_key_arc4_dynamic_bytes"
+    byte "explicit_key_arc4_dynamic_bytes"
+    // tests/artifacts/StateOps/contract.py:545
+    // self.arc4_dynamic_bytes[Global.creator_address] = arc4.DynamicBytes(b"dynamic bytes")
+    byte 0x000d64796e616d6963206279746573
+    app_local_put
+    retsub
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.get_implicit_key_arc4_uint(a: bytes) -> bytes:
+get_implicit_key_arc4_uint:
+    // tests/artifacts/StateOps/contract.py:547-549
+    // # Getter methods for implicit key state variables
+    // @arc4.abimethod()
+    // def get_implicit_key_arc4_uint(self, a: Account) -> arc4.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:550
+    // return self.implicit_key_arc4_uint[a]
+    frame_dig -1
+    int 0
+    // tests/artifacts/StateOps/contract.py:505-506
+    // # Implicit key state variables
+    // self.implicit_key_arc4_uint = LocalState(arc4.UInt64)
+    byte "implicit_key_arc4_uint"
+    // tests/artifacts/StateOps/contract.py:550
+    // return self.implicit_key_arc4_uint[a]
+    app_local_get_ex
+    assert // check self.implicit_key_arc4_uint exists for account
+    retsub
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.get_implicit_key_arc4_string(a: bytes) -> bytes:
+get_implicit_key_arc4_string:
+    // tests/artifacts/StateOps/contract.py:552-553
+    // @arc4.abimethod()
+    // def get_implicit_key_arc4_string(self, a: Account) -> arc4.String:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:554
+    // return self.implicit_key_arc4_string[a]
+    frame_dig -1
+    int 0
+    // tests/artifacts/StateOps/contract.py:507
+    // self.implicit_key_arc4_string = LocalState(arc4.String)
+    byte "implicit_key_arc4_string"
+    // tests/artifacts/StateOps/contract.py:554
+    // return self.implicit_key_arc4_string[a]
+    app_local_get_ex
+    assert // check self.implicit_key_arc4_string exists for account
+    retsub
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.get_implicit_key_arc4_byte(a: bytes) -> bytes:
+get_implicit_key_arc4_byte:
+    // tests/artifacts/StateOps/contract.py:556-557
+    // @arc4.abimethod()
+    // def get_implicit_key_arc4_byte(self, a: Account) -> arc4.Byte:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:558
+    // return self.implicit_key_arc4_byte[a]
+    frame_dig -1
+    int 0
+    // tests/artifacts/StateOps/contract.py:508
+    // self.implicit_key_arc4_byte = LocalState(arc4.Byte)
+    byte "implicit_key_arc4_byte"
+    // tests/artifacts/StateOps/contract.py:558
+    // return self.implicit_key_arc4_byte[a]
+    app_local_get_ex
+    assert // check self.implicit_key_arc4_byte exists for account
+    retsub
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.get_implicit_key_arc4_bool(a: bytes) -> bytes:
+get_implicit_key_arc4_bool:
+    // tests/artifacts/StateOps/contract.py:560-561
+    // @arc4.abimethod()
+    // def get_implicit_key_arc4_bool(self, a: Account) -> arc4.Bool:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:562
+    // return self.implicit_key_arc4_bool[a]
+    frame_dig -1
+    int 0
+    // tests/artifacts/StateOps/contract.py:509
+    // self.implicit_key_arc4_bool = LocalState(arc4.Bool)
+    byte "implicit_key_arc4_bool"
+    // tests/artifacts/StateOps/contract.py:562
+    // return self.implicit_key_arc4_bool[a]
+    app_local_get_ex
+    assert // check self.implicit_key_arc4_bool exists for account
+    retsub
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.get_implicit_key_arc4_address(a: bytes) -> bytes:
+get_implicit_key_arc4_address:
+    // tests/artifacts/StateOps/contract.py:564-565
+    // @arc4.abimethod()
+    // def get_implicit_key_arc4_address(self, a: Account) -> arc4.Address:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:566
+    // return self.implicit_key_arc4_address[a]
+    frame_dig -1
+    int 0
+    // tests/artifacts/StateOps/contract.py:510
+    // self.implicit_key_arc4_address = LocalState(arc4.Address)
+    byte "implicit_key_arc4_address"
+    // tests/artifacts/StateOps/contract.py:566
+    // return self.implicit_key_arc4_address[a]
+    app_local_get_ex
+    assert // check self.implicit_key_arc4_address exists for account
+    retsub
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.get_implicit_key_arc4_uint128(a: bytes) -> bytes:
+get_implicit_key_arc4_uint128:
+    // tests/artifacts/StateOps/contract.py:568-569
+    // @arc4.abimethod()
+    // def get_implicit_key_arc4_uint128(self, a: Account) -> arc4.UInt128:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:570
+    // return self.implicit_key_arc4_uint128[a]
+    frame_dig -1
+    int 0
+    // tests/artifacts/StateOps/contract.py:511
+    // self.implicit_key_arc4_uint128 = LocalState(arc4.UInt128)
+    byte "implicit_key_arc4_uint128"
+    // tests/artifacts/StateOps/contract.py:570
+    // return self.implicit_key_arc4_uint128[a]
+    app_local_get_ex
+    assert // check self.implicit_key_arc4_uint128 exists for account
+    retsub
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.get_implicit_key_arc4_dynamic_bytes(a: bytes) -> bytes:
+get_implicit_key_arc4_dynamic_bytes:
+    // tests/artifacts/StateOps/contract.py:572-573
+    // @arc4.abimethod()
+    // def get_implicit_key_arc4_dynamic_bytes(self, a: Account) -> arc4.DynamicBytes:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:574
+    // return self.implicit_key_arc4_dynamic_bytes[a]
+    frame_dig -1
+    int 0
+    // tests/artifacts/StateOps/contract.py:512
+    // self.implicit_key_arc4_dynamic_bytes = LocalState(arc4.DynamicBytes)
+    byte "implicit_key_arc4_dynamic_bytes"
+    // tests/artifacts/StateOps/contract.py:574
+    // return self.implicit_key_arc4_dynamic_bytes[a]
+    app_local_get_ex
+    assert // check self.implicit_key_arc4_dynamic_bytes exists for account
+    retsub
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.get_arc4_uint(a: bytes) -> bytes:
+get_arc4_uint:
+    // tests/artifacts/StateOps/contract.py:576-578
+    // # Getter methods for explicit key state variables
+    // @arc4.abimethod()
+    // def get_arc4_uint(self, a: Account) -> arc4.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:579
+    // return self.arc4_uint[a]
+    frame_dig -1
+    int 0
+    // tests/artifacts/StateOps/contract.py:514-515
+    // # Explicit key state variables
+    // self.arc4_uint = LocalState(arc4.UInt64, key="explicit_key_arc4_uint")
+    byte "explicit_key_arc4_uint"
+    // tests/artifacts/StateOps/contract.py:579
+    // return self.arc4_uint[a]
+    app_local_get_ex
+    assert // check self.arc4_uint exists for account
+    retsub
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.get_arc4_string(a: bytes) -> bytes:
+get_arc4_string:
+    // tests/artifacts/StateOps/contract.py:581-582
+    // @arc4.abimethod()
+    // def get_arc4_string(self, a: Account) -> arc4.String:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:583
+    // return self.arc4_string[a]
+    frame_dig -1
+    int 0
+    // tests/artifacts/StateOps/contract.py:516
+    // self.arc4_string = LocalState(arc4.String, key="explicit_key_arc4_string")
+    byte "explicit_key_arc4_string"
+    // tests/artifacts/StateOps/contract.py:583
+    // return self.arc4_string[a]
+    app_local_get_ex
+    assert // check self.arc4_string exists for account
+    retsub
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.get_arc4_byte(a: bytes) -> bytes:
+get_arc4_byte:
+    // tests/artifacts/StateOps/contract.py:585-586
+    // @arc4.abimethod()
+    // def get_arc4_byte(self, a: Account) -> arc4.Byte:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:587
+    // return self.arc4_byte[a]
+    frame_dig -1
+    int 0
+    // tests/artifacts/StateOps/contract.py:517
+    // self.arc4_byte = LocalState(arc4.Byte, key="explicit_key_arc4_byte")
+    byte "explicit_key_arc4_byte"
+    // tests/artifacts/StateOps/contract.py:587
+    // return self.arc4_byte[a]
+    app_local_get_ex
+    assert // check self.arc4_byte exists for account
+    retsub
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.get_arc4_bool(a: bytes) -> bytes:
+get_arc4_bool:
+    // tests/artifacts/StateOps/contract.py:589-590
+    // @arc4.abimethod()
+    // def get_arc4_bool(self, a: Account) -> arc4.Bool:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:591
+    // return self.arc4_bool[a]
+    frame_dig -1
+    int 0
+    // tests/artifacts/StateOps/contract.py:518
+    // self.arc4_bool = LocalState(arc4.Bool, key="explicit_key_arc4_bool")
+    byte "explicit_key_arc4_bool"
+    // tests/artifacts/StateOps/contract.py:591
+    // return self.arc4_bool[a]
+    app_local_get_ex
+    assert // check self.arc4_bool exists for account
+    retsub
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.get_arc4_address(a: bytes) -> bytes:
+get_arc4_address:
+    // tests/artifacts/StateOps/contract.py:593-594
+    // @arc4.abimethod()
+    // def get_arc4_address(self, a: Account) -> arc4.Address:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:595
+    // return self.arc4_address[a]
+    frame_dig -1
+    int 0
+    // tests/artifacts/StateOps/contract.py:519
+    // self.arc4_address = LocalState(arc4.Address, key="explicit_key_arc4_address")
+    byte "explicit_key_arc4_address"
+    // tests/artifacts/StateOps/contract.py:595
+    // return self.arc4_address[a]
+    app_local_get_ex
+    assert // check self.arc4_address exists for account
+    retsub
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.get_arc4_uint128(a: bytes) -> bytes:
+get_arc4_uint128:
+    // tests/artifacts/StateOps/contract.py:597-598
+    // @arc4.abimethod()
+    // def get_arc4_uint128(self, a: Account) -> arc4.UInt128:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:599
+    // return self.arc4_uint128[a]
+    frame_dig -1
+    int 0
+    // tests/artifacts/StateOps/contract.py:520
+    // self.arc4_uint128 = LocalState(arc4.UInt128, key="explicit_key_arc4_uint128")
+    byte "explicit_key_arc4_uint128"
+    // tests/artifacts/StateOps/contract.py:599
+    // return self.arc4_uint128[a]
+    app_local_get_ex
+    assert // check self.arc4_uint128 exists for account
+    retsub
+
+
+// tests.artifacts.StateOps.contract.LocalStateContract.get_arc4_dynamic_bytes(a: bytes) -> bytes:
+get_arc4_dynamic_bytes:
+    // tests/artifacts/StateOps/contract.py:601-602
+    // @arc4.abimethod()
+    // def get_arc4_dynamic_bytes(self, a: Account) -> arc4.DynamicBytes:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:603
+    // return self.arc4_dynamic_bytes[a]
+    frame_dig -1
+    int 0
+    // tests/artifacts/StateOps/contract.py:522
+    // arc4.DynamicBytes, key="explicit_key_arc4_dynamic_bytes"
+    byte "explicit_key_arc4_dynamic_bytes"
+    // tests/artifacts/StateOps/contract.py:603
+    // return self.arc4_dynamic_bytes[a]
+    app_local_get_ex
+    assert // check self.arc4_dynamic_bytes exists for account
+    retsub

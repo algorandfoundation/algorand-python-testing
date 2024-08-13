@@ -2,22 +2,22 @@ from __future__ import annotations
 
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.protocols import BytesBacked
-from algopy_testing.utils import as_bytes, as_string
+from algopy_testing.utils import as_bytes, as_string, check_type
 
 
 class String(BytesBacked):
-    """
-    Represents a UTF-8 encoded string backed by Bytes, accessible via .bytes.
+    """Represents a UTF-8 encoded string backed by Bytes, accessible via
+    .bytes.
 
-    Works with str literals instead of bytes literals. Due to lack of AVM support for unicode,
-    indexing and length operations are not supported. Use .bytes.length for byte length.
+    Works with str literals instead of bytes literals. Due to lack of
+    AVM support for unicode, indexing and length operations are not
+    supported. Use .bytes.length for byte length.
     """
 
     _value: bytes  # underlying 'bytes' value representing the String
 
     def __init__(self, value: str = "") -> None:
-        if not isinstance(value, str):
-            raise TypeError(f"expected str, got {type(value).__name__!r}")
+        check_type(value, str)
         self._value = value.encode("utf-8")
 
     def __repr__(self) -> str:
@@ -60,7 +60,7 @@ class String(BytesBacked):
 
     @property
     def bytes(self) -> Bytes:
-        """Get the underlying Bytes"""
+        """Get the underlying Bytes."""
         return Bytes(self._value)
 
     @property

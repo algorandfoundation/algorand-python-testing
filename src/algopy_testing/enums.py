@@ -1,11 +1,31 @@
 from __future__ import annotations
 
-from enum import Enum, StrEnum
+import typing
+
+from algosdk import constants
 
 from algopy_testing.primitives import UInt64
 
 
-class OnCompleteAction(UInt64):
+class _EnumLike(UInt64):
+    names: dict[_EnumLike, str]
+
+    @property
+    def name(self) -> str:
+        return self.names[self]
+
+
+_T = typing.TypeVar("_T", bound=_EnumLike)
+
+
+def _add_enum_values(cls: type[_T], **values: _T) -> None:
+    cls.names = {v: k for k, v in values.items()}
+    for name, value in values.items():
+        setattr(cls, name, value)
+
+
+# can't use an actual enum here as this type need to subclass UInt64
+class OnCompleteAction(_EnumLike):
     NoOp: OnCompleteAction
     OptIn: OnCompleteAction
     CloseOut: OnCompleteAction
@@ -14,15 +34,18 @@ class OnCompleteAction(UInt64):
     DeleteApplication: OnCompleteAction
 
 
-OnCompleteAction.NoOp = OnCompleteAction(0)
-OnCompleteAction.OptIn = OnCompleteAction(1)
-OnCompleteAction.CloseOut = OnCompleteAction(2)
-OnCompleteAction.ClearState = OnCompleteAction(3)
-OnCompleteAction.UpdateApplication = OnCompleteAction(4)
-OnCompleteAction.DeleteApplication = OnCompleteAction(5)
+_add_enum_values(
+    OnCompleteAction,
+    NoOp=OnCompleteAction(0),
+    OptIn=OnCompleteAction(1),
+    CloseOut=OnCompleteAction(2),
+    ClearState=OnCompleteAction(3),
+    UpdateApplication=OnCompleteAction(4),
+    DeleteApplication=OnCompleteAction(5),
+)
 
 
-class TransactionType(UInt64):
+class TransactionType(_EnumLike):
     Payment: TransactionType
     KeyRegistration: TransactionType
     AssetConfig: TransactionType
@@ -30,33 +53,31 @@ class TransactionType(UInt64):
     AssetFreeze: TransactionType
     ApplicationCall: TransactionType
 
-
-TransactionType.Payment = TransactionType(0)
-TransactionType.KeyRegistration = TransactionType(1)
-TransactionType.AssetConfig = TransactionType(2)
-TransactionType.AssetTransfer = TransactionType(3)
-TransactionType.AssetFreeze = TransactionType(4)
-TransactionType.ApplicationCall = TransactionType(5)
-
-
-class ECDSA(Enum):
-    Secp256k1 = 0
-    Secp256r1 = 1
-
-
-class VrfVerify(Enum):
-    VrfAlgorand = 0
-
-
-class Base64(Enum):
-    URLEncoding = 0
-    StdEncoding = 1
+    @property
+    def txn_name(self) -> str:
+        match self:
+            case self.Payment:
+                return constants.PAYMENT_TXN
+            case self.KeyRegistration:
+                return constants.KEYREG_TXN
+            case self.AssetConfig:
+                return constants.ASSETCONFIG_TXN
+            case self.AssetTransfer:
+                return constants.ASSETTRANSFER_TXN
+            case self.AssetFreeze:
+                return constants.ASSETFREEZE_TXN
+            case self.ApplicationCall:
+                return constants.APPCALL_TXN
+            case _:
+                raise ValueError("unexpected transaction type")
 
 
-class EC(StrEnum):
-    """Available values for the `EC` enum"""
-
-    BN254g1 = "BN254g1"
-    BN254g2 = "BN254g2"
-    BLS12_381g1 = "BLS12_381g1"
-    BLS12_381g2 = "BLS12_381g2"
+_add_enum_values(
+    TransactionType,
+    Payment=TransactionType(0),
+    KeyRegistration=TransactionType(1),
+    AssetConfig=TransactionType(2),
+    AssetTransfer=TransactionType(3),
+    AssetFreeze=TransactionType(4),
+    ApplicationCall=TransactionType(5),
+)

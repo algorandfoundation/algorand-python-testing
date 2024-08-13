@@ -1,10 +1,11 @@
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.uint64 import UInt64
 from algopy_testing.protocols import BytesBacked
 from algopy_testing.utils import int_to_bytes
 
 
-def log(  # noqa: C901, PLR0912
+def log(
     *args: UInt64 | Bytes | BytesBacked | str | bytes | int,
     sep: Bytes | bytes | str = b"",
 ) -> None:
@@ -15,9 +16,6 @@ def log(  # noqa: C901, PLR0912
     """
     import algopy
 
-    from algopy_testing.context import get_test_context
-
-    context = get_test_context()
     logs: list[bytes] = []
 
     for arg in args:
@@ -42,14 +40,12 @@ def log(  # noqa: C901, PLR0912
     else:
         separator = sep
 
-    active_txn = context.get_active_transaction()
-    if not active_txn:
-        raise ValueError("Cannot emit events outside of application call context!")
+    active_txn = lazy_context.active_group.active_txn
     if active_txn.type != algopy.TransactionType.ApplicationCall:
         raise ValueError("Cannot emit events outside of application call context!")
     if not active_txn.app_id:
         raise ValueError("Cannot emit event: missing `app_id` in associated call transaction!")
-    context.add_application_logs(
-        app_id=active_txn.app_id(),
+    lazy_context.txn.add_app_logs(
+        app_id=active_txn.app_id,
         logs=separator.join(logs),
     )

@@ -158,6 +158,16 @@ _arc4_string_array_of_array_of_array = arc4.DynamicArray[
 _abi_tuple_array_type = abi.ABIType.from_string(
     "(string[],(string[],string,uint256),bool,uint256[3])[]"
 )
+_arc4_string_array_type = arc4.DynamicArray[arc4.String]
+_arc4_tuple_array_type = arc4.DynamicArray[
+    arc4.Tuple[
+        _arc4_string_array_type,
+        arc4.Tuple[_arc4_string_array_type, arc4.String, arc4.UInt256],
+        arc4.Bool,
+        arc4.StaticArray[arc4.UInt256, typing.Literal[3]],
+    ]
+]
+
 _abi_tuple_array_values = [
     (
         _abi_string_array_values[:2],
@@ -463,7 +473,7 @@ def test_get_item(abi_values: list[typing.Any], arc4_value: arc4.DynamicArray) -
         (
             _abi_tuple_array_type,
             _abi_tuple_array_values,
-            arc4.DynamicArray[arc4.Tuple](),  # type: ignore[type-arg]
+            _arc4_tuple_array_type(),
             _arc4_tuple_array_values,
         ),
     ],
@@ -617,7 +627,7 @@ def test_append(
         (
             _abi_tuple_array_type,
             _abi_tuple_array_values,
-            arc4.DynamicArray[arc4.Tuple](),  # type: ignore[type-arg]
+            _arc4_tuple_array_type(),
             _arc4_tuple_array_values,
         ),
     ],

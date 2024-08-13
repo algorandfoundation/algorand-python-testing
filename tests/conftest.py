@@ -1,8 +1,10 @@
+import algopy
 import pytest
 from algokit_utils import (
     get_algod_client,
     get_default_localnet_config,
     get_indexer_client,
+    get_localnet_default_account,
     is_localnet,
 )
 from algosdk.v2client.algod import AlgodClient
@@ -22,3 +24,13 @@ def algod_client() -> AlgodClient:
 @pytest.fixture(scope="session")
 def indexer_client() -> IndexerClient:
     return get_indexer_client(get_default_localnet_config("indexer"))
+
+
+@pytest.fixture()
+def localnet_creator_address(algod_client: AlgodClient) -> str:
+    return get_localnet_default_account(algod_client).address
+
+
+@pytest.fixture()
+def localnet_creator(localnet_creator_address: str) -> algopy.Account:
+    return algopy.Account(localnet_creator_address)

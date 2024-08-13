@@ -1,0 +1,77 @@
+#pragma version 10
+
+tests.artifacts.StateOps.contract.StateAppGlobalExContract.approval_program:
+    txn ApplicationID
+    bnz main_entrypoint@2
+    callsub __init__
+
+main_entrypoint@2:
+    // tests/artifacts/StateOps/contract.py:276
+    // class StateAppGlobalExContract(ARC4Contract):
+    txn NumAppArgs
+    !
+    assert // reject transaction
+    txn OnCompletion
+    !
+    assert // reject transaction
+    txn ApplicationID
+    !
+    assert // is creating
+    int 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAppGlobalExContract.__init__() -> void:
+__init__:
+    // tests/artifacts/StateOps/contract.py:277
+    // def __init__(self) -> None:
+    proto 0 0
+    // tests/artifacts/StateOps/contract.py:280
+    // key="global_uint64",
+    byte "global_uint64"
+    // tests/artifacts/StateOps/contract.py:279
+    // UInt64(2),
+    int 2
+    // tests/artifacts/StateOps/contract.py:278-281
+    // self.global_uint64 = GlobalState(
+    //     UInt64(2),
+    //     key="global_uint64",
+    // )
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:284
+    // key="global_bytes",
+    byte "global_bytes"
+    // tests/artifacts/StateOps/contract.py:283
+    // Bytes(b"dummy_bytes"),
+    byte 0x64756d6d795f6279746573
+    // tests/artifacts/StateOps/contract.py:282-285
+    // self.global_bytes = GlobalState(
+    //     Bytes(b"dummy_bytes"),
+    //     key="global_bytes",
+    // )
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:286
+    // self.global_uint64_explicit = algopy.UInt64(2)
+    byte "global_uint64_explicit"
+    int 2
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:287
+    // self.global_bytes_explicit = algopy.Bytes(b"dummy_bytes")
+    byte "global_bytes_explicit"
+    byte 0x64756d6d795f6279746573
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:289
+    // algopy.arc4.DynamicBytes(b"dummy_arc4_bytes"), key="global_arc4_bytes"
+    byte "global_arc4_bytes"
+    byte 0x001064756d6d795f617263345f6279746573
+    // tests/artifacts/StateOps/contract.py:288-290
+    // self.global_arc4_bytes = GlobalState(
+    //     algopy.arc4.DynamicBytes(b"dummy_arc4_bytes"), key="global_arc4_bytes"
+    // )
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:291
+    // self.global_arc4_bytes_explicit = algopy.arc4.DynamicBytes(b"dummy_arc4_bytes")
+    byte "global_arc4_bytes_explicit"
+    byte 0x001064756d6d795f617263345f6279746573
+    app_global_put
+    retsub

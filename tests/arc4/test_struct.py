@@ -13,7 +13,7 @@ _abi_bool = True
 
 _arc4_string = arc4.String("hello")
 _arc4_uint64 = arc4.UInt64(42)
-_arc4_bool = arc4.Bool(True)  # noqa: FBT003
+_arc4_bool = arc4.Bool(True)
 
 
 class Swapped(arc4.Struct):
@@ -319,7 +319,7 @@ def test_from_bytes(abi_type: abi.ABIType, abi_value: tuple, arc4_type: type[Swa
     abi_bytes = abi_type.encode(abi_value)
 
     arc4_value = arc4_type.from_bytes(abi_bytes)
-    arc4_result = arc4_value._value
+    arc4_result = arc4_value._as_tuple
 
     i = 0
     while i < len(arc4_result):
