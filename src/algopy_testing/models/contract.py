@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import functools
 import typing
 from dataclasses import dataclass
 
 import algopy_testing
 from algopy_testing._context_helpers import lazy_context
+from algopy_testing.decorators.arc4 import maybe_arc4_metadata
 from algopy_testing.primitives import Bytes, UInt64
 from algopy_testing.protocols import BytesBacked, UInt64Backed
 from algopy_testing.state.utils import deserialize, serialize
@@ -38,11 +40,15 @@ class _ContractMeta(type):
         context = lazy_context.value
         app_ref = context.any.application()  # new reference to get a unique app_id
         app_id = app_ref.id.value
-        # TODO: this provides a dummy txn to provide app_id during construction
-        #       however this isn't quite right if the user needs to provide other transactions
-        #       during construction
+        instance = cls.__new__(cls)  # type: ignore[call-overload]
+        instance.__app_id__ = app_id
+        app_data = lazy_context.get_app_data(app_id)
+        app_data.is_creating = True
+
         fields = lazy_context.get_txn_op_fields()
         fields["app_id"] = app_ref
+
+        # TODO: provide app_id during instantiation without requiring a txn
         txn = context.any.txn.application_call(**fields)
         with context.txn.scoped_execution([txn]):
             instance = super().__call__(*args, **kwargs)
@@ -120,6 +126,7 @@ class Contract(metaclass=_ContractMeta):
 
         if callable(attr) and not name.startswith("__"):
 
+            @functools.wraps(attr)
             def set_is_creating(*args: typing.Any, **kwargs: dict[str, typing.Any]) -> typing.Any:
                 try:
                     return attr(*args, **kwargs)
@@ -220,7 +227,7 @@ def _get_state_totals(contract: Contract, cls_state_totals: StateTotals) -> _Sta
 
 def _has_create_methods(contract_cls: _ContractMeta) -> bool:
     for method in vars(contract_cls).values():
-        if callable(method) and getattr(method, "is_create", False):
+        if callable(method) and (arc4_meta := maybe_arc4_metadata(method)) and arc4_meta.is_create:
             return True
 
     return False

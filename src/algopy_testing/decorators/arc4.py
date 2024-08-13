@@ -32,21 +32,57 @@ if typing.TYPE_CHECKING:
         ]
     )
 _CreateValues = typing.Literal["allow", "require", "disallow"]
+ARC4_METADATA_ATTR = "arc4_metadata"
 
 
-def check_create(contract: algopy.Contract, create: _CreateValues) -> None:
-    app_data = lazy_context.get_app_data(contract)
+@dataclasses.dataclass
+class MethodMetadata:
+    create: _CreateValues
+    allow_actions: Sequence[_AllowActions]
+    arc4_signature: str | None = None
 
+    @property
+    def is_create(self) -> bool:
+        return self.create != "disallow"
+
+
+def set_arc4_metadata(fn: object, data: MethodMetadata) -> None:
+    setattr(fn, ARC4_METADATA_ATTR, data)
+
+
+def maybe_arc4_metadata(fn: object) -> MethodMetadata | None:
+    return getattr(fn, ARC4_METADATA_ATTR, None)
+
+
+def get_arc4_metadata(fn: object) -> MethodMetadata:
+    metadata = maybe_arc4_metadata(fn)
+    if metadata is None:
+        raise ValueError("Expected ARC4 abimethod or baremethod")
+    return metadata
+
+
+def get_ordered_args(
+    _fn: Callable[..., typing.Any], app_args: list[typing.Any], kwargs: dict[str, typing.Any]
+) -> list[typing.Any]:
+    # TODO: order kwargs correctly based on fn signature
+    return [*app_args, *kwargs.values()]
+
+
+def check_routing_conditions(app_id: int, metadata: MethodMetadata) -> None:
+    app_data = lazy_context.get_app_data(app_id)
+
+    # check if app is creating and if method allows this
     is_creating = app_data.is_creating
-    if is_creating and create == "disallow":
+    if is_creating and metadata.create == "disallow":
         raise RuntimeError("method can not be called while creating")
-    if not is_creating and create == "require":
+    if not is_creating and metadata.create == "require":
         raise RuntimeError("method can only be called while creating")
 
-
-def check_on_completion_action(actions: Sequence[_AllowActions]) -> None:
+    # check on completion action
     txn = lazy_context.active_group.active_txn
-    allowed_actions = [action if isinstance(action, str) else action.name for action in actions]
+    allowed_actions = [
+        action if isinstance(action, str) else action.name for action in metadata.allow_actions
+    ]
     if txn.on_completion.name not in allowed_actions:
         raise RuntimeError(
             "method can only be called with one of the following"
@@ -78,8 +114,6 @@ def abimethod(  # noqa: PLR0913
     readonly: bool = False,
     default_args: Mapping[str, str | object] | None = None,
 ) -> Callable[[Callable[_P, _R]], Callable[_P, _R]] | Callable[_P, _R]:
-    # TODO: ARC4 signature should be derived here
-    #       then possibly store on the context, or fn itself?
     if fn is None:
         return functools.partial(
             abimethod,
@@ -91,29 +125,32 @@ def abimethod(  # noqa: PLR0913
         )
 
     arc4_name = name or fn.__name__
-    fn.is_create = create != "disallow"  # type: ignore[attr-defined]
-    arc4_signature = _generate_arc4_signature_from_fn(fn, arc4_name)
+    metadata = MethodMetadata(
+        create=create,
+        allow_actions=allow_actions,
+        arc4_signature=_generate_arc4_signature_from_fn(fn, arc4_name),
+    )
+    set_arc4_metadata(fn, metadata)
 
     @functools.wraps(fn)
     def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
         contract, *app_args = args
         assert isinstance(contract, algopy_testing.ARC4Contract), "expected ARC4 contract"
         assert fn is not None, "expected function"
+        app_id = contract.__app_id__
 
         context = lazy_context.value
         # TODO: does contract need to be active here?
         # TODO: handle custom txn groups
-        # TODO: order kwargs correctly based on fn signature
-        ordered_args = [*app_args, *kwargs.values()]
-        txns = _extract_group_txns(
-            context,
-            contract=contract,
-            arc4_signature=arc4_signature,
+        ordered_args = get_ordered_args(fn, app_args, kwargs)
+        assert metadata.arc4_signature is not None, "expected abimethod"
+        txns = create_abimethod_txns(
+            app_id=app_id,
+            arc4_signature=metadata.arc4_signature,
             args=ordered_args,
         )
         with context.txn._maybe_implicit_txn_group(txns):
-            check_create(contract, create)
-            check_on_completion_action(allow_actions)
+            check_routing_conditions(app_id, metadata)
             result = fn(*args, **kwargs)
             # TODO: add result along with ARC4 log prefix to application logs?
             return result
@@ -121,9 +158,8 @@ def abimethod(  # noqa: PLR0913
     return wrapper
 
 
-def _extract_group_txns(
-    context: algopy_testing.AlgopyTestContext,
-    contract: algopy_testing.Contract,
+def create_abimethod_txns(
+    app_id: int,
     arc4_signature: str,
     args: Sequence[object],
 ) -> list[algopy.gtxn.TransactionBase]:
@@ -131,19 +167,18 @@ def _extract_group_txns(
     method_selector = Bytes(method.get_selector())
     txn_fields = lazy_context.get_txn_op_fields()
 
-    contract_app = context.ledger.get_application(contract.__app_id__)
-    txn_app = txn_fields.get("app_id", contract_app)
+    contract_app = lazy_context.ledger.get_application(app_id)
+    txn_app = txn_fields.setdefault("app_id", contract_app)
+    txn_fields.setdefault("sender", lazy_context.value.default_sender)
     if contract_app != txn_app:
         raise ValueError("txn app_id does not match contract")
     txn_arrays = _extract_arrays_from_args(
         args,
         method_selector=method_selector,
-        sender=context.default_sender,
+        sender=txn_fields["sender"],
         app=contract_app,
     )
 
-    txn_fields.setdefault("sender", context.default_sender)
-    txn_fields.setdefault("app_id", contract_app)
     txn_fields.setdefault("accounts", txn_arrays.accounts)
     txn_fields.setdefault("assets", txn_arrays.assets)
     txn_fields.setdefault("apps", txn_arrays.apps)
@@ -157,8 +192,29 @@ def _extract_group_txns(
         "clear_state_program_pages", [algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)]
     )
 
-    app_txn = context.any.txn.application_call(**txn_fields)
+    app_txn = lazy_context.any.txn.application_call(**txn_fields)
     return [*txn_arrays.txns, app_txn]
+
+
+def create_baremethod_txns(app_id: int) -> list[algopy.gtxn.TransactionBase]:
+    txn_fields = lazy_context.get_txn_op_fields()
+
+    contract_app = lazy_context.ledger.get_application(app_id)
+    txn_fields.setdefault("app_id", contract_app)
+
+    # TODO: fill out other fields where possible (see abimethod)
+    txn_fields.setdefault(
+        "approval_program_pages", [algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)]
+    )
+    txn_fields.setdefault(
+        "clear_state_program_pages", [algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)]
+    )
+    txn_fields.setdefault("sender", lazy_context.value.default_sender)
+    return [
+        lazy_context.value.any.txn.application_call(
+            **txn_fields,
+        ),
+    ]
 
 
 @dataclasses.dataclass
@@ -306,7 +362,11 @@ def baremethod(
             allow_actions=allow_actions,
         )
 
-    fn.is_create = create != "disallow"  # type: ignore[attr-defined]
+    metadata = MethodMetadata(
+        create=create,
+        allow_actions=allow_actions,
+    )
+    set_arc4_metadata(fn, metadata)
 
     @functools.wraps(fn)
     def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
@@ -315,17 +375,10 @@ def baremethod(
         assert fn is not None, "expected function"
 
         # TODO: handle custom txn groups
-        contract_app = lazy_context.ledger.get_application(contract.__app_id__)
-        txns = [
-            lazy_context.value.any.txn.application_call(
-                # TODO: fill out other fields where possible (see abimethod)
-                app_id=contract_app,
-            ),
-        ]
+        txns = create_baremethod_txns(contract.__app_id__)
 
         with lazy_context.txn._maybe_implicit_txn_group(txns):
-            check_create(contract, create)
-            check_on_completion_action(allow_actions)
+            check_routing_conditions(contract.__app_id__, metadata)
             return fn(*args, **kwargs)
 
     return wrapper

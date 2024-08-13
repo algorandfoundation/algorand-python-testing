@@ -169,3 +169,38 @@ def test_app_args_is_correct_with_complex(context: algopy_testing.AlgopyTestCont
     ]
     assert result[0].bytes == struct.another_struct.bytes
     assert result[1].bytes == struct.bytes
+
+
+def test_txn_group_for_with_complex(context: algopy_testing.AlgopyTestContext) -> None:
+    # arrange
+    contract = SignaturesContract()
+    contract.create()
+
+    account = context.any.account(balance=algopy.UInt64(123))
+    txn = context.any.txn.transaction()
+    struct = MyStruct(
+        three=arc4.UInt128(3),
+        four=arc4.UInt128(4),
+        another_struct=AnotherStruct(one=arc4.UInt64(1), two=arc4.String("2")),
+        another_struct_alias=AnotherStruct(one=arc4.UInt64(1), two=arc4.String("2")),
+    )
+    five = UInt8Array(arc4.UInt8(5))
+    group = context.txn.txn_group_for(contract.complex_sig, struct, txn, account, five)
+
+    # act
+    with context.txn.scoped_execution(gtxns=group.txns):
+        result = group.submit()
+
+    # assert
+    txn = context.txn.last_active
+    app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
+    assert app_args == [
+        algosdk.abi.Method.from_signature(
+            "complex_sig(((uint64,string),(uint64,string),uint128,uint128),txn,account,uint8[])((uint64,string),((uint64,string),(uint64,string),uint128,uint128))"
+        ).get_selector(),
+        b"\x00$\x001\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x01\x00\n\x00\x012\x00\x00\x00\x00\x00\x00\x00\x01\x00\n\x00\x012",
+        b"\x01",  # 0th index is the sender
+        b"\x00\x01\x05",
+    ]
+    assert result[0].bytes == struct.another_struct.bytes
+    assert result[1].bytes == struct.bytes

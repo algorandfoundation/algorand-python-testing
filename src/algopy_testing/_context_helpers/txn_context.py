@@ -4,24 +4,28 @@ import contextlib
 import typing
 from collections import defaultdict
 from dataclasses import dataclass
-from inspect import signature
 
 import algosdk
 
 from algopy_testing.constants import ARC4_RETURN_PREFIX
-from algopy_testing.decorators.arc4 import _extract_group_txns, _generate_arc4_signature_from_fn
+from algopy_testing.decorators.arc4 import (
+    check_routing_conditions,
+    create_abimethod_txns,
+    create_baremethod_txns,
+    get_arc4_metadata,
+    get_ordered_args,
+)
 from algopy_testing.enums import OnCompleteAction
-from algopy_testing.models.contract import Contract
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.utils import convert_native_to_stack, get_new_scratch_space
 
 if typing.TYPE_CHECKING:
-    from collections.abc import Iterator, Sequence
+    from collections.abc import Callable, Iterator, Sequence
 
     import algopy
 
     from algopy_testing._itxn_loader import InnerTransactionResultType
-    from algopy_testing.models.txn_fields import ApplicationCallFields, TransactionFields
+    from algopy_testing.models.txn_fields import TransactionFields
 
 
 from algopy_testing import gtxn
@@ -30,17 +34,21 @@ from algopy_testing.itxn import InnerTransaction, submit_txns
 from algopy_testing.models import Application
 from algopy_testing.primitives import UInt64
 
+TReturn = typing.TypeVar("TReturn")
+TParamSpec = typing.ParamSpec("TParamSpec")
 
-@dataclass
-class PreparedAppCall:
+
+@dataclass(kw_only=True)
+class PreparedAppCall(typing.Generic[TReturn]):
+    app_id: int
     txns: list[algopy.gtxn.TransactionBase]
-    app_txn: algopy.gtxn.ApplicationCallTransaction
-    method: typing.Callable[..., typing.Any]
-    args: tuple
-    kwargs: dict
+    method: typing.Callable[..., TReturn]
+    args: tuple[typing.Any, ...]
+    kwargs: dict[str, typing.Any]
 
-    def submit(self) -> object:
+    def submit(self) -> TReturn:
         # This method will be called to execute the prepared call
+        check_routing_conditions(self.app_id, get_arc4_metadata(self.method))
         return self.method(*self.args, **self.kwargs)
 
 
@@ -77,8 +85,11 @@ class TransactionContext:
             yield
 
     def txn_group_for(
-        self, method: typing.Callable[..., typing.Any], *args: typing.Any, **kwargs: typing.Any
-    ) -> PreparedAppCall:
+        self,
+        method: Callable[TParamSpec, TReturn],
+        *args: TParamSpec.args,
+        **kwargs: TParamSpec.kwargs,
+    ) -> PreparedAppCall[TReturn]:
         """Prepare an application call transaction group for a contract method
         without executing it.
 
@@ -89,50 +100,37 @@ class TransactionContext:
         :return: A PreparedAppCall object containing the transaction
             group and method info.
         """
+        arc4_metadata = get_arc4_metadata(method)
+        # unwrap instance method
+        try:
+            wrapped = method.__wrapped__  # type: ignore[attr-defined]
+        except AttributeError:
+            wrapped = None
 
-        import algopy
+        # get instance and original cls method
+        try:
+            contract = wrapped.__self__
+            fn = wrapped.__func__
+        except AttributeError:
+            contract = fn = None
 
-        if not hasattr(method, "__wrapped__"):
-            raise ValueError("The provided method must be decorated with baremethod or abimethod")
+        if contract is None or fn is None:
+            raise ValueError("The provided method must be instance method of an ARC4 contract")
 
-        contract = method.__self__
-        if not isinstance(contract, Contract):
-            raise TypeError("The method must be bound to a Contract instance")
-
-        # Extract method signature
-        sig = signature(method)
-        bound_args = sig.bind(contract, *args, **kwargs)
-        bound_args.apply_defaults()
-
-        # Prepare transaction fields
-        txn_fields: ApplicationCallFields = {}
-
-        if hasattr(method, "is_create"):
-            txn_fields["on_completion"] = (
-                OnCompleteAction.NoOp
-                if not method.is_create  # type: ignore[attr-defined]
-                else OnCompleteAction.OptIn
-            )
-
+        app_id = contract.__app_id__
         # Handle ABI methods
-        if hasattr(method, "__name__"):
-            arc4_name = getattr(method, "__arc4_name__", method.__name__)
-            arc4_signature = _generate_arc4_signature_from_fn(method.__wrapped__, arc4_name)  # type: ignore[attr-defined]
-            txns = _extract_group_txns(
-                self,
-                contract=contract,
-                arc4_signature=arc4_signature,
-                args=bound_args.args[1:],  # Exclude 'self' argument
+        if arc4_metadata.arc4_signature:
+            ordered_args = get_ordered_args(fn, args, kwargs)  # type: ignore[arg-type]
+            txns = create_abimethod_txns(
+                app_id=app_id,
+                arc4_signature=arc4_metadata.arc4_signature,
+                args=ordered_args,
             )
-            app_txn = next(
-                txn for txn in txns if isinstance(txn, algopy.gtxn.ApplicationCallTransaction)
-            )
-            return PreparedAppCall(txns, app_txn, method, args, kwargs)
-
         # Handle bare methods
-        txn_fields["app_id"] = contract.__app_id__
-        app_txn = self.any.txn.application_call(**txn_fields)
-        return PreparedAppCall([app_txn], app_txn, method, args, kwargs)
+        else:
+            txns = create_baremethod_txns(app_id)
+
+        return PreparedAppCall(app_id=app_id, txns=txns, method=method, args=args, kwargs=kwargs)
 
     @contextlib.contextmanager
     def scoped_execution(
