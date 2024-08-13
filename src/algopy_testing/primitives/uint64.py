@@ -185,11 +185,15 @@ class UInt64:
 
 def _as_maybe_uint64(value: object) -> int | None:
     """Returns int value if `value` is an int or UInt64, otherwise None."""
+    import algopy_testing
+
     match value:
         case int(int_value):
             return as_int64(int_value)
         case UInt64(value=int_value):
             return int_value
+        case algopy_testing.state.box._ProxyValue() as proxy_value:
+            return _as_maybe_uint64(proxy_value._value)
         case _:
             return None
 

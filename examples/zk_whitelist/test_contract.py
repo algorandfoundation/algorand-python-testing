@@ -37,8 +37,14 @@ def test_add_address_to_whitelist(
     )
 
     # TODO: allow callables for side effects
-    dummy_verifier_app = context.any.application(logs=[arc4_prefix(b"\x80")])
+    dummy_verifier_app = context.any.application()
     context.set_template_var("VERIFIER_APP_ID", dummy_verifier_app.id)
+    context.txn.add_app_logs(
+        app_id=dummy_verifier_app.id,
+        logs=arc4_prefix(b"\x80"),
+    )
+
+    # Act
     result = contract.add_address_to_whitelist(address, proof)
 
     # Assert
@@ -62,8 +68,7 @@ def test_add_address_to_whitelist_invalid_proof(
     context.set_template_var("VERIFIER_APP_ID", dummy_verifier_app.id)
     context.txn.add_app_logs(
         app_id=dummy_verifier_app.id,
-        logs=b"",
-        prepend_arc4_prefix=True,
+        logs=arc4_prefix(b""),
     )
 
     # Act
