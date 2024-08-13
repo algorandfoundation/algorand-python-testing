@@ -16,6 +16,7 @@ from algopy_testing.decorators.arc4 import (
     get_ordered_args,
 )
 from algopy_testing.enums import OnCompleteAction
+from algopy_testing.models import ARC4Contract
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.utils import convert_native_to_stack, get_new_scratch_space
 
@@ -114,8 +115,8 @@ class TransactionContext:
         except AttributeError:
             contract = fn = None
 
-        if contract is None or fn is None:
-            raise ValueError("The provided method must be instance method of an ARC4 contract")
+        if not isinstance(contract, ARC4Contract) or fn is None:
+            raise ValueError("The provided method must be an instance method of an ARC4 contract")
 
         app_id = contract.__app_id__
         # Handle ABI methods
@@ -135,8 +136,15 @@ class TransactionContext:
     @contextlib.contextmanager
     def scoped_execution(
         self,
+        # TODO: allow PreparedAppCall to be passed via gtxns array
+        #       which will be expanded to form the full gtxns array
+        #       and determine the correct active_txn_index
         gtxns: typing.Sequence[algopy.gtxn.TransactionBase] | None = None,
         active_txn_index: int | None = None,
+        # TODO: review txn fields we allow the user to specify, as only a small subset make sense
+        #       probably only the fields on _TransactionBaseFields. As all other fields
+        #       are automatically set by the testing framework, or the user should construct
+        #       an ApplicationCallTransaction and pass via gtxns
         txn_op_fields: TransactionFields | None = None,
     ) -> Iterator[None]:
         """Adds a new transaction group using a list of transactions and an
