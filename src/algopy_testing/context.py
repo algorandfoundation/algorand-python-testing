@@ -5,10 +5,7 @@ import typing
 import algosdk
 
 from algopy_testing._context_helpers import LedgerContext, TransactionContext
-from algopy_testing._value_generators import (
-    AlgopyValueGenerator,
-    ARC4ValueGenerator,
-)
+from algopy_testing._value_generators import AlgopyValueGenerator
 
 if typing.TYPE_CHECKING:
     from collections.abc import Sequence
@@ -26,8 +23,6 @@ class AlgopyTestContext:
     easy setup and manipulation of test scenarios for algopy-based smart
     contracts and applications.
     """
-
-    _arc4: ARC4ValueGenerator
 
     def __init__(
         self,
@@ -47,10 +42,6 @@ class AlgopyTestContext:
         self._ledger_context = LedgerContext()
         self._txn_context = TransactionContext()
         self._value_generator = AlgopyValueGenerator()
-
-    @property
-    def arc4(self) -> ARC4ValueGenerator:
-        return self._arc4
 
     @property
     def default_sender(self) -> algopy.Account:
