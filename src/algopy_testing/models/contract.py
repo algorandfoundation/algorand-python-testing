@@ -50,7 +50,7 @@ class _ContractMeta(type):
 
         # TODO: provide app_id during instantiation without requiring a txn
         txn = context.any.txn.application_call(**fields)
-        with context.txn.scoped_execution([txn]):
+        with context.txn.create_group([txn]):
             instance = super().__call__(*args, **kwargs)
             instance.__app_id__ = app_id
 

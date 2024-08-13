@@ -59,7 +59,7 @@ class AlgopyTestContext:
     def txn(self) -> TransactionContext:
         return self._txn_context
 
-    def get_application_for_contract(
+    def get_app_for_contract(
         self, contract: algopy.Contract | algopy.ARC4Contract
     ) -> algopy.Application:
         return self.ledger.get_application(contract.__app_id__)

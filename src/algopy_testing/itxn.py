@@ -10,7 +10,7 @@ from algopy_testing._context_helpers import lazy_context
 from algopy_testing.enums import TransactionType
 from algopy_testing.models import Account, Asset
 from algopy_testing.models.txn_fields import (
-    TransactionFieldsBase,
+    TransactionFieldsGetter,
     get_txn_defaults,
     narrow_field_type,
 )
@@ -48,7 +48,7 @@ __all__ = [
 # and are created by the `submit` method of each inner transaction class
 
 
-class _BaseInnerTransactionResult(TransactionFieldsBase):
+class _BaseInnerTransactionResult(TransactionFieldsGetter):
     txn_type: TransactionType = TransactionType.Payment
 
     def __init__(self, **fields: typing.Any):

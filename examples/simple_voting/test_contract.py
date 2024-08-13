@@ -33,7 +33,7 @@ def test_vote(context: AlgopyTestContext) -> None:
     contract.votes.value = algopy.UInt64(0)
     voter = context.default_sender
 
-    with context.txn.scoped_execution(
+    with context.txn.create_group(
         gtxns=[
             context.any.txn.application_call(
                 sender=voter,
@@ -63,7 +63,7 @@ def test_vote_already_voted(context: AlgopyTestContext) -> None:
     contract.votes.value = algopy.UInt64(1)
     contract.voted[voter] = algopy.UInt64(1)
 
-    with context.txn.scoped_execution(
+    with context.txn.create_group(
         gtxns=[
             context.any.txn.application_call(
                 sender=voter,

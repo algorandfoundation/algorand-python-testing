@@ -4,6 +4,7 @@ from collections.abc import Generator
 import algopy
 import pytest
 from algopy_testing import AlgopyTestContext, algopy_testing_context
+from algopy_testing.utils import arc4_prefix
 
 from .contract import ZkWhitelistContract
 
@@ -34,17 +35,11 @@ def test_add_address_to_whitelist(
             *[algopy.arc4.Byte(0) for _ in range(32)]
         )
     )
-    dummy_verifier_app = context.any.application()
-    context.set_template_var("VERIFIER_APP_ID", dummy_verifier_app.id)
 
-    # Act
-    with context.txn.scoped_execution(
-        gtxns=[context.any.txn.application_call(app_id=dummy_verifier_app)]
-    ):
-        context.txn.add_app_logs(
-            app_id=dummy_verifier_app.id, logs=b"\x80", prepend_arc4_prefix=True
-        )
-        result = contract.add_address_to_whitelist(address, proof)
+    # TODO: allow callables for side effects
+    dummy_verifier_app = context.any.application(logs=[arc4_prefix(b"\x80")])
+    context.set_template_var("VERIFIER_APP_ID", dummy_verifier_app.id)
+    result = contract.add_address_to_whitelist(address, proof)
 
     # Assert
     assert result == algopy.arc4.String("")
@@ -81,9 +76,7 @@ def test_add_address_to_whitelist_invalid_proof(
 @pytest.mark.usefixtures("context")
 def test_is_on_whitelist(context: AlgopyTestContext, contract: ZkWhitelistContract) -> None:
     # Arrange
-    dummy_account = context.any.account(
-        opted_apps=[context.get_application_for_contract(contract)]
-    )
+    dummy_account = context.any.account(opted_apps=[context.get_app_for_contract(contract)])
     contract.whitelist[dummy_account] = True
 
     # Act
@@ -96,9 +89,7 @@ def test_is_on_whitelist(context: AlgopyTestContext, contract: ZkWhitelistContra
 @pytest.mark.usefixtures("context")
 def test_is_not_on_whitelist(context: AlgopyTestContext, contract: ZkWhitelistContract) -> None:
     # Arrange
-    dummy_account = context.any.account(
-        opted_apps=[context.get_application_for_contract(contract)]
-    )
+    dummy_account = context.any.account(opted_apps=[context.get_app_for_contract(contract)])
     contract.whitelist[dummy_account] = False
 
     # Act

@@ -5,7 +5,7 @@ import typing
 from algopy_testing._context_helpers import lazy_context
 from algopy_testing.enums import TransactionType
 from algopy_testing.models import Application
-from algopy_testing.models.txn_fields import TransactionFieldsBase
+from algopy_testing.models.txn_fields import TransactionFieldsGetter
 
 if typing.TYPE_CHECKING:
     import algopy
@@ -23,7 +23,7 @@ __all__ = [
 ]
 
 
-class TransactionBase(TransactionFieldsBase):
+class TransactionBase(TransactionFieldsGetter):
     type_enum: TransactionType
 
     # since the only thing that matters is that the implementation matches the stubs

@@ -61,7 +61,7 @@ def context() -> Generator[AlgopyTestContext, None, None]:
 
 def test_emit(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
     dummy_app = context.any.application()
-    with context.txn.scoped_execution([context.any.txn.application_call(app_id=dummy_app)]):
+    with context.txn.create_group([context.any.txn.application_call(app_id=dummy_app)]):
         _test_data = Swapped(
             algopy.String("hello"),
             MAX_UINT512,

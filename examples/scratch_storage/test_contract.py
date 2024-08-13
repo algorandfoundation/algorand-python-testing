@@ -33,7 +33,7 @@ def test_simple_contract(context: AlgopyTestContext) -> None:
     contract = SimpleScratchSlotsContract()
 
     # Act
-    with context.txn.scoped_execution(
+    with context.txn.create_group(
         gtxns=[context.any.txn.application_call(scratch_space=[0, 5, b"Hello World"])]
     ):
         result = contract.approval_program()

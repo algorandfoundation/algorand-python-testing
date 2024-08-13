@@ -15,7 +15,9 @@ if typing.TYPE_CHECKING:
     import algopy
 
 
-class _TransactionBaseFields(typing.TypedDict, total=False):
+# NOTE: type and tx_id are excluded, first is inferred from other txn related classes
+# the second can't be meaningfully inferred in unit testing context
+class TransactionBaseFields(typing.TypedDict, total=False):
     sender: algopy.Account
     fee: algopy.UInt64
     first_valid: algopy.UInt64
@@ -23,12 +25,10 @@ class _TransactionBaseFields(typing.TypedDict, total=False):
     last_valid: algopy.UInt64
     note: algopy.Bytes
     lease: algopy.Bytes
-    txn_id: algopy.Bytes
     rekey_to: algopy.Account
-    type: algopy.TransactionType
 
 
-class AssetTransferFields(_TransactionBaseFields, total=False):
+class AssetTransferFields(TransactionBaseFields, total=False):
     xfer_asset: algopy.Asset
     asset_amount: algopy.UInt64
     asset_sender: algopy.Account
@@ -36,19 +36,19 @@ class AssetTransferFields(_TransactionBaseFields, total=False):
     asset_close_to: algopy.Account
 
 
-class PaymentFields(_TransactionBaseFields, total=False):
+class PaymentFields(TransactionBaseFields, total=False):
     receiver: algopy.Account
     amount: algopy.UInt64
     close_remainder_to: algopy.Account
 
 
-class AssetFreezeFields(_TransactionBaseFields, total=False):
+class AssetFreezeFields(TransactionBaseFields, total=False):
     freeze_asset: algopy.Asset
     freeze_account: algopy.Account
     frozen: bool
 
 
-class AssetConfigFields(_TransactionBaseFields, total=False):
+class AssetConfigFields(TransactionBaseFields, total=False):
     config_asset: algopy.Asset
     total: algopy.UInt64
     decimals: algopy.UInt64
@@ -63,7 +63,7 @@ class AssetConfigFields(_TransactionBaseFields, total=False):
     clawback: algopy.Account
 
 
-class ApplicationCallFields(_TransactionBaseFields, total=False):
+class ApplicationCallFields(TransactionBaseFields, total=False):
     app_id: algopy.Application
     on_completion: algopy.OnCompleteAction
     global_num_uint: algopy.UInt64
@@ -82,7 +82,7 @@ class ApplicationCallFields(_TransactionBaseFields, total=False):
     clear_state_program: Sequence[algopy.Bytes]
 
 
-class KeyRegistrationFields(_TransactionBaseFields, total=False):
+class KeyRegistrationFields(TransactionBaseFields, total=False):
     vote_key: algopy.Bytes
     selection_key: algopy.Bytes
     vote_first: algopy.UInt64
@@ -101,7 +101,7 @@ class TransactionFields(  # type: ignore[misc]
     ApplicationCallFields,
     total=False,
 ):
-    pass
+    type: algopy.TransactionType
 
 
 # TODO: can this easily be derived from annotations?
@@ -178,7 +178,7 @@ def get_txn_defaults() -> Mapping[str, typing.Any]:
     return fields
 
 
-class TransactionFieldsBase(abc.ABC):
+class TransactionFieldsGetter(abc.ABC):
     """Base transaction type used across both inner and global transactions
     implementations."""
 
@@ -470,7 +470,7 @@ __all__ = [
     "AssetConfigFields",
     "AssetFreezeFields",
     "AssetTransferFields",
-    "TransactionFieldsBase",
+    "TransactionFieldsGetter",
     "KeyRegistrationFields",
     "PaymentFields",
     "TransactionFields",

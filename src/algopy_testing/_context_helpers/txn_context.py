@@ -26,7 +26,7 @@ if typing.TYPE_CHECKING:
     import algopy
 
     from algopy_testing._itxn_loader import InnerTransactionResultType
-    from algopy_testing.models.txn_fields import TransactionFields
+    from algopy_testing.models.txn_fields import TransactionBaseFields
 
 
 from algopy_testing import gtxn
@@ -40,7 +40,8 @@ TParamSpec = typing.ParamSpec("TParamSpec")
 
 
 @dataclass(kw_only=True)
-class PreparedAppCall(typing.Generic[TReturn]):
+class DeferredAppCall(typing.Generic[TReturn]):
+    # TODO: make private
     app_id: int
     txns: list[algopy.gtxn.TransactionBase]
     method: typing.Callable[..., TReturn]
@@ -86,7 +87,7 @@ class TransactionContext:
     ) -> Iterator[None]:
         """Only creates a group if there isn't one already active."""
         if not self._active_group or not self._active_group.txns:
-            ctx: typing.ContextManager[None] = self.scoped_execution(
+            ctx: typing.ContextManager[None] = self.create_group(
                 gtxns, active_txn_index=active_txn_index
             )
         else:
@@ -94,12 +95,12 @@ class TransactionContext:
         with ctx:
             yield
 
-    def txn_group_for(
+    def defer_app_call(
         self,
         method: Callable[TParamSpec, TReturn],
         *args: TParamSpec.args,
         **kwargs: TParamSpec.kwargs,
-    ) -> PreparedAppCall[TReturn]:
+    ) -> DeferredAppCall[TReturn]:
         """Prepare an application call transaction group for a contract method
         without executing it.
 
@@ -107,7 +108,7 @@ class TransactionContext:
             abimethod).
         :param args: Positional arguments for the method.
         :param kwargs: Keyword arguments for the method.
-        :return: A PreparedAppCall object containing the transaction
+        :return: A DeferredAppCall object containing the transaction
             group and method info.
         """
         arc4_metadata = get_arc4_metadata(method)
@@ -140,21 +141,16 @@ class TransactionContext:
         else:
             txns = create_baremethod_txns(app_id)
 
-        return PreparedAppCall(app_id=app_id, txns=txns, method=method, args=args, kwargs=kwargs)
+        return DeferredAppCall(app_id=app_id, txns=txns, method=method, args=args, kwargs=kwargs)
 
     @contextlib.contextmanager
-    def scoped_execution(
+    def create_group(
         self,
-        # TODO: allow PreparedAppCall to be passed via gtxns array
-        #       which will be expanded to form the full gtxns array
-        #       and determine the correct active_txn_index
-        gtxns: typing.Sequence[algopy.gtxn.TransactionBase] | None = None,
+        gtxns: (
+            typing.Sequence[algopy.gtxn.TransactionBase | DeferredAppCall[TReturn]] | None
+        ) = None,
         active_txn_index: int | None = None,
-        # TODO: review txn fields we allow the user to specify, as only a small subset make sense
-        #       probably only the fields on _TransactionBaseFields. As all other fields
-        #       are automatically set by the testing framework, or the user should construct
-        #       an ApplicationCallTransaction and pass via gtxns
-        txn_op_fields: TransactionFields | None = None,
+        txn_op_fields: TransactionBaseFields | None = None,
     ) -> Iterator[None]:
         """Adds a new transaction group using a list of transactions and an
         optional index to indicate the active transaction within the group.
@@ -172,24 +168,32 @@ class TransactionContext:
             value = None)
         """
 
-        if gtxns is None:
-            gtxns = []
-        else:
-            if not all(isinstance(txn, gtxn.TransactionBase) for txn in gtxns):
-                raise ValueError("All transactions must be instances of TransactionBase")
+        processed_gtxns = []
 
-            if len(gtxns) > algosdk.constants.TX_GROUP_LIMIT:
+        if gtxns:
+            processed_gtxns = [
+                txn
+                for item in gtxns
+                for txn in (item.txns if isinstance(item, DeferredAppCall) else [item])
+            ]
+
+            if not all(isinstance(txn, gtxn.TransactionBase) for txn in processed_gtxns):
+                raise ValueError(
+                    "All transactions must be instances of TransactionBase or DeferredAppCall"
+                )
+
+            if len(processed_gtxns) > algosdk.constants.TX_GROUP_LIMIT:
                 raise ValueError(
                     f"Transaction group can have at most {algosdk.constants.TX_GROUP_LIMIT} "
                     "transactions, as per AVM limits."
                 )
 
-            for i, txn in enumerate(gtxns):
+            for i, txn in enumerate(processed_gtxns):
                 txn.fields["group_index"] = UInt64(i)
 
         previous_group = self._active_group
         self._active_group = TransactionGroup(
-            txns=gtxns,
+            txns=processed_gtxns,
             active_txn_index=active_txn_index,
             txn_op_fields=typing.cast(dict[str, typing.Any], txn_op_fields),
         )

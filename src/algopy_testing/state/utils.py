@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing
 
+from algopy_testing import arc4
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.uint64 import UInt64
 from algopy_testing.protocols import BytesBacked, UInt64Backed
@@ -17,7 +18,7 @@ def serialize(value: _TValue) -> SerializableValue:
         return value.value
     elif isinstance(value, UInt64Backed):
         return value.int_
-    elif isinstance(value, BytesBacked):
+    elif isinstance(value, BytesBacked | (arc4.Struct | arc4._ABIEncoded)):
         return value.bytes.value
     else:
         raise TypeError(f"Unsupported type: {type(value)}")
@@ -33,7 +34,7 @@ def deserialize(typ: type[_TValue], value: SerializableValue) -> _TValue:
         if isinstance(value, bytes):
             raise TypeError("expected int, received bytes")
         return typ.from_int(value)  # type: ignore[return-value]
-    elif issubclass(typ, BytesBacked):
+    elif issubclass(typ, BytesBacked | (arc4.Struct | arc4._ABIEncoded)):
         if isinstance(value, int):
             raise TypeError("expected bytes, received int")
         return typ.from_bytes(Bytes(value))  # type: ignore[return-value]

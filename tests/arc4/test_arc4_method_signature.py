@@ -110,7 +110,7 @@ def test_app_args_is_correct_with_application(context: algopy_testing.AlgopyTest
     contract = SignaturesContract()
     contract.create()
 
-    self_app = context.get_application_for_contract(contract)
+    self_app = context.get_app_for_contract(contract)
     other_app = context.any.application(id=1234)
 
     # act
@@ -171,7 +171,7 @@ def test_app_args_is_correct_with_complex(context: algopy_testing.AlgopyTestCont
     assert result[1].bytes == struct.bytes
 
 
-def test_txn_group_for_with_complex(context: algopy_testing.AlgopyTestContext) -> None:
+def test_prepare_txns_with_complex(context: algopy_testing.AlgopyTestContext) -> None:
     # arrange
     contract = SignaturesContract()
     contract.create()
@@ -185,11 +185,13 @@ def test_txn_group_for_with_complex(context: algopy_testing.AlgopyTestContext) -
         another_struct_alias=AnotherStruct(one=arc4.UInt64(1), two=arc4.String("2")),
     )
     five = UInt8Array(arc4.UInt8(5))
-    group = context.txn.txn_group_for(contract.complex_sig, struct, txn, account, five)
+    deferred_app_call = context.txn.defer_app_call(
+        contract.complex_sig, struct, txn, account, five
+    )
 
     # act
-    with context.txn.scoped_execution(gtxns=group.txns):
-        result = group.submit()
+    with context.txn.create_group(gtxns=[deferred_app_call]):
+        result = deferred_app_call.submit()
 
     # assert
     txn = context.txn.last_active

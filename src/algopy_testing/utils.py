@@ -7,6 +7,7 @@ import algosdk
 
 import algopy_testing
 from algopy_testing.constants import (
+    ARC4_RETURN_PREFIX,
     DEFAULT_ACCOUNT_MIN_BALANCE,
     DEFAULT_ASSET_CREATE_MIN_BALANCE,
     DEFAULT_ASSET_OPT_IN_MIN_BALANCE,
@@ -158,3 +159,7 @@ def get_new_scratch_space() -> list[algopy.Bytes | algopy.UInt64]:
     import algopy
 
     return [algopy.UInt64(0)] * 256
+
+
+def arc4_prefix(value: bytes) -> bytes:
+    return ARC4_RETURN_PREFIX + value

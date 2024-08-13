@@ -1,4 +1,5 @@
 import logging
+import multiprocessing
 import os
 import shutil
 import subprocess
@@ -23,7 +24,7 @@ def get_artifact_folders(root_dir: str) -> Iterator[Path]:
             yield folder
 
 
-def compile_contract(folder: Path) -> str:
+def compile_contract(folder: Path) -> Path:
     logger.info(f"Compiling: {folder}")
     contract_path = folder / "contract.py"
     if not contract_path.exists():
@@ -75,15 +76,24 @@ def generate_client(folder: Path) -> None:
             raise
 
 
+def process_folder(folder: Path) -> None:
+    try:
+        out_dir = compile_contract(folder)
+        generate_client(out_dir)
+        shutil.rmtree(out_dir)
+    except subprocess.CalledProcessError:
+        logger.exception(f"Error processing folder {folder}")
+
+
 def main() -> None:
     artifacts_dir = "examples"
-    try:
-        for folder in get_artifact_folders(artifacts_dir):
-            out_dir = compile_contract(folder)
-            generate_client(out_dir)
-            shutil.rmtree(out_dir)
-    except subprocess.CalledProcessError as e:
-        print(f"Error: {e}")
+    folders = list(get_artifact_folders(artifacts_dir))
+
+    with multiprocessing.Pool() as pool:
+        try:
+            pool.map(process_folder, folders)
+        except Exception:
+            logger.exception("An error occurred during parallel processing")
 
 
 if __name__ == "__main__":

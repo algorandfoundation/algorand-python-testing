@@ -246,7 +246,7 @@ def test_ed25519verify(
         avm_result = get_crypto_ops_avm_result(
             "verify_ed25519verify", a=message, b=signature, c=public_key, suggested_params=sp
         )
-        with ctx.txn.scoped_execution([app_call], active_txn_index=0):
+        with ctx.txn.create_group([app_call], active_txn_index=0):
             result = op.ed25519verify(message, signature, public_key)
 
         assert avm_result == result, "The AVM result should match the expected result"
@@ -705,7 +705,7 @@ def test_app_local_ex_get(
     get_state_app_local_ex_avm_result: AVMInvoker,
 ) -> None:
     mock_secondary_contract = StateAppLocalExContract()
-    mock_secondary_app = context.get_application_for_contract(mock_secondary_contract)
+    mock_secondary_app = context.get_app_for_contract(mock_secondary_contract)
     assert mock_secondary_app.local_num_uint == 1
     assert mock_secondary_app.local_num_bytes == 2
 
@@ -735,7 +735,7 @@ def test_app_local_ex_get_arc4(
     get_state_app_local_ex_avm_result: AVMInvoker,
 ) -> None:
     mock_secondary_contract = StateAppLocalExContract()
-    mock_secondary_app = context.get_application_for_contract(mock_secondary_contract)
+    mock_secondary_app = context.get_app_for_contract(mock_secondary_contract)
     assert mock_secondary_app.local_num_uint == 1
     assert mock_secondary_app.local_num_bytes == 2
 
@@ -825,7 +825,7 @@ def test_app_global_ex_get(
     get_state_app_global_ex_avm_result: AVMInvoker,
 ) -> None:
     mock_secondary_contract = StateAppGlobalExContract()
-    mock_secondary_app = context.get_application_for_contract(mock_secondary_contract)
+    mock_secondary_app = context.get_app_for_contract(mock_secondary_contract)
     assert mock_secondary_app.global_num_uint == 2
     assert mock_secondary_app.global_num_bytes == 4
 
@@ -856,7 +856,7 @@ def test_app_global_ex_get_arc4(
     key_name: str,
 ) -> None:
     mock_secondary_contract = StateAppGlobalExContract()
-    mock_secondary_app = context.get_application_for_contract(mock_secondary_contract)
+    mock_secondary_app = context.get_app_for_contract(mock_secondary_contract)
     assert mock_secondary_app.global_num_uint == 2
     assert mock_secondary_app.global_num_bytes == 4
 

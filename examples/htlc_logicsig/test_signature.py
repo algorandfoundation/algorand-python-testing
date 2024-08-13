@@ -17,7 +17,7 @@ def context() -> Generator[AlgopyTestContext, None, None]:
 
 def test_seller_receives_payment(context: AlgopyTestContext) -> None:
     # Arrange
-    with context.txn.scoped_execution(
+    with context.txn.create_group(
         [
             context.any.txn.payment(
                 fee=algopy.UInt64(500),

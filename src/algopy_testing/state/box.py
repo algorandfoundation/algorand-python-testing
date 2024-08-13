@@ -364,7 +364,7 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
             raise RuntimeError("Box key prefix is not defined")
         return self._key_prefix
 
-    def __getitem__(self, key: _TKey) -> _TValue:
+    def __getitem__(self, key: _TKey) -> _ProxyValue:
         """Retrieve the contents of a keyed box.
 
         Fails if the box for the key has not been created.
@@ -372,7 +372,7 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         box_content, box_exists = self.maybe(key)
         if not box_exists:
             raise RuntimeError("Box has not been created")
-        return box_content
+        return _ProxyValue(self, key, box_content)
 
     def __setitem__(self, key: _TKey, value: _TValue) -> None:
         """Write _value_ to a keyed box.
@@ -416,6 +416,8 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         context = get_test_context()
         key_bytes = self._full_key(key)
         box_exists = context.ledger.box_exists(key_bytes)
+        if not box_exists:
+            return self._value_type(), False
         box_content_bytes = context.ledger.get_box(key_bytes)
         box_content = cast_from_bytes(self._value_type, box_content_bytes)
         return box_content, box_exists
@@ -436,3 +438,26 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
 
     def _full_key(self, key: _TKey) -> algopy.Bytes:
         return self.key_prefix + cast_to_bytes(key)
+
+
+class _ProxyValue:
+    """Allows mutating attributes of objects retrieved from a BoxMap."""
+
+    def __init__(self, box_map: BoxMap[_TKey, _TValue], key: _TKey, value: _TValue) -> None:
+        self._box_map = box_map
+        self._key = key
+        self._value = value
+
+    def __getattr__(self, name: str) -> typing.Any:
+        return getattr(self._value, name)
+
+    def __setattr__(self, name: str, value: typing.Any) -> None:
+        if name.startswith("_"):
+            super().__setattr__(name, value)
+        else:
+            new_value = self._value.__class__(**{**self._value.__dict__, name: value})
+            self._box_map[self._key] = new_value
+            self._value = new_value
+
+    def __repr__(self) -> str:
+        return repr(self._value)
