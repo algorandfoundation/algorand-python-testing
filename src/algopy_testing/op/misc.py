@@ -112,9 +112,9 @@ def min_balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
 
 def exit(a: UInt64 | int, /) -> typing.Never:  # noqa: A001
     value = UInt64(a) if isinstance(a, int) else a
-    # TODO: this should raise a less severe exception and then be caught by the active txn context
-    #       and used to determine if the overall txn was successful
-    raise RuntimeError(value)
+    # TODO: in the docs indicate this method as mockable, as the semantics don't really
+    #       work very well with Python, so leave it up the user to decide what should happen
+    raise NotImplementedError(f"exit with value: {value}")
 
 
 def app_opted_in(
