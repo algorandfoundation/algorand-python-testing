@@ -302,13 +302,6 @@ class TransactionContext:
 
         return self._app_logs[app_id]
 
-    @contextlib.contextmanager
-    def scoped_txn_fields(self, **fields: typing.Any) -> Iterator[None]:
-        if self._active_group is None:
-            raise RuntimeError("No active group")
-        with self._active_group.scoped_txn_fields(**fields):
-            yield
-
 
 class TransactionGroup:
     def __init__(
@@ -355,15 +348,6 @@ class TransactionGroup:
         if not self._constructing_itxn_group:
             raise RuntimeError("itxn field without itxn begin")
         return self._constructing_itxn_group[-1]
-
-    @contextlib.contextmanager
-    def scoped_txn_fields(self, **fields: typing.Any) -> Iterator[None]:
-        original_fields = self._txn_op_fields.copy()
-        self._txn_op_fields.update(fields)
-        try:
-            yield
-        finally:
-            self._txn_op_fields = original_fields
 
     def get_txn(self, index: int | algopy.UInt64) -> algopy.gtxn.Transaction:
         try:
