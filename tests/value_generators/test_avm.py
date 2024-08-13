@@ -1,3 +1,5 @@
+from collections.abc import Iterator
+
 import algopy
 import algosdk
 import pytest
@@ -9,13 +11,13 @@ from algopy_testing.primitives.string import String
 
 
 @pytest.fixture()
-def context() -> AlgopyTestContext:
+def context() -> Iterator[AlgopyTestContext]:
     with algopy_testing_context() as ctx:
         yield ctx
 
 
 def assert_value_in_range(value: int | object, min_val: int, max_val: int) -> None:
-    assert min_val <= value <= max_val
+    assert min_val <= value <= max_val  # type: ignore[operator]
 
 
 def assert_length(value: bytes | str | String | Bytes, expected_length: int) -> None:
