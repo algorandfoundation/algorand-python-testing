@@ -19,6 +19,7 @@ class LedgerContext:
         self.account_data = defaultdict[str, AccountContextData](get_empty_account)
         self.application_data: dict[int, ApplicationContextData] = {}
         self.asset_data: dict[int, AssetFields] = {}
+        # TODO: move boxes onto application data
         self.boxes: dict[bytes, bytes] = {}
         self.blocks: dict[int, dict[str, int]] = {}
         self.global_fields: GlobalFields = get_default_global_fields()

@@ -63,10 +63,19 @@ class TransactionContext:
         # not executing an app call.
         # User code should use the "last" group properties to do assertions about a recently
         # executed app call
-
+        # TODO: store scratch space on gtxn.TransactionBase implementation
+        #       users can mock scratch space when calling any.txn.application_call
+        #       move get_scratch_slot/get_scratch_space to TransactionGroup
+        #       so users can assert anything put into scratch spaces
+        #       by the active txn
+        #       set_scratch/slot/space no longer required
         self._scratch_spaces = defaultdict[gtxn.TransactionBase, list[Bytes | UInt64]](
             get_new_scratch_space
         )
+        # TODO: move app_logs on to gtxn.TransactionBase implementation
+        #       users can mock app values when calling any.application
+        #       move get_app_logs on to TransactionGroup, to query app_logs
+        #       for the active txn
         self._app_logs: dict[int, list[bytes]] = {}
 
     @contextlib.contextmanager
