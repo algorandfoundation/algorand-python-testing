@@ -83,8 +83,10 @@ def gaid(a: algopy.UInt64 | int, /) -> algopy.Application:
     if txn.type not in (TransactionType.ApplicationCall, TransactionType.AssetConfig):
         raise ValueError(f"transaction at index {a} is not an Application Call or Asset Config")
 
-    # TODO: when mocking group transactions, allow specifying the resulting app/asset id
-    #       then return it here
+    # TODO: allow specifying created_asset_id, or created_application_id on group transactions
+    #       and then return those values here if specified.
+    #       Additionally stubs from puyapy are currently incorrect as this op should be typed as
+    #       returning UInt64, so perhaps leave this as NotImplemented until that is resolved
     raise NotImplementedError
 
 
