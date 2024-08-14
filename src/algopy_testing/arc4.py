@@ -1146,8 +1146,7 @@ def emit(event: str | Struct, /, *args: object) -> None:
         raise TypeError("expected str or Struct for event")
 
     event_hash = SHA512.new(event_str.encode(), truncate="256").digest()
-    lazy_context.txn.add_app_logs(
-        app_id=active_txn.app_id,
+    active_txn._add_app_logs(
         logs=event_hash[:4] + event_data.value,
     )
 

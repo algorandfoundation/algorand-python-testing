@@ -45,7 +45,6 @@ def log(
         raise ValueError("Cannot emit events outside of application call context!")
     if not active_txn.app_id:
         raise ValueError("Cannot emit event: missing `app_id` in associated call transaction!")
-    lazy_context.txn.add_app_logs(
-        app_id=active_txn.app_id,
+    active_txn._add_app_logs(
         logs=separator.join(logs),
     )

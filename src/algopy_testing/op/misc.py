@@ -51,7 +51,7 @@ def _get_bytes(b: algopy.Bytes | bytes) -> bytes:
 def _gload(a: UInt64 | int, b: UInt64 | int, /) -> Bytes | UInt64:
     txn = lazy_context.active_group.get_txn(a)
     try:
-        return lazy_context.txn.get_scratch_slot(txn, b)
+        return txn._get_scratch_space()[b]
     except IndexError:
         raise ValueError("invalid scratch slot") from None
 
@@ -66,7 +66,7 @@ class _Scratch:
     @staticmethod
     def store(a: algopy.UInt64 | int, b: algopy.Bytes | algopy.UInt64 | bytes | int, /) -> None:
         active_txn = lazy_context.active_group.active_txn
-        lazy_context.txn.set_scratch_slot(active_txn, a, b)
+        active_txn._set_scratch_slot(a, b)
 
 
 Scratch = _Scratch()

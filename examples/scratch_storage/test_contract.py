@@ -22,7 +22,7 @@ def test_arc4_contract(context: AlgopyTestContext) -> None:
 
     # Assert
     assert result
-    scratch_space = context.txn.get_scratch_space(context.txn.last_active)
+    scratch_space = context.txn.last_group.get_scratch_space()
     assert scratch_space[1] == 5
     assert scratch_space[2] == b"Hello World"
 

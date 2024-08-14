@@ -63,7 +63,18 @@ def test_log(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
         [context.any.txn.application_call(app_id=dummy_app)], active_txn_index=0
     ):
         log(a, b, c, d, e, f, g, h, i, j, k, m, n, sep=b"-")
-        arc4_result = [
-            base64.b64encode(log).decode() for log in context.txn.get_app_logs(dummy_app.id)
-        ]
-        assert avm_result == arc4_result
+
+    arc4_result = [
+        base64.b64encode(log).decode() for log in context.txn.last_group.get_app_logs(dummy_app.id)
+    ]
+    assert avm_result == arc4_result
+
+
+def test_user_supplied_logs(context: AlgopyTestContext) -> None:
+    dummy_app = context.any.application(logs=[b"\x80"])
+
+    with context.txn.create_group([context.any.txn.application_call(app_id=dummy_app)]):
+        log(b"\x81")  # should be logged but user supplied log is overriding it
+
+    assert context.txn.last_group.get_app_logs(dummy_app.id) == [b"\x80"]
+    assert context.txn.last_group.active_txn._app_logs == [b"\x81"]

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import dataclasses
 import inspect
 import typing
 
@@ -32,17 +31,32 @@ Key = bytes
 StateValueType = int | bytes
 
 
-@dataclasses.dataclass
 class ApplicationContextData:
     app_id: int
     fields: ApplicationFields
-    global_state: dict[Key, StateValueType] = dataclasses.field(default_factory=dict)
-    local_state: dict[tuple[AccountKey, Key], StateValueType] = dataclasses.field(
-        default_factory=dict
-    )
-    is_creating: bool = False
-    contract: Contract | None = None
+    global_state: dict[Key, StateValueType]
+    local_state: dict[tuple[AccountKey, Key], StateValueType]
+    boxes: dict[bytes, bytes]
+    is_creating: bool
+    contract: Contract | None
+    # TODO: add callables support (similar to side effects in pytest)
     # TODO: 1.0 add getter to ledger context, get_global_state, get_local_state, get_box
+    _app_logs: list[bytes]
+
+    def __init__(
+        self,
+        app_id: int,
+        fields: ApplicationFields,
+        logs: bytes | list[bytes] | None = None,
+    ):
+        self.app_id = app_id
+        self.fields = fields
+        self.global_state = {}
+        self.local_state = {}
+        self.boxes = {}
+        self.is_creating = False
+        self.contract = None
+        self._app_logs = logs if isinstance(logs, list) else [logs] if logs else []
 
     def get_global_state(self, key: algopy.Bytes | bytes) -> StateValueType:
         return self.global_state[as_bytes(key)]
@@ -73,6 +87,14 @@ class ApplicationContextData:
             del self.local_state[(account_public_key, key_bytes)]
         else:
             self.local_state[(account_public_key, key_bytes)] = value
+
+    def _get_app_logs(self) -> list[bytes]:
+        """Get the user supplied custom logs for the application.
+
+        If exists, it will be prepended to the logs array stored within
+        each transaction object.
+        """
+        return self._app_logs
 
 
 class Application(UInt64Backed):

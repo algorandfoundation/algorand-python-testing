@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import contextlib
 import typing
-from collections import defaultdict
-from dataclasses import dataclass
 
 import algosdk
 
-from algopy_testing.constants import ARC4_RETURN_PREFIX
+from algopy_testing._itxn_loader import ITxnGroupLoader
 from algopy_testing.decorators.arc4 import (
     check_routing_conditions,
     create_abimethod_txns,
@@ -17,8 +15,6 @@ from algopy_testing.decorators.arc4 import (
 )
 from algopy_testing.enums import OnCompleteAction
 from algopy_testing.models import ARC4Contract
-from algopy_testing.primitives.bytes import Bytes
-from algopy_testing.utils import convert_native_to_stack, get_new_scratch_space
 
 if typing.TYPE_CHECKING:
     from collections.abc import Callable, Iterator, Sequence
@@ -28,9 +24,9 @@ if typing.TYPE_CHECKING:
     from algopy_testing._itxn_loader import InnerTransactionResultType
     from algopy_testing.models.txn_fields import TransactionBaseFields
 
-
 from algopy_testing import gtxn
-from algopy_testing._itxn_loader import ITxnGroupLoader, ITxnLoader
+from algopy_testing._context_helpers import lazy_context
+from algopy_testing._itxn_loader import ITxnLoader
 from algopy_testing.itxn import InnerTransaction, submit_txns
 from algopy_testing.models import Application
 from algopy_testing.primitives import UInt64
@@ -39,19 +35,31 @@ TReturn = typing.TypeVar("TReturn")
 TParamSpec = typing.ParamSpec("TParamSpec")
 
 
-@dataclass(kw_only=True)
 class DeferredAppCall(typing.Generic[TReturn]):
-    # TODO: make private
-    app_id: int
-    txns: list[algopy.gtxn.TransactionBase]
-    method: typing.Callable[..., TReturn]
-    args: tuple[typing.Any, ...]
-    kwargs: dict[str, typing.Any]
+    _app_id: int
+    _txns: list[algopy.gtxn.TransactionBase]
+    _method: typing.Callable[..., TReturn]
+    _args: tuple[typing.Any, ...]
+    _kwargs: dict[str, typing.Any]
+
+    def __init__(
+        self,
+        app_id: int,
+        txns: list[algopy.gtxn.TransactionBase],
+        method: Callable[..., TReturn],
+        args: tuple[typing.Any, ...],
+        kwargs: dict[str, typing.Any],
+    ) -> None:
+        self._app_id = app_id
+        self._txns = txns
+        self._method = method
+        self._args = args
+        self._kwargs = kwargs
 
     def submit(self) -> TReturn:
         # This method will be called to execute the prepared call
-        check_routing_conditions(self.app_id, get_arc4_metadata(self.method))
-        return self.method(*self.args, **self.kwargs)
+        check_routing_conditions(self._app_id, get_arc4_metadata(self._method))
+        return self._method(*self._args, **self._kwargs)
 
 
 class TransactionContext:
@@ -64,20 +72,6 @@ class TransactionContext:
         # not executing an app call.
         # User code should use the "last" group properties to do assertions about a recently
         # executed app call
-        # TODO: store scratch space on gtxn.TransactionBase implementation
-        #       users can mock scratch space when calling any.txn.application_call
-        #       move get_scratch_slot/get_scratch_space to TransactionGroup
-        #       so users can assert anything put into scratch spaces
-        #       by the active txn
-        #       set_scratch/slot/space no longer required
-        self._scratch_spaces = defaultdict[gtxn.TransactionBase, list[Bytes | UInt64]](
-            get_new_scratch_space
-        )
-        # TODO: move app_logs on to gtxn.TransactionBase implementation
-        #       users can mock app values when calling any.application
-        #       move get_app_logs on to TransactionGroup, to query app_logs
-        #       for the active txn
-        self._app_logs: dict[int, list[bytes]] = {}
 
     @contextlib.contextmanager
     def _maybe_implicit_txn_group(
@@ -174,7 +168,7 @@ class TransactionContext:
             processed_gtxns = [
                 txn
                 for item in gtxns
-                for txn in (item.txns if isinstance(item, DeferredAppCall) else [item])
+                for txn in (item._txns if isinstance(item, DeferredAppCall) else [item])
             ]
 
             if not all(isinstance(txn, gtxn.TransactionBase) for txn in processed_gtxns):
@@ -215,113 +209,6 @@ class TransactionContext:
         self,
     ) -> algopy.gtxn.Transaction:
         return self.last_group.active_txn
-
-    def set_scratch_space(
-        self,
-        txn: algopy.gtxn.TransactionBase,
-        scratch_space: Sequence[algopy.Bytes | algopy.UInt64 | bytes | int],
-    ) -> None:
-        new_scratch_space = get_new_scratch_space()
-        # insert values to list at specific indexes, use key as index and value as value to set
-        for index, value in enumerate(scratch_space):
-            new_scratch_space[index] = convert_native_to_stack(value)
-
-        self._scratch_spaces[txn] = new_scratch_space
-
-    def set_scratch_slot(
-        self,
-        txn: algopy.gtxn.TransactionBase,
-        index: algopy.UInt64 | int,
-        value: algopy.Bytes | algopy.UInt64 | bytes | int,
-    ) -> None:
-        slots = self._scratch_spaces[txn]
-        try:
-            slots[int(index)] = convert_native_to_stack(value)
-        except IndexError:
-            raise ValueError("invalid scratch slot") from None
-
-    def get_scratch_slot(
-        self,
-        txn: algopy.gtxn.TransactionBase,
-        index: algopy.UInt64 | int,
-    ) -> algopy.UInt64 | algopy.Bytes:
-        slots = self._scratch_spaces[txn]
-        try:
-            return slots[int(index)]
-        except IndexError:
-            raise ValueError("invalid scratch slot") from None
-
-    def get_scratch_space(
-        self, txn: algopy.gtxn.TransactionBase
-    ) -> Sequence[algopy.Bytes | algopy.UInt64]:
-        """Retrieves scratch space for a transaction.
-
-        :param txn: Transaction identifier.
-        :param txn: algopy.gtxn.TransactionBase:
-        :returns: List of scratch space values.
-        """
-        return self._scratch_spaces[txn]
-
-    def add_app_logs(
-        self,
-        *,
-        app_id: algopy.UInt64 | algopy.Application | int,
-        logs: bytes | list[bytes],
-        prepend_arc4_prefix: bool = False,
-    ) -> None:
-        """Add logs for an application.
-
-        :param app_id: The ID of the application.
-        :type app_id: int
-        :param logs: A single log entry or a list of log entries.
-        :type logs: bytes | list[bytes]
-        :param prepend_arc4_prefix: Whether to prepend ARC4 prefix to
-            the logs.
-        :type prepend_arc4_prefix: bool :param *:
-        :param app_id: algopy.UInt64 | algopy.Application | int:
-        :param logs: bytes | list[bytes]:
-        :param prepend_arc4_prefix: bool:  (Default value = False)
-        """
-        import algopy
-
-        raw_app_id = (
-            int(app_id)
-            if isinstance(app_id, algopy.UInt64)
-            else int(app_id.id) if isinstance(app_id, algopy.Application) else app_id
-        )
-
-        if isinstance(logs, bytes):
-            logs = [logs]
-
-        if prepend_arc4_prefix:
-            logs = [ARC4_RETURN_PREFIX + log for log in logs]
-
-        if raw_app_id in self._app_logs:
-            self._app_logs[raw_app_id].extend(logs)
-        else:
-            self._app_logs[raw_app_id] = logs
-
-    def get_app_logs(self, app_id: algopy.UInt64 | int) -> list[bytes]:
-        """Retrieve the application logs for a given app ID.
-
-        :param app_id: The ID of the application.
-        :type app_id: algopy.UInt64 | int
-        :param app_id: algopy.UInt64 | int:
-        :returns: The application logs for the given app ID.
-        :rtype: list[bytes]
-        :raises ValueError: If no application logs are available for the
-            given app ID.
-        """
-        import algopy
-
-        app_id = int(app_id) if isinstance(app_id, algopy.UInt64) else app_id
-
-        if app_id not in self._app_logs:
-            raise ValueError(
-                f"No application logs available for app ID {app_id} in testing context!"
-            )
-
-        return self._app_logs[app_id]
 
 
 class TransactionGroup:
@@ -370,6 +257,39 @@ class TransactionGroup:
             raise RuntimeError("itxn field without itxn begin")
         return self._constructing_itxn_group[-1]
 
+    def get_app_logs(self, app_id: algopy.UInt64 | int) -> list[bytes]:
+        """Retrieve the application logs for a given app ID.
+
+        :param app_id: The ID of the application.
+        :type app_id: algopy.UInt64 | int
+        :param app_id: algopy.UInt64 | int:
+        :returns: The application logs for the given app ID.
+        :rtype: list[bytes]
+        :raises ValueError: If no application logs are available for the
+            given app ID.
+        """
+        import algopy
+
+        app_id = int(app_id) if isinstance(app_id, algopy.UInt64) else app_id
+
+        app_data = lazy_context.get_app_data(app_id)
+        user_supplied_logs = app_data._get_app_logs()
+
+        if user_supplied_logs:
+            # If user explicitly set logs on an app, return those
+            # over logs stored within each txn
+            return user_supplied_logs
+
+        for txn in self.txns:
+            if txn.fields.get("app_id", None) == app_id:
+                return txn._app_logs
+
+        raise ValueError(
+            f"No logs for app with id - {app_id}. "
+            "Use `context.any.txn.application_call(logs=[...])` on an app associated with app call"
+            "to set custom logs, or `algopy.log()` in contracts to store logs automatically."
+        )
+
     def get_txn(self, index: int | algopy.UInt64) -> algopy.gtxn.Transaction:
         try:
             return self.txns[int(index)]  # type: ignore[return-value]
@@ -381,6 +301,26 @@ class TransactionGroup:
             return ITxnGroupLoader(self._itxn_groups[index])
         except IndexError as e:
             raise ValueError(f"No inner transaction group at index {index}!") from e
+
+    def get_scratch_slot(
+        self,
+        index: algopy.UInt64 | int,
+    ) -> algopy.UInt64 | algopy.Bytes:
+        slots = self.active_txn._get_scratch_space()
+        try:
+            return slots[int(index)]
+        except IndexError:
+            raise ValueError("invalid scratch slot") from None
+
+    def get_scratch_space(
+        self,
+    ) -> Sequence[algopy.Bytes | algopy.UInt64]:
+        """Retrieves scratch space for the active transaction.
+
+        :returns: List of scratch space values for the active
+            transaction.
+        """
+        return self.active_txn._get_scratch_space()
 
     def _add_itxn_group(self, group: Sequence[InnerTransactionResultType]) -> None:
         self._itxn_groups.append(group)

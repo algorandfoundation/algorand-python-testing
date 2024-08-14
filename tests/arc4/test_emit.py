@@ -143,7 +143,7 @@ def test_emit(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
             _test_data_arc4.t,
         )
 
-        arc4_result = [
-            base64.b64encode(log).decode() for log in context.txn.get_app_logs(dummy_app.id)
-        ]
-        assert avm_result == arc4_result
+    arc4_result = [
+        base64.b64encode(log).decode() for log in context.txn.last_group.get_app_logs(dummy_app.id)
+    ]
+    assert avm_result == arc4_result

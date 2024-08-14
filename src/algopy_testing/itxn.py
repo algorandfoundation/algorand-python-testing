@@ -66,7 +66,7 @@ class _BaseInnerTransactionResult(TransactionFieldsGetter):
     @property
     def _logs(self) -> list[bytes]:
         try:
-            return lazy_context.txn.get_app_logs(self.app_id.id)
+            return lazy_context.active_group.get_app_logs(self.app_id.id)
         except KeyError:
             return []
 
