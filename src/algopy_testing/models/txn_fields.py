@@ -76,8 +76,8 @@ class ApplicationCallFields(TransactionBaseFields, total=False):
     accounts: Sequence[algopy.Account]
     assets: Sequence[algopy.Asset]
     apps: Sequence[algopy.Application]
-    # TODO: when storing these pages values, combine into one bytes and then
-    # "chop" into 4096 length pieces
+    # TODO: 1.0 when storing these pages values, combine into one bytes and then
+    # "chop" into 4096 length pieces. Covered in ITxns, ensure Txns use the same method
     approval_program: Sequence[algopy.Bytes]
     clear_state_program: Sequence[algopy.Bytes]
 
@@ -104,7 +104,6 @@ class TransactionFields(  # type: ignore[misc]
     type: algopy.TransactionType
 
 
-# TODO: can this easily be derived from annotations?
 _FIELD_TYPES = {
     "sender": Account,
     "rekey_to": Account,
@@ -201,7 +200,7 @@ class TransactionFieldsGetter(abc.ABC):
         return self.fields["sender"]  # type: ignore[return-value]
 
     @property
-    def txn_id(self) -> algopy.Bytes:  # TODO: txn_id or tx_id
+    def txn_id(self) -> algopy.Bytes:
         return self.fields["txn_id"]  # type: ignore[return-value]
 
     @property

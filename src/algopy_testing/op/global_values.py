@@ -64,7 +64,7 @@ class _Global:
         try:
             return self._fields["latest_timestamp"]
         except KeyError:
-            # TODO: cache this for the active txn? this value shouldn't change during execution
+            # TODO: 1.0 Construct this while setting default values rather than here.
             return UInt64(int(time.time()))
 
     @property

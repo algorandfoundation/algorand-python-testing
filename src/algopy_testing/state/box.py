@@ -55,6 +55,7 @@ class Box(typing.Generic[_TValue]):
         context = get_test_context()
         if not context.ledger.box_exists(self.key):
             raise RuntimeError("Box has not been created")
+        # TODO: 1.0 will need to use a proxy here too for mutable types
         return cast_from_bytes(self._type, context.ledger.get_box(self.key))
 
     @value.setter
@@ -440,6 +441,13 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
         return self.key_prefix + cast_to_bytes(key)
 
 
+# TODO: 1.0 using this proxy will mean other parts of the library that do isinstance will not be
+#       correct. To solve this need to do the following
+#       1.) only use the proxy if the value is mutable, currently this means only
+#           ARC Arrays, Tuples and structs should need this proxy
+#       2.) modify the metaclass of the above types to ensure they still pass the appropriate
+#           isinstance checks, when a ProxyValue is being used
+#           see https://docs.python.org/3.12/reference/datamodel.html#customizing-instance-and-subclass-checks
 class _ProxyValue:
     """Allows mutating attributes of objects retrieved from a BoxMap."""
 

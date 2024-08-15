@@ -40,7 +40,6 @@ class LocalState(typing.Generic[_T]):
                 case _:
                     raise ValueError("Key must be bytes or str")
         self.description = description
-        self.app_id = 0  # TODO: set from contract instance
 
     @property
     def key(self) -> algopy.Bytes:

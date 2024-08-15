@@ -13,7 +13,7 @@ from tests.artifacts.Arc4ABIMethod.contract import (
     UInt8Array,
 )
 
-# TODO: execute this on AVM too
+# TODO: 1.0 execute this on AVM too
 
 
 @pytest.fixture()

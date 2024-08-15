@@ -25,7 +25,6 @@ def serialize(value: _TValue) -> SerializableValue:
 
 
 def deserialize(typ: type[_TValue], value: SerializableValue) -> _TValue:
-    # TODO: handle arc4 instances that require a _TypeInfo
     if issubclass(typ, bool):
         return value != 0  # type: ignore[return-value]
     elif issubclass(typ, UInt64 | Bytes):

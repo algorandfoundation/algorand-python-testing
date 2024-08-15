@@ -277,9 +277,6 @@ class _UIntN(_ABIEncoded, typing.Generic[_TBitSize], metaclass=_UIntNMeta):
         bytes_value = int_to_bytes(value, self.type_info.max_bytes_len)
         self._value = as_bytes(bytes_value)
 
-    # ~~~ https://docs.python.org/3/reference/datamodel.html#basic-customization ~~~
-    # TODO: mypy suggests due to Liskov below should be other: object
-    #       need to consider ramifications here, ignoring it for now
     def __eq__(  # type: ignore[override]
         self,
         other: UIntN[_TBitSize] | BigUIntN[_TBitSize] | algopy.UInt64 | algopy.BigUInt | int,
@@ -1031,7 +1028,7 @@ def _tuple_type_from_struct(struct: type[Struct]) -> type[Tuple]:  # type: ignor
 class Struct(metaclass=_StructMeta):
     """Base class for ARC4 Struct types."""
 
-    type_info: typing.ClassVar[_TypeInfo]  # TODO: this could clash with user values
+    type_info: typing.ClassVar[_TypeInfo]  # TODO: 1.0 this could clash with user values
 
     def __init_subclass__(cls) -> None:
         dataclasses.dataclass(cls)

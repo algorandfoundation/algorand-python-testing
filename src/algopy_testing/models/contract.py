@@ -48,7 +48,7 @@ class _ContractMeta(type):
         fields = lazy_context.get_txn_op_fields()
         fields["app_id"] = app_ref
 
-        # TODO: provide app_id during instantiation without requiring a txn
+        # TODO: 1.0 provide app_id during instantiation without requiring a txn
         txn = context.any.txn.application_call(**fields)
         with context.txn.create_group([txn]):
             instance = super().__call__(*args, **kwargs)
@@ -91,7 +91,7 @@ class Contract(metaclass=_ContractMeta):
         ) = None,
         state_totals: StateTotals | None = None,
     ):
-        # TODO: check storing these on cls does not interfere with instances
+        # TODO: 1.0 add test : check storing these on cls does not interfere with instances
         #       by having a contract with _name, _scratch_slots and _state_totals attributes
         cls._name = name or cls.__name__
         cls._scratch_slots = scratch_slots
@@ -113,7 +113,7 @@ class Contract(metaclass=_ContractMeta):
                 *args: typing.Any, **kwargs: dict[str, typing.Any]
             ) -> typing.Any:
                 context = lazy_context.value
-                # TODO: this should populate the app txn as much as possible like abimethod does
+                # TODO: 1.0 should populate the app txn as much as possible like abimethod does
                 app = context.ledger.get_application(_get_self_or_active_app_id(self))
                 txns = [context.any.txn.application_call(app_id=app)]
                 with context.txn._maybe_implicit_txn_group(txns):
@@ -207,7 +207,7 @@ def _get_state_totals(contract: Contract, cls_state_totals: StateTotals) -> _Sta
         else:
             local_bytes += 1
 
-    # TODO: add tests for state overrides
+    # TODO: 1.0 add tests for state overrides
     # apply any cls specific overrides
     if cls_state_totals.global_uints is not None:
         global_uints = cls_state_totals.global_uints
