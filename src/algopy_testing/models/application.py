@@ -42,6 +42,7 @@ class ApplicationContextData:
     )
     is_creating: bool = False
     contract: Contract | None = None
+    # TODO: 1.0 add getter to ledger context, get_global_state, get_local_state, get_box
 
     def get_global_state(self, key: algopy.Bytes | bytes) -> StateValueType:
         return self.global_state[as_bytes(key)]
@@ -99,7 +100,7 @@ class Application(UInt64Backed):
     def __getattr__(self, name: str) -> typing.Any:
         if name in inspect.get_annotations(ApplicationFields):
             value = self.fields.get(name)
-            # TODO: ensure reasonable default values are present (like account does)
+            # TODO: 1.0 ensure reasonable default values are present (like account does)
             if value is None:
                 raise ValueError(
                     f"The Application value '{name}' has not been defined on the test context. "

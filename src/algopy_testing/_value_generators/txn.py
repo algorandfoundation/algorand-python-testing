@@ -123,7 +123,6 @@ class TxnValueGenerator:
         return self._new_gtxn(gtxn.Transaction, **fields)
 
     def _new_gtxn(self, txn_type: type[_TGlobalTxn], **fields: object) -> _TGlobalTxn:
-        # TODO: check reference types are known?
         fields.setdefault("type", txn_type.type_enum)
         fields.setdefault("sender", lazy_context.value.default_sender)
 

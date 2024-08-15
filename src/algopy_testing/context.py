@@ -32,7 +32,6 @@ class AlgopyTestContext:
     ) -> None:
         import algopy
 
-        # TODO: remove direct reads of data mappings outside of context_storage
         self._default_sender = algopy.Account(
             default_sender or algosdk.account.generate_account()[1]
         )

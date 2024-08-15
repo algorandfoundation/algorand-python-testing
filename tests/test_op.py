@@ -497,7 +497,7 @@ def test_asset_params_get(
 
     avm_result = get_state_asset_params_avm_result(method_name, a=dummy_asset, suggested_params=sp)
     mock_result = getattr(mock_contract, method_name)(mock_asset)
-    # TODO: add separate tests by foreign array index
+    # TODO: 1.0 add separate tests by foreign array index
 
     expected = expected_value(dummy_account) if callable(expected_value) else expected_value
     expected = (
@@ -555,7 +555,7 @@ def test_app_params_get(
         contract_method = getattr(contract, method_name)
         result = contract_method(app)
 
-        # TODO: add alternate tests for testing by index
+        # TODO: 1.0 add alternate tests for testing by index
         assert avm_result == result
         if expected_value is not None:
             assert avm_result == expected_value
@@ -618,7 +618,7 @@ def test_acct_params_get(
         assert mock_result == 100_100_000  # assert it returns the value set in test context
         mock_result = avm_result
 
-    # TODO: add alternate tests for testing by index
+    # TODO: 1.0 add alternate tests for testing by index
     assert mock_result == avm_result
 
     if expected_value is not None:
@@ -943,7 +943,7 @@ def test_itxn_ops(context: AlgopyTestContext) -> None:
     appl_itxn = itxn_group.application_call(0)
     pay_itxn = itxn_group.payment(1)
 
-    # TODO: also test other array fields, apps, accounts, applications, assets
+    # TODO: 1.0 also test other array fields, apps, accounts, applications, assets
     assert appl_itxn.approval_program == algopy.Bytes.from_hex("068101068101")
     assert appl_itxn.clear_state_program == algopy.Bytes.from_hex("068101")
     approval_pages = [

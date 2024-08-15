@@ -64,7 +64,7 @@ def get_arc4_metadata(fn: object) -> MethodMetadata:
 def get_ordered_args(
     _fn: Callable[..., typing.Any], app_args: list[typing.Any], kwargs: dict[str, typing.Any]
 ) -> list[typing.Any]:
-    # TODO: order kwargs correctly based on fn signature
+    # TODO: 1.0 order kwargs correctly based on fn signature
     return [*app_args, *kwargs.values()]
 
 
@@ -140,8 +140,6 @@ def abimethod(  # noqa: PLR0913
         app_id = contract.__app_id__
 
         context = lazy_context.value
-        # TODO: does contract need to be active here?
-        # TODO: handle custom txn groups
         ordered_args = get_ordered_args(fn, app_args, kwargs)
         assert metadata.arc4_signature is not None, "expected abimethod"
         txns = create_abimethod_txns(
@@ -152,7 +150,7 @@ def abimethod(  # noqa: PLR0913
         with context.txn._maybe_implicit_txn_group(txns):
             check_routing_conditions(app_id, metadata)
             result = fn(*args, **kwargs)
-            # TODO: add result along with ARC4 log prefix to application logs?
+            # TODO: 1.0 add result along with ARC4 log prefix to application logs?
             return result
 
     return wrapper
@@ -202,7 +200,6 @@ def create_baremethod_txns(app_id: int) -> list[algopy.gtxn.TransactionBase]:
     contract_app = lazy_context.ledger.get_application(app_id)
     txn_fields.setdefault("app_id", contract_app)
 
-    # TODO: fill out other fields where possible (see abimethod)
     txn_fields.setdefault(
         "approval_program_pages", [algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)]
     )
@@ -253,7 +250,7 @@ def _extract_arrays_from_args(
             case _ as maybe_native:
                 app_args.append(algopy_testing.arc4.native_value_to_arc4(maybe_native).bytes)
     if len(app_args) > 16:
-        # TODO: pack extra args into an ARC4 tuple
+        # TODO:1.0 pack extra args into an ARC4 tuple
         raise NotImplementedError
     return _TxnArrays(
         txns=txns,
@@ -374,7 +371,6 @@ def baremethod(
         assert isinstance(contract, algopy_testing.ARC4Contract), "expected ARC4 contract"
         assert fn is not None, "expected function"
 
-        # TODO: handle custom txn groups
         txns = create_baremethod_txns(contract.__app_id__)
 
         with lazy_context.txn._maybe_implicit_txn_group(txns):

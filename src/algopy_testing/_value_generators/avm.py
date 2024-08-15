@@ -117,7 +117,7 @@ class AVMValueGenerator:
         if asset_id and asset_id in lazy_context.ledger.asset_data:
             raise ValueError("Asset with such ID already exists in testing context!")
 
-        # TODO: ensure passed fields are valid names and types
+        # TODO: 1.0 ensure passed fields are valid names and types
         new_asset = algopy.Asset(asset_id or next(lazy_context.ledger.asset_id))
         default_asset_fields = {
             "total": lazy_context.any.uint64(),

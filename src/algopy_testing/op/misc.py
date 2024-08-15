@@ -91,7 +91,7 @@ def gaid(a: algopy.UInt64 | int, /) -> algopy.Application:
 
 
 def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
-    # TODO: add tests
+    # TODO: 1.0 add tests
     active_txn = lazy_context.active_group.active_txn
 
     account = _get_account(a)
@@ -112,8 +112,6 @@ def min_balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
 
 def exit(a: UInt64 | int, /) -> typing.Never:  # noqa: A001
     value = UInt64(a) if isinstance(a, int) else a
-    # TODO: in the docs indicate this method as mockable, as the semantics don't really
-    #       work very well with Python, so leave it up the user to decide what should happen
     raise NotImplementedError(f"exit with value: {value}")
 
 
@@ -383,7 +381,6 @@ AppGlobal = _AppGlobal()
 
 
 def arg(a: UInt64 | int, /) -> Bytes:
-    # TODO: read from active group
     return lazy_context.value._active_lsig_args[int(a)]
 
 

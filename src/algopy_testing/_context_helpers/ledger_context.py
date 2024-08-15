@@ -19,7 +19,7 @@ class LedgerContext:
         self.account_data = defaultdict[str, AccountContextData](get_empty_account)
         self.application_data: dict[int, ApplicationContextData] = {}
         self.asset_data: dict[int, AssetFields] = {}
-        # TODO: move boxes onto application data
+        # TODO: 1.0 move boxes onto application data
         self.boxes: dict[bytes, bytes] = {}
         self.blocks: dict[int, dict[str, int]] = {}
         self.global_fields: GlobalFields = get_default_global_fields()
@@ -85,6 +85,7 @@ class LedgerContext:
 
         self.application_data[app_id].fields.update(application_fields)
 
+    # TODO: 1.0 add app ids, access the boxes from application data
     def get_box(self, name: algopy.Bytes | bytes) -> bytes:
         name_bytes = name if isinstance(name, bytes) else name.value
         return self.boxes.get(name_bytes, b"")
