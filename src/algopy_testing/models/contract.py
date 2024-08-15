@@ -113,7 +113,7 @@ class Contract(metaclass=_ContractMeta):
                 *args: typing.Any, **kwargs: dict[str, typing.Any]
             ) -> typing.Any:
                 context = lazy_context.value
-                # TODO: 1.0 this should populate the app txn as much as possible like abimethod does
+                # TODO: 1.0 should populate the app txn as much as possible like abimethod does
                 app = context.ledger.get_application(_get_self_or_active_app_id(self))
                 txns = [context.any.txn.application_call(app_id=app)]
                 with context.txn._maybe_implicit_txn_group(txns):

@@ -24,8 +24,9 @@ from algopy_testing.models import (
 from algopy_testing.primitives import BigUInt, Bytes, String, UInt64
 from algopy_testing.state import Box, BoxMap, BoxRef, GlobalState, LocalState
 
-# TODO: clean up and ensure only algopy_testing namespace specific user facing abstractions are exposed
-# Only keep the _value_generators, ledger_context, txn_context, context, and arc4_prexif from utils (make utils private)
+# TODO: clean up and ensure only algopy_testing namespace specific user facing abstractions
+# are exposed Only keep the _value_generators, ledger_context, txn_context,
+# context, and arc4_prexif from utils (make utils private)
 __all__ = [
     "ARC4Contract",
     "ARC4ValueGenerator",
