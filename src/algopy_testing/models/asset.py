@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import typing
-from dataclasses import dataclass
 
 from algopy_testing._context_helpers import lazy_context
 from algopy_testing.protocols import UInt64Backed
@@ -28,10 +27,7 @@ class AssetFields(typing.TypedDict, total=False):
     creator: algopy.Account
 
 
-@dataclass
 class Asset(UInt64Backed):
-    id: algopy.UInt64
-
     def __init__(self, asset_id: algopy.UInt64 | int = 0):
         from algopy import UInt64
 

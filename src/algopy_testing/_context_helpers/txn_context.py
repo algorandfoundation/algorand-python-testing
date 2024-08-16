@@ -36,12 +36,6 @@ TParamSpec = typing.ParamSpec("TParamSpec")
 
 
 class DeferredAppCall(typing.Generic[TReturn]):
-    _app_id: int
-    _txns: list[algopy.gtxn.TransactionBase]
-    _method: typing.Callable[..., TReturn]
-    _args: tuple[typing.Any, ...]
-    _kwargs: dict[str, typing.Any]
-
     def __init__(
         self,
         app_id: int,
@@ -214,7 +208,7 @@ class TransactionContext:
 class TransactionGroup:
     def __init__(
         self,
-        txns: typing.Sequence[algopy.gtxn.TransactionBase],
+        txns: Sequence[algopy.gtxn.TransactionBase] = (),
         active_txn_index: int | None = None,
         txn_op_fields: dict[str, typing.Any] | None = None,
     ):
