@@ -1,6 +1,49 @@
 # CHANGELOG
 
-## v0.3.0-beta.1 (2024-08-13)
+## v0.3.0-beta.2 (2024-08-16)
+
+### Chore
+
+* chore: refreshing todos (#11)
+
+[skip ci] ([`6df2567`](https://github.com/algorandfoundation/algorand-python-testing/commit/6df256700169d09620db64802ee5177d3cd5803e))
+
+### Refactor
+
+* refactor: moving scratch slots and app logs to TransactionBase (#10)
+
+* refactor: moving scratch slots and app logs to TransactionBase
+
+* build: updated to latest puyapy
+
+* refactor: minor refactors
+
+* refactor: refactor txn group initialization
+
+* refactor: add additional gtxn properties from 2.0 stubs
+
+* refactor: consolidate log and scratch space implementation.
+
+logs can be mocked on the underlying application, or for specific transactions
+active txn can append logs
+
+* refactor: defer some imports to reduce circular imports
+
+* chore: add some TODO&#39;s for future work
+
+* test: tweak test for mocking abi_call, by ensuring mocked function is in algopy namespace
+
+* feat: implement gaid op
+
+* fix: added mock implementations for new algopy functions, add util for raising consistent mockable method errors
+
+* chore: add TODO for asset property
+
+---------
+
+Co-authored-by: Daniel McGregor &lt;daniel.mcgregor@makerx.com.au&gt; ([`71801f0`](https://github.com/algorandfoundation/algorand-python-testing/commit/71801f01e49b683d81fa46d2ddb1c8aaf38b89f2))
+
+## v0.3.0-beta.1 (2024-08-14)
 
 ### Feature
 
@@ -227,6 +270,12 @@ chore: addressing minor todos and removing the ones already addressed
 ---------
 
 Co-authored-by: Daniel McGregor &lt;daniel.mcgregor@makerx.com.au&gt; ([`85dd58a`](https://github.com/algorandfoundation/algorand-python-testing/commit/85dd58a60f56a0737de84dcb549c01ca5a7a2851))
+
+### Unknown
+
+* 0.3.0-beta.1
+
+[skip ci] ([`8c12bab`](https://github.com/algorandfoundation/algorand-python-testing/commit/8c12bab417eb9840014bd6cc9190618f6530d29d))
 
 ## v0.2.2-beta.5 (2024-07-30)
 
