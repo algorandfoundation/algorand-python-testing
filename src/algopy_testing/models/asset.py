@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import typing
 
-from algopy_testing._context_helpers import lazy_context
 from algopy_testing.protocols import UInt64Backed
 
 if typing.TYPE_CHECKING:
@@ -42,6 +41,8 @@ class Asset(UInt64Backed):
         return cls(value)
 
     def balance(self, account: algopy.Account) -> algopy.UInt64:
+        from algopy_testing._context_helpers import lazy_context
+
         account_data = lazy_context.get_account_data(account.public_key)
 
         if not account_data:
@@ -62,6 +63,8 @@ class Asset(UInt64Backed):
         )
 
     def __getattr__(self, name: str) -> object:
+        from algopy_testing._context_helpers import lazy_context
+
         if int(self.id) not in lazy_context.ledger.asset_data:
             # check if its not 0 (which means its not
             # instantiated/opted-in yet, and instantiated directly

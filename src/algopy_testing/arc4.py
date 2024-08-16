@@ -16,7 +16,6 @@ from algopy_testing.constants import (
     UINT64_SIZE,
     UINT512_SIZE,
 )
-from algopy_testing.decorators.arc4 import abimethod, baremethod
 from algopy_testing.models.account import Account
 from algopy_testing.primitives import Bytes
 from algopy_testing.protocols import BytesBacked
@@ -58,9 +57,7 @@ __all__ = [
     "UInt8",
     "UIntN",
     "abi_call",
-    "abimethod",
     "arc4_signature",
-    "baremethod",
     "emit",
 ]
 

@@ -3,7 +3,6 @@ from __future__ import annotations
 import inspect
 import typing
 
-from algopy_testing._context_helpers import lazy_context
 from algopy_testing.primitives import UInt64
 from algopy_testing.protocols import UInt64Backed
 from algopy_testing.utils import as_bytes, as_int64
@@ -100,6 +99,8 @@ class Application(UInt64Backed):
 
     @property
     def fields(self) -> ApplicationFields:
+        from algopy_testing._context_helpers import lazy_context
+
         if self._id == 0:
             raise ValueError("cannot access properties of an app with an id of 0") from None
         return lazy_context.get_app_data(self._id).fields

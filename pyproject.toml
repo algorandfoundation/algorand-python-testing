@@ -243,6 +243,11 @@ unfixable = [
     "F841", # don't delete unused local variables automatically
 ]
 [tool.ruff.lint.per-file-ignores]
+"src/algopy/**" = [
+    "PLC0414", # allow explicit alias
+    "F401", # allow unused imports in module with stubs
+    "F403"  # allow * imports in module with stubs
+]
 "src/**" = [
     "PT", # no pytest rules
 ]

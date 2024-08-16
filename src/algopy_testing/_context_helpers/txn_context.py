@@ -14,7 +14,6 @@ from algopy_testing.decorators.arc4 import (
     get_ordered_args,
 )
 from algopy_testing.enums import OnCompleteAction
-from algopy_testing.models import ARC4Contract
 
 if typing.TYPE_CHECKING:
     from collections.abc import Callable, Iterator, Sequence
@@ -98,6 +97,8 @@ class TransactionContext:
         :return: A DeferredAppCall object containing the transaction
             group and method info.
         """
+        from algopy_testing.models import ARC4Contract
+
         arc4_metadata = get_arc4_metadata(method)
         # unwrap instance method
         try:
