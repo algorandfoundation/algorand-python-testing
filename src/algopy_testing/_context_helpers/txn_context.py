@@ -69,16 +69,15 @@ class TransactionContext:
 
     @contextlib.contextmanager
     def _maybe_implicit_txn_group(
-        self,
-        gtxns: typing.Sequence[algopy.gtxn.TransactionBase] | None = None,
-        active_txn_index: int | None = None,
+        self, gtxns: typing.Sequence[algopy.gtxn.TransactionBase]
     ) -> Iterator[None]:
         """Only creates a group if there isn't one already active."""
-        if not self._active_group or not self._active_group.txns:
-            ctx: typing.ContextManager[None] = self.create_group(
-                gtxns, active_txn_index=active_txn_index
-            )
+        active_group = self._active_group
+        if not active_group:
+            ctx: typing.ContextManager[None] = self.create_group(gtxns)
         else:
+            if not active_group.txns:
+                active_group._set_txn_group(gtxns)
             ctx = contextlib.nullcontext()
         with ctx:
             yield
@@ -164,20 +163,11 @@ class TransactionContext:
                 for item in gtxns
                 for txn in (item._txns if isinstance(item, DeferredAppCall) else [item])
             ]
-
-            if not all(isinstance(txn, gtxn.TransactionBase) for txn in processed_gtxns):
-                raise ValueError(
-                    "All transactions must be instances of TransactionBase or DeferredAppCall"
-                )
-
-            if len(processed_gtxns) > algosdk.constants.TX_GROUP_LIMIT:
-                raise ValueError(
-                    f"Transaction group can have at most {algosdk.constants.TX_GROUP_LIMIT} "
-                    "transactions, as per AVM limits."
-                )
-
-            for i, txn in enumerate(processed_gtxns):
-                txn.fields["group_index"] = UInt64(i)
+        if active_txn_index is None and (
+            app_calls := [item for item in (gtxns or []) if isinstance(item, DeferredAppCall)]
+        ):
+            last_app_call_txn = app_calls[-1]._txns[-1]
+            active_txn_index = processed_gtxns.index(last_app_call_txn)
 
         previous_group = self._active_group
         self._active_group = TransactionGroup(
@@ -212,11 +202,37 @@ class TransactionGroup:
         active_txn_index: int | None = None,
         txn_op_fields: dict[str, typing.Any] | None = None,
     ):
-        self.txns = txns
-        self.active_txn_index = len(txns) - 1 if active_txn_index is None else active_txn_index
+        self._set_txn_group(txns, active_txn_index)
         self._itxn_groups: list[Sequence[InnerTransactionResultType]] = []
         self._constructing_itxn_group: list[InnerTransaction] = []
         self._txn_op_fields = txn_op_fields or {}
+
+    def _set_txn_group(
+        self,
+        txns: Sequence[algopy.gtxn.TransactionBase],
+        active_txn_index: int | None = None,
+    ) -> None:
+        if not txns:
+            self.txns = txns
+            self.active_txn_index = 0
+            return
+        if not all(isinstance(txn, gtxn.TransactionBase) for txn in txns):
+            raise ValueError(
+                "All transactions must be instances of TransactionBase or DeferredAppCall"
+            )
+
+        if len(txns) > algosdk.constants.TX_GROUP_LIMIT:
+            raise ValueError(
+                f"Transaction group can have at most {algosdk.constants.TX_GROUP_LIMIT} "
+                "transactions, as per AVM limits."
+            )
+
+        for i, txn in enumerate(txns):
+            txn.fields["group_index"] = UInt64(i)
+
+        self.txns = txns
+        self.active_txn_index = len(txns) - 1 if active_txn_index is None else active_txn_index
+        self.active_txn.is_active = True
 
     @property
     def active_app_id(self) -> int:
@@ -227,11 +243,18 @@ class TransactionGroup:
         assert isinstance(app_id, Application)
         return int(app_id.id)
 
+    # internal property with algopy_testing type
     @property
-    def active_txn(self) -> algopy.gtxn.Transaction:
+    def _active_txn(self) -> TransactionBase:
         if not self.txns or self.active_txn_index is None:
             raise ValueError("No active transaction in the group")
-        return self.txns[self.active_txn_index]  # type: ignore[return-value]
+        active_txn = self.txns[self.active_txn_index]
+        assert isinstance(active_txn, TransactionBase)
+        return active_txn
+
+    @property
+    def active_txn(self) -> algopy.gtxn.Transaction:
+        return self._active_txn  # type: ignore[return-value]
 
     @property
     def itxn_groups(

@@ -44,6 +44,19 @@ class TransactionBase(TransactionFieldsGetter):
 
         self._app_logs: list[bytes] = []
         self._scratch_space = get_new_scratch_space()
+        self._is_active = False
+
+    @property
+    def is_active(self) -> bool:
+        return self._is_active
+
+    @is_active.setter
+    def is_active(self, value: bool) -> None:
+        self._is_active = value
+        if value:
+            if "logs" in self.fields:
+                raise RuntimeError("Cannot have existing logs for active transaction")
+            self.fields["logs"] = []
 
     @property
     def key_txn(self) -> TransactionBase:
