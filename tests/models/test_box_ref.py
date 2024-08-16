@@ -22,7 +22,8 @@ class ATestContract(algopy.ARC4Contract):
 @pytest.fixture()
 def context() -> Generator[AlgopyTestContext, None, None]:
     with algopy_testing_context() as ctx:
-        yield ctx
+        with ctx.txn.create_group([ctx.any.txn.application_call()]):
+            yield ctx
         ctx.reset()
 
 

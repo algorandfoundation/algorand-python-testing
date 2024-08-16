@@ -24,7 +24,7 @@ def _get_app(app: algopy.Application | algopy.UInt64 | int) -> Application:
     if isinstance(app, Application):
         return app
     if app >= 1001:
-        return lazy_context.ledger.get_application(app)
+        return lazy_context.ledger.get_app(app)
     txn = lazy_context.active_group.active_txn
     return txn.apps(app)
 
@@ -293,10 +293,9 @@ class _AppLocal:
     ) -> tuple[algopy.Bytes | algopy.UInt64, bool]:
         account = _get_account(a)
         app = _get_app(b)
-        app_data = lazy_context.get_app_data(app)
         key = _get_bytes(c)
         try:
-            native = app_data.get_local_state(account, key)
+            native = lazy_context.ledger.get_local_state(app, account, key)
         except KeyError:
             # note: returns uint64 when not found, to match AVM
             value: Bytes | UInt64 = UInt64()
@@ -309,10 +308,9 @@ class _AppLocal:
     get_ex_uint64 = get_ex_bytes
 
     def delete(self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /) -> None:
-        app_data = lazy_context.get_app_data(0)
         account = _get_account(a)
         key = _get_bytes(b)
-        app_data.set_local_state(account, key, None)
+        lazy_context.ledger.set_local_state(lazy_context.active_app_id, account, key, None)
 
     def put(
         self,
@@ -321,11 +319,10 @@ class _AppLocal:
         c: algopy.Bytes | algopy.UInt64 | bytes | int,
         /,
     ) -> None:
-        app_data = lazy_context.get_app_data(0)
         account = _get_account(a)
         key = _get_bytes(b)
         value = c.value if isinstance(c, Bytes | UInt64) else c
-        app_data.set_local_state(account, key, value)
+        lazy_context.ledger.set_local_state(lazy_context.active_app_id, account, key, value)
 
 
 AppLocal = _AppLocal()
@@ -344,10 +341,9 @@ class _AppGlobal:
         /,
     ) -> tuple[algopy.Bytes | algopy.UInt64, bool]:
         app = _get_app(a)
-        app_data = lazy_context.get_app_data(app)
         key = _get_bytes(b)
         try:
-            native = app_data.get_global_state(key)
+            native = lazy_context.ledger.get_global_state(app, key)
         except KeyError:
             # note: returns uint64 when not found, to match AVM
             value: Bytes | UInt64 = UInt64()
@@ -360,9 +356,8 @@ class _AppGlobal:
     get_ex_uint64 = get_ex_bytes
 
     def delete(self, a: algopy.Bytes | bytes, /) -> None:
-        app_data = lazy_context.get_app_data(0)
         key = _get_bytes(a)
-        app_data.set_global_state(key, None)
+        lazy_context.ledger.set_global_state(lazy_context.active_app_id, key, None)
 
     def put(
         self,
@@ -370,10 +365,9 @@ class _AppGlobal:
         b: algopy.Bytes | algopy.UInt64 | bytes | int,
         /,
     ) -> None:
-        app_data = lazy_context.get_app_data(0)
         key = _get_bytes(a)
         value = b.value if isinstance(b, Bytes | UInt64) else b
-        app_data.set_global_state(key, value)
+        lazy_context.ledger.set_global_state(lazy_context.active_app_id, key, value)
 
 
 AppGlobal = _AppGlobal()
@@ -390,63 +384,66 @@ class Box:
         size = int(b)
         if not name_bytes or size > MAX_BOX_SIZE:
             raise ValueError("Invalid box name or size")
-        if lazy_context.ledger.get_box(name_bytes):
+        app_id = lazy_context.active_app_id
+        if lazy_context.ledger.get_box(app_id, name_bytes):
             return False
-        lazy_context.ledger.set_box(name_bytes, b"\x00" * size)
+        lazy_context.ledger.set_box(app_id, name_bytes, b"\x00" * size)
         return True
 
     @staticmethod
     def delete(a: algopy.Bytes | bytes, /) -> bool:
         name_bytes = a.value if isinstance(a, Bytes) else a
-        if lazy_context.ledger.get_box(name_bytes):
-            lazy_context.ledger.delete_box(name_bytes)
+        app_id = lazy_context.active_app_id
+        if lazy_context.ledger.get_box(app_id, name_bytes):
+            lazy_context.ledger.delete_box(app_id, name_bytes)
             return True
         return False
 
     @staticmethod
     def extract(
-        a: algopy.Bytes | bytes, b: algopy.UInt64 | int, c: algopy.UInt64 | int, /
+        key: algopy.Bytes | bytes, b: algopy.UInt64 | int, c: algopy.UInt64 | int, /
     ) -> algopy.Bytes:
-        name_bytes = a.value if isinstance(a, Bytes) else a
         start = int(b)
         length = int(c)
-        box_content = lazy_context.ledger.get_box(name_bytes)
+        app_id = lazy_context.active_app_id
+        box_content = lazy_context.ledger.get_box(app_id, key)
         if not box_content:
             raise RuntimeError("Box does not exist")
         result = box_content[start : start + length]
         return Bytes(result)
 
     @staticmethod
-    def get(a: algopy.Bytes | bytes, /) -> tuple[algopy.Bytes, bool]:
-        name_bytes = a.value if isinstance(a, Bytes) else a
-        box_content = Bytes(lazy_context.ledger.get_box(name_bytes))
-        box_exists = lazy_context.ledger.box_exists(name_bytes)
+    def get(key: algopy.Bytes | bytes, /) -> tuple[algopy.Bytes, bool]:
+        app_id = lazy_context.active_app_id
+        box_content = Bytes(lazy_context.ledger.get_box(app_id, key))
+        box_exists = lazy_context.ledger.box_exists(app_id, key)
         return box_content, box_exists
 
     @staticmethod
-    def length(a: algopy.Bytes | bytes, /) -> tuple[algopy.UInt64, bool]:
-        name_bytes = a.value if isinstance(a, Bytes) else a
-        box_content = lazy_context.ledger.get_box(name_bytes)
-        box_exists = lazy_context.ledger.box_exists(name_bytes)
+    def length(key: algopy.Bytes | bytes, /) -> tuple[algopy.UInt64, bool]:
+        app_id = lazy_context.active_app_id
+        box_content = lazy_context.ledger.get_box(app_id, key)
+        box_exists = lazy_context.ledger.box_exists(app_id, key)
         return UInt64(len(box_content)), box_exists
 
     @staticmethod
-    def put(a: algopy.Bytes | bytes, b: algopy.Bytes | bytes, /) -> None:
-        name_bytes = a.value if isinstance(a, Bytes) else a
-        content = b.value if isinstance(b, Bytes) else b
-        existing_content = lazy_context.ledger.get_box(name_bytes)
-        if existing_content and len(existing_content) != len(content):
+    def put(key: algopy.Bytes | bytes, value: algopy.Bytes | bytes, /) -> None:
+        app_id = lazy_context.active_app_id
+        existing_content = lazy_context.ledger.get_box(app_id, key)
+        if existing_content and len(existing_content) != len(
+            value if isinstance(value, bytes) else value.value
+        ):
             raise ValueError("New content length does not match existing box length")
-        lazy_context.ledger.set_box(name_bytes, Bytes(content))
+        lazy_context.ledger.set_box(app_id, key, value)
 
     @staticmethod
     def replace(
-        a: algopy.Bytes | bytes, b: algopy.UInt64 | int, c: algopy.Bytes | bytes, /
+        key: algopy.Bytes | bytes, b: algopy.UInt64 | int, c: algopy.Bytes | bytes, /
     ) -> None:
-        name_bytes = a.value if isinstance(a, Bytes) else a
         start = int(b)
         new_content = c.value if isinstance(c, Bytes) else c
-        box_content = lazy_context.ledger.get_box(name_bytes)
+        app_id = lazy_context.active_app_id
+        box_content = lazy_context.ledger.get_box(app_id, key)
         if not box_content:
             raise RuntimeError("Box does not exist")
         if start + len(new_content) > len(box_content):
@@ -454,36 +451,34 @@ class Box:
         updated_content = (
             box_content[:start] + new_content + box_content[start + len(new_content) :]
         )
-        lazy_context.ledger.set_box(name_bytes, updated_content)
+        lazy_context.ledger.set_box(app_id, key, updated_content)
 
     @staticmethod
-    def resize(a: algopy.Bytes | bytes, b: algopy.UInt64 | int, /) -> None:
-        name_bytes = a.value if isinstance(a, Bytes) else a
+    def resize(key: algopy.Bytes | bytes, b: algopy.UInt64 | int, /) -> None:
         new_size = int(b)
-        if not name_bytes or new_size > MAX_BOX_SIZE:
-            raise ValueError("Invalid box name or size")
-        box_content = lazy_context.ledger.get_box(name_bytes)
+        app_id = lazy_context.active_app_id
+        box_content = lazy_context.ledger.get_box(app_id, key)
         if not box_content:
             raise RuntimeError("Box does not exist")
         if new_size > len(box_content):
             updated_content = box_content + b"\x00" * (new_size - len(box_content))
         else:
             updated_content = box_content[:new_size]
-        lazy_context.ledger.set_box(name_bytes, updated_content)
+        lazy_context.ledger.set_box(app_id, key, updated_content)
 
     @staticmethod
     def splice(
-        a: algopy.Bytes | bytes,
+        key: algopy.Bytes | bytes,
         b: algopy.UInt64 | int,
         c: algopy.UInt64 | int,
         d: algopy.Bytes | bytes,
         /,
     ) -> None:
-        name_bytes = a.value if isinstance(a, Bytes) else a
         start = int(b)
         delete_count = int(c)
         insert_content = d.value if isinstance(d, Bytes) else d
-        box_content = lazy_context.ledger.get_box(name_bytes)
+        app_id = lazy_context.active_app_id
+        box_content = lazy_context.ledger.get_box(app_id, key)
 
         if not box_content:
             raise RuntimeError("Box does not exist")
@@ -506,4 +501,4 @@ class Box:
             new_content += b"\x00" * (len(box_content) - len(new_content))
 
         # Update the box with the new content
-        lazy_context.ledger.set_box(name_bytes, new_content)
+        lazy_context.ledger.set_box(app_id, key, new_content)

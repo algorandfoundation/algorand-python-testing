@@ -48,25 +48,21 @@ class LocalState(typing.Generic[_T]):
 
     def __setitem__(self, key: algopy.Account | algopy.UInt64 | int, value: _T) -> None:
         account = _get_account(key)
-        app_data = lazy_context.get_app_data(self.app_id)
-        app_data.set_local_state(account, self._key.value, serialize(value))
+        lazy_context.ledger.set_local_state(self.app_id, account, self._key, serialize(value))
 
     def __getitem__(self, key: algopy.Account | algopy.UInt64 | int) -> _T:
         account = _get_account(key)
-        app_data = lazy_context.get_app_data(self.app_id)
-        native = app_data.get_local_state(account, self._key.value)
+        native = lazy_context.ledger.get_local_state(self.app_id, account, self._key)
         return deserialize(self.type_, native)
 
     def __delitem__(self, key: algopy.Account | algopy.UInt64 | int) -> None:
         account = _get_account(key)
-        app_data = lazy_context.get_app_data(self.app_id)
-        app_data.set_local_state(account, self._key.value, None)
+        lazy_context.ledger.set_local_state(self.app_id, account, self._key, None)
 
     def __contains__(self, key: algopy.Account | algopy.UInt64 | int) -> bool:
         account = _get_account(key)
-        app_data = lazy_context.get_app_data(self.app_id)
         try:
-            app_data.get_local_state(account, self._key.value)
+            lazy_context.ledger.get_local_state(self.app_id, account, self._key)
         except KeyError:
             return False
         return True

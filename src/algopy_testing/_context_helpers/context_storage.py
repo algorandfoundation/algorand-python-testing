@@ -20,18 +20,6 @@ if typing.TYPE_CHECKING:
 _var: ContextVar[AlgopyTestContext] = ContextVar("_var")
 
 
-# functions for use by algopy_testing implementations that shouldn't be exposed to the user
-def get_test_context() -> AlgopyTestContext:
-    try:
-        result = _var.get()
-    except LookupError:
-        raise ValueError(
-            "Test context is not initialized! Use `with algopy_testing_context()` to "
-            "access the context manager."
-        ) from None
-    return result
-
-
 class _InternalContext:
     """For accessing implementation specific functions, with a convenient
     single entry point for other modules to import Also allows for a single
@@ -39,7 +27,13 @@ class _InternalContext:
 
     @property
     def value(self) -> AlgopyTestContext:
-        return get_test_context()
+        try:
+            return _var.get()
+        except LookupError:
+            raise ValueError(
+                "Test context is not initialized! Use `with algopy_testing_context()` to "
+                "access the context manager."
+            ) from None
 
     @property
     def ledger(self) -> LedgerContext:
@@ -67,32 +61,20 @@ class _InternalContext:
         return group
 
     @property
-    def active_application(self) -> algopy.Application:
-        return self.ledger.get_application(self.active_group.active_app_id)
+    def active_app(self) -> algopy.Application:
+        return self.ledger.get_app(self.active_group.active_app_id)
+
+    @property
+    def active_app_id(self) -> int:
+        return self.active_group.active_app_id
 
     def get_app_data(
         self,
         app: algopy.Contract | algopy.Application | algopy.UInt64 | int,
     ) -> ApplicationContextData:
-        from algopy_testing.models import Application, Contract
-        from algopy_testing.primitives import UInt64
-
-        if isinstance(app, Contract):
-            app_id = app.__app_id__
-        elif isinstance(app, Application):
-            app_id = app.id.value
-        elif isinstance(app, UInt64):
-            app_id = app.value
-        elif isinstance(app, int):
-            app_id = app
-        else:
-            raise TypeError("invalid type")
-        if app_id == 0:
-            app_id = self.active_group.active_app_id
-        try:
-            return self.ledger.application_data[app_id]
-        except KeyError:
-            raise ValueError("Unknown app id, is there an active transaction?") from None
+        if app == 0:
+            app = self.active_group.active_app_id
+        return self.ledger._get_app_data(app)
 
     def get_asset_data(self, asset_id: int | algopy.UInt64) -> AssetFields:
         try:

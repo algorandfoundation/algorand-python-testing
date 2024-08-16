@@ -57,7 +57,7 @@ def test_application_management() -> None:
             clear_state_program=Bytes(b"TestClear"),
         )
 
-        application = context.ledger.get_application(app.id)
+        application = context.ledger.get_app(app.id)
 
         assert application.approval_program == b"TestApp"
         assert application.clear_state_program == b"TestClear"
@@ -114,7 +114,7 @@ def test_context_reset() -> None:
         context.reset()
         assert len(context.ledger.account_data) == 0
         assert len(context.ledger.asset_data) == 0
-        assert len(context.ledger.application_data) == 0
+        assert len(context.ledger.app_data) == 0
         with pytest.raises(ValueError, match="No group transactions found"):
             assert context.txn.last_group
         assert len(context.txn._groups) == 0

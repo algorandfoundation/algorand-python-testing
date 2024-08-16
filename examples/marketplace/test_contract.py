@@ -63,7 +63,7 @@ def test_first_deposit(
         nonce=test_nonce,
     )
     listing_value = ListingValue.from_bytes(
-        context.ledger.get_box(b"listings" + listing_key.bytes)
+        context.ledger.get_box(contract, b"listings" + listing_key.bytes)
     )
     assert listing_value.deposited == UInt64(10)
 
@@ -100,7 +100,7 @@ def test_deposit(
     )
 
     # Assert
-    assert context.ledger.box_exists(b"listings" + listing_key.bytes)
+    assert context.ledger.box_exists(contract, b"listings" + listing_key.bytes)
 
 
 def test_set_price(
@@ -129,7 +129,7 @@ def test_set_price(
 
     # Assert
     updated_listing = ListingValue.from_bytes(
-        context.ledger.get_box(b"listings" + listing_key.bytes)
+        context.ledger.get_box(contract, b"listings" + listing_key.bytes)
     )
     assert updated_listing.unitary_price == test_unitary_price
 
@@ -173,7 +173,7 @@ def test_buy(
 
     # Assert
     updated_listing = ListingValue.from_bytes(
-        context.ledger.get_box(b"listings" + listing_key.bytes)
+        context.ledger.get_box(contract, b"listings" + listing_key.bytes)
     )
     assert updated_listing.deposited == initial_deposit.native - test_buy_quantity.native
     assert (
@@ -206,7 +206,7 @@ def test_withdraw(
     contract.withdraw(asset=test_asset, nonce=test_nonce)
 
     # Assert
-    assert not context.ledger.box_exists(b"listings" + listing_key.bytes)
+    assert not context.ledger.box_exists(contract, b"listings" + listing_key.bytes)
     assert len(context.txn.last_group.itxn_groups) == 2
 
     payment_txn = context.txn.last_group.get_itxn_group(0).payment(0)

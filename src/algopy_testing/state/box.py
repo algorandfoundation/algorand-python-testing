@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 
 import algopy_testing
-from algopy_testing._context_helpers.context_storage import get_test_context
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import MAX_BOX_SIZE
 from algopy_testing.state.utils import cast_from_bytes, cast_to_bytes
 from algopy_testing.utils import as_bytes, as_string
@@ -32,12 +32,12 @@ class Box(typing.Generic[_TValue]):
             if isinstance(key, str | algopy_testing.String)
             else algopy_testing.Bytes(as_bytes(key))
         )
+        self.app_id = lazy_context.active_app_id
 
     def __bool__(self) -> bool:
         """Returns True if the box exists, regardless of the truthiness of the
         contents of the box."""
-        context = get_test_context()
-        return context.ledger.box_exists(self.key)
+        return lazy_context.ledger.box_exists(self.app_id, self.key)
 
     @property
     def key(self) -> algopy.Bytes:
@@ -52,11 +52,10 @@ class Box(typing.Generic[_TValue]):
 
         Fails if the box has not been created.
         """
-        context = get_test_context()
-        if not context.ledger.box_exists(self.key):
+        if not lazy_context.ledger.box_exists(self.app_id, self.key):
             raise RuntimeError("Box has not been created")
         # TODO: 1.0 will need to use a proxy here too for mutable types
-        return cast_from_bytes(self._type, context.ledger.get_box(self.key))
+        return cast_from_bytes(self._type, lazy_context.ledger.get_box(self.app_id, self.key))
 
     @value.setter
     def value(self, value: _TValue) -> None:
@@ -64,15 +63,13 @@ class Box(typing.Generic[_TValue]):
 
         Creates the box if it does not exist.
         """
-        context = get_test_context()
         bytes_value = cast_to_bytes(value)
-        context.ledger.set_box(self.key, bytes_value)
+        lazy_context.ledger.set_box(self.app_id, self.key, bytes_value)
 
     @value.deleter
     def value(self) -> None:
         """Delete the box."""
-        context = get_test_context()
-        context.ledger.delete_box(self.key)
+        lazy_context.ledger.delete_box(self.app_id, self.key)
 
     def get(self, *, default: _TValue) -> _TValue:
         """Retrieve the contents of the box, or return the default value if the
@@ -87,9 +84,8 @@ class Box(typing.Generic[_TValue]):
     def maybe(self) -> tuple[_TValue, bool]:
         """Retrieve the contents of the box if it exists, and return a boolean
         indicating if the box exists."""
-        context = get_test_context()
-        box_exists = context.ledger.box_exists(self.key)
-        box_content_bytes = context.ledger.get_box(self.key)
+        box_exists = lazy_context.ledger.box_exists(self.app_id, self.key)
+        box_content_bytes = lazy_context.ledger.get_box(self.app_id, self.key)
         box_content = cast_from_bytes(self._type, box_content_bytes)
         return box_content, box_exists
 
@@ -99,10 +95,9 @@ class Box(typing.Generic[_TValue]):
 
         Fails if the box does not exist
         """
-        context = get_test_context()
-        if not context.ledger.box_exists(self.key):
+        if not lazy_context.ledger.box_exists(self.app_id, self.key):
             raise RuntimeError("Box has not been created")
-        return algopy_testing.UInt64(len(context.ledger.get_box(self.key)))
+        return algopy_testing.UInt64(len(lazy_context.ledger.get_box(self.app_id, self.key)))
 
 
 class BoxRef:
@@ -119,12 +114,12 @@ class BoxRef:
             if isinstance(key, str | algopy_testing.String)
             else algopy_testing.Bytes(as_bytes(key))
         )
+        self.app_id = lazy_context.active_app_id
 
     def __bool__(self) -> bool:
         """Returns True if the box has a value set, regardless of the
         truthiness of that value."""
-        context = get_test_context()
-        return context.ledger.box_exists(self.key)
+        return lazy_context.ledger.box_exists(self.app_id, self.key)
 
     @property
     def key(self) -> algopy.Bytes:
@@ -151,15 +146,13 @@ class BoxRef:
             raise ValueError("Box already exists with a different size")
         if box_exists:
             return False
-        context = get_test_context()
-        context.ledger.set_box(self.key, b"\x00" * size_int)
+        lazy_context.ledger.set_box(self.app_id, self.key, b"\x00" * size_int)
         return True
 
     def delete(self) -> bool:
         """Deletes the box if it exists and returns a value indicating if the
         box existed."""
-        context = get_test_context()
-        return context.ledger.delete_box(self.key)
+        return lazy_context.ledger.delete_box(self.app_id, self.key)
 
     def extract(
         self, start_index: algopy.UInt64 | int, length: algopy.UInt64 | int
@@ -188,7 +181,6 @@ class BoxRef:
 
         :arg new_size: The new size of the box
         """
-        context = get_test_context()
         new_size_int = int(new_size)
 
         if new_size_int > MAX_BOX_SIZE:
@@ -200,7 +192,7 @@ class BoxRef:
             updated_content = box_content + b"\x00" * (new_size_int - len(box_content))
         else:
             updated_content = box_content[:new_size_int]
-        context.ledger.set_box(self.key, updated_content)
+        lazy_context.ledger.set_box(self.app_id, self.key, updated_content)
 
     def replace(self, start_index: algopy.UInt64 | int, value: algopy.Bytes | bytes) -> None:
         """Write `value` to the box starting at `start_index`. Fails if the box
@@ -209,7 +201,6 @@ class BoxRef:
         :arg start_index: The offset to start writing bytes from :arg
         value: The bytes to be written
         """
-        context = get_test_context()
         box_content, box_exists = self._maybe()
         if not box_exists:
             raise RuntimeError("Box has not been created")
@@ -218,7 +209,7 @@ class BoxRef:
         if (start + length) > len(box_content):
             raise ValueError("Replacement content exceeds box size")
         updated_content = box_content[:start] + value + box_content[start + length :]
-        context.ledger.set_box(self.key, updated_content)
+        lazy_context.ledger.set_box(self.app_id, self.key, updated_content)
 
     def splice(
         self,
@@ -238,7 +229,6 @@ class BoxRef:
         :arg length: The number of bytes after `start_index` to omit from the new value
         :arg value: The `value` to be inserted.
         """
-        context = get_test_context()
         box_content, box_exists = self._maybe()
 
         start = int(start_index)
@@ -266,7 +256,7 @@ class BoxRef:
             new_content += b"\x00" * (len(box_content) - len(new_content))
 
         # Update the box with the new content
-        context.ledger.set_box(self.key, new_content)
+        lazy_context.ledger.set_box(self.app_id, self.key, new_content)
 
     def get(self, *, default: algopy.Bytes | bytes) -> algopy.Bytes:
         """Retrieve the contents of the box, or return the default value if the
@@ -292,9 +282,8 @@ class BoxRef:
         if box_exists and len(box_content) != len(value):
             raise ValueError("Box already exists with a different size")
 
-        context = get_test_context()
         content = value if isinstance(value, algopy_testing.Bytes) else algopy_testing.Bytes(value)
-        context.ledger.set_box(self.key, content)
+        lazy_context.ledger.set_box(self.app_id, self.key, content)
 
     def maybe(self) -> tuple[algopy.Bytes, bool]:
         """Retrieve the contents of the box if it exists, and return a boolean
@@ -303,9 +292,8 @@ class BoxRef:
         return algopy_testing.Bytes(box_content), box_exists
 
     def _maybe(self) -> tuple[bytes, bool]:
-        context = get_test_context()
-        box_exists = context.ledger.box_exists(self.key)
-        box_content = context.ledger.get_box(self.key)
+        box_exists = lazy_context.ledger.box_exists(self.app_id, self.key)
+        box_content = lazy_context.ledger.get_box(self.app_id, self.key)
         return box_content, box_exists
 
     @property
@@ -356,6 +344,7 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
                 self._key_prefix = algopy_testing.Bytes(key_str.encode("utf8"))
             case _:
                 typing.assert_never(key_prefix)
+        self.app_id = lazy_context.active_app_id
 
     @property
     def key_prefix(self) -> algopy.Bytes:
@@ -380,23 +369,20 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
 
         Creates the box if it does not exist
         """
-        context = get_test_context()
         key_bytes = self._full_key(key)
         bytes_value = cast_to_bytes(value)
-        context.ledger.set_box(key_bytes, bytes_value)
+        lazy_context.ledger.set_box(self.app_id, key_bytes, bytes_value)
 
     def __delitem__(self, key: _TKey) -> None:
         """Deletes a keyed box."""
-        context = get_test_context()
         key_bytes = self._full_key(key)
-        context.ledger.delete_box(key_bytes)
+        lazy_context.ledger.delete_box(self.app_id, key_bytes)
 
     def __contains__(self, key: _TKey) -> bool:
         """Returns True if a box with the specified key exists in the map,
         regardless of the truthiness of the contents of the box."""
-        context = get_test_context()
         key_bytes = self._full_key(key)
-        return context.ledger.box_exists(key_bytes)
+        return lazy_context.ledger.box_exists(self.app_id, key_bytes)
 
     def get(self, key: _TKey, *, default: _TValue) -> _TValue:
         """Retrieve the contents of a keyed box, or return the default value if
@@ -414,12 +400,11 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
 
         :arg key: The key of the box to get
         """
-        context = get_test_context()
         key_bytes = self._full_key(key)
-        box_exists = context.ledger.box_exists(key_bytes)
+        box_exists = lazy_context.ledger.box_exists(self.app_id, key_bytes)
         if not box_exists:
             return self._value_type(), False
-        box_content_bytes = context.ledger.get_box(key_bytes)
+        box_content_bytes = lazy_context.ledger.get_box(self.app_id, key_bytes)
         box_content = cast_from_bytes(self._value_type, box_content_bytes)
         return box_content, box_exists
 
@@ -429,12 +414,11 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
 
         :arg key: The key of the box to get
         """
-        context = get_test_context()
         key_bytes = self._full_key(key)
-        box_exists = context.ledger.box_exists(key_bytes)
+        box_exists = lazy_context.ledger.box_exists(self.app_id, key_bytes)
         if not box_exists:
             raise RuntimeError("Box has not been created")
-        box_content_bytes = context.ledger.get_box(key_bytes)
+        box_content_bytes = lazy_context.ledger.get_box(self.app_id, key_bytes)
         return algopy_testing.UInt64(len(box_content_bytes))
 
     def _full_key(self, key: _TKey) -> algopy.Bytes:

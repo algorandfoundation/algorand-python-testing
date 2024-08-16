@@ -1,8 +1,5 @@
 from algopy_testing import arc4, gtxn, itxn
-from algopy_testing._context_helpers.context_storage import (
-    algopy_testing_context,
-    get_test_context,
-)
+from algopy_testing._context_helpers.context_storage import algopy_testing_context
 from algopy_testing._itxn_loader import ITxnGroupLoader, ITxnLoader
 from algopy_testing._value_generators.arc4 import ARC4ValueGenerator
 from algopy_testing.context import AlgopyTestContext
