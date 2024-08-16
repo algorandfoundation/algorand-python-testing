@@ -92,9 +92,8 @@ class GlobalState(typing.Generic[_T]):
             if self._pending_value is not None:
                 return self._pending_value
             raise ValueError("Key is not set")
-        app_data = lazy_context.get_app_data(self.app_id)
         try:
-            native = app_data.get_global_state(self._key.value)
+            native = lazy_context.ledger.get_global_state(self.app_id, self._key)
         except KeyError as e:
             raise ValueError("Value is not set") from e
         return deserialize(self.type_, native)
@@ -104,16 +103,14 @@ class GlobalState(typing.Generic[_T]):
         if self._key is None:
             self._pending_value = value
         else:
-            app_data = lazy_context.get_app_data(self.app_id)
-            app_data.set_global_state(self._key.value, serialize(value))
+            lazy_context.ledger.set_global_state(self.app_id, self._key, serialize(value))
 
     @value.deleter
     def value(self) -> None:
         if self._key is None:
             self._pending_value = None
         else:
-            app_data = lazy_context.get_app_data(self.app_id)
-            app_data.set_global_state(self._key.value, None)
+            lazy_context.ledger.set_global_state(self.app_id, self._key, None)
 
     def __bool__(self) -> bool:
         return self._key is not None or self._pending_value is not None

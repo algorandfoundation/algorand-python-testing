@@ -293,10 +293,9 @@ class _AppLocal:
     ) -> tuple[algopy.Bytes | algopy.UInt64, bool]:
         account = _get_account(a)
         app = _get_app(b)
-        app_data = lazy_context.get_app_data(app)
         key = _get_bytes(c)
         try:
-            native = app_data.get_local_state(account, key)
+            native = lazy_context.ledger.get_local_state(app, account, key)
         except KeyError:
             # note: returns uint64 when not found, to match AVM
             value: Bytes | UInt64 = UInt64()
@@ -309,10 +308,9 @@ class _AppLocal:
     get_ex_uint64 = get_ex_bytes
 
     def delete(self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /) -> None:
-        app_data = lazy_context.get_app_data(0)
         account = _get_account(a)
         key = _get_bytes(b)
-        app_data.set_local_state(account, key, None)
+        lazy_context.ledger.set_local_state(lazy_context.active_app_id, account, key, None)
 
     def put(
         self,
@@ -321,11 +319,10 @@ class _AppLocal:
         c: algopy.Bytes | algopy.UInt64 | bytes | int,
         /,
     ) -> None:
-        app_data = lazy_context.get_app_data(0)
         account = _get_account(a)
         key = _get_bytes(b)
         value = c.value if isinstance(c, Bytes | UInt64) else c
-        app_data.set_local_state(account, key, value)
+        lazy_context.ledger.set_local_state(lazy_context.active_app_id, account, key, value)
 
 
 AppLocal = _AppLocal()
@@ -344,10 +341,9 @@ class _AppGlobal:
         /,
     ) -> tuple[algopy.Bytes | algopy.UInt64, bool]:
         app = _get_app(a)
-        app_data = lazy_context.get_app_data(app)
         key = _get_bytes(b)
         try:
-            native = app_data.get_global_state(key)
+            native = lazy_context.ledger.get_global_state(app, key)
         except KeyError:
             # note: returns uint64 when not found, to match AVM
             value: Bytes | UInt64 = UInt64()
@@ -360,9 +356,8 @@ class _AppGlobal:
     get_ex_uint64 = get_ex_bytes
 
     def delete(self, a: algopy.Bytes | bytes, /) -> None:
-        app_data = lazy_context.get_app_data(0)
         key = _get_bytes(a)
-        app_data.set_global_state(key, None)
+        lazy_context.ledger.set_global_state(lazy_context.active_app_id, key, None)
 
     def put(
         self,
@@ -370,10 +365,9 @@ class _AppGlobal:
         b: algopy.Bytes | algopy.UInt64 | bytes | int,
         /,
     ) -> None:
-        app_data = lazy_context.get_app_data(0)
         key = _get_bytes(a)
         value = b.value if isinstance(b, Bytes | UInt64) else b
-        app_data.set_global_state(key, value)
+        lazy_context.ledger.set_global_state(lazy_context.active_app_id, key, value)
 
 
 AppGlobal = _AppGlobal()

@@ -5,7 +5,7 @@ import typing
 
 from algopy_testing.primitives import UInt64
 from algopy_testing.protocols import UInt64Backed
-from algopy_testing.utils import as_bytes, as_int64
+from algopy_testing.utils import as_int64
 
 if typing.TYPE_CHECKING:
     from collections.abc import Sequence
@@ -47,38 +47,7 @@ class ApplicationContextData:
         self.is_creating = False
         self.contract: Contract | None = None
         # TODO: add callables support (similar to side effects in pytest)
-        # TODO: 1.0 add getter to ledger context, get_global_state, get_local_state, get_box
         self.app_logs: Sequence[bytes] = (logs,) if isinstance(logs, bytes) else logs
-
-    def get_global_state(self, key: algopy.Bytes | bytes) -> StateValueType:
-        return self.global_state[as_bytes(key)]
-
-    def set_global_state(self, key: algopy.Bytes | bytes, value: StateValueType | None) -> None:
-        key_bytes = as_bytes(key)
-        if value is None:
-            if key_bytes in self.global_state:
-                del self.global_state[key_bytes]
-        else:
-            self.global_state[key_bytes] = value
-
-    def get_local_state(
-        self, account: algopy.Account | str, key: algopy.Bytes | bytes
-    ) -> StateValueType:
-        account_public_key = account if isinstance(account, str) else account.public_key
-        return self.local_state[(account_public_key, as_bytes(key))]
-
-    def set_local_state(
-        self,
-        account: algopy.Account | str,
-        key: algopy.Bytes | bytes,
-        value: StateValueType | None,
-    ) -> None:
-        account_public_key = account if isinstance(account, str) else account.public_key
-        key_bytes = as_bytes(key)
-        if value is None:
-            del self.local_state[(account_public_key, key_bytes)]
-        else:
-            self.local_state[(account_public_key, key_bytes)] = value
 
 
 class Application(UInt64Backed):

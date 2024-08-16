@@ -141,8 +141,9 @@ class Contract(metaclass=_ContractMeta):
             unproxied_global_state_type = cls.global_state_types[name]
         except KeyError:
             return attr
-        app_data = lazy_context.get_app_data(_get_self_or_active_app_id(self))
-        value = app_data.get_global_state(name.encode("utf8"))
+        value = lazy_context.ledger.get_global_state(
+            _get_self_or_active_app_id(self), name.encode("utf8")
+        )
         return deserialize(unproxied_global_state_type, value)
 
     def __setattr__(self, name: str, value: typing.Any) -> None:
@@ -162,8 +163,7 @@ class Contract(metaclass=_ContractMeta):
                 box_map._key_prefix = name_bytes
             case Bytes() | UInt64() | BytesBacked() | UInt64Backed() | bool():
                 app_id = _get_self_or_active_app_id(self)
-                app = lazy_context.get_app_data(app_id)
-                app.set_global_state(name_bytes.value, serialize(value))
+                lazy_context.ledger.set_global_state(app_id, name_bytes, serialize(value))
                 cls = type(self)
                 assert isinstance(cls, _ContractMeta)
                 cls.global_state_types[name] = type(value)
