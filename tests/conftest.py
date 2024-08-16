@@ -10,6 +10,8 @@ from algokit_utils import (
 from algosdk.v2client.algod import AlgodClient
 from algosdk.v2client.indexer import IndexerClient
 
+# config.config.configure(debug=True)
+
 
 @pytest.fixture(scope="session")
 def algod_client() -> AlgodClient:

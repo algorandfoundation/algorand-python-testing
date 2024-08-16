@@ -1,10 +1,12 @@
 from collections.abc import Generator
+from pathlib import Path
 
 import algopy
 import algopy_testing
 import algosdk
 import pytest
 from algopy import arc4
+from algosdk.v2client.algod import AlgodClient
 
 from tests.artifacts.Arc4ABIMethod.contract import (
     AnotherStruct,
@@ -12,8 +14,17 @@ from tests.artifacts.Arc4ABIMethod.contract import (
     SignaturesContract,
     UInt8Array,
 )
+from tests.common import AVMInvoker, create_avm_invoker
 
 # TODO: 1.0 execute this on AVM too
+
+ARTIFACTS_DIR = Path(__file__).parent / ".." / "artifacts"
+APP_SPEC = ARTIFACTS_DIR / "Arc4ABIMethod" / "data" / "SignaturesContract.arc32.json"
+
+
+@pytest.fixture()
+def get_avm_result(algod_client: AlgodClient) -> AVMInvoker:
+    return create_avm_invoker(APP_SPEC, algod_client)
 
 
 @pytest.fixture()
@@ -23,12 +34,19 @@ def context() -> Generator[algopy_testing.AlgopyTestContext, None, None]:
         ctx.reset()
 
 
-def test_app_args_is_correct_with_simple_args(context: algopy_testing.AlgopyTestContext) -> None:
+def test_app_args_is_correct_with_simple_args(
+    get_avm_result: AVMInvoker,
+    context: algopy_testing.AlgopyTestContext,
+) -> None:
     # arrange
     contract = SignaturesContract()
     contract.create()
 
     # act
+
+    # ensure same execution in AVM runs without errors
+    get_avm_result("sink", value="hello", arr=[1, 2])
+    # then run inside emulator
     contract.sink(arc4.String("hello"), UInt8Array(arc4.UInt8(1), arc4.UInt8(2)))
 
     # assert
@@ -41,12 +59,18 @@ def test_app_args_is_correct_with_simple_args(context: algopy_testing.AlgopyTest
     ]
 
 
-def test_app_args_is_correct_with_alias(context: algopy_testing.AlgopyTestContext) -> None:
+def test_app_args_is_correct_with_alias(
+    get_avm_result: AVMInvoker,
+    context: algopy_testing.AlgopyTestContext,
+) -> None:
     # arrange
     contract = SignaturesContract()
     contract.create()
 
     # act
+    # ensure same execution in AVM runs without errors
+    get_avm_result("alias", value="hello", arr=[1, 2])
+    # then run inside emulator
     contract.sink2(arc4.String("hello"), UInt8Array(arc4.UInt8(1), arc4.UInt8(2)))
 
     # assert
