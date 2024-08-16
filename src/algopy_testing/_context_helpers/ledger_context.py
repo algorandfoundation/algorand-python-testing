@@ -3,12 +3,12 @@ from __future__ import annotations
 import typing
 from collections import defaultdict
 
-from algopy_testing.models.account import AccountContextData, AccountFields, get_empty_account
 from algopy_testing.utils import assert_address_is_valid, get_default_global_fields
 
 if typing.TYPE_CHECKING:
     import algopy
 
+    from algopy_testing.models.account import AccountFields
     from algopy_testing.models.application import ApplicationContextData, ApplicationFields
     from algopy_testing.models.asset import AssetFields
     from algopy_testing.op.global_values import GlobalFields
@@ -16,6 +16,8 @@ if typing.TYPE_CHECKING:
 
 class LedgerContext:
     def __init__(self) -> None:
+        from algopy_testing.models.account import AccountContextData, get_empty_account
+
         self.account_data = defaultdict[str, AccountContextData](get_empty_account)
         self.application_data: dict[int, ApplicationContextData] = {}
         self.asset_data: dict[int, AssetFields] = {}

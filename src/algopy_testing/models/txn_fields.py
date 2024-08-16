@@ -3,6 +3,7 @@ from __future__ import annotations
 import abc
 import typing
 
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import MAX_BYTES_SIZE
 from algopy_testing.enums import OnCompleteAction, TransactionType
 from algopy_testing.models import Account, Application, Asset
@@ -61,6 +62,7 @@ class AssetConfigFields(TransactionBaseFields, total=False):
     reserve: algopy.Account
     freeze: algopy.Account
     clawback: algopy.Account
+    created_asset: algopy.Asset
 
 
 class ApplicationCallFields(TransactionBaseFields, total=False):
@@ -71,15 +73,14 @@ class ApplicationCallFields(TransactionBaseFields, total=False):
     local_num_uint: algopy.UInt64
     local_num_bytes: algopy.UInt64
     extra_program_pages: algopy.UInt64
-    last_log: algopy.Bytes
+    logs: Sequence[algopy.Bytes]
     app_args: Sequence[algopy.Bytes]
     accounts: Sequence[algopy.Account]
     assets: Sequence[algopy.Asset]
     apps: Sequence[algopy.Application]
-    # TODO: 1.0 when storing these pages values, combine into one bytes and then
-    # "chop" into 4096 length pieces. Covered in ITxns, ensure Txns use the same method
     approval_program: Sequence[algopy.Bytes]
     clear_state_program: Sequence[algopy.Bytes]
+    created_app: algopy.Application
 
 
 class KeyRegistrationFields(TransactionBaseFields, total=False):
@@ -129,7 +130,6 @@ _FIELD_TYPES = {
     "metadata_hash": Bytes,
     "note": Bytes,
     "lease": Bytes,
-    "last_log": Bytes,
     "vote_key": Bytes,
     "selection_key": Bytes,
     "state_proof_key": Bytes,
@@ -151,6 +151,8 @@ _FIELD_TYPES = {
     "vote_first": UInt64,
     "vote_last": UInt64,
     "vote_key_dilution": UInt64,
+    "created_app": Application,
+    "created_asset": Asset,
 }
 
 
@@ -162,6 +164,7 @@ def get_txn_defaults() -> Mapping[str, typing.Any]:
     # a random 32 byte hash is as good as a real txn id here
     fields["txn_id"] = Bytes(generate_random_bytes32())
 
+    # logs intentionally omitted, as they can fall back to application mocked logs
     for field in (
         "app_args",
         "accounts",
@@ -301,6 +304,39 @@ class TransactionFieldsGetter(abc.ABC):
     def on_completion(self) -> algopy.OnCompleteAction:
         return self.fields["on_completion"]  # type: ignore[return-value]
 
+    @property
+    def created_app(self) -> algopy.Application:
+        return self.fields["created_app"]  # type: ignore[return-value]
+
+    @property
+    def created_asset(self) -> algopy.Asset:
+        return self.fields["created_asset"]  # type: ignore[return-value]
+
+    @property
+    def _logs(self) -> Sequence[algopy.Bytes]:
+        try:
+            logs: Sequence[algopy.Bytes] = self.fields["logs"]  # type: ignore[assignment]
+        except KeyError:
+            # if no txn logs, fall back to logs on app
+            app_data = lazy_context.get_app_data(self.app_id)
+            logs = list(map(Bytes, app_data.app_logs))
+        return logs
+
+    @property
+    def last_log(self) -> algopy.Bytes:
+        try:
+            return self._logs[-1]
+        except IndexError:
+            return Bytes(b"")
+
+    @property
+    def num_logs(self) -> algopy.UInt64:
+        return UInt64(len(self._logs))
+
+    @property
+    def logs(self) -> Callable[[algopy.UInt64 | int], algopy.Bytes]:
+        return _create_array_accessor(self._logs)
+
     def __getattr__(self, name: str) -> object:
         try:
             return self.fields[name]
@@ -332,7 +368,7 @@ def narrow_field_type(field: str, value: object) -> object:  # noqa: PLR0911
     return narrow(value)
 
 
-def combine_into_max_byte_pages(pages: tuple[Bytes, ...]) -> tuple[Bytes, ...]:
+def combine_into_max_byte_pages(pages: Sequence[Bytes]) -> Sequence[Bytes]:
     raw_pages = b"".join(page.value for page in pages)
     total_pages = (len(raw_pages) + MAX_BYTES_SIZE - 1) // MAX_BYTES_SIZE
     full_pages = [
@@ -431,7 +467,7 @@ def _as_bool(value: typing.Any) -> bool:
     return value
 
 
-def _narrow_tuple(value: typing.Any, item_type: type) -> tuple[typing.Any, ...]:
+def _narrow_tuple(value: typing.Any, item_type: type) -> Sequence[typing.Any]:
     if not isinstance(value, tuple):
         raise TypeError("unexpected type")
 

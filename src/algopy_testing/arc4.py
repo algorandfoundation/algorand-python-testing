@@ -9,7 +9,6 @@ import typing
 import algosdk
 from Cryptodome.Hash import SHA512
 
-from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import (
     ARC4_RETURN_PREFIX,
     BITS_IN_BYTE,
@@ -17,7 +16,6 @@ from algopy_testing.constants import (
     UINT64_SIZE,
     UINT512_SIZE,
 )
-from algopy_testing.decorators.arc4 import abimethod, baremethod
 from algopy_testing.models.account import Account
 from algopy_testing.primitives import Bytes
 from algopy_testing.protocols import BytesBacked
@@ -29,6 +27,7 @@ from algopy_testing.utils import (
     as_int512,
     as_string,
     int_to_bytes,
+    raise_mocked_function_error,
 )
 
 if typing.TYPE_CHECKING:
@@ -59,9 +58,7 @@ __all__ = [
     "UInt8",
     "UIntN",
     "abi_call",
-    "abimethod",
     "arc4_signature",
-    "baremethod",
     "emit",
 ]
 
@@ -1069,25 +1066,28 @@ class ARC4Client(typing.Protocol): ...
 
 
 class _ABICall:
+
+    def __init__(self, func_name: str) -> None:
+        self.func_name = func_name
+
     def __call__(
         self,
-        method: typing.Callable[..., typing.Any] | str,
+        _method: typing.Callable[..., typing.Any] | str,
         /,
-        *args: typing.Any,
-        **kwargs: typing.Any,
+        *_args: typing.Any,
+        **_kwargs: typing.Any,
     ) -> typing.Any:
         # Implement the actual abi_call logic here
-        raise NotImplementedError(
-            "'abi_call' is not available in test context. "
-            "Mock using your preferred testing framework."
-        )
+        raise_mocked_function_error(self.func_name)
 
     def __getitem__(self, return_type: type) -> typing.Any:
         return self
 
 
-# TODO: Implement abi_call
-abi_call = _ABICall()
+# TODO: Implement these when calling other puya contracts
+abi_call = _ABICall("abi_call")
+arc4_create = _ABICall("arc4_create")
+arc4_update = _ABICall("arc4_update")
 
 
 def emit(event: str | Struct, /, *args: object) -> None:
@@ -1120,14 +1120,7 @@ def emit(event: str | Struct, /, *args: object) -> None:
             arc4.emit("Swapped", b, a)
     ```
     """  # noqa: E501
-    import algopy
-
-    active_txn = lazy_context.active_group.active_txn
-
-    if active_txn.type != algopy.TransactionType.ApplicationCall:
-        raise ValueError("Cannot emit events outside of application call context!")
-    if not active_txn.app_id:
-        raise ValueError("Cannot emit event: missing `app_id` in associated call transaction!")
+    from algopy_testing.utilities.log import log
 
     if isinstance(event, str):
         arc4_args = tuple(_cast_arg_as_arc4(arg) for arg in args)
@@ -1146,10 +1139,7 @@ def emit(event: str | Struct, /, *args: object) -> None:
         raise TypeError("expected str or Struct for event")
 
     event_hash = SHA512.new(event_str.encode(), truncate="256").digest()
-    lazy_context.txn.add_app_logs(
-        app_id=active_txn.app_id,
-        logs=event_hash[:4] + event_data.value,
-    )
+    log(event_hash[:4] + event_data.value)
 
 
 def native_value_to_arc4(value: object) -> _ABIEncoded:  # noqa: PLR0911

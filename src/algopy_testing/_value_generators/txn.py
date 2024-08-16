@@ -52,8 +52,8 @@ class TxnValueGenerator:
 
         new_txn = self._new_gtxn(gtxn.ApplicationCallTransaction, **fields)
 
-        if scratch_space is not None:
-            lazy_context.txn.set_scratch_space(new_txn, scratch_space)
+        for idx, value in enumerate(scratch_space or []):
+            new_txn.set_scratch_slot(idx, value)
 
         return new_txn
 

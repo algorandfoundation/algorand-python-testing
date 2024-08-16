@@ -10,6 +10,7 @@ from algopy_testing.enums import TransactionType
 from algopy_testing.models import Account, Application, Asset
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.uint64 import UInt64
+from algopy_testing.utils import raise_mocked_function_error
 
 if typing.TYPE_CHECKING:
     import algopy
@@ -51,7 +52,7 @@ def _get_bytes(b: algopy.Bytes | bytes) -> bytes:
 def _gload(a: UInt64 | int, b: UInt64 | int, /) -> Bytes | UInt64:
     txn = lazy_context.active_group.get_txn(a)
     try:
-        return lazy_context.txn.get_scratch_slot(txn, b)
+        return txn.get_scratch_slot(b)
     except IndexError:
         raise ValueError("invalid scratch slot") from None
 
@@ -66,7 +67,7 @@ class _Scratch:
     @staticmethod
     def store(a: algopy.UInt64 | int, b: algopy.Bytes | algopy.UInt64 | bytes | int, /) -> None:
         active_txn = lazy_context.active_group.active_txn
-        lazy_context.txn.set_scratch_slot(active_txn, a, b)
+        active_txn.set_scratch_slot(a, b)
 
 
 Scratch = _Scratch()
@@ -74,20 +75,19 @@ gload_uint64 = _gload
 gload_bytes = _gload
 
 
-def gaid(a: algopy.UInt64 | int, /) -> algopy.Application:
+def gaid(a: algopy.UInt64 | int, /) -> algopy.UInt64:
+    # TODO: 1.0 add tests
     group = lazy_context.active_group
-    if a >= group.active_txn_index:
+    if a >= group.active_txn.group_index:
         raise ValueError("can only get id's for transactions earlier in the group")
 
     txn = group.get_txn(a)
-    if txn.type not in (TransactionType.ApplicationCall, TransactionType.AssetConfig):
+    if txn.type == TransactionType.ApplicationCall:
+        return txn.created_app.id
+    elif txn.type == TransactionType.AssetConfig:
+        return txn.created_asset.id
+    else:
         raise ValueError(f"transaction at index {a} is not an Application Call or Asset Config")
-
-    # TODO: allow specifying created_asset_id, or created_application_id on group transactions
-    #       and then return those values here if specified.
-    #       Additionally stubs from puyapy are currently incorrect as this op should be typed as
-    #       returning UInt64, so perhaps leave this as NotImplemented until that is resolved
-    raise NotImplementedError
 
 
 def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
@@ -110,9 +110,8 @@ def min_balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     return account.min_balance
 
 
-def exit(a: UInt64 | int, /) -> typing.Never:  # noqa: A001
-    value = UInt64(a) if isinstance(a, int) else a
-    raise NotImplementedError(f"exit with value: {value}")
+def exit(_a: UInt64 | int, /) -> typing.Never:  # noqa: A001
+    raise_mocked_function_error("exit")
 
 
 def app_opted_in(

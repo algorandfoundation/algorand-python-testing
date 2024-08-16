@@ -141,6 +141,7 @@ class AVMValueGenerator:
         self,
         id: int | None = None,
         address: algopy.Account | None = None,
+        logs: list[bytes] | None = None,  # type: ignore[valid-type]
         **application_fields: typing.Unpack[ApplicationFields],
     ) -> algopy.Application:
         """Generate and add a new application with a unique ID.
@@ -149,16 +150,14 @@ class AVMValueGenerator:
             will be generated.
         :type id: int | None
         :param address: Optional application address. If not provided,
-        :type address: algopy.Account | None
-        :param address: Optional application address. If not provided,
             it will be generated.
-        :type address: algopy.Account | None :param
-            **application_fields: Additional application fields. :param
-            # type: ignore[misc]self:
-        :param id: int | None:  (Default value = None)
-        :param address: algopy.Account | None: (Default value = None)
-            :param **application_fields: Unpack[ApplicationFields]:
-        :returns: The newly generated application.
+        :type address: algopy.Account | None
+        :param logs: Optional sequence of log messages for the
+            application.
+        :type logs: typing.Sequence[bytes] | None :param
+            **application_fields: Additional application fields. :type
+            **application_fields: typing.Unpack[ApplicationFields]
+        :return: The newly generated application.
         :rtype: algopy.Application
         """
         import algopy_testing
@@ -199,6 +198,7 @@ class AVMValueGenerator:
         lazy_context.ledger.application_data[new_app_id] = ApplicationContextData(
             fields=app_fields,
             app_id=new_app_id,
+            logs=logs or [],
         )
 
         return new_app

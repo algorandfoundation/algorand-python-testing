@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import typing
-from dataclasses import dataclass
 
-from algopy_testing._context_helpers import lazy_context
 from algopy_testing.protocols import UInt64Backed
 
 if typing.TYPE_CHECKING:
@@ -28,10 +26,7 @@ class AssetFields(typing.TypedDict, total=False):
     creator: algopy.Account
 
 
-@dataclass
 class Asset(UInt64Backed):
-    id: algopy.UInt64
-
     def __init__(self, asset_id: algopy.UInt64 | int = 0):
         from algopy import UInt64
 
@@ -46,6 +41,8 @@ class Asset(UInt64Backed):
         return cls(value)
 
     def balance(self, account: algopy.Account) -> algopy.UInt64:
+        from algopy_testing._context_helpers import lazy_context
+
         account_data = lazy_context.get_account_data(account.public_key)
 
         if not account_data:
@@ -60,12 +57,16 @@ class Asset(UInt64Backed):
         return account_data.opted_asset_balances[self.id]
 
     def frozen(self, _account: algopy.Account) -> bool:
+        # TODO: 1.0 expand data structure on AccountContextData.opted_asset_balances
+        #       to support frozen attribute
         raise NotImplementedError(
             "The 'frozen' method is being executed in a python testing context. "
             "Please mock this method using your python testing framework of choice."
         )
 
     def __getattr__(self, name: str) -> object:
+        from algopy_testing._context_helpers import lazy_context
+
         if int(self.id) not in lazy_context.ledger.asset_data:
             # check if its not 0 (which means its not
             # instantiated/opted-in yet, and instantiated directly

@@ -5,7 +5,6 @@ import typing
 
 import algosdk
 
-from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import DEFAULT_ACCOUNT_MIN_BALANCE
 from algopy_testing.primitives import Bytes, UInt64
 from algopy_testing.protocols import BytesBacked
@@ -71,19 +70,18 @@ class AccountContextData:
 
 
 class Account(BytesBacked):
-    _public_key: bytes
-
     def __init__(self, value: str | Bytes = algosdk.constants.ZERO_ADDRESS, /):
         if not isinstance(value, str | Bytes):
             raise TypeError("Invalid value for Account")
 
-        public_key = (
+        self._public_key: bytes = (
             algosdk.encoding.decode_address(value) if isinstance(value, str) else value.value
         )
-        self._public_key = public_key
 
     @property
     def data(self) -> AccountContextData:
+        from algopy_testing._context_helpers import lazy_context
+
         return lazy_context.ledger.account_data[self.public_key]
 
     @property
@@ -130,10 +128,7 @@ class Account(BytesBacked):
             ) from None
 
     def __repr__(self) -> str:
-        return str(algosdk.encoding.encode_address(self._public_key))
-
-    def __str__(self) -> str:
-        return str(algosdk.encoding.encode_address(self._public_key))
+        return self.public_key
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Account | str):

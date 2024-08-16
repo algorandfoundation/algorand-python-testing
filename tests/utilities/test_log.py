@@ -35,7 +35,7 @@ def test_log(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
     m = arc4.DynamicArray(arc4.UInt16(1), arc4.UInt16(2), arc4.UInt16(3))
     n = arc4.Tuple((arc4.UInt32(1), arc4.UInt64(2), arc4.String("hello")))
 
-    avm_result = get_avm_result(
+    avm_result_ = get_avm_result(
         "verify_log",
         a=a.value,
         b=b.value,
@@ -51,11 +51,11 @@ def test_log(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
         m=m.bytes.value,
         n=n.bytes.value,
     )
+    assert isinstance(avm_result_, list)
+    avm_result = [base64.b64decode(b) for b in avm_result_]
 
     with context.txn.create_group([context.any.txn.payment()]):  # noqa: SIM117
-        with pytest.raises(
-            ValueError, match="Cannot emit events outside of application call context!"
-        ):
+        with pytest.raises(RuntimeError, match="Can only add logs to ApplicationCallTransaction!"):
             log(a, b, c, d, e, f, g, h, i, j, k, m, n, sep=b"-")
 
     dummy_app = context.any.application()
@@ -63,7 +63,16 @@ def test_log(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
         [context.any.txn.application_call(app_id=dummy_app)], active_txn_index=0
     ):
         log(a, b, c, d, e, f, g, h, i, j, k, m, n, sep=b"-")
-        arc4_result = [
-            base64.b64encode(log).decode() for log in context.txn.get_app_logs(dummy_app.id)
-        ]
-        assert avm_result == arc4_result
+
+    last_txn = context.txn.last_active
+    arc4_result = [last_txn.logs(i) for i in range(last_txn.num_logs)]
+    assert avm_result == arc4_result
+
+
+def test_user_supplied_logs(context: AlgopyTestContext) -> None:
+    with context.txn.create_group([context.any.txn.application_call()]):
+        log(b"\x81")  # should be logged but user supplied log is overriding it
+
+    last_txn = context.txn.last_active
+    logs = [last_txn.logs(i) for i in range(last_txn.num_logs)]
+    assert logs == [b"\x81"]

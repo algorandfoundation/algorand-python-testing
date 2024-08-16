@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import contextlib
 import typing
-from collections import defaultdict
-from dataclasses import dataclass
 
 import algosdk
 
-from algopy_testing.constants import ARC4_RETURN_PREFIX
+from algopy_testing._itxn_loader import ITxnGroupLoader
 from algopy_testing.decorators.arc4 import (
     check_routing_conditions,
     create_abimethod_txns,
@@ -16,9 +14,6 @@ from algopy_testing.decorators.arc4 import (
     get_ordered_args,
 )
 from algopy_testing.enums import OnCompleteAction
-from algopy_testing.models import ARC4Contract
-from algopy_testing.primitives.bytes import Bytes
-from algopy_testing.utils import convert_native_to_stack, get_new_scratch_space
 
 if typing.TYPE_CHECKING:
     from collections.abc import Callable, Iterator, Sequence
@@ -28,9 +23,9 @@ if typing.TYPE_CHECKING:
     from algopy_testing._itxn_loader import InnerTransactionResultType
     from algopy_testing.models.txn_fields import TransactionBaseFields
 
-
 from algopy_testing import gtxn
-from algopy_testing._itxn_loader import ITxnGroupLoader, ITxnLoader
+from algopy_testing._itxn_loader import ITxnLoader
+from algopy_testing.gtxn import TransactionBase
 from algopy_testing.itxn import InnerTransaction, submit_txns
 from algopy_testing.models import Application
 from algopy_testing.primitives import UInt64
@@ -39,19 +34,25 @@ TReturn = typing.TypeVar("TReturn")
 TParamSpec = typing.ParamSpec("TParamSpec")
 
 
-@dataclass(kw_only=True)
 class DeferredAppCall(typing.Generic[TReturn]):
-    # TODO: make private
-    app_id: int
-    txns: list[algopy.gtxn.TransactionBase]
-    method: typing.Callable[..., TReturn]
-    args: tuple[typing.Any, ...]
-    kwargs: dict[str, typing.Any]
+    def __init__(
+        self,
+        app_id: int,
+        txns: list[algopy.gtxn.TransactionBase],
+        method: Callable[..., TReturn],
+        args: tuple[typing.Any, ...],
+        kwargs: dict[str, typing.Any],
+    ) -> None:
+        self._app_id = app_id
+        self._txns = txns
+        self._method = method
+        self._args = args
+        self._kwargs = kwargs
 
     def submit(self) -> TReturn:
         # This method will be called to execute the prepared call
-        check_routing_conditions(self.app_id, get_arc4_metadata(self.method))
-        return self.method(*self.args, **self.kwargs)
+        check_routing_conditions(self._app_id, get_arc4_metadata(self._method))
+        return self._method(*self._args, **self._kwargs)
 
 
 class TransactionContext:
@@ -64,33 +65,18 @@ class TransactionContext:
         # not executing an app call.
         # User code should use the "last" group properties to do assertions about a recently
         # executed app call
-        # TODO: store scratch space on gtxn.TransactionBase implementation
-        #       users can mock scratch space when calling any.txn.application_call
-        #       move get_scratch_slot/get_scratch_space to TransactionGroup
-        #       so users can assert anything put into scratch spaces
-        #       by the active txn
-        #       set_scratch/slot/space no longer required
-        self._scratch_spaces = defaultdict[gtxn.TransactionBase, list[Bytes | UInt64]](
-            get_new_scratch_space
-        )
-        # TODO: move app_logs on to gtxn.TransactionBase implementation
-        #       users can mock app values when calling any.application
-        #       move get_app_logs on to TransactionGroup, to query app_logs
-        #       for the active txn
-        self._app_logs: dict[int, list[bytes]] = {}
 
     @contextlib.contextmanager
     def _maybe_implicit_txn_group(
-        self,
-        gtxns: typing.Sequence[algopy.gtxn.TransactionBase] | None = None,
-        active_txn_index: int | None = None,
+        self, gtxns: typing.Sequence[algopy.gtxn.TransactionBase]
     ) -> Iterator[None]:
         """Only creates a group if there isn't one already active."""
-        if not self._active_group or not self._active_group.txns:
-            ctx: typing.ContextManager[None] = self.create_group(
-                gtxns, active_txn_index=active_txn_index
-            )
+        active_group = self._active_group
+        if not active_group:
+            ctx: typing.ContextManager[None] = self.create_group(gtxns)
         else:
+            if not active_group.txns:
+                active_group._set_txn_group(gtxns)
             ctx = contextlib.nullcontext()
         with ctx:
             yield
@@ -111,6 +97,8 @@ class TransactionContext:
         :return: A DeferredAppCall object containing the transaction
             group and method info.
         """
+        from algopy_testing.models import ARC4Contract
+
         arc4_metadata = get_arc4_metadata(method)
         # unwrap instance method
         try:
@@ -174,22 +162,13 @@ class TransactionContext:
             processed_gtxns = [
                 txn
                 for item in gtxns
-                for txn in (item.txns if isinstance(item, DeferredAppCall) else [item])
+                for txn in (item._txns if isinstance(item, DeferredAppCall) else [item])
             ]
-
-            if not all(isinstance(txn, gtxn.TransactionBase) for txn in processed_gtxns):
-                raise ValueError(
-                    "All transactions must be instances of TransactionBase or DeferredAppCall"
-                )
-
-            if len(processed_gtxns) > algosdk.constants.TX_GROUP_LIMIT:
-                raise ValueError(
-                    f"Transaction group can have at most {algosdk.constants.TX_GROUP_LIMIT} "
-                    "transactions, as per AVM limits."
-                )
-
-            for i, txn in enumerate(processed_gtxns):
-                txn.fields["group_index"] = UInt64(i)
+        if active_txn_index is None and (
+            app_calls := [item for item in (gtxns or []) if isinstance(item, DeferredAppCall)]
+        ):
+            last_app_call_txn = app_calls[-1]._txns[-1]
+            active_txn_index = processed_gtxns.index(last_app_call_txn)
 
         previous_group = self._active_group
         self._active_group = TransactionGroup(
@@ -216,126 +195,45 @@ class TransactionContext:
     ) -> algopy.gtxn.Transaction:
         return self.last_group.active_txn
 
-    def set_scratch_space(
-        self,
-        txn: algopy.gtxn.TransactionBase,
-        scratch_space: Sequence[algopy.Bytes | algopy.UInt64 | bytes | int],
-    ) -> None:
-        new_scratch_space = get_new_scratch_space()
-        # insert values to list at specific indexes, use key as index and value as value to set
-        for index, value in enumerate(scratch_space):
-            new_scratch_space[index] = convert_native_to_stack(value)
-
-        self._scratch_spaces[txn] = new_scratch_space
-
-    def set_scratch_slot(
-        self,
-        txn: algopy.gtxn.TransactionBase,
-        index: algopy.UInt64 | int,
-        value: algopy.Bytes | algopy.UInt64 | bytes | int,
-    ) -> None:
-        slots = self._scratch_spaces[txn]
-        try:
-            slots[int(index)] = convert_native_to_stack(value)
-        except IndexError:
-            raise ValueError("invalid scratch slot") from None
-
-    def get_scratch_slot(
-        self,
-        txn: algopy.gtxn.TransactionBase,
-        index: algopy.UInt64 | int,
-    ) -> algopy.UInt64 | algopy.Bytes:
-        slots = self._scratch_spaces[txn]
-        try:
-            return slots[int(index)]
-        except IndexError:
-            raise ValueError("invalid scratch slot") from None
-
-    def get_scratch_space(
-        self, txn: algopy.gtxn.TransactionBase
-    ) -> Sequence[algopy.Bytes | algopy.UInt64]:
-        """Retrieves scratch space for a transaction.
-
-        :param txn: Transaction identifier.
-        :param txn: algopy.gtxn.TransactionBase:
-        :returns: List of scratch space values.
-        """
-        return self._scratch_spaces[txn]
-
-    def add_app_logs(
-        self,
-        *,
-        app_id: algopy.UInt64 | algopy.Application | int,
-        logs: bytes | list[bytes],
-        prepend_arc4_prefix: bool = False,
-    ) -> None:
-        """Add logs for an application.
-
-        :param app_id: The ID of the application.
-        :type app_id: int
-        :param logs: A single log entry or a list of log entries.
-        :type logs: bytes | list[bytes]
-        :param prepend_arc4_prefix: Whether to prepend ARC4 prefix to
-            the logs.
-        :type prepend_arc4_prefix: bool :param *:
-        :param app_id: algopy.UInt64 | algopy.Application | int:
-        :param logs: bytes | list[bytes]:
-        :param prepend_arc4_prefix: bool:  (Default value = False)
-        """
-        import algopy
-
-        raw_app_id = (
-            int(app_id)
-            if isinstance(app_id, algopy.UInt64)
-            else int(app_id.id) if isinstance(app_id, algopy.Application) else app_id
-        )
-
-        if isinstance(logs, bytes):
-            logs = [logs]
-
-        if prepend_arc4_prefix:
-            logs = [ARC4_RETURN_PREFIX + log for log in logs]
-
-        if raw_app_id in self._app_logs:
-            self._app_logs[raw_app_id].extend(logs)
-        else:
-            self._app_logs[raw_app_id] = logs
-
-    def get_app_logs(self, app_id: algopy.UInt64 | int) -> list[bytes]:
-        """Retrieve the application logs for a given app ID.
-
-        :param app_id: The ID of the application.
-        :type app_id: algopy.UInt64 | int
-        :param app_id: algopy.UInt64 | int:
-        :returns: The application logs for the given app ID.
-        :rtype: list[bytes]
-        :raises ValueError: If no application logs are available for the
-            given app ID.
-        """
-        import algopy
-
-        app_id = int(app_id) if isinstance(app_id, algopy.UInt64) else app_id
-
-        if app_id not in self._app_logs:
-            raise ValueError(
-                f"No application logs available for app ID {app_id} in testing context!"
-            )
-
-        return self._app_logs[app_id]
-
 
 class TransactionGroup:
     def __init__(
         self,
-        txns: typing.Sequence[algopy.gtxn.TransactionBase],
+        txns: Sequence[algopy.gtxn.TransactionBase] = (),
         active_txn_index: int | None = None,
         txn_op_fields: dict[str, typing.Any] | None = None,
     ):
-        self.txns = txns
-        self.active_txn_index = len(txns) - 1 if active_txn_index is None else active_txn_index
+        self._set_txn_group(txns, active_txn_index)
         self._itxn_groups: list[Sequence[InnerTransactionResultType]] = []
         self._constructing_itxn_group: list[InnerTransaction] = []
         self._txn_op_fields = txn_op_fields or {}
+
+    def _set_txn_group(
+        self,
+        txns: Sequence[algopy.gtxn.TransactionBase],
+        active_txn_index: int | None = None,
+    ) -> None:
+        if not txns:
+            self.txns = txns
+            self.active_txn_index = 0
+            return
+        if not all(isinstance(txn, gtxn.TransactionBase) for txn in txns):
+            raise ValueError(
+                "All transactions must be instances of TransactionBase or DeferredAppCall"
+            )
+
+        if len(txns) > algosdk.constants.TX_GROUP_LIMIT:
+            raise ValueError(
+                f"Transaction group can have at most {algosdk.constants.TX_GROUP_LIMIT} "
+                "transactions, as per AVM limits."
+            )
+
+        for i, txn in enumerate(txns):
+            txn.fields["group_index"] = UInt64(i)
+
+        self.txns = txns
+        self.active_txn_index = len(txns) - 1 if active_txn_index is None else active_txn_index
+        self.active_txn.is_active = True
 
     @property
     def active_app_id(self) -> int:
@@ -346,11 +244,18 @@ class TransactionGroup:
         assert isinstance(app_id, Application)
         return int(app_id.id)
 
+    # internal property with algopy_testing type
     @property
-    def active_txn(self) -> algopy.gtxn.Transaction:
+    def _active_txn(self) -> TransactionBase:
         if not self.txns or self.active_txn_index is None:
             raise ValueError("No active transaction in the group")
-        return self.txns[self.active_txn_index]  # type: ignore[return-value]
+        active_txn = self.txns[self.active_txn_index]
+        assert isinstance(active_txn, TransactionBase)
+        return active_txn
+
+    @property
+    def active_txn(self) -> algopy.gtxn.Transaction:
+        return self._active_txn  # type: ignore[return-value]
 
     @property
     def itxn_groups(
@@ -381,6 +286,31 @@ class TransactionGroup:
             return ITxnGroupLoader(self._itxn_groups[index])
         except IndexError as e:
             raise ValueError(f"No inner transaction group at index {index}!") from e
+
+    def get_scratch_slot(
+        self,
+        index: algopy.UInt64 | int,
+    ) -> algopy.UInt64 | algopy.Bytes:
+        """Retrieves the scratch values for a specific slot in the active
+        transaction.
+
+        :param index: algopy.UInt64 | int: Which scratch slot to query
+        :returns: Scratch slot value for the active transaction.
+        :rtype: algopy.UInt64 | algopy.Bytes
+        """
+        # this wraps an internal method on TransactionBase, so it can be exposed to
+        # consumers of algopy_testing
+        return self._active_txn.get_scratch_slot(index)
+
+    def get_scratch_space(
+        self,
+    ) -> Sequence[algopy.Bytes | algopy.UInt64]:
+        """Retrieves scratch space for the active transaction.
+
+        :returns: List of scratch space values for the active
+            transaction.
+        """
+        return self._active_txn.get_scratch_space()
 
     def _add_itxn_group(self, group: Sequence[InnerTransactionResultType]) -> None:
         self._itxn_groups.append(group)

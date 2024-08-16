@@ -29,7 +29,7 @@ dependencies = [
     "pynacl>=1.4.0,<2",
     "ecdsa>=0.17.0",
     "coincurve>=19.0.1",
-    "algorand-python>=1.2"
+    "algorand-python>=2.0"
 ]
 
 [project.urls]
@@ -52,7 +52,7 @@ type = "virtual"
 path = ".venv"
 python = "3.12"
 dependencies = [
-    "puyapy>=2.2.0",
+    "puyapy>=3.0",
     "pytest>=7.4",
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
@@ -243,6 +243,11 @@ unfixable = [
     "F841", # don't delete unused local variables automatically
 ]
 [tool.ruff.lint.per-file-ignores]
+"src/algopy/**" = [
+    "PLC0414", # allow explicit alias
+    "F401", # allow unused imports in module with stubs
+    "F403"  # allow * imports in module with stubs
+]
 "src/**" = [
     "PT", # no pytest rules
 ]

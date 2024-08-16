@@ -14,14 +14,8 @@ from algopy_testing.models.txn_fields import (
     get_txn_defaults,
     narrow_field_type,
 )
-from algopy_testing.primitives import Bytes, UInt64
 
 logger = logging.getLogger(__name__)
-
-if typing.TYPE_CHECKING:
-    from collections.abc import Callable
-
-    import algopy
 
 
 __all__ = [
@@ -62,29 +56,6 @@ class _BaseInnerTransactionResult(TransactionFieldsGetter):
     @property
     def fields(self) -> dict[str, object]:
         return self._fields
-
-    @property
-    def _logs(self) -> list[bytes]:
-        try:
-            return lazy_context.txn.get_app_logs(self.app_id.id)
-        except KeyError:
-            return []
-
-    @property
-    def last_log(self) -> algopy.Bytes:
-        try:
-            last = self._logs[-1]
-        except IndexError:
-            last = b""
-        return Bytes(last)
-
-    @property
-    def num_logs(self) -> algopy.UInt64:
-        return UInt64(len(self._logs))
-
-    @property
-    def logs(self) -> Callable[[algopy.UInt64 | int], algopy.Bytes]:
-        return lambda i: Bytes(self._logs[int(i)])
 
 
 class PaymentInnerTransaction(_BaseInnerTransactionResult):
@@ -207,6 +178,7 @@ def _get_itxn_result(itxn: _BaseInnerTransactionFields) -> _BaseInnerTransaction
 # handlers for submitting each txn type, done here rather than on the typed specific classes
 # as not everything goes through those types
 def _on_pay(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
+    # TODO: update balances on ledger?
     return fields
 
 
@@ -236,10 +208,12 @@ def _on_asset_config(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
 
 
 def _on_asset_freeze(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
+    # TODO: update freeze flag on asset?
     return fields
 
 
 def _on_asset_xfer(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
+    # TODO: update asset balances on ledger?
     if fields["asset_sender"] == Account():
         fields["asset_sender"] = fields["sender"]
     return fields

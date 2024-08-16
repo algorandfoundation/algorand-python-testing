@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-import dataclasses
 import inspect
 import typing
 
-from algopy_testing._context_helpers import lazy_context
 from algopy_testing.primitives import UInt64
 from algopy_testing.protocols import UInt64Backed
 from algopy_testing.utils import as_bytes, as_int64
 
 if typing.TYPE_CHECKING:
+    from collections.abc import Sequence
+
     import algopy
 
     from algopy_testing.models.contract import Contract
@@ -32,17 +32,23 @@ Key = bytes
 StateValueType = int | bytes
 
 
-@dataclasses.dataclass
 class ApplicationContextData:
-    app_id: int
-    fields: ApplicationFields
-    global_state: dict[Key, StateValueType] = dataclasses.field(default_factory=dict)
-    local_state: dict[tuple[AccountKey, Key], StateValueType] = dataclasses.field(
-        default_factory=dict
-    )
-    is_creating: bool = False
-    contract: Contract | None = None
-    # TODO: 1.0 add getter to ledger context, get_global_state, get_local_state, get_box
+    def __init__(
+        self,
+        app_id: int,
+        fields: ApplicationFields,
+        logs: bytes | Sequence[bytes] = (),
+    ):
+        self.app_id = app_id
+        self.fields = fields
+        self.global_state = dict[Key, StateValueType]()
+        self.local_state = dict[tuple[AccountKey, Key], StateValueType]()
+        self.boxes = dict[bytes, bytes]()
+        self.is_creating = False
+        self.contract: Contract | None = None
+        # TODO: add callables support (similar to side effects in pytest)
+        # TODO: 1.0 add getter to ledger context, get_global_state, get_local_state, get_box
+        self.app_logs: Sequence[bytes] = (logs,) if isinstance(logs, bytes) else logs
 
     def get_global_state(self, key: algopy.Bytes | bytes) -> StateValueType:
         return self.global_state[as_bytes(key)]
@@ -93,6 +99,8 @@ class Application(UInt64Backed):
 
     @property
     def fields(self) -> ApplicationFields:
+        from algopy_testing._context_helpers import lazy_context
+
         if self._id == 0:
             raise ValueError("cannot access properties of an app with an id of 0") from None
         return lazy_context.get_app_data(self._id).fields

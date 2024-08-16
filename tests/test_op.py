@@ -883,52 +883,24 @@ def test_app_global_ex_get_arc4(
         (255, algopy.Bytes(b"max_index")),  # Test maximum valid index
     ],
 )
-def test_set_scratch_slot(
+def test_scratch_slots(
     context: AlgopyTestContext, index: int, value: algopy.Bytes | algopy.UInt64 | bytes | int
 ) -> None:
-    txn = context.any.txn.application_call()
-    context.txn.set_scratch_slot(txn, index, value)
-    assert context.txn.get_scratch_slot(txn, index) == convert_native_to_stack(value)
+    new_scratch_space: list[algopy.UInt64 | algopy.Bytes | int | bytes] = [0] * 256
+    new_scratch_space[index] = value
 
+    # Test set
+    with context.txn.create_group(
+        gtxns=[context.any.txn.application_call(scratch_space=new_scratch_space)]
+    ):
+        pass
 
-@pytest.mark.parametrize(
-    ("index", "value"),
-    [
-        (0, algopy.Bytes(b"test_bytes")),
-        (1, algopy.UInt64(42)),
-        (2, b"test_bytes"),
-        (3, 42),
-        (255, algopy.Bytes(b"max_index")),
-        (250, algopy.Bytes(b"")),
-    ],
-)
-def test_get_scratch_slot(
-    context: AlgopyTestContext, index: int, value: algopy.Bytes | algopy.UInt64 | bytes | int
-) -> None:
-    txn = context.any.txn.application_call()
-    context.txn.set_scratch_slot(txn, index, value)
-    retrieved_value = context.txn.get_scratch_slot(txn, index)
-    assert retrieved_value == convert_native_to_stack(value)
+    # Test get
+    assert context.txn.last_group.get_scratch_slot(index) == convert_native_to_stack(value)
 
-
-def test_scratch_slot_invalid_index(
-    context: AlgopyTestContext,
-) -> None:
-    invalid_index = 256
-    txn = context.any.txn.application_call()
-
+    # Test invalid index
     with pytest.raises(ValueError, match="invalid scratch slot"):
-        context.txn.set_scratch_slot(txn, invalid_index, algopy.Bytes(b"invalid"))
-
-    with pytest.raises(ValueError, match="invalid scratch slot"):
-        context.txn.get_scratch_slot(txn, invalid_index)
-
-
-def test_overwrite_scratch_slot(context: AlgopyTestContext) -> None:
-    txn = context.any.txn.application_call()
-    context.txn.set_scratch_slot(txn, 0, algopy.Bytes(b"initial"))
-    context.txn.set_scratch_slot(txn, 0, algopy.UInt64(99))
-    assert context.txn.get_scratch_slot(txn, 0) == algopy.UInt64(99)
+        context.txn.last_group.get_scratch_slot(256)
 
 
 def test_itxn_ops(context: AlgopyTestContext) -> None:
