@@ -57,6 +57,8 @@ class Asset(UInt64Backed):
         return account_data.opted_asset_balances[self.id]
 
     def frozen(self, _account: algopy.Account) -> bool:
+        # TODO: 1.0 expand data structure on AccountContextData.opted_asset_balances
+        #       to support frozen attribute
         raise NotImplementedError(
             "The 'frozen' method is being executed in a python testing context. "
             "Please mock this method using your python testing framework of choice."
