@@ -3,7 +3,8 @@ from __future__ import annotations
 import typing
 from collections import defaultdict
 
-from algopy_testing.utils import assert_address_is_valid, get_default_global_fields
+from algopy_testing.constants import MAX_BOX_SIZE
+from algopy_testing.utils import as_bytes, assert_address_is_valid, get_default_global_fields
 
 if typing.TYPE_CHECKING:
     import algopy
@@ -21,8 +22,6 @@ class LedgerContext:
         self.account_data = defaultdict[str, AccountContextData](get_empty_account)
         self.application_data: dict[int, ApplicationContextData] = {}
         self.asset_data: dict[int, AssetFields] = {}
-        # TODO: 1.0 move boxes onto application data
-        self.boxes: dict[bytes, bytes] = {}
         self.blocks: dict[int, dict[str, int]] = {}
         self.global_fields: GlobalFields = get_default_global_fields()
 
@@ -63,50 +62,67 @@ class LedgerContext:
             raise ValueError("Asset not found in testing context!")
         self.asset_data[asset_id].update(asset_fields)
 
-    def get_application(self, app_id: algopy.UInt64 | int) -> algopy.Application:
+    def get_application(self, app: algopy.UInt64 | int) -> algopy.Application:
         import algopy
 
-        app_id = int(app_id) if isinstance(app_id, algopy.UInt64) else app_id
+        app_data = self._get_app_data(app)
+        return algopy.Application(app_data.app_id)
 
-        if app_id not in self.application_data:
-            raise ValueError("Application not found in testing context!")
+    def _get_app_data(
+        self, app: algopy.UInt64 | algopy.Application | algopy.Contract | int
+    ) -> ApplicationContextData:
+        app_id = _get_app_id(app)
+        try:
+            return self.application_data[app_id]
+        except KeyError:
+            raise ValueError("Unknown app id, is there an active transaction?") from None
 
-        return algopy.Application(app_id)
-
-    def app_exists(self, app_id: algopy.UInt64 | int) -> bool:
-        import algopy
-
-        app_id = int(app_id) if isinstance(app_id, algopy.UInt64) else app_id
+    def app_exists(self, app: algopy.UInt64 | int) -> bool:
+        app_id = _get_app_id(app)
         return app_id in self.application_data
 
     def update_application(
         self, app_id: int, **application_fields: typing.Unpack[ApplicationFields]
     ) -> None:
-        if app_id not in self.application_data:
-            raise ValueError("Application not found in testing context!")
+        app_data = self._get_app_data(app_id)
+        app_data.fields.update(application_fields)
 
-        self.application_data[app_id].fields.update(application_fields)
+    def get_box(
+        self,
+        app: algopy.Contract | algopy.Application | algopy.UInt64 | int,
+        key: algopy.Bytes | bytes,
+    ) -> bytes:
+        boxes = self._get_app_data(app).boxes
+        return boxes.get(_as_box_key(key), b"")
 
-    # TODO: 1.0 add app ids, access the boxes from application data
-    def get_box(self, name: algopy.Bytes | bytes) -> bytes:
-        name_bytes = name if isinstance(name, bytes) else name.value
-        return self.boxes.get(name_bytes, b"")
+    def set_box(
+        self,
+        app: algopy.Contract | algopy.Application | algopy.UInt64 | int,
+        key: algopy.Bytes | bytes,
+        value: algopy.Bytes | bytes,
+    ) -> None:
+        boxes = self._get_app_data(app).boxes
+        boxes[_as_box_key(key)] = as_bytes(value, max_size=MAX_BOX_SIZE)
 
-    def set_box(self, name: algopy.Bytes | bytes, content: algopy.Bytes | bytes) -> None:
-        name_bytes = name if isinstance(name, bytes) else name.value
-        content_bytes = content if isinstance(content, bytes) else content.value
-        self.boxes[name_bytes] = content_bytes
+    def delete_box(
+        self,
+        app: algopy.Contract | algopy.Application | algopy.UInt64 | int,
+        key: algopy.Bytes | bytes,
+    ) -> bool:
+        boxes = self._get_app_data(app).boxes
+        try:
+            del boxes[_as_box_key(key)]
+        except KeyError:
+            return False
+        return True
 
-    def delete_box(self, name: algopy.Bytes | bytes) -> bool:
-        name_bytes = name if isinstance(name, bytes) else name.value
-        if name_bytes in self.boxes:
-            del self.boxes[name_bytes]
-            return True
-        return False
-
-    def box_exists(self, name: algopy.Bytes | bytes) -> bool:
-        name_bytes = name if isinstance(name, bytes) else name.value
-        return name_bytes in self.boxes
+    def box_exists(
+        self,
+        app: algopy.Contract | algopy.Application | algopy.UInt64 | int,
+        key: algopy.Bytes | bytes,
+    ) -> bool:
+        boxes = self._get_app_data(app).boxes
+        return _as_box_key(key) in boxes
 
     def set_block(
         self, index: int, seed: algopy.UInt64 | int, timestamp: algopy.UInt64 | int
@@ -132,3 +148,27 @@ class LedgerContext:
             )
 
         self.global_fields.update(global_fields)
+
+
+def _as_box_key(key_: algopy.Bytes | bytes) -> bytes:
+    key = as_bytes(key_)
+    if not key:
+        raise ValueError("invalid box key")
+    return key
+
+
+def _get_app_id(app: algopy.UInt64 | algopy.Application | algopy.Contract | int) -> int:
+    from algopy_testing.models import Application, Contract
+    from algopy_testing.primitives import UInt64
+
+    if isinstance(app, Contract):
+        app_id = app.__app_id__
+    elif isinstance(app, Application):
+        app_id = app.id.value
+    elif isinstance(app, UInt64):
+        app_id = app.value
+    elif isinstance(app, int):
+        app_id = app
+    else:
+        raise TypeError("invalid type")
+    return app_id

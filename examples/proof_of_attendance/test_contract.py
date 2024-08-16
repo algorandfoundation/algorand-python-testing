@@ -57,9 +57,9 @@ def test_confirm_attendance(
     confirm()
 
     # Assert
-    assert context.ledger.get_box(key_prefix + context.default_sender.bytes) == algopy.op.itob(
-        1001
-    )
+    assert context.ledger.get_box(
+        contract, key_prefix + context.default_sender.bytes
+    ) == algopy.op.itob(1001)
 
 
 @pytest.mark.parametrize(
@@ -88,7 +88,9 @@ def test_claim_poa(
         fee=algopy.UInt64(0),
         asset_amount=algopy.UInt64(0),
     )
-    context.ledger.set_box(key_prefix + context.default_sender.bytes, algopy.op.itob(dummy_poa.id))
+    context.ledger.set_box(
+        contract, key_prefix + context.default_sender.bytes, algopy.op.itob(dummy_poa.id)
+    )
 
     # Act
     claim = getattr(contract, claim_poa)
