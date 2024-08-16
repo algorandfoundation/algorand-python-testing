@@ -74,20 +74,19 @@ gload_uint64 = _gload
 gload_bytes = _gload
 
 
-def gaid(a: algopy.UInt64 | int, /) -> algopy.Application:
+def gaid(a: algopy.UInt64 | int, /) -> algopy.UInt64:
+    # TODO: 1.0 add tests
     group = lazy_context.active_group
     if a >= group.active_txn.group_index:
         raise ValueError("can only get id's for transactions earlier in the group")
 
     txn = group.get_txn(a)
-    if txn.type not in (TransactionType.ApplicationCall, TransactionType.AssetConfig):
+    if txn.type == TransactionType.ApplicationCall:
+        return txn.created_app.id
+    elif txn.type == TransactionType.AssetConfig:
+        return txn.created_asset.id
+    else:
         raise ValueError(f"transaction at index {a} is not an Application Call or Asset Config")
-
-    # TODO: allow specifying created_asset_id, or created_application_id on group transactions
-    #       and then return those values here if specified.
-    #       Additionally stubs from puyapy are currently incorrect as this op should be typed as
-    #       returning UInt64, so perhaps leave this as NotImplemented until that is resolved
-    raise NotImplementedError
 
 
 def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:

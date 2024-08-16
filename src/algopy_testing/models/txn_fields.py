@@ -305,6 +305,14 @@ class TransactionFieldsGetter(abc.ABC):
         return self.fields["on_completion"]  # type: ignore[return-value]
 
     @property
+    def created_app(self) -> algopy.Application:
+        return self.fields["created_app"]  # type: ignore[return-value]
+
+    @property
+    def created_asset(self) -> algopy.Asset:
+        return self.fields["created_asset"]  # type: ignore[return-value]
+
+    @property
     def _logs(self) -> Sequence[algopy.Bytes]:
         try:
             logs: Sequence[algopy.Bytes] = self.fields["logs"]  # type: ignore[assignment]
