@@ -47,7 +47,7 @@ class _Global:
 
     @property
     def current_application_id(self) -> algopy.Application:
-        app = lazy_context.active_application
+        app = lazy_context.active_app
         app_data = lazy_context.get_app_data(app)
         if app_data.is_creating:
             return Application(0)
@@ -55,7 +55,7 @@ class _Global:
 
     @property
     def creator_address(self) -> algopy.Account:
-        app = lazy_context.active_application
+        app = lazy_context.active_app
         app_data = lazy_context.get_app_data(app)
         return app_data.fields["creator"]
 

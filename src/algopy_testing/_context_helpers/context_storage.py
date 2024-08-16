@@ -61,8 +61,8 @@ class _InternalContext:
         return group
 
     @property
-    def active_application(self) -> algopy.Application:
-        return self.ledger.get_application(self.active_group.active_app_id)
+    def active_app(self) -> algopy.Application:
+        return self.ledger.get_app(self.active_group.active_app_id)
 
     @property
     def active_app_id(self) -> int:

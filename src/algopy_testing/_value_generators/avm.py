@@ -164,7 +164,7 @@ class AVMValueGenerator:
 
         new_app_id = id if id is not None else next(lazy_context.ledger.app_id)
 
-        if new_app_id in lazy_context.ledger.application_data:
+        if new_app_id in lazy_context.ledger.app_data:
             raise ValueError(
                 f"Application id {new_app_id} has already been configured in test context!"
             )
@@ -195,7 +195,7 @@ class AVMValueGenerator:
                 raise TypeError(f"incorrect type for {field!r}")
             app_fields[field] = value  # type: ignore[literal-required]
 
-        lazy_context.ledger.application_data[new_app_id] = ApplicationContextData(
+        lazy_context.ledger.app_data[new_app_id] = ApplicationContextData(
             fields=app_fields,
             app_id=new_app_id,
             logs=logs or [],

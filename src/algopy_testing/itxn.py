@@ -96,7 +96,7 @@ class _BaseInnerTransactionFields:
         fields = {
             **get_txn_defaults(),
             "type": txn_type,
-            "sender": lazy_context.active_application.address,
+            "sender": lazy_context.active_app.address,
             **fields,
         }
         _narrow_covariant_types(fields)

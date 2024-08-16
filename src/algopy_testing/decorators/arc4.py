@@ -165,7 +165,7 @@ def create_abimethod_txns(
     method_selector = Bytes(method.get_selector())
     txn_fields = lazy_context.get_txn_op_fields()
 
-    contract_app = lazy_context.ledger.get_application(app_id)
+    contract_app = lazy_context.ledger.get_app(app_id)
     txn_app = txn_fields.setdefault("app_id", contract_app)
     txn_fields.setdefault("sender", lazy_context.value.default_sender)
     if contract_app != txn_app:
@@ -197,7 +197,7 @@ def create_abimethod_txns(
 def create_baremethod_txns(app_id: int) -> list[algopy.gtxn.TransactionBase]:
     txn_fields = lazy_context.get_txn_op_fields()
 
-    contract_app = lazy_context.ledger.get_application(app_id)
+    contract_app = lazy_context.ledger.get_app(app_id)
     txn_fields.setdefault("app_id", contract_app)
 
     txn_fields.setdefault(

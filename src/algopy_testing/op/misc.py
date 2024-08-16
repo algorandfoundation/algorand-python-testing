@@ -24,7 +24,7 @@ def _get_app(app: algopy.Application | algopy.UInt64 | int) -> Application:
     if isinstance(app, Application):
         return app
     if app >= 1001:
-        return lazy_context.ledger.get_application(app)
+        return lazy_context.ledger.get_app(app)
     txn = lazy_context.active_group.active_txn
     return txn.apps(app)
 

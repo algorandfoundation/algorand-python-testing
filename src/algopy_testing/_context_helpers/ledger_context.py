@@ -22,7 +22,7 @@ class LedgerContext:
         from algopy_testing.models.account import AccountContextData, get_empty_account
 
         self.account_data = defaultdict[str, AccountContextData](get_empty_account)
-        self.application_data: dict[int, ApplicationContextData] = {}
+        self.app_data: dict[int, ApplicationContextData] = {}
         self.asset_data: dict[int, AssetFields] = {}
         self.blocks: dict[int, dict[str, int]] = {}
         self.global_fields: GlobalFields = get_default_global_fields()
@@ -114,7 +114,7 @@ class LedgerContext:
             raise ValueError("Asset not found in testing context!")
         self.asset_data[asset_id].update(asset_fields)
 
-    def get_application(self, app: algopy.UInt64 | int) -> algopy.Application:
+    def get_app(self, app: algopy.UInt64 | int) -> algopy.Application:
         """Get an application by ID.
 
         Args:
@@ -138,9 +138,9 @@ class LedgerContext:
             bool: True if the application exists, False otherwise.
         """
         app_id = _get_app_id(app)
-        return app_id in self.application_data
+        return app_id in self.app_data
 
-    def update_application(
+    def update_app(
         self, app_id: int, **application_fields: typing.Unpack[ApplicationFields]
     ) -> None:
         """Update application fields.
@@ -375,7 +375,7 @@ class LedgerContext:
         """
         app_id = _get_app_id(app)
         try:
-            return self.application_data[app_id]
+            return self.app_data[app_id]
         except KeyError:
             raise ValueError("Unknown app id, is there an active transaction?") from None
 

@@ -57,7 +57,7 @@ class _ContractMeta(type):
         assert isinstance(instance, Contract)
         cls_state_totals = cls._state_totals or StateTotals()  # type: ignore[attr-defined]
         state_totals = _get_state_totals(instance, cls_state_totals)
-        context.ledger.update_application(
+        context.ledger.update_app(
             app_id,
             global_num_bytes=algopy_testing.UInt64(state_totals.global_bytes),
             global_num_uint=algopy_testing.UInt64(state_totals.global_uints),
@@ -114,7 +114,7 @@ class Contract(metaclass=_ContractMeta):
             ) -> typing.Any:
                 context = lazy_context.value
                 # TODO: 1.0 should populate the app txn as much as possible like abimethod does
-                app = context.ledger.get_application(_get_self_or_active_app_id(self))
+                app = context.ledger.get_app(_get_self_or_active_app_id(self))
                 txns = [context.any.txn.application_call(app_id=app)]
                 with context.txn._maybe_implicit_txn_group(txns):
                     try:
