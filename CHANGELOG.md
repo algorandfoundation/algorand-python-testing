@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v0.3.0-beta.3 (2024-08-16)
+
+### Refactor
+
+* refactor: move box storage onto ApplicationContextData (#12)
+
+* refactor: move box storage onto ApplicationContextData
+
+Require app reference when interacting with boxes
+
+* refactor: moving getters setters of global local state to ledger context
+
+* refactor: more laconic names for methods/vars referencing application -&gt; app
+
+---------
+
+Co-authored-by: Altynbek Orumbayev &lt;altynbek.orumbayev@makerx.com.au&gt; ([`57a8f13`](https://github.com/algorandfoundation/algorand-python-testing/commit/57a8f137c99e0890b98daf821cb8c47a19d20350))
+
 ## v0.3.0-beta.2 (2024-08-16)
 
 ### Chore
@@ -42,6 +60,12 @@ active txn can append logs
 ---------
 
 Co-authored-by: Daniel McGregor &lt;daniel.mcgregor@makerx.com.au&gt; ([`71801f0`](https://github.com/algorandfoundation/algorand-python-testing/commit/71801f01e49b683d81fa46d2ddb1c8aaf38b89f2))
+
+### Unknown
+
+* 0.3.0-beta.2
+
+[skip ci] ([`439b563`](https://github.com/algorandfoundation/algorand-python-testing/commit/439b56309506ac4ebdfe2ce053b3fb4497789ae5))
 
 ## v0.3.0-beta.1 (2024-08-14)
 
