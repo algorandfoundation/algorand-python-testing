@@ -61,6 +61,7 @@ class AssetConfigFields(TransactionBaseFields, total=False):
     reserve: algopy.Account
     freeze: algopy.Account
     clawback: algopy.Account
+    created_asset: algopy.Asset
 
 
 class ApplicationCallFields(TransactionBaseFields, total=False):
@@ -76,10 +77,9 @@ class ApplicationCallFields(TransactionBaseFields, total=False):
     accounts: Sequence[algopy.Account]
     assets: Sequence[algopy.Asset]
     apps: Sequence[algopy.Application]
-    # TODO: 1.0 when storing these pages values, combine into one bytes and then
-    # "chop" into 4096 length pieces. Covered in ITxns, ensure Txns use the same method
     approval_program: Sequence[algopy.Bytes]
     clear_state_program: Sequence[algopy.Bytes]
+    created_app: algopy.Application
 
 
 class KeyRegistrationFields(TransactionBaseFields, total=False):
@@ -151,6 +151,8 @@ _FIELD_TYPES = {
     "vote_first": UInt64,
     "vote_last": UInt64,
     "vote_key_dilution": UInt64,
+    "created_app": Application,
+    "created_asset": Asset,
 }
 
 
@@ -332,7 +334,7 @@ def narrow_field_type(field: str, value: object) -> object:  # noqa: PLR0911
     return narrow(value)
 
 
-def combine_into_max_byte_pages(pages: tuple[Bytes, ...]) -> tuple[Bytes, ...]:
+def combine_into_max_byte_pages(pages: Sequence[Bytes]) -> Sequence[Bytes]:
     raw_pages = b"".join(page.value for page in pages)
     total_pages = (len(raw_pages) + MAX_BYTES_SIZE - 1) // MAX_BYTES_SIZE
     full_pages = [
@@ -431,7 +433,7 @@ def _as_bool(value: typing.Any) -> bool:
     return value
 
 
-def _narrow_tuple(value: typing.Any, item_type: type) -> tuple[typing.Any, ...]:
+def _narrow_tuple(value: typing.Any, item_type: type) -> Sequence[typing.Any]:
     if not isinstance(value, tuple):
         raise TypeError("unexpected type")
 

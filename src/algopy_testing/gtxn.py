@@ -6,14 +6,12 @@ from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import MAX_ITEMS_IN_LOG
 from algopy_testing.enums import TransactionType
 from algopy_testing.models import Application
-from algopy_testing.models.txn_fields import TransactionFieldsGetter
-from algopy_testing.primitives.uint64 import UInt64
+from algopy_testing.models.txn_fields import TransactionFieldsGetter, combine_into_max_byte_pages
+from algopy_testing.primitives import Bytes, UInt64
 from algopy_testing.utils import convert_native_to_stack, get_new_scratch_space
 
 if typing.TYPE_CHECKING:
     import algopy
-
-    from algopy_testing.primitives.bytes import Bytes
 
 __all__ = [
     "ApplicationCallTransaction",
@@ -36,7 +34,11 @@ class TransactionBase(TransactionFieldsGetter):
     # we can define all the fields in TransactionBase
     def __init__(self, group_index_or_fields: algopy.UInt64 | int | dict[str, typing.Any]):
         if isinstance(group_index_or_fields, dict):
-            self._fields: dict[str, typing.Any] | None = group_index_or_fields
+            fields = group_index_or_fields
+            for field in ("approval_program", "clear_state_program"):
+                pages = fields[field]
+                fields[field] = combine_into_max_byte_pages(pages)
+            self._fields: dict[str, typing.Any] | None = fields
             self._group_index = 0
         else:
             self._fields = None
