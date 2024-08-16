@@ -27,6 +27,7 @@ from algopy_testing.utils import (
     as_int512,
     as_string,
     int_to_bytes,
+    raise_mocked_function_error,
 )
 
 if typing.TYPE_CHECKING:
@@ -1065,25 +1066,28 @@ class ARC4Client(typing.Protocol): ...
 
 
 class _ABICall:
+
+    def __init__(self, func_name: str) -> None:
+        self.func_name = func_name
+
     def __call__(
         self,
-        method: typing.Callable[..., typing.Any] | str,
+        _method: typing.Callable[..., typing.Any] | str,
         /,
-        *args: typing.Any,
-        **kwargs: typing.Any,
+        *_args: typing.Any,
+        **_kwargs: typing.Any,
     ) -> typing.Any:
         # Implement the actual abi_call logic here
-        raise NotImplementedError(
-            "'abi_call' is not available in test context. "
-            "Mock using your preferred testing framework."
-        )
+        raise_mocked_function_error(self.func_name)
 
     def __getitem__(self, return_type: type) -> typing.Any:
         return self
 
 
-# TODO: Implement abi_call
-abi_call = _ABICall()
+# TODO: Implement these when calling other puya contracts
+abi_call = _ABICall("abi_call")
+arc4_create = _ABICall("arc4_create")
+arc4_update = _ABICall("arc4_update")
 
 
 def emit(event: str | Struct, /, *args: object) -> None:

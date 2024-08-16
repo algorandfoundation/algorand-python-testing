@@ -10,6 +10,7 @@ from algopy_testing.enums import TransactionType
 from algopy_testing.models import Account, Application, Asset
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.uint64 import UInt64
+from algopy_testing.utils import raise_mocked_function_error
 
 if typing.TYPE_CHECKING:
     import algopy
@@ -109,9 +110,8 @@ def min_balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     return account.min_balance
 
 
-def exit(a: UInt64 | int, /) -> typing.Never:  # noqa: A001
-    value = UInt64(a) if isinstance(a, int) else a
-    raise NotImplementedError(f"exit with value: {value}")
+def exit(_a: UInt64 | int, /) -> typing.Never:  # noqa: A001
+    raise_mocked_function_error("exit")
 
 
 def app_opted_in(

@@ -1,3 +1,9 @@
+from algopy_testing._compiled import (
+    CompiledContract,
+    CompiledLogicSig,
+    compile_contract,
+    compile_logicsig,
+)
 from algopy_testing.decorators.subroutine import subroutine
 from algopy_testing.enums import OnCompleteAction, TransactionType
 from algopy_testing.models.account import Account
@@ -23,6 +29,8 @@ __all__ = [
     "BigUInt",
     "Bytes",
     "BytesBacked",
+    "CompiledContract",
+    "CompiledLogicSig",
     "Contract",
     "Global",
     "GlobalState",
@@ -37,6 +45,8 @@ __all__ = [
     "Txn",
     "UInt64",
     "arc4",
+    "compile_contract",
+    "compile_logicsig",
     "ensure_budget",
     "gtxn",
     "itxn",

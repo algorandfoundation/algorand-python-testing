@@ -20,7 +20,7 @@ from ecdsa import (  # type: ignore  # noqa: PGH003
 from algopy_testing._context_helpers import lazy_context
 from algopy_testing.enums import OnCompleteAction
 from algopy_testing.primitives import Bytes, UInt64
-from algopy_testing.utils import as_bytes
+from algopy_testing.utils import as_bytes, raise_mocked_function_error
 
 
 class ECDSA(enum.Enum):
@@ -174,9 +174,7 @@ def vrf_verify(
     _c: Bytes | bytes,
     /,
 ) -> tuple[Bytes, bool]:
-    raise NotImplementedError(
-        "'op.vrf_verify' is not implemented. Mock using preferred testing tools."
-    )
+    raise_mocked_function_error("vrf_verify")
 
 
 class EC(enum.StrEnum):
@@ -190,11 +188,10 @@ class EC(enum.StrEnum):
 
 class _EllipticCurve:
     def __getattr__(self, name: str) -> typing.Any:
-        raise NotImplementedError(
-            f"EllipticCurve.{name} is currently not available as a native "
-            "`algorand-python-testing` type. Use your own preferred testing "
-            "framework of choice to mock the behaviour."
-        )
+        def mock(*_args: typing.Any, **_kwargs: typing.Any) -> None:
+            raise_mocked_function_error(f"{EllipticCurve}.{name}")
+
+        return mock
 
 
 EllipticCurve = _EllipticCurve()

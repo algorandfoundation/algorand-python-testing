@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import secrets
+import typing
 from typing import TYPE_CHECKING
 
 import algosdk
@@ -165,3 +166,10 @@ def get_new_scratch_space() -> list[algopy.Bytes | algopy.UInt64]:
 
 def arc4_prefix(value: bytes) -> bytes:
     return ARC4_RETURN_PREFIX + value
+
+
+def raise_mocked_function_error(func_name: str) -> typing.Never:
+    raise NotImplementedError(
+        f"{func_name!r} is not available in test context. "
+        "Mock using your preferred testing framework."
+    )
