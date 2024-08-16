@@ -178,6 +178,7 @@ def _get_itxn_result(itxn: _BaseInnerTransactionFields) -> _BaseInnerTransaction
 # handlers for submitting each txn type, done here rather than on the typed specific classes
 # as not everything goes through those types
 def _on_pay(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
+    # TODO: update balances on ledger?
     return fields
 
 
@@ -207,10 +208,12 @@ def _on_asset_config(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
 
 
 def _on_asset_freeze(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
+    # TODO: update freeze flag on asset?
     return fields
 
 
 def _on_asset_xfer(fields: dict[str, typing.Any]) -> dict[str, typing.Any]:
+    # TODO: update asset balances on ledger?
     if fields["asset_sender"] == Account():
         fields["asset_sender"] = fields["sender"]
     return fields
