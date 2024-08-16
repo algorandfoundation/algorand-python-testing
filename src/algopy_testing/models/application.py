@@ -9,6 +9,8 @@ from algopy_testing.protocols import UInt64Backed
 from algopy_testing.utils import as_bytes, as_int64
 
 if typing.TYPE_CHECKING:
+    from collections.abc import Sequence
+
     import algopy
 
     from algopy_testing.models.contract import Contract
@@ -78,14 +80,6 @@ class ApplicationContextData:
             del self.local_state[(account_public_key, key_bytes)]
         else:
             self.local_state[(account_public_key, key_bytes)] = value
-
-    def _get_app_logs(self) -> list[bytes]:
-        """Get the user supplied custom logs for the application.
-
-        If exists, it will be prepended to the logs array stored within
-        each transaction object.
-        """
-        return self._app_logs
 
 
 class Application(UInt64Backed):

@@ -25,8 +25,8 @@ if typing.TYPE_CHECKING:
     from algopy_testing.models.txn_fields import TransactionBaseFields
 
 from algopy_testing import gtxn
-from algopy_testing._context_helpers import lazy_context
 from algopy_testing._itxn_loader import ITxnLoader
+from algopy_testing.gtxn import TransactionBase
 from algopy_testing.itxn import InnerTransaction, submit_txns
 from algopy_testing.models import Application
 from algopy_testing.primitives import UInt64
@@ -274,39 +274,6 @@ class TransactionGroup:
             raise RuntimeError("itxn field without itxn begin")
         return self._constructing_itxn_group[-1]
 
-    def get_app_logs(self, app_id: algopy.UInt64 | int) -> list[bytes]:
-        """Retrieve the application logs for a given app ID.
-
-        :param app_id: The ID of the application.
-        :type app_id: algopy.UInt64 | int
-        :param app_id: algopy.UInt64 | int:
-        :returns: The application logs for the given app ID.
-        :rtype: list[bytes]
-        :raises ValueError: If no application logs are available for the
-            given app ID.
-        """
-        import algopy
-
-        app_id = int(app_id) if isinstance(app_id, algopy.UInt64) else app_id
-
-        app_data = lazy_context.get_app_data(app_id)
-        user_supplied_logs = app_data._get_app_logs()
-
-        if user_supplied_logs:
-            # If user explicitly set logs on an app, return those
-            # over logs stored within each txn
-            return user_supplied_logs
-
-        for txn in self.txns:
-            if txn.fields.get("app_id", None) == app_id:
-                return txn._app_logs
-
-        raise ValueError(
-            f"No logs for app with id - {app_id}. "
-            "Use `context.any.txn.application_call(logs=[...])` on an app associated with app call"
-            "to set custom logs, or `algopy.log()` in contracts to store logs automatically."
-        )
-
     def get_txn(self, index: int | algopy.UInt64) -> algopy.gtxn.Transaction:
         try:
             return self.txns[int(index)]  # type: ignore[return-value]
@@ -323,11 +290,16 @@ class TransactionGroup:
         self,
         index: algopy.UInt64 | int,
     ) -> algopy.UInt64 | algopy.Bytes:
-        slots = self.active_txn._get_scratch_space()
-        try:
-            return slots[int(index)]
-        except IndexError:
-            raise ValueError("invalid scratch slot") from None
+        """Retrieves the scratch values for a specific slot in the active
+        transaction.
+
+        :param index: algopy.UInt64 | int: Which scratch slot to query
+        :returns: Scratch slot value for the active transaction.
+        :rtype: algopy.UInt64 | algopy.Bytes
+        """
+        # this wraps an internal method on TransactionBase, so it can be exposed to
+        # consumers of algopy_testing
+        return self._active_txn.get_scratch_slot(index)
 
     def get_scratch_space(
         self,
@@ -337,7 +309,7 @@ class TransactionGroup:
         :returns: List of scratch space values for the active
             transaction.
         """
-        return self.active_txn._get_scratch_space()
+        return self._active_txn.get_scratch_space()
 
     def _add_itxn_group(self, group: Sequence[InnerTransactionResultType]) -> None:
         self._itxn_groups.append(group)

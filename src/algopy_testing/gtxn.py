@@ -11,6 +11,8 @@ from algopy_testing.primitives import Bytes, UInt64
 from algopy_testing.utils import convert_native_to_stack, get_new_scratch_space
 
 if typing.TYPE_CHECKING:
+    from collections.abc import Sequence
+
     import algopy
 
 __all__ = [
@@ -27,8 +29,6 @@ __all__ = [
 
 class TransactionBase(TransactionFieldsGetter):
     type_enum: TransactionType
-    _app_logs: list[bytes]
-    _scratch_space: list[Bytes | UInt64]
 
     # since the only thing that matters is that the implementation matches the stubs
     # we can define all the fields in TransactionBase
@@ -44,7 +44,6 @@ class TransactionBase(TransactionFieldsGetter):
             self._fields = None
             self._group_index = int(group_index_or_fields)
 
-        self._app_logs: list[bytes] = []
         self._scratch_space = get_new_scratch_space()
         self._is_active = False
 
@@ -86,42 +85,36 @@ class TransactionBase(TransactionFieldsGetter):
             return Application(0)
         return app_id
 
-    def _get_app_logs(self) -> list[bytes]:
+    def append_log(self, log: bytes) -> None:
+        if not self.is_active:
+            raise RuntimeError("Can only add logs to active transaction")
         if self.type_enum != TransactionType.ApplicationCall:
-            raise ValueError("Can only get logs from ApplicationCallTransaction!")
+            raise RuntimeError("Can only add logs to ApplicationCallTransaction!")
+        logs = self.fields["logs"]
+        assert isinstance(logs, list), "expected list"
+        if len(logs) + 1 > MAX_ITEMS_IN_LOG:
+            raise RuntimeError(
+                f"Too many log calls in program, up to {MAX_ITEMS_IN_LOG} is allowed"
+            )
+        logs.append(log)
 
-        return self._app_logs
-
-    def _add_app_logs(self, logs: bytes | list[bytes]) -> None:
-        logs = [logs] if isinstance(logs, bytes) else logs
-
-        if self.type_enum != TransactionType.ApplicationCall:
-            raise ValueError("Can only add logs to ApplicationCallTransaction!")
-
-        if len(logs) > MAX_ITEMS_IN_LOG:
-            # Note this isn't 100% accurate to AVM behaviour as it counts elements not accesses
-            # to the logs. But generally 32 calls to log() opcode will result in 32 items being
-            # added to the logs which is comparable to 32 accesses to the logs
-            raise ValueError("Too many log calls in program. up to 32 is allowed")
-
-        self._app_logs.extend(logs)
-
-    def _set_scratch_slot(
+    def set_scratch_slot(
         self, index: UInt64 | int, value: algopy.Bytes | algopy.UInt64 | bytes | int
     ) -> None:
         index = int(index) if isinstance(index, UInt64) else index
-        self._scratch_space[index] = convert_native_to_stack(value)
+        try:
+            self._scratch_space[index] = convert_native_to_stack(value)
+        except IndexError:
+            raise ValueError("invalid scratch slot") from None
 
-    def _set_scratch_space(
-        self,
-        scratch_space: typing.Sequence[algopy.Bytes | algopy.UInt64 | bytes | int],
-    ) -> None:
-        new_scratch_space = get_new_scratch_space()
-        for index, value in enumerate(scratch_space):
-            new_scratch_space[index] = convert_native_to_stack(value)
-        self._scratch_space = new_scratch_space
+    def get_scratch_slot(self, index: UInt64 | int) -> algopy.UInt64 | algopy.Bytes:
+        index = int(index) if isinstance(index, UInt64) else index
+        try:
+            return self._scratch_space[index]
+        except IndexError:
+            raise ValueError("invalid scratch slot") from None
 
-    def _get_scratch_space(self) -> list[Bytes | UInt64]:
+    def get_scratch_space(self) -> Sequence[Bytes | UInt64]:
         return self._scratch_space
 
 

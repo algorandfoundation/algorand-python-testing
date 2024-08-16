@@ -61,7 +61,8 @@ def context() -> Generator[AlgopyTestContext, None, None]:
 
 def test_emit(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
     dummy_app = context.any.application()
-    with context.txn.create_group([context.any.txn.application_call(app_id=dummy_app)]):
+    app_txn = context.any.txn.application_call(app_id=dummy_app)
+    with context.txn.create_group([app_txn]):
         _test_data = Swapped(
             algopy.String("hello"),
             MAX_UINT512,
@@ -83,7 +84,7 @@ def test_emit(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
             arc4.DynamicArray(arc4.UInt16(1), arc4.UInt16(2), arc4.UInt16(3)),
             arc4.Tuple((arc4.UInt32(1), arc4.UInt64(2), arc4.String("hello"))),
         )
-        avm_result = get_avm_result(
+        avm_result_ = get_avm_result(
             "verify_emit",
             a=_test_data.a.value,
             b=_test_data.b,
@@ -102,6 +103,9 @@ def test_emit(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
             s=_test_data_arc4.s.bytes.value,
             t=_test_data_arc4.t.bytes.value,
         )
+        assert isinstance(avm_result_, list)
+        avm_result = [base64.b64decode(b) for b in avm_result_]
+
         arc4.emit(_test_data_arc4)
         arc4.emit(
             "Swapped(string,uint512,uint64,byte[],uint64,bool,byte[],string,uint64,uint256,ufixed32x8,ufixed256x16,bool,uint8[3],uint16[],(uint32,uint64,string))",
@@ -143,7 +147,5 @@ def test_emit(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
             _test_data_arc4.t,
         )
 
-    arc4_result = [
-        base64.b64encode(log).decode() for log in context.txn.last_group.get_app_logs(dummy_app.id)
-    ]
+    arc4_result = [app_txn.logs(i) for i in range(app_txn.num_logs)]
     assert avm_result == arc4_result

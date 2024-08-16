@@ -9,7 +9,6 @@ import typing
 import algosdk
 from Cryptodome.Hash import SHA512
 
-from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import (
     ARC4_RETURN_PREFIX,
     BITS_IN_BYTE,
@@ -1120,14 +1119,7 @@ def emit(event: str | Struct, /, *args: object) -> None:
             arc4.emit("Swapped", b, a)
     ```
     """  # noqa: E501
-    import algopy
-
-    active_txn = lazy_context.active_group.active_txn
-
-    if active_txn.type != algopy.TransactionType.ApplicationCall:
-        raise ValueError("Cannot emit events outside of application call context!")
-    if not active_txn.app_id:
-        raise ValueError("Cannot emit event: missing `app_id` in associated call transaction!")
+    from algopy_testing.utilities.log import log
 
     if isinstance(event, str):
         arc4_args = tuple(_cast_arg_as_arc4(arg) for arg in args)
@@ -1146,9 +1138,7 @@ def emit(event: str | Struct, /, *args: object) -> None:
         raise TypeError("expected str or Struct for event")
 
     event_hash = SHA512.new(event_str.encode(), truncate="256").digest()
-    active_txn._add_app_logs(
-        logs=event_hash[:4] + event_data.value,
-    )
+    log(event_hash[:4] + event_data.value)
 
 
 def native_value_to_arc4(value: object) -> _ABIEncoded:  # noqa: PLR0911

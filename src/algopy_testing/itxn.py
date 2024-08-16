@@ -14,14 +14,8 @@ from algopy_testing.models.txn_fields import (
     get_txn_defaults,
     narrow_field_type,
 )
-from algopy_testing.primitives import Bytes, UInt64
 
 logger = logging.getLogger(__name__)
-
-if typing.TYPE_CHECKING:
-    from collections.abc import Callable
-
-    import algopy
 
 
 __all__ = [
@@ -62,29 +56,6 @@ class _BaseInnerTransactionResult(TransactionFieldsGetter):
     @property
     def fields(self) -> dict[str, object]:
         return self._fields
-
-    @property
-    def _logs(self) -> list[bytes]:
-        try:
-            return lazy_context.active_group.get_app_logs(self.app_id.id)
-        except KeyError:
-            return []
-
-    @property
-    def last_log(self) -> algopy.Bytes:
-        try:
-            last = self._logs[-1]
-        except IndexError:
-            last = b""
-        return Bytes(last)
-
-    @property
-    def num_logs(self) -> algopy.UInt64:
-        return UInt64(len(self._logs))
-
-    @property
-    def logs(self) -> Callable[[algopy.UInt64 | int], algopy.Bytes]:
-        return lambda i: Bytes(self._logs[int(i)])
 
 
 class PaymentInnerTransaction(_BaseInnerTransactionResult):

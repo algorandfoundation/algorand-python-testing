@@ -3,6 +3,7 @@ from __future__ import annotations
 import abc
 import typing
 
+from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import MAX_BYTES_SIZE
 from algopy_testing.enums import OnCompleteAction, TransactionType
 from algopy_testing.models import Account, Application, Asset
@@ -72,7 +73,7 @@ class ApplicationCallFields(TransactionBaseFields, total=False):
     local_num_uint: algopy.UInt64
     local_num_bytes: algopy.UInt64
     extra_program_pages: algopy.UInt64
-    last_log: algopy.Bytes
+    logs: Sequence[algopy.Bytes]
     app_args: Sequence[algopy.Bytes]
     accounts: Sequence[algopy.Account]
     assets: Sequence[algopy.Asset]
@@ -129,7 +130,6 @@ _FIELD_TYPES = {
     "metadata_hash": Bytes,
     "note": Bytes,
     "lease": Bytes,
-    "last_log": Bytes,
     "vote_key": Bytes,
     "selection_key": Bytes,
     "state_proof_key": Bytes,
@@ -164,6 +164,7 @@ def get_txn_defaults() -> Mapping[str, typing.Any]:
     # a random 32 byte hash is as good as a real txn id here
     fields["txn_id"] = Bytes(generate_random_bytes32())
 
+    # logs intentionally omitted, as they can fall back to application mocked logs
     for field in (
         "app_args",
         "accounts",
@@ -302,6 +303,31 @@ class TransactionFieldsGetter(abc.ABC):
     @property
     def on_completion(self) -> algopy.OnCompleteAction:
         return self.fields["on_completion"]  # type: ignore[return-value]
+
+    @property
+    def _logs(self) -> Sequence[algopy.Bytes]:
+        try:
+            logs: Sequence[algopy.Bytes] = self.fields["logs"]  # type: ignore[assignment]
+        except KeyError:
+            # if no txn logs, fall back to logs on app
+            app_data = lazy_context.get_app_data(self.app_id)
+            logs = list(map(Bytes, app_data.app_logs))
+        return logs
+
+    @property
+    def last_log(self) -> algopy.Bytes:
+        try:
+            return self._logs[-1]
+        except IndexError:
+            return Bytes(b"")
+
+    @property
+    def num_logs(self) -> algopy.UInt64:
+        return UInt64(len(self._logs))
+
+    @property
+    def logs(self) -> Callable[[algopy.UInt64 | int], algopy.Bytes]:
+        return _create_array_accessor(self._logs)
 
     def __getattr__(self, name: str) -> object:
         try:
