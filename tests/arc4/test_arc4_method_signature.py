@@ -5,7 +5,10 @@ import algopy
 import algopy_testing
 import algosdk
 import pytest
+from algokit_utils.beta.algorand_client import AlgorandClient, AssetCreateParams, PayParams
 from algopy import arc4
+from algopy_testing.primitives.uint64 import UInt64
+from algosdk.atomic_transaction_composer import TransactionWithSigner
 from algosdk.v2client.algod import AlgodClient
 
 from tests.artifacts.Arc4ABIMethod.contract import (
@@ -83,15 +86,36 @@ def test_app_args_is_correct_with_alias(
     ]
 
 
-def test_app_args_is_correct_with_txn(context: algopy_testing.AlgopyTestContext) -> None:
+def test_app_args_is_correct_with_txn(
+    context: algopy_testing.AlgopyTestContext,
+    get_avm_result: AVMInvoker,
+    localnet_creator_address: str,
+    algorand: AlgorandClient,
+) -> None:
     # arrange
     contract = SignaturesContract()
     contract.create()
 
     # act
+
+    get_avm_result(
+        "with_txn",
+        value="hello",
+        pay=TransactionWithSigner(
+            txn=algorand.transactions.payment(
+                PayParams(
+                    sender=localnet_creator_address,
+                    receiver=localnet_creator_address,
+                    amount=123,
+                )
+            ),
+            signer=algorand.account.get_signer("default"),
+        ),
+        arr=[1, 2],
+    )
     contract.with_txn(
         arc4.String("hello"),
-        context.any.txn.asset_config(total=algopy.UInt64(123)),
+        context.any.txn.payment(amount=algopy.UInt64(123)),
         UInt8Array(arc4.UInt8(1), arc4.UInt8(2)),
     )
 
@@ -99,7 +123,7 @@ def test_app_args_is_correct_with_txn(context: algopy_testing.AlgopyTestContext)
     txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(3)]
     assert app_args == [
-        algosdk.abi.Method.from_signature("with_txn(string,acfg,uint8[])void").get_selector(),
+        algosdk.abi.Method.from_signature("with_txn(string,pay,uint8[])void").get_selector(),
         b"\x00\x05hello",
         b"\x00\x02\x01\x02",
     ]
@@ -107,14 +131,24 @@ def test_app_args_is_correct_with_txn(context: algopy_testing.AlgopyTestContext)
 
 def test_app_args_is_correct_with_asset(
     context: algopy_testing.AlgopyTestContext,
+    localnet_creator_address: str,
+    algorand: AlgorandClient,
+    get_avm_result: AVMInvoker,
 ) -> None:  # arrange
     contract = SignaturesContract()
     contract.create()
 
     # act
+    asa_id = algorand.send.asset_create(
+        AssetCreateParams(
+            sender=localnet_creator_address,
+            total=123,
+        )
+    )["confirmation"]["asset-index"]
+    get_avm_result("with_asset", value="hello", asset=asa_id, arr=[1, 2])
     contract.with_asset(
         arc4.String("hello"),
-        context.any.asset(total=algopy.UInt64(123)),
+        context.any.asset(total=UInt64(123)),
         UInt8Array(arc4.UInt8(1), arc4.UInt8(2)),
     )
 
@@ -129,7 +163,44 @@ def test_app_args_is_correct_with_asset(
     ]
 
 
-def test_app_args_is_correct_with_application(context: algopy_testing.AlgopyTestContext) -> None:
+def test_app_args_is_correct_with_account(
+    context: algopy_testing.AlgopyTestContext,
+    localnet_creator_address: str,
+    get_avm_result: AVMInvoker,
+) -> None:  # arrange
+    contract = SignaturesContract()
+    contract.create()
+
+    # act
+    test_account = context.any.account(total_apps_created=UInt64(1))
+    contract.with_acc(
+        arc4.String("hello"),
+        test_account,
+        UInt8Array(arc4.UInt8(1), arc4.UInt8(2)),
+    )
+    get_avm_result(
+        "with_acc",
+        value="hello",
+        acc=localnet_creator_address,
+        arr=[1, 2],
+        accounts=[localnet_creator_address, localnet_creator_address],
+    )
+
+    # assert
+    txn = context.txn.last_active
+    app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
+    assert app_args == [
+        algosdk.abi.Method.from_signature("with_acc(string,account,uint8[])void").get_selector(),
+        b"\x00\x05hello",
+        b"\x01",
+        b"\x00\x02\x01\x02",
+    ]
+
+
+def test_app_args_is_correct_with_application(
+    context: algopy_testing.AlgopyTestContext,
+    get_avm_result: AVMInvoker,
+) -> None:
     # arrange
     contract = SignaturesContract()
     contract.create()
@@ -138,6 +209,13 @@ def test_app_args_is_correct_with_application(context: algopy_testing.AlgopyTest
     other_app = context.any.application(id=1234)
 
     # act
+    get_avm_result(
+        "with_app",
+        value="hello",
+        app=get_avm_result.client.app_id,
+        arr=[1, 2],
+        foreign_apps=[get_avm_result.client.app_id, get_avm_result.client.app_id],
+    )
     contract.with_app(
         arc4.String("hello"),
         other_app,
@@ -195,7 +273,12 @@ def test_app_args_is_correct_with_complex(context: algopy_testing.AlgopyTestCont
     assert result[1].bytes == struct.bytes
 
 
-def test_prepare_txns_with_complex(context: algopy_testing.AlgopyTestContext) -> None:
+def test_prepare_txns_with_complex(
+    context: algopy_testing.AlgopyTestContext,
+    # get_avm_result: AVMInvoker,
+    # algorand: AlgorandClient,
+    # localnet_creator_address: str,
+) -> None:
     # arrange
     contract = SignaturesContract()
     contract.create()
@@ -214,6 +297,23 @@ def test_prepare_txns_with_complex(context: algopy_testing.AlgopyTestContext) ->
     )
 
     # act
+    # TODO: 1.0 Figure out proper way to pass encoded struct
+    # get_avm_result(
+    #     "complex_sig",
+    #     struct1=struct.bytes.value,
+    #     txn=TransactionWithSigner(
+    #         txn=algorand.transactions.payment(
+    #             PayParams(
+    #                 sender=localnet_creator_address,
+    #                 receiver=localnet_creator_address,
+    #                 amount=123,
+    #             )
+    #         ),
+    #         signer=algorand.account.get_signer("default"),
+    #     ),
+    #     acc=localnet_creator_address,
+    #     five=[5],
+    # )
     with context.txn.create_group(gtxns=[deferred_app_call]):
         result = deferred_app_call.submit()
 

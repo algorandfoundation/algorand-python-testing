@@ -35,6 +35,9 @@ class AVMInvoker:
             transaction_parameters={
                 # random note avoids duplicate txn if tests are running concurrently
                 "note": _random_note(),
+                "accounts": kwargs.pop("accounts", None),
+                "foreign_apps": kwargs.pop("foreign_apps", None),
+                "foreign_assets": kwargs.pop("foreign_assets", None),
                 "suggested_params": kwargs.pop("suggested_params", None),
                 "on_complete": on_complete,
             },
