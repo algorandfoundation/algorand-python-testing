@@ -126,16 +126,23 @@ clean_dist = "rm -rf dist"
 
 # docs environment
 [tool.hatch.envs.docs]
+detached = true
+path = ".venv.docs"
+type = "virtual"
+python = "3.12"
 dependencies = [
     "sphinx>=7.2.6",
     "furo>=2024.1.29",
     "myst-parser>=2.0.0",
     "sphinx-autodoc2>=0.5.0",
-    "sphinx-copybutton>=0.5.2"
+    "sphinx-copybutton>=0.5.2",
+    "sphinx-autobuild>=2024.4.16",
+    "sphinx-mermaid>=0.0.8",
 ]
 
 [tool.hatch.envs.docs.scripts]
 build = "sphinx-build docs docs/_build -W --keep-going -n -E"
+dev = "sphinx-autobuild docs docs/_build"
 
 # Examples environment
 [tool.hatch.envs.examples]
