@@ -11,6 +11,7 @@ project = "Algorand Python Testing"
 copyright = "2024, Algorand Foundation"  # noqa: A001
 author = "Algorand Foundation"
 
+
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
@@ -19,6 +20,8 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
     "myst_parser",
+    "sphinxmermaid",
+    "autodoc2",  # Add this line
 ]
 
 templates_path = ["_templates"]
@@ -56,3 +59,32 @@ myst_enable_extensions = [
     "colon_fence",
     "fieldlist",
 ]
+
+# Add autodoc2 configuration
+autodoc2_packages = [
+    {
+        "path": "../src/algopy_testing",
+        "module": "algopy_testing",
+        "auto_mode": False,
+    },
+]
+autodoc2_render_plugin = "myst"
+autodoc2_hidden_objects = [
+    "private",  # single-underscore methods, e.g. _private
+    "undoc",
+]
+add_module_names = False
+autodoc2_index_template = None
+myst_enable_extensions = ["fieldlist"]
+
+
+sphinxmermaid_mermaid_init = {
+    "theme": "base",
+    "themeVariables": {
+        "primaryColor": "#5ca5ff",
+        "primaryTextColor": "#fff",  # Changed to gray for better contrast in light mode
+        "lineColor": "#808080",  # Changed to black for better contrast in light mode
+        "secondaryColor": "#808080",
+        "tertiaryColor": "#113a51",
+    },
+}
