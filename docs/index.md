@@ -1,8 +1,8 @@
 # Algorand Python Testing
 
-`algopy-testing` is a companion package to [Algorand Python](https://github.com/algorandfoundation/puya) that enables efficient unit testing of Algorand Python smart contracts in an offline environment. This package emulates key AVM behaviors without requiring a network connection, offering fast and reliable testing capabilities with a familiar Pythonic interface.
+`algorand-python-testing` is a companion package to [Algorand Python](https://github.com/algorandfoundation/puya) that enables efficient unit testing of Algorand Python smart contracts in an offline environment. This package emulates key AVM behaviors without requiring a network connection, offering fast and reliable testing capabilities with a familiar Pythonic interface.
 
-The `algopy-testing` package provides:
+The `algorand-python-testing` package provides:
 
 -   A simple interface for fast and reliable unit testing
 -   An offline testing environment that simulates core AVM functionality
@@ -10,13 +10,13 @@ The `algopy-testing` package provides:
 
 ## Quick Start
 
-`algopy` is a prerequisite for `algopy-testing`, providing stubs and type annotations for Algorand Python syntax. It enhances code completion and type checking when writing smart contracts. Note that this code isn't directly executable in standard Python interpreters; it's compiled by `puya` into TEAL for Algorand Network deployment.
+`algopy` is a prerequisite for `algorand-python-testing`, providing stubs and type annotations for Algorand Python syntax. It enhances code completion and type checking when writing smart contracts. Note that this code isn't directly executable in standard Python interpreters; it's compiled by `puya` into TEAL for Algorand Network deployment.
 
 Traditionally, testing Algorand smart contracts involved deployment on sandboxed networks and interacting with live instances. While robust, this approach can be inefficient and lacks versatility for testing Algorand Python code.
 
-Enter `algopy-testing`: it leverages Python's rich testing ecosystem for unit testing without network deployment. This enables rapid iteration and granular logic testing.
+Enter `algorand-python-testing`: it leverages Python's rich testing ecosystem for unit testing without network deployment. This enables rapid iteration and granular logic testing.
 
-> **NOTE**: While `algopy-testing` offers valuable unit testing capabilities, it's not a replacement for comprehensive testing. Use it alongside other test types, particularly those running against the actual Algorand Network, for thorough contract validation.
+> **NOTE**: While `algorand-python-testing` offers valuable unit testing capabilities, it's not a replacement for comprehensive testing. Use it alongside other test types, particularly those running against the actual Algorand Network, for thorough contract validation.
 
 ### Prerequisites
 
@@ -25,7 +25,7 @@ Enter `algopy-testing`: it leverages Python's rich testing ecosystem for unit te
 
 ### Installation
 
-`algopy-testing` is distributed via [PyPI](https://pypi.org/project/algopy-testing/). Install the package using `pip`:
+`algorand-python-testing` is distributed via [PyPI](https://pypi.org/project/algorand-python-testing/). Install the package using `pip`:
 
 ```bash
 pip install algorand-python-testing
@@ -39,11 +39,11 @@ poetry add algorand-python-testing
 
 ### Testing your first contract
 
-Let's write a simple contract and test it using the `algopy-testing` framework.
+Let's write a simple contract and test it using the `algorand-python-testing` framework.
 
 #### Contract Definition
 
-```{jupyter-execute}
+```{testcode}
 import algopy
 from algopy import arc4
 
@@ -84,7 +84,7 @@ class VotingContract(algopy.ARC4Contract):
 
 #### Test Definition
 
-```{jupyter-execute}
+```{testcode}
 from collections.abc import Generator
 import pytest
 from algopy_testing import AlgopyTestContext, algopy_testing_context
@@ -120,7 +120,18 @@ with algopy_testing_context() as context:
     print(f"Current votes: {votes.native}")
 ```
 
-This interactive `jupyter` example demonstrates key aspects of testing with `algopy-testing` for ARC4-based contracts:
+```{testoutput}
+:hide:
+
+Vote result: True
+Total votes: 1
+Voter ... voted: 1
+New topic: ...
+Contract topic: ...
+Current votes: 5
+```
+
+This example demonstrates key aspects of testing with `algorand-python-testing` for ARC4-based contracts:
 
 1. ARC4 Contract Features:
 
@@ -148,7 +159,7 @@ This interactive `jupyter` example demonstrates key aspects of testing with `alg
 
 ### Next steps
 
-To dig deeper into the capabilities of `algopy-testing`, continue with the following sections.
+To dig deeper into the capabilities of `algorand-python-testing`, continue with the following sections.
 
 ```{toctree}
 ---

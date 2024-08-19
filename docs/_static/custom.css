@@ -12,7 +12,3 @@
 .py.class {
     margin-top: 3rem;
 }
-
-.jupyter_container .stderr {
-    background-color: #7fff00;
-}

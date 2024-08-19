@@ -96,12 +96,12 @@ def generate_test_asset(  # noqa: PLR0913
     rekey_to: str | None = None,
 ) -> int:
     if total is None:
-        total = math.floor(random.random() * 100) + 20  # noqa: S311
+        total = math.floor(random.random() * 100) + 20
 
     if asset_name is None:
         asset_name = (
-            f"ASA ${math.floor(random.random() * 100) + 1}_"  # noqa: S311
-            f"${math.floor(random.random() * 100) + 1}_${total}"  # noqa: S311
+            f"ASA ${math.floor(random.random() * 100) + 1}_"
+            f"${math.floor(random.random() * 100) + 1}_${total}"
         )
 
     params = algod_client.suggested_params()

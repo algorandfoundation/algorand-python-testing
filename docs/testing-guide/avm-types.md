@@ -1,10 +1,17 @@
 # AVM Types
 
-These types are available directly under the `algopy` namespace. They represent the basic AVM primitive types and can be instantiated as follows:
+These types are available directly under the `algopy` namespace. They represent the basic AVM primitive types and can be instantiated directly or via _value generators_:
+
+```{testsetup}
+import algopy
+import algopy_testing
+
+ctx = algopy_testing.AlgopyTestContext()
+```
 
 ## UInt64
 
-```python
+```{testcode}
 # Direct instantiation
 uint64_value = algopy.UInt64(100)
 
@@ -12,10 +19,15 @@ uint64_value = algopy.UInt64(100)
 ...
 
 # Generate a random UInt64 value
-random_uint64 = ctx.any_uint64()
+random_uint64 = ctx.any.uint64()
 
 # Specify a range
-random_uint64 = ctx.any_uint64(min_value=1000, max_value=9999)
+random_uint64 = ctx.any.uint64(min_value=1000, max_value=9999)
+print(random_uint64)
+```
+
+```{testoutput}
+...
 ```
 
 ## Bytes

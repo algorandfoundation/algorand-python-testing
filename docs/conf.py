@@ -21,7 +21,7 @@ extensions = [
     "sphinx_copybutton",
     "myst_parser",
     "autodoc2",  # Add this line
-    "jupyter_sphinx",
+    "sphinx.ext.doctest",
 ]
 
 templates_path = ["_templates"]
@@ -56,25 +56,28 @@ html_js_files = ["https://unpkg.com/thebe@latest/lib/index.js"]
 python_maximum_signature_line_length = 80
 
 # -- Options for myst ---
-myst_enable_extensions = [
-    "colon_fence",
-    "fieldlist",
-]
+myst_enable_extensions = ["colon_fence", "fieldlist"]
 
 # Add autodoc2 configuration
 autodoc2_packages = [
     {
         "path": "../src/algopy_testing",
-        "module": "algopy_testing",
-        "auto_mode": False,
+        "auto_mode": True,
     },
 ]
 autodoc2_render_plugin = "myst"
 autodoc2_hidden_objects = [
-    "private",  # single-underscore methods, e.g. _private
+    "dunder",
+    "private",
     "undoc",
 ]
 add_module_names = False
 autodoc2_index_template = None
 
-jupyter_sphinx_execute_kernelspec = "python3"
+doctest_global_setup = """
+import algopy
+from algopy import arc4
+import algopy_testing
+from algopy_testing import AlgopyTestContext, algopy_testing_context
+"""
+doctest_test_doctest_blocks = "default"

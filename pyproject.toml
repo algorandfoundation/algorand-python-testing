@@ -137,11 +137,10 @@ dependencies = [
     "sphinx-autodoc2>=0.5.0",
     "sphinx-copybutton>=0.5.2",
     "sphinx-autobuild>=2024.4.16",
-    "sphinxcontrib-mermaid",
-    "jupyter-sphinx",
     "ipykernel",
     "pytest",
     "py-algorand-sdk",
+    "algokit-utils",
     "pycryptodomex>=3.6.0,<4",
     "pynacl>=1.4.0,<2",
     "ecdsa>=0.17.0",
@@ -151,7 +150,7 @@ dependencies = [
 ]
 
 [tool.hatch.envs.docs.scripts]
-build = "sphinx-build docs docs/_build -W --keep-going -n -E"
+build = "sphinx-build -b doctest docs docs/_build -W --keep-going -n -E"
 dev = "sphinx-autobuild docs docs/_build"
 
 # Examples environment
@@ -273,7 +272,9 @@ unfixable = [
 ]
 "tests/**" = [
     "FBT003", # allow boolean positional arguments
+    "S311", # allow using `random`
 ]
+"src/algopy_testing/*" = ["S311"] # allow using `random` in value generators
 "src/algopy_testing/models/logicsig.py" = ["ARG002"]
 "scripts/**/*.py" = ["T201"]
 "scripts/refresh_test_artifacts.py" = ["S603"]
