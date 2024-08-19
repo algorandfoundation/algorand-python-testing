@@ -7,7 +7,7 @@ from typing import TypedDict, TypeVar
 import algosdk
 
 from algopy_testing._context_helpers import lazy_context
-from algopy_testing.models import Account, Application
+from algopy_testing.models import Account
 from algopy_testing.primitives import UInt64
 
 if typing.TYPE_CHECKING:
@@ -47,11 +47,7 @@ class _Global:
 
     @property
     def current_application_id(self) -> algopy.Application:
-        app = lazy_context.active_app
-        app_data = lazy_context.get_app_data(app)
-        if app_data.is_creating:
-            return Application(0)
-        return app
+        return lazy_context.active_app
 
     @property
     def creator_address(self) -> algopy.Account:
