@@ -301,6 +301,11 @@ class StateAppLocalContract(ARC4Contract):
         op.AppLocal.delete(a, b)
 
     @arc4.abimethod()
+    def verify_exists(self, a: Account, b: Bytes) -> bool:
+        _value, exists = op.AppLocal.get_ex_uint64(a, 0, b)
+        return exists
+
+    @arc4.abimethod()
     def verify_put_uint64(self, a: Account, b: Bytes, c: UInt64) -> None:
         op.AppLocal.put(a, b, c)
 
