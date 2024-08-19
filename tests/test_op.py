@@ -521,15 +521,15 @@ def test_asset_params_get(
         ("verify_app_params_get_local_num_uint", 0),
         ("verify_app_params_get_local_num_byte_slice", 0),
         ("verify_app_params_get_extra_program_pages", 0),
-        ("verify_app_params_get_creator", None),
-        ("verify_app_params_get_address", None),
+        ("verify_app_params_get_creator", "app.creator"),
+        ("verify_app_params_get_address", "app.address"),
     ],
 )
 def test_app_params_get(
     algod_client: AlgodClient,
     get_state_app_params_avm_result: AVMInvoker,
     method_name: str,
-    expected_value: int | bytes | bool | str | None,
+    expected_value: object,
 ) -> None:
     client = get_state_app_params_avm_result.client
     with algopy_testing_context() as ctx:
@@ -560,8 +560,11 @@ def test_app_params_get(
         contract_method = getattr(contract, method_name)
         result = contract_method(app)
 
-        # TODO: 1.0 add alternate tests for testing by index
         assert avm_result == result
+        if expected_value == "app.creator":
+            expected_value = app.creator
+        elif expected_value == "app.address":
+            expected_value = app.address
         if expected_value is not None:
             assert avm_result == expected_value
 
