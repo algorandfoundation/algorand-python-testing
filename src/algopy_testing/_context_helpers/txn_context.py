@@ -135,7 +135,7 @@ class TransactionContext:
     def create_group(
         self,
         gtxns: (
-            typing.Sequence[algopy.gtxn.TransactionBase | DeferredAppCall[TReturn]] | None
+            typing.Sequence[algopy.gtxn.TransactionBase | DeferredAppCall[typing.Any]] | None
         ) = None,
         active_txn_index: int | None = None,
         txn_op_fields: TransactionBaseFields | None = None,
