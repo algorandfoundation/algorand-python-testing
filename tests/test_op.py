@@ -99,6 +99,13 @@ def get_state_app_local_avm_result(algod_client: AlgodClient) -> AVMInvoker:
 
 
 @pytest.fixture(scope="module")
+def get_state_app_local_avm_opted_in(algod_client: AlgodClient) -> AVMInvoker:
+    invoker = create_avm_invoker(STATE_OPS_APP_LOCAL_SPEC, algod_client)
+    invoker.client.opt_in()
+    return invoker
+
+
+@pytest.fixture(scope="module")
 def get_state_app_global_avm_result(algod_client: AlgodClient) -> AVMInvoker:
     return create_avm_invoker(STATE_OPS_APP_GLOBAL_SPEC, algod_client)
 
@@ -622,54 +629,50 @@ def test_acct_params_get(
     if expected_value is not None:
         assert mock_result == expected_value
 
-
-@pytest.mark.usefixtures("context")
 @pytest.mark.parametrize(
-    ("method_name", "key", "value", "expected"),
+    ("key", "value"),
     [
-        ("verify_put_bytes", b"local_bytes", b"test_bytes", b"test_bytes"),
-        ("verify_put_uint64", b"local_uint64", 42, 42),
+        (b"local_bytes", b"test_bytes"),
+        (b"local_uint64", 42),
     ],
 )
-def test_app_local_put_get_and_delete(  # noqa: PLR0913
+def test_app_local_put_get_and_delete(
+    context: algopy_testing.AlgopyTestContext,
     localnet_creator: algopy_testing.Account,
-    get_state_app_local_avm_result: AVMInvoker,
-    method_name: str,
+    get_state_app_local_avm_opted_in: AVMInvoker,
     key: bytes,
     value: bytes | int,
-    expected: bytes | int,
 ) -> None:
-    with contextlib.suppress(algosdk.error.AlgodHTTPError):
-        get_state_app_local_avm_result.client.opt_in(
-            "opt_in",
-        )
+    assert context
+    type_suffix = "bytes" if isinstance(value, bytes) else "uint64"
+    put_method_name = f"verify_put_{type_suffix}"
+    get_method_name = f"verify_get_{type_suffix}"
 
     # Put operation
-    get_state_app_local_avm_result(
-        method_name,
+    get_state_app_local_avm_opted_in(
+        put_method_name,
         a=localnet_creator.public_key,
         b=key,
         c=value,
     )
     contract = StateAppLocalContract()
-    getattr(contract, method_name)(
+    getattr(contract, put_method_name)(
         a=localnet_creator,
         b=Bytes(key),
         c=Bytes(value) if isinstance(value, bytes) else UInt64(value),
     )
 
     # Get operation
-    get_method = "verify_get_bytes" if isinstance(value, bytes) else "verify_get_uint64"
-    avm_result = get_state_app_local_avm_result(
-        get_method,
+    avm_result = get_state_app_local_avm_opted_in(
+        get_method_name,
         a=localnet_creator.public_key,
         b=key,
     )
-    mock_result = getattr(contract, get_method)(a=localnet_creator, b=Bytes(key))
-    assert avm_result == mock_result == expected
+    mock_result = getattr(contract, get_method_name)(a=localnet_creator, b=Bytes(key))
+    assert avm_result == mock_result == value
 
     # Delete operation
-    get_state_app_local_avm_result(
+    get_state_app_local_avm_opted_in(
         "verify_delete",
         a=localnet_creator.public_key,
         b=key,
@@ -677,23 +680,11 @@ def test_app_local_put_get_and_delete(  # noqa: PLR0913
     contract.verify_delete(a=localnet_creator, b=Bytes(key))
 
     # Verify deletion
-    if method_name == "verify_put_bytes":
-        with pytest.raises(LogicError):
-            get_state_app_local_avm_result(
-                get_method,
-                a=localnet_creator.public_key,
-                b=key,
-            )
-    else:
-        assert (
-            get_state_app_local_avm_result(
-                get_method,
-                a=localnet_creator.public_key,
-                b=key,
-            )
-            == 0
-        )
-    assert getattr(contract, get_method)(a=localnet_creator, b=Bytes(key)) == 0
+    avm_result = get_state_app_local_avm_opted_in(
+        "verify_exists", a=localnet_creator.public_key, b=key
+    )
+    mock_result = contract.verify_exists(a=localnet_creator, b=Bytes(key))
+    assert avm_result == mock_result, "verify_exists does not match"
 
 
 def test_app_local_ex_get(
