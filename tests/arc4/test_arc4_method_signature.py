@@ -1,13 +1,13 @@
 from collections.abc import Generator
 from pathlib import Path
 
+import algokit_utils
 import algopy
 import algopy_testing
 import algosdk
 import pytest
 from algokit_utils.beta.algorand_client import AlgorandClient, AssetCreateParams, PayParams
 from algopy import arc4
-from algopy_testing.primitives.uint64 import UInt64
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 from algosdk.v2client.algod import AlgodClient
 
@@ -19,10 +19,9 @@ from tests.artifacts.Arc4ABIMethod.contract import (
 )
 from tests.common import AVMInvoker, create_avm_invoker
 
-# TODO: 1.0 execute this on AVM too
-
 ARTIFACTS_DIR = Path(__file__).parent / ".." / "artifacts"
 APP_SPEC = ARTIFACTS_DIR / "Arc4ABIMethod" / "data" / "SignaturesContract.arc32.json"
+_FUNDED_ACCOUNT_SPENDING = 1234
 
 
 @pytest.fixture()
@@ -35,6 +34,34 @@ def context() -> Generator[algopy_testing.AlgopyTestContext, None, None]:
     with algopy_testing.algopy_testing_context() as ctx:
         yield ctx
         ctx.reset()
+
+
+@pytest.fixture()
+def funded_account(algod_client: AlgodClient, context: algopy_testing.AlgopyTestContext) -> str:
+    pk, address = algosdk.account.generate_account()
+    assert isinstance(address, str)
+    algokit_utils.ensure_funded(
+        algod_client,
+        algokit_utils.EnsureBalanceParameters(
+            account_to_fund=address,
+            min_spending_balance_micro_algos=_FUNDED_ACCOUNT_SPENDING,
+        ),
+    )
+
+    # ensure context has the same account with matching balance
+    context.any.account(address, balance=algopy.Global.min_balance + _FUNDED_ACCOUNT_SPENDING)
+    return address
+
+
+@pytest.fixture()
+def other_app_id(algod_client: AlgodClient, context: algopy_testing.AlgopyTestContext) -> int:
+    second_invoker = create_avm_invoker(APP_SPEC, algod_client)
+    client = second_invoker.client
+    app_id = client.app_id
+
+    # ensure context also has app with this id
+    context.any.application(app_id)
+    return app_id
 
 
 def test_app_args_is_correct_with_simple_args(
@@ -97,7 +124,6 @@ def test_app_args_is_correct_with_txn(
     contract.create()
 
     # act
-
     get_avm_result(
         "with_txn",
         value="hello",
@@ -134,21 +160,23 @@ def test_app_args_is_correct_with_asset(
     localnet_creator_address: str,
     algorand: AlgorandClient,
     get_avm_result: AVMInvoker,
-) -> None:  # arrange
+) -> None:
+    # arrange
     contract = SignaturesContract()
     contract.create()
 
-    # act
     asa_id = algorand.send.asset_create(
         AssetCreateParams(
             sender=localnet_creator_address,
             total=123,
         )
     )["confirmation"]["asset-index"]
+
+    # act
     get_avm_result("with_asset", value="hello", asset=asa_id, arr=[1, 2])
     contract.with_asset(
         arc4.String("hello"),
-        context.any.asset(total=UInt64(123)),
+        context.any.asset(total=algopy.UInt64(123)),
         UInt8Array(arc4.UInt8(1), arc4.UInt8(2)),
     )
 
@@ -165,25 +193,24 @@ def test_app_args_is_correct_with_asset(
 
 def test_app_args_is_correct_with_account(
     context: algopy_testing.AlgopyTestContext,
-    localnet_creator_address: str,
+    funded_account: str,
     get_avm_result: AVMInvoker,
-) -> None:  # arrange
+) -> None:
+    # arrange
     contract = SignaturesContract()
     contract.create()
 
     # act
-    test_account = context.any.account(total_apps_created=UInt64(1))
     contract.with_acc(
         arc4.String("hello"),
-        test_account,
+        context.ledger.get_account(funded_account),
         UInt8Array(arc4.UInt8(1), arc4.UInt8(2)),
     )
     get_avm_result(
         "with_acc",
         value="hello",
-        acc=localnet_creator_address,
+        acc=funded_account,
         arr=[1, 2],
-        accounts=[localnet_creator_address, localnet_creator_address],
     )
 
     # assert
@@ -199,6 +226,7 @@ def test_app_args_is_correct_with_account(
 
 def test_app_args_is_correct_with_application(
     context: algopy_testing.AlgopyTestContext,
+    other_app_id: int,
     get_avm_result: AVMInvoker,
 ) -> None:
     # arrange
@@ -206,46 +234,50 @@ def test_app_args_is_correct_with_application(
     contract.create()
 
     self_app = context.get_app_for_contract(contract)
-    other_app = context.any.application(id=1234)
 
     # act
     get_avm_result(
         "with_app",
         value="hello",
-        app=get_avm_result.client.app_id,
+        app=other_app_id,
+        app_id=other_app_id,
         arr=[1, 2],
-        foreign_apps=[get_avm_result.client.app_id, get_avm_result.client.app_id],
     )
     contract.with_app(
         arc4.String("hello"),
-        other_app,
+        context.ledger.get_app(other_app_id),
+        arc4.UInt64(other_app_id),
         UInt8Array(arc4.UInt8(1), arc4.UInt8(2)),
     )
 
     # assert
     txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
-    app_foreign_apps = [txn.apps(i) for i in range(int(txn.num_apps))]
+    app_foreign_apps = [txn.apps(i).id for i in range(int(txn.num_apps))]
     assert app_args == [
         algosdk.abi.Method.from_signature(
-            "with_app(string,application,uint8[])void"
+            "with_app(string,application,uint64,uint8[])void"
         ).get_selector(),
         b"\x00\x05hello",
         b"\x01",  # 0th index is the app being called
+        other_app_id.to_bytes(length=8),  # app id as bytes
         b"\x00\x02\x01\x02",
     ]
     assert app_foreign_apps == [
-        self_app,
-        other_app,
+        self_app.id,
+        other_app_id,
     ]
 
 
-def test_app_args_is_correct_with_complex(context: algopy_testing.AlgopyTestContext) -> None:
+def test_app_args_is_correct_with_complex(
+    context: algopy_testing.AlgopyTestContext,
+    funded_account: str,
+) -> None:
     # arrange
     contract = SignaturesContract()
     contract.create()
 
-    account = context.any.account(balance=algopy.UInt64(123))
+    account = context.ledger.get_account(funded_account)
     txn = context.any.txn.transaction()
     struct = MyStruct(
         three=arc4.UInt128(3),
@@ -275,15 +307,16 @@ def test_app_args_is_correct_with_complex(context: algopy_testing.AlgopyTestCont
 
 def test_prepare_txns_with_complex(
     context: algopy_testing.AlgopyTestContext,
-    # get_avm_result: AVMInvoker,
-    # algorand: AlgorandClient,
-    # localnet_creator_address: str,
+    get_avm_result: AVMInvoker,
+    algorand: AlgorandClient,
+    localnet_creator_address: str,
+    funded_account: str,
 ) -> None:
     # arrange
     contract = SignaturesContract()
     contract.create()
 
-    account = context.any.account(balance=algopy.UInt64(123))
+    account = context.ledger.get_account(funded_account)
     txn = context.any.txn.transaction()
     struct = MyStruct(
         three=arc4.UInt128(3),
@@ -297,24 +330,25 @@ def test_prepare_txns_with_complex(
     )
 
     # act
-    # TODO: 1.0 Figure out proper way to pass encoded struct
-    # get_avm_result(
-    #     "complex_sig",
-    #     struct1=struct.bytes.value,
-    #     txn=TransactionWithSigner(
-    #         txn=algorand.transactions.payment(
-    #             PayParams(
-    #                 sender=localnet_creator_address,
-    #                 receiver=localnet_creator_address,
-    #                 amount=123,
-    #             )
-    #         ),
-    #         signer=algorand.account.get_signer("default"),
-    #     ),
-    #     acc=localnet_creator_address,
-    #     five=[5],
-    # )
-    with context.txn.create_group(gtxns=[deferred_app_call]):
+    get_avm_result(
+        "complex_sig",
+        struct1=((1, "2"), (1, "2"), 3, 4),
+        txn=TransactionWithSigner(
+            txn=algorand.transactions.payment(
+                PayParams(
+                    sender=localnet_creator_address,
+                    receiver=localnet_creator_address,
+                    amount=123,
+                )
+            ),
+            signer=algorand.account.get_signer("default"),
+        ),
+        acc=funded_account,
+        five=[5],
+    )
+    with context.txn.create_group(
+        gtxns=[context.any.txn.payment(), deferred_app_call, context.any.txn.payment()]
+    ):
         result = deferred_app_call.submit()
 
     # assert

@@ -59,10 +59,13 @@ class SignaturesContract(ARC4Contract):
         assert Txn.assets(0) == asset
 
     @arc4.abimethod
-    def with_app(self, value: arc4.String, app: Application, arr: UInt8Array) -> None:
+    def with_app(
+        self, value: arc4.String, app: Application, app_id: arc4.UInt64, arr: UInt8Array
+    ) -> None:
         assert value
         assert arr
-        assert app.id >= 1001
+        assert app.id == app_id, "expected app id to match provided app id"
+        assert app.creator == op.Global.creator_address, "expected other app to have same creator"
         app_txn = gtxn.ApplicationCallTransaction(0)
         assert app_txn.apps(0) == op.Global.current_application_id
         assert Txn.applications(0) == op.Global.current_application_id
@@ -73,7 +76,7 @@ class SignaturesContract(ARC4Contract):
     def with_acc(self, value: arc4.String, acc: Account, arr: UInt8Array) -> None:
         assert value
         assert arr
-        assert acc.total_apps_created >= 1
+        assert acc.balance == acc.min_balance + 1234
         assert Txn.accounts(0) == Txn.sender
         assert Txn.accounts(1) == acc
 
@@ -95,7 +98,7 @@ class SignaturesContract(ARC4Contract):
 
         # acc
         assert Txn.application_args(2) == arc4.UInt8(1).bytes  # acc array ref
-        assert acc.balance >= 123
+        assert acc.balance == acc.min_balance + 1234
         assert five[0] == 5
 
         return struct1.another_struct.copy(), struct1.copy()
