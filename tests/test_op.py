@@ -455,7 +455,7 @@ def test_asset_holding_get(
         ("verify_asset_params_get_reserve", algosdk.constants.ZERO_ADDRESS),
         ("verify_asset_params_get_freeze", algosdk.constants.ZERO_ADDRESS),
         ("verify_asset_params_get_clawback", algosdk.constants.ZERO_ADDRESS),
-        ("verify_asset_params_get_creator", lambda a: algopy.Account(a.address).bytes),
+        ("verify_asset_params_get_creator", "creator"),
     ],
 )
 def test_asset_params_get(
@@ -463,9 +463,10 @@ def test_asset_params_get(
     get_state_asset_params_avm_result: AVMInvoker,
     context: AlgopyTestContext,
     method_name: str,
-    expected_value: int | bytes | bool | typing.Callable[..., algopy.Bytes],
+    expected_value: object,
 ) -> None:
     dummy_account = get_localnet_default_account(algod_client)
+    creator = dummy_account.address
     metadata_hash = b"test" + b" " * 28
 
     mock_asset = context.any.asset(
@@ -475,7 +476,7 @@ def test_asset_params_get(
         unit_name=algopy.Bytes(b"UNIT"),
         url=algopy.Bytes(b"https://algorand.co"),
         metadata_hash=algopy.Bytes(metadata_hash),
-        creator=algopy.Account(dummy_account.address),
+        creator=algopy.Account(creator),
     )
 
     dummy_asset = generate_test_asset(
@@ -497,13 +498,10 @@ def test_asset_params_get(
 
     avm_result = get_state_asset_params_avm_result(method_name, a=dummy_asset, suggested_params=sp)
     mock_result = getattr(mock_contract, method_name)(mock_asset)
-    # TODO: 1.0 add separate tests by foreign array index
 
-    expected = expected_value(dummy_account) if callable(expected_value) else expected_value
-    expected = (
-        algopy.Account().bytes if str(expected) == algosdk.constants.ZERO_ADDRESS else expected
-    )
-    assert mock_result == avm_result == expected
+    if isinstance(expected_value, str):
+        expected_value = algopy.Account(creator if expected_value == "creator" else expected_value)
+    assert mock_result == avm_result == expected_value
 
 
 @pytest.mark.parametrize(
