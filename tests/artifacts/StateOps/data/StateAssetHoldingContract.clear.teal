@@ -1,7 +1,7 @@
 #pragma version 10
 
 tests.artifacts.StateOps.contract.StateAssetHoldingContract.clear_state_program:
-    // tests/artifacts/StateOps/contract.py:79
+    // tests/artifacts/StateOps/contract.py:128
     // class StateAssetHoldingContract(ARC4Contract):
     int 1
     return
