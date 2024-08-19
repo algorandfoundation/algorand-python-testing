@@ -14,3 +14,4 @@ examples/**/*.trace
 # coverage output
 .coverage
 coverage.xml
+.venv*
