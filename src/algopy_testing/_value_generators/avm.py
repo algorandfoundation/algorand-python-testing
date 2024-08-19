@@ -10,7 +10,7 @@ import algosdk
 import algopy_testing
 from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM, MAX_BYTES_SIZE, MAX_UINT64
-from algopy_testing.models.account import AccountContextData, AccountFields
+from algopy_testing.models.account import AccountFields
 from algopy_testing.models.application import ApplicationContextData, ApplicationFields
 from algopy_testing.models.asset import AssetFields
 from algopy_testing.utils import generate_random_int
@@ -88,14 +88,13 @@ class AVMValueGenerator:
 
         new_account_address = address or algosdk.account.generate_account()[1]
         new_account = algopy.Account(new_account_address)
-        new_account_fields = AccountFields(**account_fields)
-        new_account_data = AccountContextData(
-            fields=new_account_fields,
-            opted_asset_balances=opted_asset_balances or {},
-            opted_apps={app.id: app for app in opted_apps},
-        )
-
-        lazy_context.ledger.account_data[new_account_address] = new_account_data
+        # defaultdict of account_data ensures we get a new initialized account
+        account_data = lazy_context.ledger.account_data[new_account_address]
+        # update so defaults are preserved
+        account_data.fields.update(account_fields)
+        # can set these since it is a new account
+        account_data.opted_asset_balances = opted_asset_balances or {}
+        account_data.opted_apps = {app.id: app for app in opted_apps}
         return new_account
 
     def asset(
