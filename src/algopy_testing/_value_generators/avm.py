@@ -118,7 +118,7 @@ class AVMValueGenerator:
             raise ValueError("Asset with such ID already exists in testing context!")
 
         # TODO: 1.0 ensure passed fields are valid names and types
-        new_asset = algopy.Asset(asset_id or next(lazy_context.ledger.asset_id))
+        new_asset = algopy.Asset(asset_id or lazy_context.ledger.get_next_asset_id())
         default_asset_fields = {
             "total": lazy_context.any.uint64(),
             "decimals": lazy_context.any.uint64(1, 6),
@@ -162,7 +162,7 @@ class AVMValueGenerator:
         """
         import algopy_testing
 
-        new_app_id = id if id is not None else next(lazy_context.ledger.app_id)
+        new_app_id = id if id is not None else lazy_context.ledger.get_next_app_id()
 
         if new_app_id in lazy_context.ledger.app_data:
             raise ValueError(

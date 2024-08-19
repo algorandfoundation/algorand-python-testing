@@ -118,8 +118,8 @@ def test_context_reset() -> None:
         with pytest.raises(ValueError, match="No group transactions found"):
             assert context.txn.last_group
         assert len(context.txn._groups) == 0
-        assert next(context.ledger.asset_id) == 1001
-        assert next(context.ledger.app_id) == 1001
+        assert context.ledger.get_next_asset_id() == 1001
+        assert context.ledger.get_next_app_id() == 1001
 
 
 def test_algopy_testing_context() -> None:

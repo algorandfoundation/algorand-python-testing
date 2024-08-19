@@ -27,8 +27,20 @@ class LedgerContext:
         self.blocks: dict[int, dict[str, int]] = {}
         self.global_fields: GlobalFields = get_default_global_fields()
 
-        self.asset_id = iter(range(1001, 2**64))
-        self.app_id = iter(range(1001, 2**64))
+        self._asset_id = iter(range(1001, 2**64))
+        self._app_id = iter(range(1001, 2**64))
+
+    def get_next_asset_id(self) -> int:
+        while True:
+            asset_id = next(self._asset_id)
+            if asset_id not in self.asset_data:
+                return asset_id
+
+    def get_next_app_id(self) -> int:
+        while True:
+            app_id = next(self._app_id)
+            if app_id not in self.app_data:
+                return app_id
 
     def get_account(self, address: str) -> algopy.Account:
         """Get an account by address.
