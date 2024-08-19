@@ -8,17 +8,24 @@ from algopy import (
     Global,
     GlobalState,
     LocalState,
+    Txn,
     UInt64,
     arc4,
     op,
+    subroutine,
 )
+
+
+@subroutine
+def _get_1st_ref_index() -> UInt64:
+    return op.btoi(Txn.application_args(1))
 
 
 class StateAcctParamsGetContract(ARC4Contract):
     @arc4.abimethod()
     def verify_acct_balance(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_balance(a)
-        value_index, funded_index = op.AcctParamsGet.acct_balance(1)
+        value_index, funded_index = op.AcctParamsGet.acct_balance(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
         return value
@@ -26,7 +33,7 @@ class StateAcctParamsGetContract(ARC4Contract):
     @arc4.abimethod()
     def verify_acct_min_balance(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_min_balance(a)
-        value_index, funded_index = op.AcctParamsGet.acct_min_balance(1)
+        value_index, funded_index = op.AcctParamsGet.acct_min_balance(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
         return value
@@ -34,7 +41,7 @@ class StateAcctParamsGetContract(ARC4Contract):
     @arc4.abimethod()
     def verify_acct_auth_addr(self, a: algopy.Account) -> arc4.Address:
         value, funded = op.AcctParamsGet.acct_auth_addr(a)
-        value_index, funded_index = op.AcctParamsGet.acct_auth_addr(1)
+        value_index, funded_index = op.AcctParamsGet.acct_auth_addr(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
         return arc4.Address(value)
@@ -42,7 +49,7 @@ class StateAcctParamsGetContract(ARC4Contract):
     @arc4.abimethod()
     def verify_acct_total_num_uint(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_num_uint(a)
-        value_index, funded_index = op.AcctParamsGet.acct_total_num_uint(1)
+        value_index, funded_index = op.AcctParamsGet.acct_total_num_uint(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
         return value
@@ -50,7 +57,9 @@ class StateAcctParamsGetContract(ARC4Contract):
     @arc4.abimethod()
     def verify_acct_total_num_byte_slice(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_num_byte_slice(a)
-        value_index, funded_index = op.AcctParamsGet.acct_total_num_byte_slice(1)
+        value_index, funded_index = op.AcctParamsGet.acct_total_num_byte_slice(
+            _get_1st_ref_index()
+        )
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
         return value
@@ -58,7 +67,9 @@ class StateAcctParamsGetContract(ARC4Contract):
     @arc4.abimethod()
     def verify_acct_total_extra_app_pages(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_extra_app_pages(a)
-        value_index, funded_index = op.AcctParamsGet.acct_total_extra_app_pages(1)
+        value_index, funded_index = op.AcctParamsGet.acct_total_extra_app_pages(
+            _get_1st_ref_index()
+        )
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
         return value
@@ -66,7 +77,7 @@ class StateAcctParamsGetContract(ARC4Contract):
     @arc4.abimethod()
     def verify_acct_total_apps_created(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_apps_created(a)
-        value_index, funded_index = op.AcctParamsGet.acct_total_apps_created(1)
+        value_index, funded_index = op.AcctParamsGet.acct_total_apps_created(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
         return value
@@ -74,7 +85,7 @@ class StateAcctParamsGetContract(ARC4Contract):
     @arc4.abimethod()
     def verify_acct_total_apps_opted_in(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_apps_opted_in(a)
-        value_index, funded_index = op.AcctParamsGet.acct_total_apps_opted_in(1)
+        value_index, funded_index = op.AcctParamsGet.acct_total_apps_opted_in(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
         return value
@@ -82,7 +93,9 @@ class StateAcctParamsGetContract(ARC4Contract):
     @arc4.abimethod()
     def verify_acct_total_assets_created(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_assets_created(a)
-        value_index, funded_index = op.AcctParamsGet.acct_total_assets_created(1)
+        value_index, funded_index = op.AcctParamsGet.acct_total_assets_created(
+            _get_1st_ref_index()
+        )
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
         return value
@@ -90,7 +103,7 @@ class StateAcctParamsGetContract(ARC4Contract):
     @arc4.abimethod()
     def verify_acct_total_assets(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_assets(a)
-        value_index, funded_index = op.AcctParamsGet.acct_total_assets(1)
+        value_index, funded_index = op.AcctParamsGet.acct_total_assets(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
         return value
@@ -98,7 +111,7 @@ class StateAcctParamsGetContract(ARC4Contract):
     @arc4.abimethod()
     def verify_acct_total_boxes(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_boxes(a)
-        value_index, funded_index = op.AcctParamsGet.acct_total_boxes(1)
+        value_index, funded_index = op.AcctParamsGet.acct_total_boxes(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
         return value
@@ -106,7 +119,7 @@ class StateAcctParamsGetContract(ARC4Contract):
     @arc4.abimethod()
     def verify_acct_total_box_bytes(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_box_bytes(a)
-        value_index, funded_index = op.AcctParamsGet.acct_total_box_bytes(1)
+        value_index, funded_index = op.AcctParamsGet.acct_total_box_bytes(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
         return value
@@ -128,7 +141,7 @@ class StateAssetParamsContract(ARC4Contract):
     @arc4.abimethod()
     def verify_asset_params_get_total(self, a: Asset) -> UInt64:
         value, exists = op.AssetParamsGet.asset_total(a)
-        value_index, exists_index = op.AssetParamsGet.asset_total(0)
+        value_index, exists_index = op.AssetParamsGet.asset_total(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert exists == exists_index, "expected exists by index to match"
         return value
@@ -136,7 +149,7 @@ class StateAssetParamsContract(ARC4Contract):
     @arc4.abimethod()
     def verify_asset_params_get_decimals(self, a: Asset) -> UInt64:
         value, exists = op.AssetParamsGet.asset_decimals(a)
-        value_index, exists_index = op.AssetParamsGet.asset_decimals(0)
+        value_index, exists_index = op.AssetParamsGet.asset_decimals(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert exists == exists_index, "expected exists by index to match"
         return value
@@ -144,7 +157,7 @@ class StateAssetParamsContract(ARC4Contract):
     @arc4.abimethod()
     def verify_asset_params_get_default_frozen(self, a: Asset) -> bool:
         value, exists = op.AssetParamsGet.asset_default_frozen(a)
-        value_index, exists_index = op.AssetParamsGet.asset_default_frozen(0)
+        value_index, exists_index = op.AssetParamsGet.asset_default_frozen(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert exists == exists_index, "expected exists by index to match"
         return value
@@ -152,7 +165,7 @@ class StateAssetParamsContract(ARC4Contract):
     @arc4.abimethod()
     def verify_asset_params_get_unit_name(self, a: Asset) -> Bytes:
         value, exists = op.AssetParamsGet.asset_unit_name(a)
-        value_index, exists_index = op.AssetParamsGet.asset_unit_name(0)
+        value_index, exists_index = op.AssetParamsGet.asset_unit_name(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert exists == exists_index, "expected exists by index to match"
         return value
@@ -160,7 +173,7 @@ class StateAssetParamsContract(ARC4Contract):
     @arc4.abimethod()
     def verify_asset_params_get_name(self, a: Asset) -> Bytes:
         value, exists = op.AssetParamsGet.asset_name(a)
-        value_index, exists_index = op.AssetParamsGet.asset_name(0)
+        value_index, exists_index = op.AssetParamsGet.asset_name(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert exists == exists_index, "expected exists by index to match"
         return value
@@ -168,7 +181,7 @@ class StateAssetParamsContract(ARC4Contract):
     @arc4.abimethod()
     def verify_asset_params_get_url(self, a: Asset) -> Bytes:
         value, exists = op.AssetParamsGet.asset_url(a)
-        value_index, exists_index = op.AssetParamsGet.asset_url(0)
+        value_index, exists_index = op.AssetParamsGet.asset_url(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert exists == exists_index, "expected exists by index to match"
         return value
@@ -176,7 +189,7 @@ class StateAssetParamsContract(ARC4Contract):
     @arc4.abimethod()
     def verify_asset_params_get_metadata_hash(self, a: Asset) -> Bytes:
         value, exists = op.AssetParamsGet.asset_metadata_hash(a)
-        value_index, exists_index = op.AssetParamsGet.asset_metadata_hash(0)
+        value_index, exists_index = op.AssetParamsGet.asset_metadata_hash(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert exists == exists_index, "expected exists by index to match"
         return value
@@ -184,7 +197,7 @@ class StateAssetParamsContract(ARC4Contract):
     @arc4.abimethod()
     def verify_asset_params_get_manager(self, a: Asset) -> arc4.Address:
         value, exists = op.AssetParamsGet.asset_manager(a)
-        value_index, exists_index = op.AssetParamsGet.asset_manager(0)
+        value_index, exists_index = op.AssetParamsGet.asset_manager(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert exists == exists_index, "expected exists by index to match"
         return arc4.Address(value)
@@ -192,7 +205,7 @@ class StateAssetParamsContract(ARC4Contract):
     @arc4.abimethod()
     def verify_asset_params_get_reserve(self, a: Asset) -> arc4.Address:
         value, exists = op.AssetParamsGet.asset_reserve(a)
-        value_index, exists_index = op.AssetParamsGet.asset_reserve(0)
+        value_index, exists_index = op.AssetParamsGet.asset_reserve(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert exists == exists_index, "expected exists by index to match"
         return arc4.Address(value)
@@ -200,7 +213,7 @@ class StateAssetParamsContract(ARC4Contract):
     @arc4.abimethod()
     def verify_asset_params_get_freeze(self, a: Asset) -> arc4.Address:
         value, exists = op.AssetParamsGet.asset_freeze(a)
-        value_index, exists_index = op.AssetParamsGet.asset_freeze(0)
+        value_index, exists_index = op.AssetParamsGet.asset_freeze(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert exists == exists_index, "expected exists by index to match"
         return arc4.Address(value)
@@ -208,7 +221,7 @@ class StateAssetParamsContract(ARC4Contract):
     @arc4.abimethod()
     def verify_asset_params_get_clawback(self, a: Asset) -> arc4.Address:
         value, exists = op.AssetParamsGet.asset_clawback(a)
-        value_index, exists_index = op.AssetParamsGet.asset_clawback(0)
+        value_index, exists_index = op.AssetParamsGet.asset_clawback(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert exists == exists_index, "expected exists by index to match"
         return arc4.Address(value)
@@ -216,57 +229,85 @@ class StateAssetParamsContract(ARC4Contract):
     @arc4.abimethod()
     def verify_asset_params_get_creator(self, a: Asset) -> arc4.Address:
         value, exists = op.AssetParamsGet.asset_creator(a)
-        value_index, exists_index = op.AssetParamsGet.asset_creator(0)
+        value_index, exists_index = op.AssetParamsGet.asset_creator(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert exists == exists_index, "expected exists by index to match"
         return arc4.Address(value)
 
 
 class StateAppParamsContract(ARC4Contract):
+
     @arc4.abimethod()
     def verify_app_params_get_approval_program(self, a: Application) -> Bytes:
-        approval_program, _val = op.AppParamsGet.app_approval_program(a)
-        return approval_program
+        value, exists = op.AppParamsGet.app_approval_program(a)
+        value_index, exists_index = op.AppParamsGet.app_approval_program(_get_1st_ref_index())
+        assert value == value_index, "expected value by index to match"
+        assert exists == exists_index, "expected exists by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_app_params_get_clear_state_program(self, a: Application) -> Bytes:
-        clear_state_program, _val = op.AppParamsGet.app_clear_state_program(a)
-        return clear_state_program
+        value, exists = op.AppParamsGet.app_clear_state_program(a)
+        value_index, exists_index = op.AppParamsGet.app_clear_state_program(_get_1st_ref_index())
+        assert value == value_index, "expected value by index to match"
+        assert exists == exists_index, "expected exists by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_app_params_get_global_num_uint(self, a: Application) -> UInt64:
-        global_num_uint, _val = op.AppParamsGet.app_global_num_uint(a)
-        return global_num_uint
+        value, exists = op.AppParamsGet.app_global_num_uint(a)
+        value_index, exists_index = op.AppParamsGet.app_global_num_uint(_get_1st_ref_index())
+        assert value == value_index, "expected value by index to match"
+        assert exists == exists_index, "expected exists by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_app_params_get_global_num_byte_slice(self, a: Application) -> UInt64:
-        global_num_byte_slice, _val = op.AppParamsGet.app_global_num_byte_slice(a)
-        return global_num_byte_slice
+        value, exists = op.AppParamsGet.app_global_num_byte_slice(a)
+        value_index, exists_index = op.AppParamsGet.app_global_num_byte_slice(_get_1st_ref_index())
+        assert value == value_index, "expected value by index to match"
+        assert exists == exists_index, "expected exists by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_app_params_get_local_num_uint(self, a: Application) -> UInt64:
-        local_num_uint, _val = op.AppParamsGet.app_local_num_uint(a)
-        return local_num_uint
+        value, exists = op.AppParamsGet.app_local_num_uint(a)
+        value_index, exists_index = op.AppParamsGet.app_local_num_uint(_get_1st_ref_index())
+        assert value == value_index, "expected value by index to match"
+        assert exists == exists_index, "expected exists by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_app_params_get_local_num_byte_slice(self, a: Application) -> UInt64:
-        local_num_byte_slice, _val = op.AppParamsGet.app_local_num_byte_slice(a)
-        return local_num_byte_slice
+        value, exists = op.AppParamsGet.app_local_num_byte_slice(a)
+        value_index, exists_index = op.AppParamsGet.app_local_num_byte_slice(_get_1st_ref_index())
+        assert value == value_index, "expected value by index to match"
+        assert exists == exists_index, "expected exists by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_app_params_get_extra_program_pages(self, a: Application) -> UInt64:
-        extra_program_pages, _val = op.AppParamsGet.app_extra_program_pages(a)
-        return extra_program_pages
+        value, exists = op.AppParamsGet.app_extra_program_pages(a)
+        value_index, exists_index = op.AppParamsGet.app_extra_program_pages(_get_1st_ref_index())
+        assert value == value_index, "expected value by index to match"
+        assert exists == exists_index, "expected exists by index to match"
+        return value
 
     @arc4.abimethod()
-    def verify_app_params_get_creator(self, a: Application) -> Bytes:
-        creator, _val = op.AppParamsGet.app_creator(a)
-        return creator.bytes
+    def verify_app_params_get_creator(self, a: Application) -> arc4.Address:
+        value, exists = op.AppParamsGet.app_creator(a)
+        value_index, exists_index = op.AppParamsGet.app_creator(_get_1st_ref_index())
+        assert value == value_index, "expected value by index to match"
+        assert exists == exists_index, "expected exists by index to match"
+        return arc4.Address(value)
 
     @arc4.abimethod()
-    def verify_app_params_get_address(self, a: Application) -> Bytes:
-        address, _val = op.AppParamsGet.app_address(a)
-        return address.bytes
+    def verify_app_params_get_address(self, a: Application) -> arc4.Address:
+        value, exists = op.AppParamsGet.app_address(a)
+        value_index, exists_index = op.AppParamsGet.app_address(_get_1st_ref_index())
+        assert value == value_index, "expected value by index to match"
+        assert exists == exists_index, "expected exists by index to match"
+        return arc4.Address(value)
 
 
 class StateAppLocalExContract(ARC4Contract):
