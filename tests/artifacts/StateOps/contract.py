@@ -17,63 +17,99 @@ from algopy import (
 class StateAcctParamsGetContract(ARC4Contract):
     @arc4.abimethod()
     def verify_acct_balance(self, a: algopy.Account) -> algopy.UInt64:
-        balance, _val = op.AcctParamsGet.acct_balance(a)
-        return balance
+        value, funded = op.AcctParamsGet.acct_balance(a)
+        value_index, funded_index = op.AcctParamsGet.acct_balance(1)
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_acct_min_balance(self, a: algopy.Account) -> algopy.UInt64:
-        min_balance, _val = op.AcctParamsGet.acct_min_balance(a)
-        return min_balance
+        value, funded = op.AcctParamsGet.acct_min_balance(a)
+        value_index, funded_index = op.AcctParamsGet.acct_min_balance(1)
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return value
 
     @arc4.abimethod()
-    def verify_acct_auth_addr(self, a: algopy.Account) -> algopy.Bytes:
-        auth_addr, _val = op.AcctParamsGet.acct_auth_addr(a)
-        return auth_addr.bytes
+    def verify_acct_auth_addr(self, a: algopy.Account) -> arc4.Address:
+        value, funded = op.AcctParamsGet.acct_auth_addr(a)
+        value_index, funded_index = op.AcctParamsGet.acct_auth_addr(1)
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return arc4.Address(value)
 
     @arc4.abimethod()
     def verify_acct_total_num_uint(self, a: algopy.Account) -> algopy.UInt64:
-        total_num_uint, _val = op.AcctParamsGet.acct_total_num_uint(a)
-        return total_num_uint
+        value, funded = op.AcctParamsGet.acct_total_num_uint(a)
+        value_index, funded_index = op.AcctParamsGet.acct_total_num_uint(1)
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_acct_total_num_byte_slice(self, a: algopy.Account) -> algopy.UInt64:
-        total_num_byte_slice, _val = op.AcctParamsGet.acct_total_num_byte_slice(a)
-        return total_num_byte_slice
+        value, funded = op.AcctParamsGet.acct_total_num_byte_slice(a)
+        value_index, funded_index = op.AcctParamsGet.acct_total_num_byte_slice(1)
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_acct_total_extra_app_pages(self, a: algopy.Account) -> algopy.UInt64:
-        total_extra_app_pages, _val = op.AcctParamsGet.acct_total_extra_app_pages(a)
-        return total_extra_app_pages
+        value, funded = op.AcctParamsGet.acct_total_extra_app_pages(a)
+        value_index, funded_index = op.AcctParamsGet.acct_total_extra_app_pages(1)
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_acct_total_apps_created(self, a: algopy.Account) -> algopy.UInt64:
-        total_apps_created, _val = op.AcctParamsGet.acct_total_apps_created(a)
-        return total_apps_created
+        value, funded = op.AcctParamsGet.acct_total_apps_created(a)
+        value_index, funded_index = op.AcctParamsGet.acct_total_apps_created(1)
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_acct_total_apps_opted_in(self, a: algopy.Account) -> algopy.UInt64:
-        total_apps_opted_in, _val = op.AcctParamsGet.acct_total_apps_opted_in(a)
-        return total_apps_opted_in
+        value, funded = op.AcctParamsGet.acct_total_apps_opted_in(a)
+        value_index, funded_index = op.AcctParamsGet.acct_total_apps_opted_in(1)
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_acct_total_assets_created(self, a: algopy.Account) -> algopy.UInt64:
-        total_assets_created, _val = op.AcctParamsGet.acct_total_assets_created(a)
-        return total_assets_created
+        value, funded = op.AcctParamsGet.acct_total_assets_created(a)
+        value_index, funded_index = op.AcctParamsGet.acct_total_assets_created(1)
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_acct_total_assets(self, a: algopy.Account) -> algopy.UInt64:
-        total_assets, _val = op.AcctParamsGet.acct_total_assets(a)
-        return total_assets
+        value, funded = op.AcctParamsGet.acct_total_assets(a)
+        value_index, funded_index = op.AcctParamsGet.acct_total_assets(1)
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_acct_total_boxes(self, a: algopy.Account) -> algopy.UInt64:
-        total_boxes, _val = op.AcctParamsGet.acct_total_boxes(a)
-        return total_boxes
+        value, funded = op.AcctParamsGet.acct_total_boxes(a)
+        value_index, funded_index = op.AcctParamsGet.acct_total_boxes(1)
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return value
 
     @arc4.abimethod()
     def verify_acct_total_box_bytes(self, a: algopy.Account) -> algopy.UInt64:
-        total_box_bytes, _val = op.AcctParamsGet.acct_total_box_bytes(a)
-        return total_box_bytes
+        value, funded = op.AcctParamsGet.acct_total_box_bytes(a)
+        value_index, funded_index = op.AcctParamsGet.acct_total_box_bytes(1)
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return value
 
 
 class StateAssetHoldingContract(ARC4Contract):

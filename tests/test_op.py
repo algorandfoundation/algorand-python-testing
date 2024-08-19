@@ -571,7 +571,7 @@ def test_app_params_get(
     [
         ("verify_acct_balance", INITIAL_BALANCE_MICRO_ALGOS + 100_000),
         ("verify_acct_min_balance", 100_000),
-        ("verify_acct_auth_addr", algosdk.encoding.decode_address(algosdk.constants.ZERO_ADDRESS)),
+        ("verify_acct_auth_addr", algosdk.constants.ZERO_ADDRESS),
         ("verify_acct_total_num_uint", 0),
         ("verify_acct_total_num_byte_slice", 0),
         ("verify_acct_total_extra_app_pages", 0),
@@ -588,12 +588,12 @@ def test_acct_params_get(
     get_state_acct_params_avm_result: AVMInvoker,
     context: AlgopyTestContext,
     method_name: str,
-    expected_value: int | bytes | bool | str | None,
+    expected_value: object,
 ) -> None:
     dummy_account = generate_test_account(algod_client)
 
     mock_account = context.any.account(
-        balance=algopy.UInt64(100_100_000),
+        balance=algopy.UInt64(INITIAL_BALANCE_MICRO_ALGOS + 100_000),
         min_balance=algopy.UInt64(100_000),
         auth_address=algopy.Account(algosdk.constants.ZERO_ADDRESS),
         total_num_uint=algopy.UInt64(0),
@@ -616,18 +616,12 @@ def test_acct_params_get(
     avm_result = get_state_acct_params_avm_result(
         method_name, a=dummy_account.address, suggested_params=sp
     )
-
     mock_result = getattr(mock_contract, method_name)(mock_account)
 
-    if method_name == "verify_acct_balance":
-        assert mock_result == 100_100_000  # assert it returns the value set in test context
-        mock_result = avm_result
+    if isinstance(expected_value, str):
+        expected_value = algopy.Account(expected_value)
+    assert mock_result == avm_result == expected_value
 
-    # TODO: 1.0 add alternate tests for testing by index
-    assert mock_result == avm_result
-
-    if expected_value is not None:
-        assert mock_result == expected_value
 
 @pytest.mark.parametrize(
     ("key", "value"),
