@@ -26,12 +26,12 @@ class SignaturesContract(ARC4Contract):
     @arc4.abimethod(create="require")
     def create(self) -> None:
         app_txn = gtxn.ApplicationCallTransaction(0)
-        # In AVM current_application_id is returning a non zero value for
-        # an application ID about to be created.
-        # In tests we are using the mocked AVM, so it should return 0
-        assert op.Global.current_application_id.id >= 0
-        assert app_txn.app_id == 0
-        assert Txn.application_id == 0
+        assert op.Global.current_application_id != 0, "expected global to have app id"
+        assert (
+            op.Global.current_application_address != op.Global.zero_address
+        ), "expected global to have app address"
+        assert app_txn.app_id == 0, "expected txn to have 0"
+        assert Txn.application_id == 0, "expected txn to have 0"
 
     @arc4.abimethod
     def sink(self, value: arc4.String, arr: UInt8Array) -> None:
