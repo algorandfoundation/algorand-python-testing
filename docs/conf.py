@@ -20,8 +20,8 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
     "myst_parser",
-    "sphinxmermaid",
     "autodoc2",  # Add this line
+    "jupyter_sphinx",
 ]
 
 templates_path = ["_templates"]
@@ -51,6 +51,7 @@ html_static_path = ["_static"]
 html_css_files = [
     "custom.css",
 ]
+html_js_files = ["https://unpkg.com/thebe@latest/lib/index.js"]
 
 python_maximum_signature_line_length = 80
 
@@ -75,16 +76,5 @@ autodoc2_hidden_objects = [
 ]
 add_module_names = False
 autodoc2_index_template = None
-myst_enable_extensions = ["fieldlist"]
 
-
-sphinxmermaid_mermaid_init = {
-    "theme": "base",
-    "themeVariables": {
-        "primaryColor": "#5ca5ff",
-        "primaryTextColor": "#fff",  # Changed to gray for better contrast in light mode
-        "lineColor": "#808080",  # Changed to black for better contrast in light mode
-        "secondaryColor": "#808080",
-        "tertiaryColor": "#113a51",
-    },
-}
+jupyter_sphinx_execute_kernelspec = "python3"

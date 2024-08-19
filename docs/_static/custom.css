@@ -2,7 +2,8 @@
  Hide the first element of attribute like items as algopy stubs are more like interfaces and as such
  should not indicate a specific "value" for variables
  */
-.py.data,.py.attribute {
+.py.data,
+.py.attribute {
     dd p:first-child {
         display: none;
     }
@@ -10,4 +11,8 @@
 
 .py.class {
     margin-top: 3rem;
+}
+
+.jupyter_container .stderr {
+    background-color: #7fff00;
 }
