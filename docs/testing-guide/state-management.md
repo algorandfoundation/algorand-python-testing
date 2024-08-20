@@ -33,7 +33,7 @@ contract.state_b = algopy.UInt64(20)
 
 Local state is defined similarly to global state, but accessed using account addresses as keys.
 
-```python
+```{testcode}
 class MyContract(algopy.ARC4Contract):
     def __init__(self):
         self.local_state_a = algopy.LocalState(algopy.UInt64, key="state_a")

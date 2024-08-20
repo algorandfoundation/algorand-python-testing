@@ -78,16 +78,16 @@ with algopy_testing_context() as ctx:
 
 ### 2. Transaction Fields
 
-```python
+```{testcode}
 from algopy_testing import algopy_testing_context
 import algopy.op as op
 
-with algopy_testing_context() as ctx:
-    class MyContract(algopy.ARC4Contract):
-        @algopy.arc4.abimethod
-        def check_txn_fields(self) -> algopy.Bytes:
-            return op.Txn.sender
+class MyContract(algopy.ARC4Contract):
+    @algopy.arc4.abimethod
+    def check_txn_fields(self) -> algopy.Bytes:
+        return op.Txn.sender
 
+with algopy_testing_context() as ctx:
     contract = MyContract()
 
     # Set custom transaction fields
@@ -95,22 +95,22 @@ with algopy_testing_context() as ctx:
     with ctx.txn.create_group(txn_op_fields={"sender": custom_sender}):
         result = contract.check_txn_fields()
 
-    assert result == custom_sender.bytes
+    assert result == custom_sender
 ```
 
 ### 3. Asset Holdings and Parameters
 
-```python
+```{testcode}
 from algopy_testing import algopy_testing_context
 import algopy.op as op
 
-with algopy_testing_context() as ctx:
-    class AssetContract(algopy.ARC4Contract):
-        @algopy.arc4.abimethod
-        def check_asset_holding(self, account: algopy.Account, asset: algopy.Asset) -> algopy.UInt64:
-            balance, _ = op.AssetHoldingGet.asset_balance(account, asset)
-            return balance
+class AssetContract(algopy.ARC4Contract):
+    @algopy.arc4.abimethod
+    def check_asset_holding(self, account: algopy.Account, asset: algopy.Asset) -> algopy.UInt64:
+        balance, _ = op.AssetHoldingGet.asset_balance(account, asset)
+        return balance
 
+with algopy_testing_context() as ctx:
     # Create an asset and set up holdings
     asset = ctx.any.asset(total=algopy.UInt64(1000000))
     account = ctx.any.account(opted_asset_balances={asset.id: algopy.UInt64(5000)})
@@ -122,17 +122,17 @@ with algopy_testing_context() as ctx:
 
 ### 4. Application Local and Global State
 
-```python
+```{testcode}
 from algopy_testing import algopy_testing_context
 import algopy.op as op
 
-with algopy_testing_context() as ctx:
-    class StateContract(algopy.ARC4Contract):
-        @algopy.arc4.abimethod
-        def set_and_get_state(self, key: algopy.Bytes, value: algopy.UInt64) -> algopy.UInt64:
-            op.AppGlobal.put(key, value)
-            return op.AppGlobal.get_uint64(key)
+class StateContract(algopy.ARC4Contract):
+    @algopy.arc4.abimethod
+    def set_and_get_state(self, key: algopy.Bytes, value: algopy.UInt64) -> algopy.UInt64:
+        op.AppGlobal.put(key, value)
+        return op.AppGlobal.get_uint64(key)
 
+with algopy_testing_context() as ctx:
     contract = StateContract()
     key = algopy.Bytes(b"test_key")
     value = algopy.UInt64(42)
@@ -180,7 +180,7 @@ Used for ABI method calls. Mocking allows testing contract interactions without 
 
 ```{testcode}
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 import algopy
 from algopy_testing.primitives import UInt64
 
@@ -194,19 +194,20 @@ class MyOtherContract(algopy.ARC4Contract):
     def my_other_method(self, arg1: algopy.UInt64, arg2: algopy.UInt64) -> algopy.UInt64:
         return arg1 + arg2
 
-def test_mock_abi_call():
-    with algopy_testing_context() as ctx:
-        mock_abi_call = MagicMock()
-        mock_abi_call.return_value = UInt64(11)
-        contract = MyContract()
+class TestMyContract(unittest.TestCase):
+    def test_mock_abi_call(self):
+        with algopy_testing_context() as ctx:
+            mock_abi_call = MagicMock(return_value=UInt64(11))
+            contract = MyContract()
 
-        with patch('algopy.arc4.abi_call', mock_abi_call):
-            result = contract.my_method(UInt64(10), UInt64(1))
+            with patch('algopy.arc4.abi_call', mock_abi_call):
+                result = contract.my_method(UInt64(10), UInt64(1))
 
-        assert result == UInt64(11)
-        mock_abi_call.assert_called_once_with("my_other_method", UInt64(10), UInt64(1))
+            self.assertEqual(result, UInt64(11))
+            mock_abi_call.assert_called_once_with("my_other_method", UInt64(10), UInt64(1))
 
-test_mock_abi_call()
+if __name__ == '__main__':
+    unittest.main()
 ```
 
 ## algopy.op.vrf_verify
@@ -215,30 +216,33 @@ Verifiable Random Function (VRF) verification. Mocking is useful for testing wit
 
 ```{testcode}
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 import algopy
 from algopy_testing.primitives import Bytes
 
-def test_mock_vrf_verify():
-    mock_result = (Bytes(b'mock_output'), True)
+class TestVrfVerify(unittest.TestCase):
 
-    with patch('algopy.op.vrf_verify', MagicMock(return_value=mock_result)) as mock_vrf_verify:
-        result = algopy.op.vrf_verify(
+    def test_mock_vrf_verify(self):
+        mock_result = (Bytes(b'mock_output'), True)
+
+        with patch('algopy.op.vrf_verify', return_value=mock_result) as mock_vrf_verify:
+            result = algopy.op.vrf_verify(
+                algopy.op.VrfVerify.VrfAlgorand,
+                Bytes(b'proof'),
+                Bytes(b'message'),
+                Bytes(b'public_key')
+            )
+
+        self.assertEqual(result, mock_result)
+        mock_vrf_verify.assert_called_once_with(
             algopy.op.VrfVerify.VrfAlgorand,
             Bytes(b'proof'),
             Bytes(b'message'),
             Bytes(b'public_key')
         )
 
-    assert result == mock_result
-    mock_vrf_verify.assert_called_once_with(
-        algopy.op.VrfVerify.VrfAlgorand,
-        Bytes(b'proof'),
-        Bytes(b'message'),
-        Bytes(b'public_key')
-    )
-
-test_mock_vrf_verify()
+if __name__ == '__main__':
+    unittest.main()
 ```
 
 ## algopy.op.EllipticCurve
@@ -247,26 +251,29 @@ Elliptic curve operations. Mocking allows testing without actual cryptographic c
 
 ```{testcode}
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 import algopy
 from algopy_testing.primitives import Bytes
 
-def test_mock_elliptic_curve_decompress():
-    mock_result = (Bytes(b'x_coord'), Bytes(b'y_coord'))
+class TestEllipticCurve(unittest.TestCase):
 
-    with patch('algopy.op.EllipticCurve.decompress', MagicMock(return_value=mock_result)) as mock_decompress:
-        result = algopy.op.EllipticCurve.decompress(
+    def test_mock_elliptic_curve_decompress(self):
+        mock_result = (Bytes(b'x_coord'), Bytes(b'y_coord'))
+
+        with patch('algopy.op.EllipticCurve.decompress', return_value=mock_result) as mock_decompress:
+            result = algopy.op.EllipticCurve.decompress(
+                algopy.op.EC.BN254g1,
+                Bytes(b'compressed_point')
+            )
+
+        self.assertEqual(result, mock_result)
+        mock_decompress.assert_called_once_with(
             algopy.op.EC.BN254g1,
             Bytes(b'compressed_point')
         )
 
-    assert result == mock_result
-    mock_decompress.assert_called_once_with(
-        algopy.op.EC.BN254g1,
-        Bytes(b'compressed_point')
-    )
-
-test_mock_elliptic_curve_decompress()
+if __name__ == '__main__':
+    unittest.main()
 ```
 
 These examples demonstrate how to mock key mockable opcodes in `algorand-python-testing`. Use similar techniques (in your preferred testing framework) for other mockable opcodes like `algopy.compile_logicsig`, `algopy.arc4.arc4_create`, and `algopy.arc4.arc4_update`.

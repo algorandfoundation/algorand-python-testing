@@ -34,8 +34,15 @@ Alternatively, if you want to start from scratch:
     from your_contract import YourContract
 
     def test_your_contract():
-    with algopy_testing_context() as ctx:
-    contract = YourContract() # Your test code here
+        # Arrange
+        contract = YourContract()
+        expected_result = ... # Your expected result here
+
+        # Act
+        result = contract.your_method()  # Your test code here
+
+        # Assert
+        assert result == expected_result
     ```
 
 5. Run your tests using your preferred Python testing framework (e.g., pytest, unittest)
