@@ -33,7 +33,6 @@ def get_avm_result(algod_client: AlgodClient) -> AVMInvoker:
 def context() -> Generator[algopy_testing.AlgopyTestContext, None, None]:
     with algopy_testing.algopy_testing_context() as ctx:
         yield ctx
-        ctx.reset()
 
 
 @pytest.fixture()

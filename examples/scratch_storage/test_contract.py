@@ -10,7 +10,6 @@ from .contract import ScratchSlotsContract, SimpleScratchSlotsContract
 def context() -> Generator[AlgopyTestContext, None, None]:
     with algopy_testing_context() as ctx:
         yield ctx
-        ctx.reset()
 
 
 def test_arc4_contract(context: AlgopyTestContext) -> None:

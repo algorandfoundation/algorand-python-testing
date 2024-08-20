@@ -1,0 +1,151 @@
+#pragma version 10
+
+tests.artifacts.BoxContract.contract.BoxContract.approval_program:
+    // tests/artifacts/BoxContract/contract.py:4
+    // class BoxContract(ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@6
+    method "store_enums()void"
+    method "read_enums()(uint64,uint64)"
+    txna ApplicationArgs 0
+    match main_store_enums_route@2 main_read_enums_route@3
+    err // reject transaction
+
+main_store_enums_route@2:
+    // tests/artifacts/BoxContract/contract.py:9
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    callsub store_enums
+    int 1
+    return
+
+main_read_enums_route@3:
+    // tests/artifacts/BoxContract/contract.py:14
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    callsub read_enums
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_bare_routing@6:
+    // tests/artifacts/BoxContract/contract.py:4
+    // class BoxContract(ARC4Contract):
+    txn OnCompletion
+    !
+    assert // reject transaction
+    txn ApplicationID
+    !
+    assert // is creating
+    int 1
+    return
+
+
+// tests.artifacts.BoxContract.contract.BoxContract.store_enums() -> void:
+store_enums:
+    // tests/artifacts/BoxContract/contract.py:9-10
+    // @arc4.abimethod()
+    // def store_enums(self) -> None:
+    proto 0 0
+    // tests/artifacts/BoxContract/contract.py:11
+    // self.oca.value = OnCompleteAction.OptIn
+    int OptIn
+    itob
+    // tests/artifacts/BoxContract/contract.py:6
+    // self.oca = Box(OnCompleteAction)
+    byte "oca"
+    // tests/artifacts/BoxContract/contract.py:11
+    // self.oca.value = OnCompleteAction.OptIn
+    swap
+    box_put
+    // tests/artifacts/BoxContract/contract.py:12
+    // self.txn.value = TransactionType.ApplicationCall
+    int appl
+    itob
+    // tests/artifacts/BoxContract/contract.py:7
+    // self.txn = Box(TransactionType)
+    byte "txn"
+    // tests/artifacts/BoxContract/contract.py:12
+    // self.txn.value = TransactionType.ApplicationCall
+    swap
+    box_put
+    retsub
+
+
+// tests.artifacts.BoxContract.contract.BoxContract.read_enums() -> bytes:
+read_enums:
+    // tests/artifacts/BoxContract/contract.py:14-15
+    // @arc4.abimethod()
+    // def read_enums(self) -> arc4.Tuple[arc4.UInt64, arc4.UInt64]:
+    proto 0 1
+    // tests/artifacts/BoxContract/contract.py:16
+    // assert op.Box.get(b"oca")[0] == op.itob(self.oca.value)
+    byte 0x6f6361
+    box_get
+    pop
+    // tests/artifacts/BoxContract/contract.py:6
+    // self.oca = Box(OnCompleteAction)
+    byte "oca"
+    // tests/artifacts/BoxContract/contract.py:16
+    // assert op.Box.get(b"oca")[0] == op.itob(self.oca.value)
+    box_get
+    swap
+    btoi
+    swap
+    assert // check self.oca exists
+    itob
+    ==
+    assert
+    // tests/artifacts/BoxContract/contract.py:17
+    // assert op.Box.get(b"txn")[0] == op.itob(self.txn.value)
+    byte 0x74786e
+    box_get
+    pop
+    // tests/artifacts/BoxContract/contract.py:7
+    // self.txn = Box(TransactionType)
+    byte "txn"
+    // tests/artifacts/BoxContract/contract.py:17
+    // assert op.Box.get(b"txn")[0] == op.itob(self.txn.value)
+    box_get
+    swap
+    btoi
+    swap
+    assert // check self.txn exists
+    itob
+    ==
+    assert
+    // tests/artifacts/BoxContract/contract.py:6
+    // self.oca = Box(OnCompleteAction)
+    byte "oca"
+    // tests/artifacts/BoxContract/contract.py:19
+    // return arc4.Tuple((arc4.UInt64(self.oca.value), arc4.UInt64(self.txn.value)))
+    box_get
+    swap
+    btoi
+    swap
+    assert // check self.oca exists
+    itob
+    // tests/artifacts/BoxContract/contract.py:7
+    // self.txn = Box(TransactionType)
+    byte "txn"
+    // tests/artifacts/BoxContract/contract.py:19
+    // return arc4.Tuple((arc4.UInt64(self.oca.value), arc4.UInt64(self.txn.value)))
+    box_get
+    swap
+    btoi
+    swap
+    assert // check self.txn exists
+    itob
+    concat
+    retsub
