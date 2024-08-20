@@ -24,12 +24,12 @@ _T = typing.TypeVar("_T")
 
 
 class ITxnLoader:
-    """A helper class for handling access to individual inner transactions in
-    test context.
+    """A helper class for handling access to individual inner transactions in test
+    context.
 
-    This class provides methods to access and retrieve specific types of
-    inner transactions. It performs type checking and conversion for
-    various transaction types.
+    This class provides methods to access and retrieve specific types of inner
+    transactions. It performs type checking and conversion for various transaction
+    types.
     """
 
     _TXN_TYPE_MAP: typing.ClassVar = {
@@ -57,8 +57,7 @@ class ITxnLoader:
     def payment(self) -> algopy.itxn.PaymentInnerTransaction:
         """Retrieve the last PaymentInnerTransaction.
 
-        :raises ValueError: If the transaction is not found or not of
-            the expected type.
+        :raises ValueError: If the transaction is not found or not of the expected type.
         """
         return self._get_itxn(itxn.PaymentInnerTransaction)
 
@@ -66,8 +65,7 @@ class ITxnLoader:
     def asset_config(self) -> algopy.itxn.AssetConfigInnerTransaction:
         """Retrieve the last AssetConfigInnerTransaction.
 
-        :raises ValueError: If the transaction is not found or not of
-            the expected type.
+        :raises ValueError: If the transaction is not found or not of the expected type.
         """
         return self._get_itxn(itxn.AssetConfigInnerTransaction)
 
@@ -75,8 +73,7 @@ class ITxnLoader:
     def asset_transfer(self) -> algopy.itxn.AssetTransferInnerTransaction:
         """Retrieve the last AssetTransferInnerTransaction.
 
-        :raises ValueError: If the transaction is not found or not of
-            the expected type.
+        :raises ValueError: If the transaction is not found or not of the expected type.
         """
         return self._get_itxn(itxn.AssetTransferInnerTransaction)
 
@@ -84,8 +81,7 @@ class ITxnLoader:
     def asset_freeze(self) -> algopy.itxn.AssetFreezeInnerTransaction:
         """Retrieve the last AssetFreezeInnerTransaction.
 
-        :raises ValueError: If the transaction is not found or not of
-            the expected type.
+        :raises ValueError: If the transaction is not found or not of the expected type.
         """
         return self._get_itxn(itxn.AssetFreezeInnerTransaction)
 
@@ -93,8 +89,7 @@ class ITxnLoader:
     def application_call(self) -> algopy.itxn.ApplicationCallInnerTransaction:
         """Retrieve the last ApplicationCallInnerTransaction.
 
-        :raises ValueError: If the transaction is not found or not of
-            the expected type.
+        :raises ValueError: If the transaction is not found or not of the expected type.
         """
         return self._get_itxn(itxn.ApplicationCallInnerTransaction)
 
@@ -102,8 +97,7 @@ class ITxnLoader:
     def key_registration(self) -> algopy.itxn.KeyRegistrationInnerTransaction:
         """Retrieve the last KeyRegistrationInnerTransaction.
 
-        :raises ValueError: If the transaction is not found or not of
-            the expected type.
+        :raises ValueError: If the transaction is not found or not of the expected type.
         """
         return self._get_itxn(itxn.KeyRegistrationInnerTransaction)
 
@@ -111,20 +105,18 @@ class ITxnLoader:
     def transaction(self) -> algopy.itxn.InnerTransactionResult:
         """Retrieve the last InnerTransactionResult.
 
-        :raises ValueError: If the transaction is not found or not of
-            the expected type.
+        :raises ValueError: If the transaction is not found or not of the expected type.
         """
         return self._get_itxn(itxn.InnerTransactionResult)
 
 
 class ITxnGroupLoader:
-    """A helper class for handling access to groups of inner transactions in
-    test context.
+    """A helper class for handling access to groups of inner transactions in test
+    context.
 
-    This class provides methods to access and retrieve inner
-    transactions from a group, either individually or as slices. It
-    supports type-specific retrieval of inner transactions and
-    implements indexing operations.
+    This class provides methods to access and retrieve inner transactions from a group,
+    either individually or as slices. It supports type-specific retrieval of inner
+    transactions and implements indexing operations.
     """
 
     @typing.overload
@@ -157,74 +149,57 @@ class ITxnGroupLoader:
     def payment(self, index: int) -> algopy.itxn.PaymentInnerTransaction:
         """Return a PaymentInnerTransaction from the group at the given index.
 
-        :param index: int
-        :param index: int:
-        :returns: algopy.itxn.PaymentInnerTransaction: The
-            PaymentInnerTransaction at the given index.
+        :param index: The index of the transaction in the group.
+        :returns: The PaymentInnerTransaction at the given index.
+        :raises TypeError: If the transaction is not found or not of
         """
         return ITxnLoader(self._get_itxn(index)).payment
 
     def asset_config(self, index: int) -> algopy.itxn.AssetConfigInnerTransaction:
-        """Return an AssetConfigInnerTransaction from the group at the given
-        index.
+        """Return an AssetConfigInnerTransaction from the group at the given index.
 
-        :param index: int
-        :param index: int:
-        :returns: algopy.itxn.AssetConfigInnerTransaction: The
-            AssetConfigInnerTransaction at the given index.
+        :param index: The index of the transaction in the group.
+        :returns: The AssetConfigInnerTransaction at the given index.
+        :raises TypeError: If the transaction is not found or not of the expected type.
         """
         return ITxnLoader(self._get_itxn(index)).asset_config
 
     def asset_transfer(self, index: int) -> algopy.itxn.AssetTransferInnerTransaction:
-        """Return an AssetTransferInnerTransaction from the group at the given
-        index.
+        """Return an AssetTransferInnerTransaction from the group at the given index.
 
-        :param index: int
-        :param index: int:
-        :returns: algopy.itxn.AssetTransferInnerTransaction: The
-            AssetTransferInnerTransaction at the given index.
+        :param index: The index of the transaction in the group.
+        :returns: The AssetTransferInnerTransaction at the given index.
         """
         return ITxnLoader(self._get_itxn(index)).asset_transfer
 
     def asset_freeze(self, index: int) -> algopy.itxn.AssetFreezeInnerTransaction:
-        """Return an AssetFreezeInnerTransaction from the group at the given
-        index.
+        """Return an AssetFreezeInnerTransaction from the group at the given index.
 
-        :param index: int
-        :param index: int:
-        :returns: algopy.itxn.AssetFreezeInnerTransaction: The
-            AssetFreezeInnerTransaction at the given index.
+        :param index: The index of the transaction in the group.
+        :returns: The AssetFreezeInnerTransaction at the given index.
         """
         return ITxnLoader(self._get_itxn(index)).asset_freeze
 
     def application_call(self, index: int) -> algopy.itxn.ApplicationCallInnerTransaction:
-        """Return an ApplicationCallInnerTransaction from the group at the
-        given index.
+        """Return an ApplicationCallInnerTransaction from the group at the given index.
 
-        :param index: int
-        :param index: int:
-        :returns: algopy.itxn.ApplicationCallInnerTransaction: The
-            ApplicationCallInnerTransaction at the given index.
+        :param index: The index of the transaction in the group.
+        :returns: The ApplicationCallInnerTransaction at the given index.
         """
         return ITxnLoader(self._get_itxn(index)).application_call
 
     def key_registration(self, index: int) -> algopy.itxn.KeyRegistrationInnerTransaction:
-        """Return a KeyRegistrationInnerTransaction from the group at the given
-        index.
+        """Return a KeyRegistrationInnerTransaction from the group at the given index.
 
-        :param index: int
-        :param index: int:
-        :returns: algopy.itxn.KeyRegistrationInnerTransaction: The
-            KeyRegistrationInnerTransaction at the given index.
+        :param index: The index of the transaction in the group.
+        :returns: The KeyRegistrationInnerTransaction at the given index.
         """
         return ITxnLoader(self._get_itxn(index)).key_registration
 
     def transaction(self, index: int) -> algopy.itxn.InnerTransactionResult:
         """Return an InnerTransactionResult from the group at the given index.
 
-        :param index: int
-        :param index: int:
-        :returns: algopy.itxn.InnerTransactionResult: The
-            InnerTransactionResult at the given index.
+        :param index: The index of the transaction in the group.
+        :returns: The InnerTransactionResult at the given index.
         """
         return ITxnLoader(self._get_itxn(index)).transaction

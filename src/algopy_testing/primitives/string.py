@@ -6,12 +6,11 @@ from algopy_testing.utils import as_bytes, as_string, check_type
 
 
 class String(BytesBacked):
-    """Represents a UTF-8 encoded string backed by Bytes, accessible via
-    .bytes.
+    """Represents a UTF-8 encoded string backed by Bytes, accessible via .bytes.
 
-    Works with str literals instead of bytes literals. Due to lack of
-    AVM support for unicode, indexing and length operations are not
-    supported. Use .bytes.length for byte length.
+    Works with str literals instead of bytes literals. Due to lack of AVM support for
+    unicode, indexing and length operations are not supported. Use .bytes.length for
+    byte length.
     """
 
     _value: bytes  # underlying 'bytes' value representing the String

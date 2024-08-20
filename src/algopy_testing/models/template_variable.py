@@ -21,5 +21,5 @@ class TemplateVarGeneric:
 
 
 TemplateVar: TemplateVarGeneric = TemplateVarGeneric()
-"""Template variables can be used to represent a placeholder for a deploy-time
-provided value."""
+"""Template variables can be used to represent a placeholder for a deploy-time provided
+value."""

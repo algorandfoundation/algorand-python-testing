@@ -21,9 +21,9 @@ _var: ContextVar[AlgopyTestContext] = ContextVar("_var")
 
 
 class _InternalContext:
-    """For accessing implementation specific functions, with a convenient
-    single entry point for other modules to import Also allows for a single
-    place to check and provide."""
+    """For accessing implementation specific functions, with a convenient single entry
+    point for other modules to import Also allows for a single place to check and
+    provide."""
 
     @property
     def value(self) -> AlgopyTestContext:

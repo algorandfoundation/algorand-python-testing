@@ -51,7 +51,8 @@ class Asset(UInt64Backed):
         if int(self.id) not in account_data.opted_asset_balances:
             raise ValueError(
                 "The asset is not opted into the account! "
-                "Use `account.opt_in()` to opt the asset into the account."
+                "Use `ctx.any.account(opted_asset_balances={{ASSET_ID: VALUE}})` "
+                "to set emulated opted asset into the account."
             )
 
         return account_data.opted_asset_balances[self.id]

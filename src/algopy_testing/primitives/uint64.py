@@ -163,8 +163,8 @@ class UInt64:
         return UInt64(~self.value & MAX_UINT64)
 
     def __index__(self) -> int:
-        """Return the internal integer value of the UInt64 for use in
-        indexing/slice expressions.
+        """Return the internal integer value of the UInt64 for use in indexing/slice
+        expressions.
 
         Returns:
             int: The internal integer value of the UInt64.

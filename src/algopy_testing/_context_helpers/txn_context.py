@@ -87,16 +87,8 @@ class TransactionContext:
         *args: TParamSpec.args,
         **kwargs: TParamSpec.kwargs,
     ) -> DeferredAppCall[TReturn]:
-        """Prepare an application call transaction group for a contract method
-        without executing it.
-
-        :param method: The decorated contract method (baremethod or
-            abimethod).
-        :param args: Positional arguments for the method.
-        :param kwargs: Keyword arguments for the method.
-        :return: A DeferredAppCall object containing the transaction
-            group and method info.
-        """
+        r"""Prepare an application call transaction group for a contract method without
+        executing it."""
         from algopy_testing.models import ARC4Contract
 
         arc4_metadata = get_arc4_metadata(method)
@@ -119,7 +111,7 @@ class TransactionContext:
         app_id = contract.__app_id__
         # Handle ABI methods
         if arc4_metadata.arc4_signature:
-            ordered_args = get_ordered_args(fn, args, kwargs)  # type: ignore[arg-type]
+            ordered_args = get_ordered_args(fn, args, kwargs)
             txns = create_abimethod_txns(
                 app_id=app_id,
                 arc4_signature=arc4_metadata.arc4_signature,
@@ -140,20 +132,13 @@ class TransactionContext:
         active_txn_index: int | None = None,
         txn_op_fields: TransactionBaseFields | None = None,
     ) -> Iterator[None]:
-        """Adds a new transaction group using a list of transactions and an
-        optional index to indicate the active transaction within the group.
+        """Adds a new transaction group using a list of transactions and an optional
+        index to indicate the active transaction within the group.
 
-        :param gtxns: List of transactions.
-        :type gtxns: list[algopy.gtxn.TransactionBase]
-        :param active_txn_index: Index of the active transaction.
-        :type active_txn_index: int
-        :param active_txn_index: Index of the active transaction.
-            Defaults to None.
-        :type active_txn_index: int
-        :param gtxn: list[algopy.gtxn.TransactionBase]:
-        :param active_txn_index: int | None: (Default value = None)
-        :param txn_op_fields: dict[str, typing.Any] | None: (Default
-            value = None)
+        :param gtxns: List of transactions
+        :param active_txn_index: Index of the active transaction
+        :param txn_op_fields: Additional transaction operation fields
+        :return: None
         """
 
         processed_gtxns = []
@@ -291,12 +276,10 @@ class TransactionGroup:
         self,
         index: algopy.UInt64 | int,
     ) -> algopy.UInt64 | algopy.Bytes:
-        """Retrieves the scratch values for a specific slot in the active
-        transaction.
+        """Retrieves the scratch values for a specific slot in the active transaction.
 
-        :param index: algopy.UInt64 | int: Which scratch slot to query
-        :returns: Scratch slot value for the active transaction.
-        :rtype: algopy.UInt64 | algopy.Bytes
+        :param index: Which scratch slot to query
+        :return: Scratch slot value for the active transaction
         """
         # this wraps an internal method on TransactionBase, so it can be exposed to
         # consumers of algopy_testing
@@ -307,8 +290,8 @@ class TransactionGroup:
     ) -> Sequence[algopy.Bytes | algopy.UInt64]:
         """Retrieves scratch space for the active transaction.
 
-        :returns: List of scratch space values for the active
-            transaction.
+        :return: List of scratch space values for the active transaction
+        :rtype: Sequence[algopy.Bytes | algopy.UInt64]
         """
         return self._active_txn.get_scratch_space()
 

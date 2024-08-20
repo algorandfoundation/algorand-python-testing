@@ -21,7 +21,6 @@ class ARC4ValueGenerator:
         """Generate a random Algorand address.
 
         :returns: A new, random Algorand address.
-        :rtype: algopy.arc4.Address
         """
 
         return arc4.Address(algosdk.account.generate_account()[1])
@@ -30,15 +29,8 @@ class ARC4ValueGenerator:
         """Generate a random UInt8 within the specified range.
 
         :param min_value: Minimum value (inclusive). Defaults to 0.
-        :type min_value: int
-        :param max_value: Maximum value (inclusive). Defaults to
-            MAX_UINT8.
-        :type max_value: int
-        :param min_value: int:  (Default value = 0)
-        :param max_value: int:  (Default value = MAX_UINT8)
+        :param max_value: Maximum value (inclusive). Defaults to MAX_UINT8.
         :returns: A random UInt8 value.
-        :rtype: algopy.arc4.UInt8
-        :raises AssertionError: If values are out of UInt8 range.
         """
         return arc4.UInt8(generate_random_int(min_value, max_value))
 
@@ -46,15 +38,8 @@ class ARC4ValueGenerator:
         """Generate a random UInt16 within the specified range.
 
         :param min_value: Minimum value (inclusive). Defaults to 0.
-        :type min_value: int
-        :param max_value: Maximum value (inclusive). Defaults to
-            MAX_UINT16.
-        :type max_value: int
-        :param min_value: int:  (Default value = 0)
-        :param max_value: int:  (Default value = MAX_UINT16)
+        :param max_value: Maximum value (inclusive). Defaults to MAX_UINT16.
         :returns: A random UInt16 value.
-        :rtype: algopy.arc4.UInt16
-        :raises AssertionError: If values are out of UInt16 range.
         """
         return arc4.UInt16(generate_random_int(min_value, max_value))
 
@@ -62,15 +47,8 @@ class ARC4ValueGenerator:
         """Generate a random UInt32 within the specified range.
 
         :param min_value: Minimum value (inclusive). Defaults to 0.
-        :type min_value: int
-        :param max_value: Maximum value (inclusive). Defaults to
-            MAX_UINT32.
-        :type max_value: int
-        :param min_value: int:  (Default value = 0)
-        :param max_value: int:  (Default value = MAX_UINT32)
+        :param max_value: Maximum value (inclusive). Defaults to MAX_UINT32.
         :returns: A random UInt32 value.
-        :rtype: algopy.arc4.UInt32
-        :raises AssertionError: If values are out of UInt32 range.
         """
         return arc4.UInt32(generate_random_int(min_value, max_value))
 
@@ -78,15 +56,8 @@ class ARC4ValueGenerator:
         """Generate a random UInt64 within the specified range.
 
         :param min_value: Minimum value (inclusive). Defaults to 0.
-        :type min_value: int
-        :param max_value: Maximum value (inclusive). Defaults to
-            MAX_UINT64.
-        :type max_value: int
-        :param min_value: int:  (Default value = 0)
-        :param max_value: int:  (Default value = MAX_UINT64)
+        :param max_value: Maximum value (inclusive). Defaults to MAX_UINT64.
         :returns: A random UInt64 value.
-        :rtype: algopy.arc4.UInt64
-        :raises AssertionError: If values are out of UInt64 range.
         """
         return arc4.UInt64(generate_random_int(min_value, max_value))
 
@@ -96,14 +67,8 @@ class ARC4ValueGenerator:
         """Generate a random UInt128 within the specified range.
 
         :param min_value: Minimum value (inclusive). Defaults to 0.
-        :type min_value: int
         :param max_value: Maximum value (inclusive). Defaults to (2^128 - 1).
-        :type max_value: int
-        :param min_value: int:  (Default value = 0)
-        :param max_value: int:  (Default value = (1 << 128) - 1)
         :returns: A random UInt128 value.
-        :rtype: algopy.arc4.UInt128
-        :raises AssertionError: If values are out of UInt128 range.
         """
         return arc4.UInt128(generate_random_int(min_value, max_value))
 
@@ -113,14 +78,8 @@ class ARC4ValueGenerator:
         """Generate a random UInt256 within the specified range.
 
         :param min_value: Minimum value (inclusive). Defaults to 0.
-        :type min_value: int
         :param max_value: Maximum value (inclusive). Defaults to (2^256 - 1).
-        :type max_value: int
-        :param min_value: int:  (Default value = 0)
-        :param max_value: int:  (Default value = (1 << 256) - 1)
         :returns: A random UInt256 value.
-        :rtype: algopy.arc4.UInt256
-        :raises AssertionError: If values are out of UInt256 range.
         """
         return arc4.UInt256(generate_random_int(min_value, max_value))
 
@@ -128,15 +87,8 @@ class ARC4ValueGenerator:
         """Generate a random UInt512 within the specified range.
 
         :param min_value: Minimum value (inclusive). Defaults to 0.
-        :type min_value: int
-        :param max_value: Maximum value (inclusive). Defaults to
-            MAX_UINT512.
-        :type max_value: int
-        :param min_value: int:  (Default value = 0)
-        :param max_value: int:  (Default value = MAX_UINT512)
+        :param max_value: Maximum value (inclusive). Defaults to MAX_UINT512.
         :returns: A random UInt512 value.
-        :rtype: algopy.arc4.UInt512
-        :raises AssertionError: If values are out of UInt512 range.
         """
         return arc4.UInt512(generate_random_int(min_value, max_value))
 
@@ -145,10 +97,7 @@ class ARC4ValueGenerator:
 
         :param n: The number of bits for the dynamic bytes. Must be a multiple of 8, otherwise
                 the last byte will be truncated.
-        :type n: int
-        :param n: int:
         :returns: A new, random dynamic bytes of size `n` bits.
-        :rtype: algopy.arc4.DynamicBytes
         """
         # rounding up
         num_bytes = (n + 7) // 8
@@ -166,10 +115,7 @@ class ARC4ValueGenerator:
         """Generate a random string of size `n` bits.
 
         :param n: The number of bits for the string.
-        :type n: int
-        :param n: int:
         :returns: A new, random string of size `n` bits.
-        :rtype: algopy.arc4.String
         """
         # Calculate the number of characters needed (rounding up)
         num_chars = (n + 7) // 8

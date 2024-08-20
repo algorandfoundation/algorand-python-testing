@@ -1,12 +1,12 @@
 from collections.abc import Generator
+from typing import Any
 
-import algopy_testing
 import pytest
+from algopy_testing import arc4
 from algopy_testing._context_helpers.context_storage import algopy_testing_context
 from algopy_testing.context import AlgopyTestContext
-
-from tests.artifacts.StateOps.contract import GlobalStateContract
-from tests.common import AVMInvoker
+from algopy_testing.primitives.bytes import Bytes
+from algopy_testing.state.global_state import GlobalState
 
 
 @pytest.fixture()
@@ -17,38 +17,118 @@ def context() -> Generator[AlgopyTestContext, None, None]:
 
 
 @pytest.mark.usefixtures("context")
-@pytest.mark.parametrize(
-    ("method_name", "expected_type"),
-    [
-        ("get_implicit_key_arc4_uint", algopy_testing.arc4.UInt64),
-        ("get_implicit_key_arc4_string", algopy_testing.arc4.String),
-        ("get_implicit_key_arc4_byte", algopy_testing.arc4.Byte),
-        ("get_implicit_key_arc4_bool", algopy_testing.arc4.Bool),
-        ("get_implicit_key_arc4_address", algopy_testing.arc4.Address),
-        ("get_implicit_key_arc4_uint128", algopy_testing.arc4.UInt128),
-        ("get_implicit_key_arc4_dynamic_bytes", algopy_testing.arc4.DynamicBytes),
-        ("get_arc4_uint", algopy_testing.arc4.UInt64),
-        ("get_arc4_string", algopy_testing.arc4.String),
-        ("get_arc4_byte", algopy_testing.arc4.Byte),
-        ("get_arc4_bool", algopy_testing.arc4.Bool),
-        ("get_arc4_address", algopy_testing.arc4.Address),
-        ("get_arc4_uint128", algopy_testing.arc4.UInt128),
-        ("get_arc4_dynamic_bytes", algopy_testing.arc4.DynamicBytes),
-    ],
-)
-def test_get_global_arc4_value(
-    get_global_state_avm_result: AVMInvoker,
-    localnet_creator_address: str,
-    method_name: str,
-    expected_type: type,
-) -> None:
-    avm_result = get_global_state_avm_result(method_name)
+class TestGlobalState:
+    @pytest.mark.parametrize(
+        ("type_or_value", "expected_type", "expected_value"),
+        [
+            (arc4.UInt64, arc4.UInt64, None),
+            (arc4.String("Hello"), arc4.String, "Hello"),
+            (arc4.Bool(True), arc4.Bool, True),
+            (
+                arc4.Address("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ"),
+                arc4.Address,
+                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+            ),
+            (Bytes(b"test"), Bytes, b"test"),
+        ],
+    )
+    def test_initialization(
+        self,
+        context: AlgopyTestContext,
+        type_or_value: Any,
+        expected_type: type[Any],
+        expected_value: Any,
+    ) -> None:
+        with context.txn.create_group(gtxns=[context.any.txn.application_call()]):
+            gs = GlobalState(type_or_value, key="test_key")
+            assert gs.type_ == expected_type
+            assert gs.key == Bytes(b"test_key")
+            if expected_value is not None:
+                response = gs.value.native if hasattr(gs.value, "native") else gs.value
+                assert response == expected_value
 
-    with algopy_testing_context(default_sender=localnet_creator_address):
-        contract = GlobalStateContract()
-        test_result = getattr(contract, method_name)()
-        assert isinstance(test_result, expected_type)
-        if isinstance(test_result, algopy_testing.arc4.Address):
-            assert test_result.native.public_key == avm_result
-        else:
-            assert test_result.native == avm_result  # type: ignore[attr-defined]
+    @pytest.mark.parametrize(
+        ("key", "expected_bytes"),
+        [
+            (b"bytes_key", b"bytes_key"),
+            ("str_key", b"str_key"),
+            (Bytes(b"bytes_obj_key"), b"bytes_obj_key"),
+            ("", b""),  # Test empty string
+        ],
+    )
+    def test_set_key(self, context: AlgopyTestContext, key: Any, expected_bytes: bytes) -> None:
+        with context.txn.create_group(gtxns=[context.any.txn.application_call()]):
+            gs = GlobalState(arc4.UInt64)
+            gs.set_key(key)
+            assert gs.key == Bytes(expected_bytes)
+
+    def test_set_key_invalid(self, context: AlgopyTestContext) -> None:
+        with context.txn.create_group(gtxns=[context.any.txn.application_call()]):
+            gs = GlobalState(arc4.UInt64)
+            with pytest.raises(KeyError, match="Key must be bytes or str"):
+                gs.set_key(123)  # type: ignore[arg-type]
+
+    @pytest.mark.parametrize(
+        ("type_", "value"),
+        [
+            (arc4.UInt64, 42),
+            (arc4.String, "test"),
+            (arc4.Bool, True),
+            (Bytes, b"test"),
+        ],
+    )
+    def test_value_operations(self, context: AlgopyTestContext, type_: Any, value: Any) -> None:
+        with context.txn.create_group(gtxns=[context.any.txn.application_call()]):
+            gs = GlobalState(type_, key="test_key")
+
+            gs.value = type_(value)
+            response = gs.value.native if hasattr(gs.value, "native") else gs.value
+            assert response == value
+            assert isinstance(gs.value, type_)
+
+            del gs.value
+            with pytest.raises(ValueError, match="Value is not set"):
+                _ = gs.value
+
+    def test_get_method(self, context: AlgopyTestContext) -> None:
+        with context.txn.create_group(gtxns=[context.any.txn.application_call()]):
+            gs = GlobalState(arc4.UInt64, key="test_uint64")
+
+            assert gs.get(default=arc4.UInt64(0)) == 0
+            assert gs.get() == 0  # Default initialization
+
+            gs.value = arc4.UInt64(42)
+            assert gs.get() == 42
+
+    def test_maybe_method(self, context: AlgopyTestContext) -> None:
+        with context.txn.create_group(gtxns=[context.any.txn.application_call()]):
+            gs = GlobalState(arc4.UInt64, key="test_uint64")
+
+            value, exists = gs.maybe()
+            assert value is None
+            assert exists is False
+
+            gs.value = arc4.UInt64(42)
+            value, exists = gs.maybe()
+            assert value == 42
+            assert exists is True
+
+    def test_pending_value(self, context: AlgopyTestContext) -> None:
+        with context.txn.create_group(gtxns=[context.any.txn.application_call()]):
+            gs = GlobalState(arc4.UInt64(100))
+            assert gs._pending_value == 100
+
+            gs.set_key("test_key")
+            assert gs.value == 100
+            assert gs._pending_value is None
+
+    def test_description(self, context: AlgopyTestContext) -> None:
+        with context.txn.create_group(gtxns=[context.any.txn.application_call()]):
+            gs = GlobalState(arc4.UInt64, key="test_key", description="Test description")
+            assert gs.description == "Test description"
+
+    def test_app_id(self, context: AlgopyTestContext) -> None:
+        with context.txn.create_group(gtxns=[context.any.txn.application_call()]):
+            gs = GlobalState(arc4.UInt64, key="test_key")
+
+        assert gs.app_id == context.txn.last_active.app_id.id

@@ -14,14 +14,15 @@ if typing.TYPE_CHECKING:
 
 
 class AlgopyTestContext:
-    """Manages the testing context for Algorand Python SDK (algopy)
-    applications.
+    """Manages the testing context for Algorand Python SDK (algopy) applications.
 
-    This class provides methods and properties to simulate various
-    aspects of the Algorand blockchain environment, including accounts,
-    assets, applications, transactions, and global state. It allows for
-    easy setup and manipulation of test scenarios for algopy-based smart
-    contracts and applications.
+    This class provides methods and properties to simulate various aspects of the
+    Algorand blockchain environment, including accounts, assets, applications,
+    transactions, and global state. It allows for easy setup and manipulation of test
+    scenarios for algopy-based smart contracts and applications.
+
+    :param default_sender: The default sender account address, defaults to None
+    :param template_vars: Dictionary of template variables, defaults to None
     """
 
     def __init__(
@@ -30,15 +31,6 @@ class AlgopyTestContext:
         default_sender: str | None = None,
         template_vars: dict[str, typing.Any] | None = None,
     ) -> None:
-        """Initialize the AlgopyTestContext.
-
-        :param default_sender: The default sender account address,
-            defaults to None
-        :type default_sender: str | None, optional
-        :param template_vars: Dictionary of template variables, defaults
-            to None
-        :type template_vars: dict[str, typing.Any] | None, optional
-        """
         import algopy
 
         self._default_sender = algopy.Account(
@@ -93,7 +85,6 @@ class AlgopyTestContext:
         """Get the application for a given contract.
 
         :param contract: The contract to get the application for
-        :type contract: algopy.Contract | algopy.ARC4Contract
         :return: The application associated with the contract
         :rtype: algopy.Application
         """
@@ -103,22 +94,13 @@ class AlgopyTestContext:
         """Set a template variable for the current context.
 
         :param name: The name of the template variable
-        :type name: str
         :param value: The value to assign to the template variable
-        :type value: Any
         """
         self._template_vars[name] = value
 
     def execute_logicsig(self, lsig: algopy.LogicSig, *args: algopy.Bytes) -> bool | algopy.UInt64:
-        """Execute a logic signature using provided args.
+        """Execute a logic signature using provided args."""
 
-        :param lsig: The logic signature to execute
-        :type lsig: algopy.LogicSig
-        :param args: The logic signature arguments to use
-        :type args: algopy.Bytes
-        :return: The result of executing the logic signature function
-        :rtype: bool | algopy.UInt64
-        """
         self._active_lsig_args = args
         try:
             return lsig.func()
@@ -130,8 +112,8 @@ class AlgopyTestContext:
         self._txn_context = TransactionContext()
 
     def reset(self) -> None:
-        """Reset the test context to its initial state, clearing all data and
-        resetting ID counters."""
+        """Reset the test context to its initial state, clearing all data and resetting
+        ID counters."""
         self._template_vars.clear()
         self._txn_context = TransactionContext()
         self._ledger_context = LedgerContext()

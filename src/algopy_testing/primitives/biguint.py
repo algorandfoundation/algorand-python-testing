@@ -14,8 +14,7 @@ from algopy_testing.utils import as_bytes, as_int, as_int512, check_type, int_to
 
 @functools.total_ordering
 class BigUInt(BytesBacked):
-    """A python implementation of an TEAL bigint type represented by AVM []byte
-    type."""
+    """A python implementation of an TEAL bigint type represented by AVM []byte type."""
 
     __value: bytes  # underlying 'bytes' value representing the BigUInt
 
