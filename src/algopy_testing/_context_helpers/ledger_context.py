@@ -5,6 +5,7 @@ from collections import defaultdict
 
 from algopy_testing.constants import MAX_BOX_SIZE
 from algopy_testing.models.account import Account
+from algopy_testing.primitives.uint64 import UInt64
 from algopy_testing.utils import as_bytes, assert_address_is_valid, get_default_global_fields
 
 if typing.TYPE_CHECKING:
@@ -17,8 +18,9 @@ if typing.TYPE_CHECKING:
 
 
 class LedgerContext:
+    """Context for managing the ledger state."""
+
     def __init__(self) -> None:
-        """Initialize the LedgerContext with default values."""
         from algopy_testing.models.account import AccountContextData, get_empty_account
 
         self.account_data = defaultdict[str, AccountContextData](get_empty_account)
@@ -68,15 +70,25 @@ class LedgerContext:
         assert_address_is_valid(address)
         return address in self.account_data
 
-    def update_account(self, address: str, **account_fields: typing.Unpack[AccountFields]) -> None:
+    def update_account(
+        self,
+        address: str,
+        opted_asset_balances: dict[int, algopy.UInt64] | None = None,
+        **account_fields: typing.Unpack[AccountFields],
+    ) -> None:
         """Update account fields.
 
         Args:
             address (str): The account address.
+            opted_asset_balances (dict[int, algopy.UInt64] | None): The opted asset balances .
             **account_fields: The fields to update.
         """
         assert_address_is_valid(address)
         self.account_data[address].fields.update(account_fields)
+
+        if opted_asset_balances is not None:
+            for asset_id, balance in opted_asset_balances.items():
+                self.account_data[address].opted_asset_balances[UInt64(asset_id)] = balance
 
     def get_asset(self, asset_id: algopy.UInt64 | int) -> algopy.Asset:
         """Get an asset by ID.
@@ -346,7 +358,7 @@ class LedgerContext:
         """
         content = self.blocks.get(index, {}).get(key, None)
         if content is None:
-            raise ValueError(
+            raise KeyError(
                 f"Block content for index {index} and key {key} not found in testing context!"
             )
         return content
