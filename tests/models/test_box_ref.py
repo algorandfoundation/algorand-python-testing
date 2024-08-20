@@ -21,10 +21,9 @@ class ATestContract(algopy.ARC4Contract):
 
 @pytest.fixture()
 def context() -> Generator[AlgopyTestContext, None, None]:
-    with algopy_testing_context() as ctx:
+    with algopy_testing_context() as ctx:  # noqa: SIM117
         with ctx.txn.create_group([ctx.any.txn.application_call()]):
             yield ctx
-        ctx.reset()
 
 
 def test_init_without_key(

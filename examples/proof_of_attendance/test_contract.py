@@ -12,7 +12,6 @@ from .contract import ProofOfAttendance
 def context() -> Generator[AlgopyTestContext, None, None]:
     with algopy_testing_context() as ctx:
         yield ctx
-        ctx.reset()
 
 
 @pytest.fixture()

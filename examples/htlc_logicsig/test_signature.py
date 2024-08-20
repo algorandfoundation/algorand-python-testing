@@ -12,7 +12,6 @@ from .signature import hashed_time_locked_lsig
 def context() -> Generator[AlgopyTestContext, None, None]:
     with algopy_testing_context() as ctx:
         yield ctx
-        ctx.reset()
 
 
 def test_seller_receives_payment(context: AlgopyTestContext) -> None:

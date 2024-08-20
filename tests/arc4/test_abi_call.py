@@ -18,7 +18,6 @@ class Logger(ARC4Contract):
 def context() -> Generator[AlgopyTestContext, None, None]:
     with algopy_testing_context() as ctx:
         yield ctx
-        ctx.reset()
 
 
 def test_mocking_required_for_abi_call(context: AlgopyTestContext) -> None:

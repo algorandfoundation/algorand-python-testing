@@ -13,7 +13,6 @@ from algopy_testing.state.global_state import GlobalState
 def context() -> Generator[AlgopyTestContext, None, None]:
     with algopy_testing_context() as ctx:
         yield ctx
-        ctx.reset()
 
 
 @pytest.mark.usefixtures("context")

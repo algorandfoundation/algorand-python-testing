@@ -56,7 +56,6 @@ class SwappedArc4(arc4.Struct):
 def context() -> Generator[AlgopyTestContext, None, None]:
     with algopy_testing_context() as ctx:
         yield ctx
-        ctx.reset()
 
 
 def test_emit(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:

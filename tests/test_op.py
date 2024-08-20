@@ -81,7 +81,6 @@ def _generate_ecdsa_test_data(curve: curves.Curve) -> dict[str, typing.Any]:
 def context() -> typing.Generator[AlgopyTestContext, None, None]:
     with algopy_testing_context() as ctx:
         yield ctx
-        ctx.reset()
 
 
 @pytest.fixture(scope="module")

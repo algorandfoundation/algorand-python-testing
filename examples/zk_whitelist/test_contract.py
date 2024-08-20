@@ -13,7 +13,6 @@ from .contract import ZkWhitelistContract
 def context() -> Generator[AlgopyTestContext, None, None]:
     with algopy_testing_context() as ctx:
         yield ctx
-        ctx.reset()
 
 
 @pytest.fixture()

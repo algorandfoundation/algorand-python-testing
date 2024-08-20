@@ -5,12 +5,15 @@ import algopy
 import pytest
 from algopy_testing import algopy_testing_context, arc4
 from algopy_testing.context import AlgopyTestContext
+from algopy_testing.op.pure import itob
 from algopy_testing.primitives.biguint import BigUInt
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.string import String
 from algopy_testing.primitives.uint64 import UInt64
 from algopy_testing.state.box import Box
 from algopy_testing.utils import as_bytes, as_string
+
+from tests.artifacts.BoxContract.contract import BoxContract
 
 BOX_NOT_CREATED_ERROR = "Box has not been created"
 
@@ -22,10 +25,9 @@ class ATestContract(algopy.Contract):
 
 @pytest.fixture()
 def context() -> Generator[AlgopyTestContext, None, None]:
-    with algopy_testing_context() as ctx:
+    with algopy_testing_context() as ctx:  # noqa: SIM117
         with ctx.txn.create_group([ctx.any.txn.application_call()]):
             yield ctx
-        ctx.reset()
 
 
 def test_init_without_key(
@@ -198,3 +200,19 @@ def _assert_box_content_equality(
     else:
         assert box_content == expected_value
         assert box_content == op_box_content
+
+
+def test_enums_in_boxes(context: AlgopyTestContext) -> None:
+    # Arrange
+    contract = BoxContract()
+
+    # Act
+    defered_store = context.txn.defer_app_call(contract.store_enums)
+    defered_read = context.txn.defer_app_call(contract.read_enums)
+    with context.txn.create_group([defered_store, defered_read]):
+        defered_store.submit()
+        oca, txn = defered_read.submit()
+
+    # Assert
+    assert context.ledger.get_box(contract, b"oca") == itob(oca.native)
+    assert context.ledger.get_box(contract, b"txn") == itob(txn.native)
