@@ -13,14 +13,14 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Install hatch
-        run: pipx install hatch
-
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: "pip"
+
+      - name: Install hatch
+        run: pip install hatch
 
       - name: Start LocalNet
         run: pipx install algokit && algokit localnet start
