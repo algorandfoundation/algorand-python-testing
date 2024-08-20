@@ -321,9 +321,9 @@ env = "GITHUB_TOKEN"
 
 [tool.pydoclint]
 style = 'sphinx'
-check-return-types = 'False'
-skip-checking-raises = 'True'
-arg-type-hints-in-docstring = 'False'
+check-return-types = false
+skip-checking-raises = true
+arg-type-hints-in-docstring = false
 
 [tool.docformatter]
 style = "sphinx"
