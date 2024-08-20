@@ -59,9 +59,8 @@ class GlobalState(typing.Generic[_T]):
     def set_key(self, key: Bytes | String | bytes | str) -> None:
         """Set the key and apply any pending value.
 
-        Pending values are used for implicit keys in Contract
-        subclasses. They're stored until the 'Contract''s initialization
-        sets the key.
+        Pending values are used for implicit keys in Contract subclasses. They're stored
+        until the 'Contract''s initialization sets the key.
         """
         match key:
             case bytes(bytes_key):
@@ -73,7 +72,7 @@ class GlobalState(typing.Generic[_T]):
             case String() as key_str:
                 self._key = key_str.bytes
             case _:
-                raise ValueError("Key must be bytes or str")
+                raise KeyError("Key must be bytes or str")
 
         if self._key and self._pending_value is not None:
             self.value = self._pending_value
@@ -83,7 +82,7 @@ class GlobalState(typing.Generic[_T]):
     def key(self) -> algopy.Bytes:
         """Provides access to the raw storage key."""
         if self._key is None:
-            raise ValueError("Key is not set")
+            raise KeyError("Key is not set")
         return self._key
 
     @property
@@ -91,7 +90,7 @@ class GlobalState(typing.Generic[_T]):
         if self._key is None:
             if self._pending_value is not None:
                 return self._pending_value
-            raise ValueError("Key is not set")
+            raise KeyError("Key is not set")
         try:
             native = lazy_context.ledger.get_global_state(self.app_id, self._key)
         except KeyError as e:

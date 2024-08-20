@@ -139,8 +139,8 @@ class _ABIEncoded(BytesBacked):
 
     @classmethod
     def from_log(cls, log: algopy.Bytes, /) -> typing.Self:
-        """Load an ABI type from application logs, checking for the ABI return
-        prefix `0x151f7c75`"""
+        """Load an ABI type from application logs, checking for the ABI return prefix
+        `0x151f7c75`"""
         if log[:4] == ARC4_RETURN_PREFIX:
             return cls.from_bytes(log[4:])
         raise ValueError("ABI return prefix not found")
@@ -200,8 +200,7 @@ class String(_ABIEncoded):
 
     @property
     def native(self) -> algopy.String:
-        """Return the String representation of the UTF8 string after ARC4
-        decoding."""
+        """Return the String representation of the UTF8 string after ARC4 decoding."""
         import algopy
 
         return algopy.String.from_bytes(self._value[_ABI_LENGTH_SIZE:])
@@ -323,8 +322,7 @@ class UIntN(_UIntN, typing.Generic[_TBitSize]):  # type: ignore[type-arg]
 
     @property
     def native(self) -> algopy.UInt64:
-        """Return the UInt64 representation of the value after ARC4
-        decoding."""
+        """Return the UInt64 representation of the value after ARC4 decoding."""
         import algopy
 
         return algopy.UInt64(int.from_bytes(self._value))
@@ -359,8 +357,7 @@ class BigUIntN(_UIntN, typing.Generic[_TBitSize]):  # type: ignore[type-arg]
 
     @property
     def native(self) -> algopy.BigUInt:
-        """Return the UInt64 representation of the value after ARC4
-        decoding."""
+        """Return the UInt64 representation of the value after ARC4 decoding."""
         import algopy
 
         return algopy.BigUInt.from_bytes(self._value)
@@ -439,9 +436,6 @@ class _UFixedNxM(
     _value: bytes  # underlying 'bytes' value representing the UFixedNxM
 
     def __init__(self, value: str = "0.0", /) -> None:
-        """Construct an instance of UFixedNxM where value (v) is determined
-        from the original decimal value (d) by the formula v = round(d *
-        (10^M))"""
         value = as_string(value)
         with decimal.localcontext(
             decimal.Context(
@@ -692,19 +686,9 @@ class _AddressTypeInfo(_StaticArrayTypeInfo):
 
 
 class Address(StaticArray[Byte, typing.Literal[32]]):
-    """An alias for an array containing 32 bytes representing an Algorand
-    address."""
-
     type_info = _AddressTypeInfo()
 
     def __init__(self, value: Account | str | algopy.Bytes = algosdk.constants.ZERO_ADDRESS):
-        """If `value` is a string, it should be a 58 character base32 string,
-
-        ie a base32 string-encoded 32 bytes public key + 4 bytes checksum.
-        If `value` is a Bytes, it's length checked to be 32 bytes - to avoid this
-        check, use `Address.from_bytes(...)` instead.
-        Defaults to the zero-address.
-        """
         if isinstance(value, str):
             try:
                 bytes_value = algosdk.encoding.decode_address(value)
@@ -729,8 +713,8 @@ class Address(StaticArray[Byte, typing.Literal[32]]):
         return self.bytes != zero_bytes
 
     def __eq__(self, other: Address | Account | str) -> bool:  # type: ignore[override]
-        """Address equality is determined by the address of another
-        `arc4.Address`, `Account` or `str`"""
+        """Address equality is determined by the address of another `arc4.Address`,
+        `Account` or `str`"""
         if isinstance(other, Address | Account):
             return self.bytes == other.bytes
         other_bytes: bytes = algosdk.encoding.decode_address(other)
@@ -982,7 +966,6 @@ class Tuple(
         return instance
 
     def __init__(self, _items: tuple[typing.Unpack[_TTuple]] = (), /):  # type: ignore[assignment]
-        """Construct an ARC4 tuple from a python tuple."""
         items = _check_is_arc4(_items)
         if items:
             for item, expected_type in zip(items, self.type_info.child_types, strict=True):
@@ -1039,8 +1022,8 @@ class Struct(metaclass=_StructMeta):
 
     @classmethod
     def from_log(cls, log: algopy.Bytes, /) -> typing.Self:
-        """Load an ABI type from application logs, checking for the ABI return
-        prefix `0x151f7c75`"""
+        """Load an ABI type from application logs, checking for the ABI return prefix
+        `0x151f7c75`"""
         if log[:4] == ARC4_RETURN_PREFIX:
             return cls.from_bytes(log[4:])
         raise ValueError("ABI return prefix not found")
@@ -1091,35 +1074,6 @@ arc4_update = _ABICall("arc4_update")
 
 
 def emit(event: str | Struct, /, *args: object) -> None:
-    """Emit an ARC-28 event for the provided event signature or name, and
-    provided args.
-
-    :param event: Either an ARC4 Struct, an event name, or event signature.
-        * If event is an ARC4 Struct, the event signature will be determined from the Struct name and fields
-        * If event is a signature, then the following args will be typed checked to ensure they match.
-        * If event is just a name, the event signature will be inferred from the name and following arguments
-
-    :param args: When event is a signature or name, args will be used as the event data.
-    They will all be encoded as single ARC4 Tuple
-
-    Example:
-    ```
-    from algopy import ARC4Contract, arc4
-
-
-    class Swapped(arc4.Struct):
-        a: arc4.UInt64
-        b: arc4.UInt64
-
-
-    class EventEmitter(ARC4Contract):
-        @arc4.abimethod
-        def emit_swapped(self, a: arc4.UInt64, b: arc4.UInt64) -> None:
-            arc4.emit(Swapped(b, a))
-            arc4.emit("Swapped(uint64,uint64)", b, a)
-            arc4.emit("Swapped", b, a)
-    ```
-    """  # noqa: E501
     from algopy_testing.utilities.log import log
 
     if isinstance(event, str):
@@ -1184,8 +1138,7 @@ def _find_bool(
     index: int,
     delta: int,
 ) -> int:
-    """Helper function to find consecutive booleans from current index in a
-    tuple."""
+    """Helper function to find consecutive booleans from current index in a tuple."""
     until = 0
     values_length = len(values) if isinstance(values, tuple | list) else values.length.value
     while True:
@@ -1202,8 +1155,7 @@ def _find_bool(
 
 
 def _find_bool_types(values: typing.Sequence[_TypeInfo], index: int, delta: int) -> int:
-    """Helper function to find consecutive booleans from current index in a
-    tuple."""
+    """Helper function to find consecutive booleans from current index in a tuple."""
     until = 0
     values_length = len(values)
     while True:

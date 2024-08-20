@@ -37,8 +37,8 @@ class Bytes:
         return bool(self.value)
 
     def __add__(self, other: Bytes | bytes) -> Bytes:
-        """Concatenate Bytes with another Bytes or bytes literal e.g.
-        `Bytes(b"Hello ") + b"World"`."""
+        """Concatenate Bytes with another Bytes or bytes literal e.g. `Bytes(b"Hello ")
+        + b"World"`."""
         if isinstance(other, Bytes):
             return _checked_result(self.value + other.value, "+")
         else:
@@ -46,8 +46,8 @@ class Bytes:
             return _checked_result(result, "+")
 
     def __radd__(self, other: bytes) -> Bytes:
-        """Concatenate Bytes with another Bytes or bytes literal e.g. `b"Hello
-        " + Bytes(b"World")`."""
+        """Concatenate Bytes with another Bytes or bytes literal e.g. `b"Hello " +
+        Bytes(b"World")`."""
         return _checked_result(other + self.value, "+")
 
     def __len__(self) -> int:
@@ -58,15 +58,15 @@ class Bytes:
         return _BytesIter(self, 1)
 
     def __reversed__(self) -> Iterator[Bytes]:
-        """Bytes can be iterated in reverse, yield each preceding byte starting
-        at the end."""
+        """Bytes can be iterated in reverse, yield each preceding byte starting at the
+        end."""
         return _BytesIter(self, -1)
 
     def __getitem__(
         self, index: UInt64 | int | slice
     ) -> Bytes:  # maps to substring/substring3 if slice, extract/extract3 otherwise?
-        """Returns a Bytes containing a single byte if indexed with UInt64 or
-        int otherwise the substring o bytes described by the slice."""
+        """Returns a Bytes containing a single byte if indexed with UInt64 or int
+        otherwise the substring o bytes described by the slice."""
         if isinstance(index, slice):
             return Bytes(self.value[index])
         else:
@@ -143,8 +143,7 @@ class Bytes:
 
     @staticmethod
     def from_hex(value: str) -> Bytes:
-        """Creates Bytes from a hex/octal encoded string e.g.
-        `Bytes.from_hex("FF")`"""
+        """Creates Bytes from a hex/octal encoded string e.g. `Bytes.from_hex("FF")`"""
         return Bytes(base64.b16decode(value))
 
 

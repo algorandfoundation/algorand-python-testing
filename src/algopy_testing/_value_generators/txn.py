@@ -34,13 +34,10 @@ class TxnValueGenerator:
     ) -> algopy.gtxn.ApplicationCallTransaction:
         """Generate a new application call transaction.
 
-        :param scratch_space: Scratch space data. :param **fields:
-            Fields to be set in the transaction. :type **fields:
-            Unpack[ApplicationCallFields]
-        :param scratch_space: Sequence[algopy.Bytes | algopy.UInt64 |
-            int | bytes] | None: (Default value = None) :param **fields:
-            Unpack[ApplicationCallFields]:
-        :returns: New application call transaction.
+        :param scratch_space: Scratch space data.
+        :param **fields: Fields to be set in the transaction.
+        :return: New application call transaction.
+        :raises TypeError: If `app_id` is not an instance of algopy.Application
         """
         try:
             app = fields["app_id"]
@@ -62,22 +59,16 @@ class TxnValueGenerator:
     ) -> algopy.gtxn.AssetTransferTransaction:
         """Generate a new asset transfer transaction with specified fields.
 
-        :param **fields: Fields to be set in the transaction. :type
-        **fields: Unpack[AssetTransferFields] :param **fields:
-        Unpack[AssetTransferFields]:
-        :returns: The newly generated asset transfer transaction.
-        :rtype: algopy.gtxn.AssetTransferTransaction
+        :param **fields: Fields to be set in the transaction.
+        :return: The newly generated asset transfer transaction.
         """
         return self._new_gtxn(gtxn.AssetTransferTransaction, **fields)
 
     def payment(self, **fields: typing.Unpack[PaymentFields]) -> algopy.gtxn.PaymentTransaction:
         """Generate a new payment transaction with specified fields.
 
-        :param **fields: Fields to be set in the transaction. :type
-        **fields: Unpack[PaymentFields] :param **fields:
-        Unpack[PaymentFields]:
-        :returns: The newly generated payment transaction.
-        :rtype: algopy.gtxn.PaymentTransaction
+        :param **fields: Fields to be set in the transaction.
+        :return: The newly generated payment transaction.
         """
         return self._new_gtxn(gtxn.PaymentTransaction, **fields)
 
@@ -86,7 +77,8 @@ class TxnValueGenerator:
     ) -> algopy.gtxn.AssetConfigTransaction:
         """Generate a new ACFG transaction with specified fields.
 
-        :param **fields: Unpack[AssetConfigFields]:
+        :param **fields: Fields to be set in the transaction.
+        :return: The newly generated asset config transaction.
         """
         return self._new_gtxn(gtxn.AssetConfigTransaction, **fields)
 
@@ -95,7 +87,8 @@ class TxnValueGenerator:
     ) -> algopy.gtxn.KeyRegistrationTransaction:
         """Generate a new key registration transaction with specified fields.
 
-        :param **fields: Unpack[KeyRegistrationFields]:
+        :param **fields: Fields to be set in the transaction.
+        :return: The newly generated key registration transaction.
         """
         return self._new_gtxn(gtxn.KeyRegistrationTransaction, **fields)
 
@@ -104,7 +97,8 @@ class TxnValueGenerator:
     ) -> algopy.gtxn.AssetFreezeTransaction:
         """Generate a new asset freeze transaction with specified fields.
 
-        :param **fields: Unpack[AssetFreezeFields]:
+        :param **fields: Fields to be set in the transaction.
+        :return: The newly generated asset freeze transaction.
         """
         return self._new_gtxn(gtxn.AssetFreezeTransaction, **fields)
 
@@ -114,11 +108,8 @@ class TxnValueGenerator:
     ) -> algopy.gtxn.Transaction:
         """Generate a new transaction with specified fields.
 
-        :param **fields: Fields to be set in the transaction. :type
-        **fields: Unpack[TransactionFields] :param **fields:
-        Unpack[TransactionFields]:
-        :returns: The newly generated transaction.
-        :rtype: algopy.gtxn.Transaction
+        :param **fields: Fields to be set in the transaction.
+        :return: The newly generated transaction.
         """
         return self._new_gtxn(gtxn.Transaction, **fields)
 

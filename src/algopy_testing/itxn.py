@@ -155,10 +155,6 @@ class ApplicationCall(_BaseInnerTransactionFields):
 def submit_txns(
     *transactions: _BaseInnerTransactionFields,
 ) -> tuple[_BaseInnerTransactionResult, ...]:
-    """Submits a group of up to 16 inner transactions parameters.
-
-    :returns: A tuple of the resulting inner transactions
-    """
     if len(transactions) > algosdk.constants.TX_GROUP_LIMIT:
         raise ValueError("Cannot submit more than 16 inner transactions at once")
 

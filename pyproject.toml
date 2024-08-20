@@ -72,6 +72,7 @@ validate_examples = "python scripts/validate_examples.py"
 check_stubs_cov = "python scripts/check_stubs_cov.py"
 pre_commit = [
     "hatch run lint:fix",
+    "hatch run lint:check",
     "mypy_testing",
     "hatch run examples:pre_commit",
 ]
@@ -97,15 +98,17 @@ dependencies = [
     "ruff==0.5.6",
     "ruff-lsp",
     "docformatter",
+    "pydoclint",
 ]
 
 [tool.hatch.envs.lint.scripts]
 check = [
   "black --check .",
   "ruff check",
+  "pydoclint --config=pyproject.toml src",
 ]
 fix = [
-  "docformatter -i -r src",
+  "docformatter -i -r --black --style sphinx src",
   "black .",
   "ruff check --fix",
 ]
@@ -315,3 +318,12 @@ upload_to_vcs_release = true
 
 [tool.semantic_release.remote.token]
 env = "GITHUB_TOKEN"
+
+[tool.pydoclint]
+style = 'sphinx'
+check-return-types = 'False'
+skip-checking-raises = 'True'
+arg-type-hints-in-docstring = 'False'
+
+[tool.docformatter]
+style = "sphinx"

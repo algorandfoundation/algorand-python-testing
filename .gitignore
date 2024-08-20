@@ -15,3 +15,5 @@ examples/**/*.trace
 .coverage
 coverage.xml
 .venv*
+
+.cursorignore

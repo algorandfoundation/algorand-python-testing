@@ -13,6 +13,7 @@ import pytest
 from algokit_utils import LogicError, get_localnet_default_account
 from algopy_testing import algopy_testing_context, op
 from algopy_testing.context import AlgopyTestContext
+from algopy_testing.op.block import Block
 from algopy_testing.primitives.bytes import Bytes
 from algopy_testing.primitives.uint64 import UInt64
 from algopy_testing.utils import convert_native_to_stack
@@ -901,7 +902,7 @@ def test_itxn_ops(context: AlgopyTestContext) -> None:
     appl_itxn = itxn_group.application_call(0)
     pay_itxn = itxn_group.payment(1)
 
-    # TODO: 1.0 also test other array fields, apps, accounts, applications, assets
+    # Test application call transaction fields
     assert appl_itxn.approval_program == algopy.Bytes.from_hex("068101068101")
     assert appl_itxn.clear_state_program == algopy.Bytes.from_hex("068101")
     approval_pages = [
@@ -911,9 +912,65 @@ def test_itxn_ops(context: AlgopyTestContext) -> None:
     assert approval_pages == [appl_itxn.approval_program]
     assert appl_itxn.on_completion == algopy.OnCompleteAction.DeleteApplication
     assert appl_itxn.fee == algopy.UInt64(algosdk.constants.MIN_TXN_FEE)
+    assert appl_itxn.sender == context.get_app_for_contract(contract).address
+    # NOTE: would implementing emulation for this behavior be useful
+    # in unit testing context (vs integration tests)?
+    # considering we don't emulate balance (transfer, accounting for fees and etc)
+    assert appl_itxn.app_id == 0
+    assert appl_itxn.type == algopy.TransactionType.ApplicationCall
+    assert appl_itxn.type_bytes == algopy.Bytes(b"appl")
 
+    # Test payment transaction fields
     assert pay_itxn.receiver == context.default_sender
     assert pay_itxn.amount == algopy.UInt64(1000)
+    assert pay_itxn.sender == context.get_app_for_contract(contract).address
+    assert pay_itxn.type == algopy.TransactionType.Payment
+    assert pay_itxn.type_bytes == algopy.Bytes(b"pay")
+
+    # Test common fields for both transactions
+    for itxn in [appl_itxn, pay_itxn]:
+        assert isinstance(itxn.sender, algopy.Account)
+        assert isinstance(itxn.fee, algopy.UInt64)
+        assert isinstance(itxn.first_valid, algopy.UInt64)
+        assert isinstance(itxn.last_valid, algopy.UInt64)
+        assert isinstance(itxn.note, algopy.Bytes)
+        assert isinstance(itxn.lease, algopy.Bytes)
+        assert isinstance(itxn.txn_id, algopy.Bytes)
+
+    # Test logs (should be empty for newly created transactions as its a void method)
+    assert context.txn.last_active.num_logs == algopy.UInt64(0)
+    assert context.txn.last_active.last_log == algopy.Bytes(b"")
+
+    # Test created_app and created_asset (should be created for these transactions)
+    assert hasattr(appl_itxn, "created_app")
+    assert hasattr(pay_itxn, "created_asset")
 
 
-# def test_
+def test_blk_seed_existing_block(context: AlgopyTestContext) -> None:
+    block_index = 42
+    block_seed = 123
+    context.ledger.set_block(block_index, block_seed, 1234567890)
+    result = Block.blk_seed(UInt64(block_index))
+    assert op.btoi(result) == block_seed
+
+
+@pytest.mark.usefixtures("context")
+def test_blk_seed_missing_block() -> None:
+    block_index = 42
+    with pytest.raises(KeyError, match=f"Block {block_index}*"):
+        Block.blk_seed(UInt64(block_index))
+
+
+def test_blk_timestamp_existing_block(context: AlgopyTestContext) -> None:
+    block_index = 42
+    block_timestamp = 1234567890
+    context.ledger.set_block(block_index, 123, block_timestamp)
+    result = Block.blk_timestamp(UInt64(block_index))
+    assert result == UInt64(block_timestamp)
+
+
+@pytest.mark.usefixtures("context")
+def test_blk_timestamp_missing_block() -> None:
+    block_index = 42
+    with pytest.raises(KeyError, match=f"Block {block_index}*"):
+        Block.blk_timestamp(UInt64(block_index))
