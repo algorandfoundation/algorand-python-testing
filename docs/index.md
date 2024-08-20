@@ -173,4 +173,5 @@ examples
 coverage
 glossary
 api
+algopy
 ```

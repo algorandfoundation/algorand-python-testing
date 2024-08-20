@@ -1,76 +1,69 @@
-# Smart Signature testing
+# Smart Signature Testing
 
-Smart signatures, also known as logic signatures or LogicSigs, are programs that can be used to sign transactions. The Algorand Python Testing framework provides support for testing these programs.
+Test Algorand smart signatures (LogicSigs) with ease using the Algorand Python Testing framework.
 
-## Defining a Logic Signature
+```{testsetup}
+import algopy
+import algopy_testing
 
-To define a logic signature, you can use the `@logicsig` decorator:
+# Create the context manager for snippets below
+ctx_manager = algopy_testing_context()
 
-```python
+# Enter the context
+context = ctx_manager.__enter__()
+```
+
+## Define a LogicSig
+
+Use the `@logicsig` decorator to create a LogicSig:
+
+```{testcode}
 from algopy import logicsig, Account, Txn, Global, UInt64, Bytes
 
 @logicsig
 def hashed_time_locked_lsig() -> bool:
-    # Your logic signature code here
-    return True  # Approve the transaction
+    # LogicSig code here
+    return True  # Approve transaction
 ```
 
-## Executing a Logic Signature
+## Execute and Test
 
-To test a logic signature, use the `execute_logicsig` method of the `AlgopyTestContext`. You can provide arguments to the logic signature using the `scoped_lsig_args` context manager:
+Use `AlgopyTestContext.execute_logicsig()` to run and verify LogicSigs:
 
-```python
-from algopy_testing import AlgopyTestContext
+```{testcode}
+with context.txn.create_group([
+    context.any.txn.payment(),
+]):
+    result = context.execute_logicsig(hashed_time_locked_lsig, algopy.Bytes(b"secret"))
 
-def test_logic_signature(context: AlgopyTestContext) -> None:
-    # Set up the transaction group
-    context.set_transaction_group(
-        [
-            context.any_payment_transaction(
-                # Transaction fields...
-            ),
-        ],
-        active_transaction_index=0,
-    )
-
-    # Execute the logic signature with arguments
-    with context.scoped_lsig_args([algopy.Bytes(b"secret")]):
-        result = context.execute_logicsig(hashed_time_locked_lsig)
-
-    assert result is True
+assert result is True
 ```
 
-The `execute_logicsig` method takes one parameter which is an `lsig` itself, an instance of the logic signature function decorated with `@logicsig`.
+`execute_logicsig()` returns a boolean:
 
-The method returns the result of executing the logic signature, which is a `bool`:
+-   `True`: Transaction approved
+-   `False`: Transaction rejected
 
--   If the logic signature returns `True`, it emulates approval of the transaction.
--   If it returns `False`, it emulates rejection of the transaction.
+## Pass Arguments
 
-## Using `scoped_lsig_args`
+Provide arguments to LogicSigs using `execute_logicsig()`:
 
-The [`scoped_lsig_args`](#algopy_testing.context.AlgopyTestContext.scoped_lsig_args) context manager allows you to provide arguments to the logic signature for the duration of its execution. This is particularly useful when your logic signature expects input parameters accessed via `algopy.op.arg(n)`.
-
-```python
-with context.scoped_lsig_args([algopy.Bytes(b"secret")]):
-    result = context.execute_logicsig(hashed_time_locked_lsig)
+```{testcode}
+result = context.execute_logicsig(hashed_time_locked_lsig, algopy.Bytes(b"secret"))
 ```
 
-In this example, `b"secret"` is passed as an argument to the logic signature. Inside the logic signature, you can access this argument using `algopy.op.arg(0)`.
+Access arguments in the LogicSig with `algopy.op.arg()` opcode:
 
-## Accessing Arguments in the Logic Signature
-
-Within your logic signature, you can access the provided arguments using the `algopy.op.arg()` function:
-
-```python
+```{testcode}
 @logicsig
 def hashed_time_locked_lsig() -> bool:
     secret = algopy.op.arg(0)
-    # Use the secret in your logic
-    is_secret_correct = algopy.op.sha256(secret) == expected_hash
-    # ... rest of the logic
+    expected_hash = algopy.op.sha256(algopy.Bytes(b"secret"))
+    return algopy.op.sha256(secret) == expected_hash
+
+# Example usage
+secret = algopy.Bytes(b"secret")
+assert context.execute_logicsig(hashed_time_locked_lsig, secret)
 ```
 
-```{hint}
-For coverage details on `algopy.op.arg` and other available operations, see the [Algorand Python Testing Framework Reference](../coverage.md).
-```
+For more details on available operations, see the [coverage](../coverage.md).

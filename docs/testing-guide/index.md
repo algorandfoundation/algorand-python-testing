@@ -6,7 +6,22 @@ The Algorand Python Testing framework provides powerful tools for testing Algora
 For all code examples in the _Testing Guide_ section, assume `context` is an instance of `AlgopyTestContext` obtained using the `algopy_testing_context()` context manager. All subsequent code is executed within this context.
 ```
 
-![](https://mermaid.ink/img/pako:eNp1kk1OwzAQha8yMptWClKQEIsIVUob9kiwQTVCbjxJTBM7mtiFqOkRWHEArsgRcGjVJvx4YY3nfR7PG3nLUiORRSwnURdwn3ANfjVutU9w9mAcQYIbLE1dobZwozeKjO5jzvZ4v-IlZ6LMTd3CxLY1QmPdqply9nhi5kfmyWJjlc49ewgyEhW-GFpPr1c0m_hnQRBCgX77_Hh_G1da-Eq1awVMUlPVqkQ66agl13_7iP3jJLSEWzLPmI4MJMsfSGsLoyE12pJI7e_iCZyfz7pvr4XStgGlMyRC6b2YqoN4iB3alOAa77aDxaiGn4GXNkp0MD_2btsSIQZ6jS7CgFq_D4X5UAgyVZbRWRheXYYjavHf9WQosIBVSJVQ0v-EbY9xZguskLPIh1LQup_UznPCWXPX6pRFlhwGjIzLCxZlomz8ydVSWEyU8FOvDtndF7zxxLg?type=png)
+```{mermaid}
+graph TD
+    subgraph GA["Your Development Environment"]
+        A["algopy (type stubs)"]
+        B["algopy_testing (testing framework)<br>(You are here 📍)"]
+        C["puya (compiler)"]
+    end
+
+    subgraph GB["Your Algorand Project"]
+        D[Your Algorand Python contract]
+    end
+
+    D -->|type hints inferred from| A
+    D -->|compiled using| C
+    D -->|tested via| B
+```
 
 > _High-level overview of the relationship between your smart contracts project, Algorand Python Testing framework, Algorand Python type stubs, and the compiler_
 

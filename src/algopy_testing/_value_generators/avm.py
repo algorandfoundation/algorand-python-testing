@@ -40,6 +40,20 @@ class AVMValueGenerator:
 
         return algopy_testing.UInt64(generate_random_int(min_value, max_value))
 
+    def biguint(self, min_value: int = 0) -> algopy.BigUInt:
+        """Generate a random BigUInt value within a specified range.
+
+        :param min_value: Minimum value. Defaults to 0.
+        :type min_value: int
+        :returns: The randomly generated BigUInt value.
+        :rtype: algopy.BigUInt
+        :raises ValueError: If `min_value` is negative.
+        """
+        if min_value < 0:
+            raise ValueError("min_value must be greater than or equal to 0")
+
+        return algopy_testing.BigUInt(generate_random_int(min_value, MAX_UINT512))
+
     def bytes(self, length: int | None = None) -> algopy.Bytes:
         """Generate a random byte sequence of a specified length.
 

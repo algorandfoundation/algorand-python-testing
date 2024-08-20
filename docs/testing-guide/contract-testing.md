@@ -8,13 +8,13 @@ This guide provides an overview of how to test smart contracts using the Algoran
 The code snippets showcasing the contract testing capabilities are using [pytest](https://docs.pytest.org/en/latest/) as the test framework. However, note that the `algorand-python-testing` package can be used with any other test framework that supports Python. `pytest` is used for demonstration purposes in this documentation.
 ```
 
-## ARC4Contract
+## `algopy.ARC4Contract`
 
 Classes prefixed with `algopy.ARC4Contract` are **required** to be instantiated withing test context. As part of instantiation, the test context will automatically create a matching `algopy.Application` object instance.
 
-Within the class implementation, methods decorated with `algopy.arc4.abimethod` and `algopy.arc4.baremethod` will automatically assemble an `algopy.gtxn.ApplicationCallTransaction` transaction to emulate the AVM application call. This behavior can be overriden by setting the transaction group manually as part of test setup, this is done via implicit invocation of [algopy_testing.context.any_application()](#algopy_testing.context.AlgopyTestContext.any_application) _value generator_.
+Within the class implementation, methods decorated with `algopy.arc4.abimethod` and `algopy.arc4.baremethod` will automatically assemble an `algopy.gtxn.ApplicationCallTransaction` transaction to emulate the AVM application call. This behavior can be overriden by setting the transaction group manually as part of test setup, this is done via implicit invocation of `algopy_testing.context.any_application()` _value generator_ (refer to [APIs](../apis.md) for more details).
 
-```python
+```{testcode}
 from algopy import ARC4Contract, GlobalState, LocalState, UInt64, Txn, arc4
 from algopy_testing import algopy_testing_context
 import pytest
@@ -102,13 +102,13 @@ def test_simple_voting_contract(context):
 
 For more examples of tests using `algopy.ARC4Contract`, see the [examples](../examples.md) section.
 
-## Contract
+## `algopy.Contract``
 
 Classes prefixed with `algopy.Contract` (parent class of `algopy.ARC4Contract`) are **required** to be instantiated withing test context. As part of instantiation, the test context will automatically create a matching `algopy.Application` object instance. This behaviour is identical to `algopy.ARC4Contract` class instances.
 
 Unlike `algopy.ARC4Contract`, `algopy.Contract` requires manual setup of the transaction context and explicit method calls. Here's an example demonstrating how to test a `Contract` class:
 
-```python
+```{testcode}
 import algopy
 import pytest
 from algopy_testing import AlgopyTestContext, algopy_testing_context
@@ -117,16 +117,16 @@ class CounterContract(algopy.Contract):
     def __init__(self):
         self.counter = algopy.UInt64(0)
 
-    @algopy.submethod
+    @algopy.subroutine
     def increment(self):
         self.counter.set(self.counter.value + algopy.UInt64(1))
         return algopy.UInt64(1)
 
-    @algopy.baremethod
+    @algopy.arc4.baremethod
     def approval_program(self):
         return self.increment()
 
-    @algopy.baremethod
+    @algopy.arc4.baremethod
     def clear_state_program(self):
         return algopy.UInt64(1)
 
@@ -167,3 +167,24 @@ def test_counter_contract(context: AlgopyTestContext):
     # Test clear state program
     assert contract.clear_state_program() == algopy.UInt64(1)
 ```
+
+## Defer contract method invocation
+
+You can create deferred application calls for more complex testing scenarios where order of transactions needs to be controlled:
+
+```python
+def test_deferred_call(context):
+    contract = MyARC4Contract()
+
+    extra_payment = context.any.txn.payment()
+    extra_asset_transfer = context.any.txn.asset_transfer()
+    implicit_payment = context.any.txn.payment()
+    deferred_call = context.txn.defer_app_call(contract.some_method, implicit_payment)
+
+    with context.txn.create_group([extra_payment, deferred_call, extra_asset_transfer]):
+        result = deferred_call.submit()
+
+    print(context.txn.last_group) # [extra_payment, implicit_payment, app call, extra_asset_transfer]
+```
+
+A deferred application call, assembles the application call transaction and can be later executed by calling `.submit()` method on the deferred application call instance. As shown on the example, it can also be passed to the transaction group creation context manager to be executed as part of the transaction group. In such cases if there are more than an application call inside the deferred objects, they will be executed in the order they were added to the transaction group.

@@ -137,6 +137,7 @@ dependencies = [
     "sphinx-autodoc2>=0.5.0",
     "sphinx-copybutton>=0.5.2",
     "sphinx-autobuild>=2024.4.16",
+    "sphinx-mermaid",
     "ipykernel",
     "pytest",
     "py-algorand-sdk",
@@ -151,7 +152,7 @@ dependencies = [
 
 [tool.hatch.envs.docs.scripts]
 build = "sphinx-build -b doctest docs docs/_build -W --keep-going -n -E"
-dev = "sphinx-autobuild docs docs/_build"
+dev = "sphinx-build -b doctest docs docs/_build && sphinx-autobuild docs docs/_build"
 
 # Examples environment
 [tool.hatch.envs.examples]

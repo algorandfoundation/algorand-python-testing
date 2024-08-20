@@ -1,9 +1,46 @@
 # Subroutines
 
-Any python function decorated with `@algopy.subroutine` is accessible as regular python function when accessed within the testing context. Which implies no additional setup or teardown is required, simply instantiate the class holding the function and access the function as a regular python instance attribute.
+Subroutines allow direct testing of internal contract logic without full application calls.
 
-See `simple_voting` examples under [examples](../examples.md) for a showcase of testing subroutines.
+## Overview
 
-```{hint}
-Testing `subroutines` is a unique feature of `algorand-python-testing`, in contrast with integration tests against real AVM network, this approach allows validating critical logic of narrowly scoped business logic of the contract class without the need to access it via public method that relies on it. In a real AVM network, a user would have to deploy a contract, assemble and submit application call/group to the network, and await for the right results to be implcitly hit by the `subroutine`.
+The `@algopy.subroutine` decorator exposes contract methods for isolated testing within the Algorand Python Testing framework. This enables focused validation of core business logic without the overhead of full application deployment and execution.
+
+## Usage
+
+1. Decorate internal methods with `@algopy.subroutine`:
+
+```{testcode}
+from algopy import subroutine, UInt64
+
+class MyContract:
+    @subroutine
+    def calculate_value(self, input: UInt64) -> UInt64:
+        return input * UInt64(2)
 ```
+
+2. Test the subroutine directly:
+
+```{testcode}
+def test_calculate_value(context: AlgopyTestContext):
+    contract = MyContract()
+    result = contract.calculate_value(UInt64(5))
+    assert result == UInt64(10)
+```
+
+## Benefits
+
+-   Faster test execution
+-   Simplified debugging
+-   Focused unit testing of core logic
+
+## Best Practices
+
+-   Use subroutines for complex internal calculations
+-   Prefer writing `pure` subroutines in ARC4Contract classes
+-   Combine with full application tests for comprehensive coverage
+-   Maintain realistic input and output types (e.g., `UInt64`, `Bytes`)
+
+## Example
+
+For a complete example, see the `simple_voting` contract in the [examples](../examples.md) section.

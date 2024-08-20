@@ -1,16 +1,114 @@
 # Transactions
 
-The testing framework follows the Transaction definitions described in [`algorand-python` docs](https://algorand-python.readthedocs.io/en/latest/algorand_sdk/transactions.html). Which implies that transaction related abstractions fall under the following categories:
+The testing framework follows the Transaction definitions described in [`algorand-python` docs](https://algorand-python.readthedocs.io/en/latest/algorand_sdk/transactions.html). This section focuses on _value generators_ and interactions with inner transactions, it also explains how the framework identifies _active_ transaction group during contract method/subroutine/logicsig invocation.
 
-## `algopy.Txn` opcode
+```{testsetup}
+import algopy
+import algopy_testing
 
-In contrast with [`algopy.Global`](state-management#Global), `algopy.Txn` opcode provides access to transactions submitted by the current executing transaction.
+# Create the context manager for snippets below
+ctx_manager = algopy_testing_context()
 
-### `scoped_txn_fields`:
+# Enter the context
+ctx = ctx_manager.__enter__()
+```
 
-`scoped_txn_fields` is a context manager property available on test context instance that allows setting temporary transaction fields within a specific scope. It's defined in the AlgopyTestContext class:
+## Group Transactions
 
-```python
+Refers to test implementation of transaction stubs available under `algopy.gtxn.*` namespace. Available under [`algopy.TxnValueGenerator`](../api.md) instance accessible via `ctx.any.txn` property:
+
+```{mermaid}
+graph TD
+    A[TxnValueGenerator] --> B[payment]
+    A --> C[asset_transfer]
+    A --> D[application_call]
+    A --> E[asset_config]
+    A --> F[key_registration]
+    A --> G[asset_freeze]
+    A --> H[transaction]
+```
+
+```{testcode}
+... # instantiate test context
+
+# Generate a random payment transaction
+pay_txn = ctx.any.txn.payment(
+    sender=ctx.any.account(),  # Optional: Defaults to context's default sender if not provided
+    receiver=ctx.any.account(),  # Required
+    amount=algopy.UInt64(1000000)  # Required
+)
+
+# Generate a random asset transfer transaction
+asset_transfer_txn = ctx.any.txn.asset_transfer(
+    sender=ctx.any.account(),  # Optional: Defaults to context's default sender if not provided
+    receiver=ctx.any.account(),  # Required
+    asset_id=algopy.UInt64(1),  # Required
+    amount=algopy.UInt64(1000)  # Required
+)
+
+# Generate a random application call transaction
+app_call_txn = ctx.any.txn.application_call(
+    app_id=ctx.any.application(),  # Required
+    app_args=[algopy.Bytes(b"arg1"), algopy.Bytes(b"arg2")],  # Optional: Defaults to empty list if not provided
+    accounts=[ctx.any.account()],  # Optional: Defaults to empty list if not provided
+    assets=[ctx.any.asset()],  # Optional: Defaults to empty list if not provided
+    apps=[ctx.any.application()],  # Optional: Defaults to empty list if not provided
+    approval_program_pages=[algopy.Bytes(b"approval_code")],  # Optional: Defaults to empty list if not provided
+    clear_state_program_pages=[algopy.Bytes(b"clear_code")],  # Optional: Defaults to empty list if not provided
+    scratch_space={0: algopy.Bytes(b"scratch")}  # Optional: Defaults to empty dict if not provided
+)
+
+# Generate a random asset config transaction
+asset_config_txn = ctx.any.txn.asset_config(
+    sender=ctx.any.account(),  # Optional: Defaults to context's default sender if not provided
+    asset_id=algopy.UInt64(1),  # Optional: If not provided, creates a new asset
+    total=1000000,  # Required for new assets
+    decimals=0,  # Required for new assets
+    default_frozen=False,  # Optional: Defaults to False if not provided
+    unit_name="UNIT",  # Optional: Defaults to empty string if not provided
+    asset_name="Asset",  # Optional: Defaults to empty string if not provided
+    url="http://asset-url",  # Optional: Defaults to empty string if not provided
+    metadata_hash=b"metadata_hash",  # Optional: Defaults to empty bytes if not provided
+    manager=ctx.any.account(),  # Optional: Defaults to sender if not provided
+    reserve=ctx.any.account(),  # Optional: Defaults to zero address if not provided
+    freeze=ctx.any.account(),  # Optional: Defaults to zero address if not provided
+    clawback=ctx.any.account()  # Optional: Defaults to zero address if not provided
+)
+
+# Generate a random key registration transaction
+key_reg_txn = ctx.any.txn.key_registration(
+    sender=ctx.any.account(),  # Optional: Defaults to context's default sender if not provided
+    vote_pk=algopy.Bytes(b"vote_pk"),  # Optional: Defaults to empty bytes if not provided
+    selection_pk=algopy.Bytes(b"selection_pk"),  # Optional: Defaults to empty bytes if not provided
+    vote_first=algopy.UInt64(1),  # Optional: Defaults to 0 if not provided
+    vote_last=algopy.UInt64(1000),  # Optional: Defaults to 0 if not provided
+    vote_key_dilution=algopy.UInt64(10000)  # Optional: Defaults to 0 if not provided
+)
+
+# Generate a random asset freeze transaction
+asset_freeze_txn = ctx.any.txn.asset_freeze(
+    sender=ctx.any.account(),  # Optional: Defaults to context's default sender if not provided
+    asset_id=algopy.UInt64(1),  # Required
+    freeze_target=ctx.any.account(),  # Required
+    freeze_state=True  # Required
+)
+
+# Generate a random transaction of a specified type
+generic_txn = ctx.any.txn.transaction(
+    type=algopy.TransactionType.Payment,  # Required
+    sender=ctx.any.account(),  # Optional: Defaults to context's default sender if not provided
+    receiver=ctx.any.account(),  # Required for Payment
+    amount=algopy.UInt64(1000000)  # Required for Payment
+)
+```
+
+## Preparing for execution
+
+When a smart contract instance (application) is interacted with on the Algorand network, it must be performed in relation to a specific transaction or transaction group where one or many transactions are application calls to target smart contract instances.
+
+To emulate this behaviour, the `create_group` context manager is available on [`algopy.TransactionContext`](../api.md) instance that allows setting temporary transaction fields within a specific scope, passing in emulated transaction objects and identifying the active transaction index within the transaction group
+
+```{testcode}
 import algopy
 from algopy_testing import AlgopyTestContext, algopy_testing_context
 
@@ -24,161 +122,82 @@ with algopy_testing_context() as ctx:
     # Create a contract instance
     contract = SimpleContract()
     # Use scoped_txn_fields to temporarily change the sender
-    patched_sender = ctx.any_account()
-    with ctx.scoped_txn_fields(sender=patched_sender):
+    patched_sender = ctx.any.account()
+    with ctx.txn.create_group(txn_op_fields={"sender": patched_sender}):
         # Call the contract method
         result = contract.check_sender()
 
         # Assert that the sender is the default creator
+        # NOTE: by default, 'default_sender' property of the test context
+        # is set to the creator of the contract
         assert result == patched_sender
-```
 
-The `scoped_txn_fields` context manager temporarily sets transaction fields and restores them to their previous values when exiting the context. This is useful for applying specific transaction fields for a limited scope without affecting the global state.
-
-## Group Transactions
-
-Refers to transaction abstractions available under `algopy.gtxn.*` namespace.
-
-```python
-... # instantiate test context
-
-# Generate a random payment transaction
-pay_txn = ctx.any_payment_transaction(
-    sender=ctx.any_account(),  # Defaults to a random account generated by ctx.any_account()
-    receiver=ctx.any_account(),  # Defaults to a random account generated by ctx.any_account()
-    amount=algopy.UInt64(1000000)  # Specified amount
-)
-
-# Generate a random asset transfer transaction
-asset_transfer_txn = ctx.any_asset_transfer_transaction(
-    sender=ctx.any_account(),  # Defaults to a random account generated by ctx.any_account()
-    receiver=ctx.any_account(),  # Defaults to a random account generated by ctx.any_account()
-    asset_id=algopy.UInt64(1),  # Specified asset ID
-    amount=algopy.UInt64(1000)  # Specified amount
-)
-
-# Generate a random application call transaction
-app_call_txn = ctx.any_application_call_transaction(
-    app_id=ctx.any_application(),  # Defaults to a random application generated by ctx.any_application()
-    app_args=[algopy.Bytes(b"arg1"), algopy.Bytes(b"arg2")],  # Specified application arguments
-    accounts=[ctx.any_account()],  # Defaults to a list with a single random account generated by ctx.any_account()
-    assets=[ctx.any_asset()],  # Defaults to a list with a single random asset generated by ctx.any_asset()
-    apps=[ctx.any_application()],  # Defaults to a list with a single random application generated by ctx.any_application()
-    approval_program_pages=[algopy.Bytes(b"approval_code")],  # Specified approval program pages
-    clear_state_program_pages=[algopy.Bytes(b"clear_code")],  # Specified clear state program pages
-    scratch_space={0: algopy.Bytes(b"scratch")}  # Specified scratch space
-)
-
-# Generate a random asset config transaction
-asset_config_txn = ctx.any_asset_config_transaction(
-    sender=ctx.any_account(),  # Defaults to a random account generated by ctx.any_account()
-    asset_id=algopy.UInt64(1),  # Specified asset ID
-    params=algopy.AssetParams(
-        total=1000000,  # Specified total
-        decimals=0,  # Specified decimals
-        default_frozen=False,  # Specified default frozen state
-        unit_name="UNIT",  # Specified unit name
-        asset_name="Asset",  # Specified asset name
-        url="http://asset-url",  # Specified URL
-        metadata_hash=b"metadata_hash",  # Specified metadata hash
-        manager=ctx.any_account(),  # Defaults to a random account generated by ctx.any_account()
-        reserve=ctx.any_account(),  # Defaults to a random account generated by ctx.any_account()
-        freeze=ctx.any_account(),  # Defaults to a random account generated by ctx.any_account()
-        clawback=ctx.any_account()  # Defaults to a random account generated by ctx.any_account()
-    )
-)
-
-# Generate a random key registration transaction
-key_reg_txn = ctx.any_key_registration_transaction(
-    sender=ctx.any_account(),  # Defaults to a random account generated by ctx.any_account()
-    vote_pk=algopy.Bytes(b"vote_pk"),  # Specified vote public key
-    selection_pk=algopy.Bytes(b"selection_pk"),  # Specified selection public key
-    vote_first=algopy.UInt64(1),  # Specified vote first round
-    vote_last=algopy.UInt64(1000),  # Specified vote last round
-    vote_key_dilution=algopy.UInt64(10000)  # Specified vote key dilution
-)
-
-# Generate a random asset freeze transaction
-asset_freeze_txn = ctx.any_asset_freeze_transaction(
-    sender=ctx.any_account(),  # Defaults to a random account generated by ctx.any_account()
-    asset_id=algopy.UInt64(1),  # Specified asset ID
-    freeze_target=ctx.any_account(),  # Defaults to a random account generated by ctx.any_account()
-    freeze_state=True  # Specified freeze state
-)
-
-# Generate a random transaction of a specified type
-generic_txn = ctx.any_transaction(
-    type=algopy.TransactionType.Payment,  # Specified transaction type
-    sender=ctx.any_account(),  # Defaults to a random account generated by ctx.any_account()
-    receiver=ctx.any_account(),  # Defaults to a random account generated by ctx.any_account()
-    amount=algopy.UInt64(1000000)  # Specified amount
-)
-
-class MyContract(algopy.ARC4Contract):
-    ...
-    @algopy.arc4.abimethod
-    def my_method(self):
-        ...
-        return Txn.amount
-
-# Setting transaction group with index of current executing transaction
-ctx.set_transaction_group(gtxn=[pay_txn, asset_transfer_txn, app_call_txn], active_transaction_index=3)
-# Now when you access abstractions like `algopy.Txn` to access 'current' transaction it will point to 'app_call_txn' at index 3.
-contract = MyContract()
-# Given that we set active transaction index to 3, the `Txn` reference will correctly refer to 'app_call_txn' instance.
-assert contract.my_method() == algopy.UInt64(1000000)
-
-## Note: active_transaction_index is optional, defaults to 0 and controls which transaction to consider when
-## interacting with `algopy.Txn` and affects behaviour when invoking contract methods using `abimethod` or `baremethod` decorators.
-## Refer to `ARC4Contract` and `Contract` sections for additional usage examples.
-
-# Get the transaction group.
-txn_group = ctx.get_transaction_group()
-
-# Set the active transaction index
-ctx.set_active_transaction_index(0)
-
-# Get the active transaction
-active_txn = ctx.get_active_transaction()
-
-# Clear the transaction group
-ctx.clear_transaction_group()
+    # Assert that the sender is the default creator after exiting the
+    # transaction group context
+    assert ctx.txn.last_active.sender == patched_sender
+    # Assert the size of last transaction group
+    assert len(ctx.txn.last_group.txns) == 1
 ```
 
 ## Inner Transaction
 
-Inner transactions are AVM transactions that are signed and executed by an AVM applications (instances of deployed smart contract/signatures). When testing smart contracts, you may interact and manage inner transactions via the test context manager as such:
+Inner transactions are AVM transactions that are signed and executed by AVM applications (instances of deployed smart contracts or signatures).
 
-```python
-# Lets use a method borrowed from our auction contract from examples. The method performs an inner asset transfer.
-# Hence after execution we expect the test context to automatically capture and store itxn.AssetTransfer transaction submitted by the contract method to be available for further unit testing assertions.
-class AuctionContract(algopy.ARC4Contract):
-    ...
-    @arc4.abimethod
-    def claim_asset(self, asset: Asset) -> None:
-        ...
-        itxn.AssetTransfer(
-            xfer_asset=asset,
-            asset_close_to=self.previous_bidder,
-            asset_receiver=self.previous_bidder,
-            asset_amount=self.asa_amount,
+When testing smart contracts, to stay consistent with AVM, the framework _does not allow you to submit inner transactions outside of contract/subroutine/logicsig invocation_, but you can interact with and manage inner transactions using the test context manager as follows:
+
+```{testcode}
+import algopy
+from algopy_testing import AlgopyTestContext, algopy_testing_context
+
+class MyContract(algopy.ARC4Contract):
+    @algopy.arc4.abimethod
+    def pay_via_itxn(self, asset: algopy.Asset) -> None:
+        algopy.itxn.Payment(
+            receiver=algopy.Txn.sender,
+            amount=algopy.UInt64(1)
         ).submit()
-    ...
 
-... # instantiate test context and invoke contract method
-contract = AuctionContract()
-contract.claim_asset(asset=ctx.any_asset())
+# Create a test context
+with algopy_testing_context() as ctx:
+    # Create a contract instance
+    contract = MyContract()
 
-# Test context will automatically capture and store itxn.AssetTransfer transaction submitted by the contract method.
-# To access the 'submitted' inner transaction with implicit assertions of whether any inner transaction has been submitted, and type of last submitted inner transaction is of specified type:
-asset_transfer_txn = ctx.last_submitted_inner_txn.asset_transfer
+    # Generate a random asset
+    asset = ctx.any.asset()
 
-# Alternatively you can access the entire group to retrieve a specific transaction or iterate over groups of transactions:
-for txn in ctx.last_submitted_inner_txns:
-    ...
-## or
-asset_transfer_txn_2 = ctx.get_submitted_itxn_group(0).asset_transfer(0) # since we expect only one asset transfer inner transaction to be submitted
-# Note that above also performs type validation and will throw an error if the type of inner transaction at index is not of specified type.
+    # Execute the contract method
+    contract.pay_via_itxn(asset=asset)
+
+    # Access the last submitted inner transaction
+    payment_txn = ctx.txn.last_group.last_itxn.payment
+
+    # Assert properties of the inner transaction
+    assert payment_txn.receiver == ctx.txn.last_active.sender
+    assert payment_txn.amount == algopy.UInt64(1)
+
+    # Access all inner transactions in the last group
+    for itxn in ctx.txn.last_group.itxn_groups[-1]:
+        # Perform assertions on each inner transaction
+        ...
+
+    # Access a specific inner transaction group
+    first_itxn_group = ctx.txn.last_group.get_itxn_group(0)
+    first_payment_txn = first_itxn_group.payment(0)
 ```
 
-See [Examples](../examples.md) for more examples of accessing inner transactions.
+In this example, we define a contract method `pay_via_itxn` that creates and submits an inner payment transaction. The test context automatically captures and stores the inner transactions submitted by the contract method.
+
+Note that we don't need to wrap the execution in a `create_group` context manager because the method is decorated with `@algopy.arc4.abimethod`, which automatically creates a transaction group for the method. The `create_group` context manager is only needed when you want to create more complex transaction groups or patch transaction fields for various transaction-related opcodes in AVM.
+
+To access the submitted inner transactions:
+
+1. Use `ctx.txn.last_group.last_itxn` to access the last submitted inner transaction of a specific type.
+2. Iterate over all inner transactions in the last group using `ctx.txn.last_group.itxn_groups[-1]`.
+3. Access a specific inner transaction group using `ctx.txn.last_group.get_itxn_group(index)`.
+
+These methods provide type validation and will raise an error if the requested transaction type doesn't match the actual type of the inner transaction.
+
+## References
+
+-   [API](../api.md) for more details on the test context manager and inner transactions related methods that perform implicit inner transaction type validation.
+-   [Examples](../examples.md) for more examples of smart contracts and associated tests that interact with inner transactions.
