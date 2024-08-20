@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import functools
+import inspect
 import types
 import typing
 
@@ -62,10 +63,29 @@ def get_arc4_metadata(fn: object) -> MethodMetadata:
 
 
 def get_ordered_args(
-    _fn: Callable[..., typing.Any], app_args: list[typing.Any], kwargs: dict[str, typing.Any]
+    _fn: Callable[..., typing.Any], app_args: Sequence[typing.Any], kwargs: dict[str, typing.Any]
 ) -> list[typing.Any]:
-    # TODO: 1.0 order kwargs correctly based on fn signature
-    return [*app_args, *kwargs.values()]
+    sig = inspect.signature(_fn)
+    params = list(sig.parameters.values())[1:]  # Skip 'self'
+    app_args_iter = iter(app_args)
+
+    ordered_args = [
+        (
+            kwargs.get(p.name, next(app_args_iter, p.default))
+            if p.default is not p.empty
+            else kwargs.get(p.name) or next(app_args_iter)
+        )
+        for p in params
+    ]
+
+    if list(app_args_iter):
+        raise TypeError("Too many positional arguments")
+
+    if len(ordered_args) != len(params):
+        missing = [p.name for p in params if p.name not in kwargs and p.default is p.empty]
+        raise TypeError(f"Missing required argument(s): {', '.join(missing)}")
+
+    return ordered_args
 
 
 def check_routing_conditions(app_id: int, metadata: MethodMetadata) -> None:
