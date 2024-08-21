@@ -33,6 +33,22 @@ class OnCompleteAction(_EnumLike):
     UpdateApplication: OnCompleteAction
     DeleteApplication: OnCompleteAction
 
+    @classmethod
+    def _from_str(
+        cls,
+        action: str | OnCompleteAction,
+    ) -> OnCompleteAction:
+        if isinstance(action, cls):
+            return action
+
+        if isinstance(action, str):
+            try:
+                return getattr(cls, action)  # type: ignore[no-any-return]
+            except AttributeError as e:
+                raise ValueError(f"Invalid OnCompleteAction: {action}") from e
+
+        raise TypeError(f"Expected str or OnCompleteAction, got {type(action)}")
+
 
 _add_enum_values(
     OnCompleteAction,

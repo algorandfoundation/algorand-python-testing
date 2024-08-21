@@ -36,7 +36,7 @@ def test_vote(context: AlgopyTestContext) -> None:
         gtxns=[
             context.any.txn.application_call(
                 sender=voter,
-                app_id=context.get_app_for_contract(contract),
+                app_id=context.ledger.get_app(contract),
                 app_args=[algopy.Bytes(b"vote"), voter.bytes],
             ),
             context.any.txn.payment(

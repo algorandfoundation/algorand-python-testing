@@ -118,6 +118,7 @@ class TransactionContext:
                 app_id=app_id,
                 arc4_signature=arc4_metadata.arc4_signature,
                 args=ordered_args,
+                allow_actions=arc4_metadata.allow_actions or [OnCompleteAction.NoOp],
             )
         # Handle bare methods
         else:

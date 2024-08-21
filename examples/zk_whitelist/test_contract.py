@@ -71,7 +71,7 @@ def test_add_address_to_whitelist_invalid_proof(
 @pytest.mark.usefixtures("context")
 def test_is_on_whitelist(context: AlgopyTestContext, contract: ZkWhitelistContract) -> None:
     # Arrange
-    dummy_account = context.any.account(opted_apps=[context.get_app_for_contract(contract)])
+    dummy_account = context.any.account(opted_apps=[context.ledger.get_app(contract)])
     contract.whitelist[dummy_account] = True
 
     # Act
@@ -84,7 +84,7 @@ def test_is_on_whitelist(context: AlgopyTestContext, contract: ZkWhitelistContra
 @pytest.mark.usefixtures("context")
 def test_is_not_on_whitelist(context: AlgopyTestContext, contract: ZkWhitelistContract) -> None:
     # Arrange
-    dummy_account = context.any.account(opted_apps=[context.get_app_for_contract(contract)])
+    dummy_account = context.any.account(opted_apps=[context.ledger.get_app(contract)])
     contract.whitelist[dummy_account] = False
 
     # Act

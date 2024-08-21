@@ -41,7 +41,7 @@ def test_first_deposit(
     test_nonce: arc4.UInt64,
 ) -> None:
     # Arrange
-    test_app = context.get_app_for_contract(contract)
+    test_app = context.ledger.get_app(contract)
 
     # Act
     contract.first_deposit(
@@ -74,7 +74,7 @@ def test_deposit(
     test_nonce: arc4.UInt64,
 ) -> None:
     # Arrange
-    test_app = context.get_app_for_contract(contract)
+    test_app = context.ledger.get_app(contract)
     listing_key = ListingKey(
         owner=arc4.Address(str(context.default_sender)),
         asset=arc4.UInt64(test_asset.id),
@@ -225,7 +225,7 @@ def test_bid(
     test_nonce: arc4.UInt64,
 ) -> None:
     # Arrange
-    app = context.get_app_for_contract(contract)
+    app = context.ledger.get_app(contract)
     owner = arc4.Address(str(context.default_sender))
     initial_price = context.any.arc4.uint64(max_value=int(10e6))
     initial_deposit = context.any.arc4.uint64(max_value=int(1e6))

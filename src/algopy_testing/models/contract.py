@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 import algopy_testing
 from algopy_testing._context_helpers import lazy_context
+from algopy_testing._mutable import set_attr_on_mutate
 from algopy_testing.decorators.arc4 import maybe_arc4_metadata
 from algopy_testing.primitives import Bytes, UInt64
 from algopy_testing.protocols import BytesBacked, UInt64Backed
@@ -144,7 +145,9 @@ class Contract(metaclass=_ContractMeta):
         value = lazy_context.ledger.get_global_state(
             _get_self_or_active_app_id(self), name.encode("utf8")
         )
-        return deserialize(unproxied_global_state_type, value)
+
+        value = deserialize(unproxied_global_state_type, value)
+        return set_attr_on_mutate(self, name, value)
 
     def __setattr__(self, name: str, value: typing.Any) -> None:
         name_bytes = algopy_testing.String(name).bytes
