@@ -9,7 +9,12 @@ import algosdk
 
 import algopy_testing
 from algopy_testing._context_helpers import lazy_context
-from algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM, MAX_BYTES_SIZE, MAX_UINT64
+from algopy_testing.constants import (
+    ALWAYS_APPROVE_TEAL_PROGRAM,
+    MAX_BYTES_SIZE,
+    MAX_UINT64,
+    MAX_UINT512,
+)
 from algopy_testing.models.account import AccountFields
 from algopy_testing.models.application import ApplicationContextData, ApplicationFields
 from algopy_testing.models.asset import AssetFields
@@ -44,9 +49,7 @@ class AVMValueGenerator:
         """Generate a random BigUInt value within a specified range.
 
         :param min_value: Minimum value. Defaults to 0.
-        :type min_value: int
         :returns: The randomly generated BigUInt value.
-        :rtype: algopy.BigUInt
         :raises ValueError: If `min_value` is negative.
         """
         if min_value < 0:
