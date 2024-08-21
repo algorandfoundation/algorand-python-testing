@@ -9,7 +9,7 @@ import typing
 import algosdk
 
 import _algopy_testing
-from _algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM
+from _algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM, ARC4_RETURN_PREFIX
 from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.enums import OnCompleteAction
 from _algopy_testing.primitives import BigUInt, Bytes, String, UInt64
@@ -144,6 +144,8 @@ def abimethod(  # noqa: PLR0913
     readonly: bool = False,
     default_args: Mapping[str, str | object] | None = None,
 ) -> Callable[[Callable[_P, _R]], Callable[_P, _R]] | Callable[_P, _R]:
+    from _algopy_testing.utilities.log import log
+
     allow_actions = _parse_allow_actions(allow_actions)
 
     if fn is None:
@@ -183,7 +185,9 @@ def abimethod(  # noqa: PLR0913
         with context.txn._maybe_implicit_txn_group(txns):
             check_routing_conditions(app_id, metadata)
             result = fn(*args, **kwargs)
-            # TODO: 1.0 add result along with ARC4 log prefix to application logs?
+            if result is not None:
+                abi_result = _algopy_testing.arc4.native_value_to_arc4(result)
+                log(ARC4_RETURN_PREFIX, abi_result)
             return result
 
     return wrapper
@@ -273,31 +277,31 @@ def _extract_arrays_from_args(
     apps = [app]
     assets = list[_algopy_testing.Asset]()
     accounts = [sender]
-    app_args = [method_selector]
+    app_args = list[_algopy_testing.arc4._ABIEncoded]()
     for arg in args:
         match arg:
             case _algopy_testing.gtxn.TransactionBase() as txn:
                 txns.append(txn)
             case _algopy_testing.Account() as acc:
-                app_args.append(_algopy_testing.arc4.UInt8(len(accounts)).bytes)
+                app_args.append(_algopy_testing.arc4.UInt8(len(accounts)))
                 accounts.append(acc)
             case _algopy_testing.Asset() as asset:
-                app_args.append(_algopy_testing.arc4.UInt8(len(assets)).bytes)
+                app_args.append(_algopy_testing.arc4.UInt8(len(assets)))
                 assets.append(asset)
             case _algopy_testing.Application() as arg_app:
-                app_args.append(_algopy_testing.arc4.UInt8(len(apps)).bytes)
+                app_args.append(_algopy_testing.arc4.UInt8(len(apps)))
                 apps.append(arg_app)
             case _ as maybe_native:
-                app_args.append(_algopy_testing.arc4.native_value_to_arc4(maybe_native).bytes)
-    if len(app_args) > 16:
-        # TODO:1.0 pack extra args into an ARC4 tuple
-        raise NotImplementedError
+                app_args.append(_algopy_testing.arc4.native_value_to_arc4(maybe_native))
+    if len(app_args) > 15:
+        packed = _algopy_testing.arc4.Tuple(tuple(app_args[14:]))
+        app_args[14:] = [packed]
     return _TxnArrays(
         txns=txns,
         apps=apps,
         assets=assets,
         accounts=accounts,
-        app_args=app_args,
+        app_args=[method_selector, *(a.bytes for a in app_args)],
     )
 
 

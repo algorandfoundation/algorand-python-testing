@@ -210,9 +210,7 @@ class TransactionGroup:
             self.active_txn_index = 0
             return
         if not all(isinstance(txn, gtxn.TransactionBase) for txn in txns):
-            raise ValueError(
-                "All transactions must be instances of TransactionBase or DeferredAppCall"
-            )
+            raise ValueError("All transactions must be instances of TransactionBase")
 
         if len(txns) > algosdk.constants.TX_GROUP_LIMIT:
             raise ValueError(

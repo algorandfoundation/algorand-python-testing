@@ -62,6 +62,8 @@ __all__ = [
     "UInt8",
     "UIntN",
     "abi_call",
+    "arc4_create",
+    "arc4_update",
     "arc4_signature",
     "emit",
 ]
@@ -216,7 +218,7 @@ class String(_ABIEncoded):
                     f"value must be a string or String type, not {type(value).__name__!r}"
                 )
 
-        self._value = len(bytes_value).to_bytes(_ABI_LENGTH_SIZE) + bytes_value
+        self._value = as_bytes(_encode_length(len(bytes_value)) + bytes_value)
 
     @property
     def native(self) -> algopy.String:
@@ -533,25 +535,12 @@ class Byte(UIntN[typing.Literal[8]]):
 
 
 UInt8: typing.TypeAlias = UIntN[typing.Literal[8]]
-"""An ARC4 UInt8."""
-
 UInt16: typing.TypeAlias = UIntN[typing.Literal[16]]
-"""An ARC4 UInt16."""
-
 UInt32: typing.TypeAlias = UIntN[typing.Literal[32]]
-"""An ARC4 UInt32."""
-
 UInt64: typing.TypeAlias = UIntN[typing.Literal[64]]
-"""An ARC4 UInt64."""
-
 UInt128: typing.TypeAlias = BigUIntN[typing.Literal[128]]
-"""An ARC4 UInt128."""
-
 UInt256: typing.TypeAlias = BigUIntN[typing.Literal[256]]
-"""An ARC4 UInt256."""
-
 UInt512: typing.TypeAlias = BigUIntN[typing.Literal[512]]
-"""An ARC4 UInt512."""
 
 
 class _BoolTypeInfo(_TypeInfo):
@@ -665,6 +654,8 @@ class StaticArray(
         super().__init__()
         items = _check_is_arc4(_items)
         for item in items:
+            if len(items) != self._type_info.size:
+                raise TypeError(f"expected {self._type_info.size} items, not {len(items)}")
             if self._type_info.item_type != item._type_info:
                 raise TypeError(
                     f"item must be of type {self._type_info.item_type!r}, not {item._type_info!r}"
@@ -735,10 +726,10 @@ class Address(StaticArray[Byte, typing.Literal[32]]):
                 bytes_value = algosdk.encoding.decode_address(value)
             except Exception as e:
                 raise ValueError(f"cannot encode the following address: {value!r}") from e
+        elif isinstance(value, Account):
+            bytes_value = value.bytes.value
         else:
-            bytes_value = (
-                value.bytes.value if isinstance(value, Account) else as_bytes(value, max_size=32)
-            )
+            bytes_value = as_bytes(value)
         if len(bytes_value) != 32:
             raise ValueError(f"expected 32 bytes, got: {len(bytes_value)}")
         self._value = bytes_value
@@ -1124,14 +1115,6 @@ class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):  # type: ignore[
         tuple_value = tuple_type.from_bytes(value)
         return cls(*tuple_value.native)
 
-    @classmethod
-    def from_log(cls, log: algopy.Bytes, /) -> typing.Self:
-        """Load an ABI type from application logs, checking for the ABI return prefix
-        `0x151f7c75`"""
-        if log[:4] == ARC4_RETURN_PREFIX:
-            return cls.from_bytes(log[4:])
-        raise ValueError("ABI return prefix not found")
-
     @property
     def bytes(self) -> algopy.Bytes:
         """Get the underlying bytes[]"""
@@ -1212,7 +1195,7 @@ def native_value_to_arc4(value: object) -> _ABIEncoded:  # noqa: PLR0911
     if isinstance(value, algopy.String):
         return String(value)
     if isinstance(value, tuple):
-        return Tuple(value)
+        return Tuple(tuple(map(native_value_to_arc4, value)))
     raise TypeError(f"Unsupported type: {type(value).__name__}")
 
 
