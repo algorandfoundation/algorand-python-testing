@@ -230,6 +230,12 @@ class String(_ABIEncoded):
         """Returns `True` if length is not zero."""
         return bool(self.native)
 
+    def __str__(self) -> str:
+        return str(self.native)
+
+    def __repr__(self) -> str:
+        return _arc4_repr(self)
+
 
 class _UIntTypeInfo(_TypeInfo):
     def __init__(self, size: int) -> None:
@@ -360,6 +366,12 @@ class UIntN(_UIntN, typing.Generic[_TBitSize]):  # type: ignore[type-arg]
     def __bool__(self) -> bool:
         return bool(self.native)
 
+    def __str__(self) -> str:
+        return str(self.native)
+
+    def __repr__(self) -> str:
+        return _arc4_repr(self)
+
 
 class BigUIntN(_UIntN, typing.Generic[_TBitSize]):  # type: ignore[type-arg]
     """An ARC4 UInt consisting of the number of bits specified.
@@ -394,6 +406,12 @@ class BigUIntN(_UIntN, typing.Generic[_TBitSize]):  # type: ignore[type-arg]
 
     def __bool__(self) -> bool:
         return bool(self.native)
+
+    def __str__(self) -> str:
+        return str(self.native)
+
+    def __repr__(self) -> str:
+        return _arc4_repr(self)
 
 
 _TDecimalPlaces = typing.TypeVar("_TDecimalPlaces", bound=int)
@@ -482,6 +500,15 @@ class _UFixedNxM(
         """Returns `True` if not equal to zero."""
         return bool(int.from_bytes(self._value))
 
+    def __str__(self) -> str:
+        int_str = str(int.from_bytes(self._value))
+        whole = int_str[: -self.type_info.precision]
+        fractional = int_str[-self.type_info.precision :]
+        return f"{whole}.{fractional}"
+
+    def __repr__(self) -> str:
+        return _arc4_repr(self)
+
 
 # implementations are effectively the same for these types
 UFixedNxM = _UFixedNxM
@@ -561,6 +588,12 @@ class Bool(_ABIEncoded):
         """Return the bool representation of the value after ARC4 decoding."""
         int_value = int.from_bytes(self._value)
         return int_value == self._true_int_value
+
+    def __str__(self) -> str:
+        return f"{self.native}"
+
+    def __repr__(self) -> str:
+        return _arc4_repr(self)
 
 
 _TArrayItem = typing.TypeVar("_TArrayItem", bound=_ABIEncoded)
@@ -675,6 +708,14 @@ class StaticArray(
     def _list(self) -> list[_TArrayItem]:
         return _decode_tuple_items(self._value, [self.type_info.item_type] * self.type_info.size)
 
+    def __str__(self) -> str:
+        items = map(str, self._list())
+        return f"[{', '.join(items)}]"
+
+    def __repr__(self) -> str:
+        items = map(repr, self._list())
+        return f"{_arc4_type_repr(type(self))}({', '.join(items)})"
+
 
 class _AddressTypeInfo(_StaticArrayTypeInfo):
     def __init__(self) -> None:
@@ -724,6 +765,12 @@ class Address(StaticArray[Byte, typing.Literal[32]]):
             return self.bytes == other.bytes
         other_bytes: bytes = algosdk.encoding.decode_address(other)
         return self.bytes == other_bytes
+
+    def __str__(self) -> str:
+        return str(self.native)
+
+    def __repr__(self) -> str:
+        return _arc4_repr(self)
 
 
 class _DynamicArrayTypeInfo(_TypeInfo):
@@ -867,6 +914,14 @@ class DynamicArray(  # TODO: inherit from StaticArray?
     def _encode_with_length(self, items: Sequence[_ABIEncoded]) -> bytes:
         return _encode_length(len(items)) + _encode(items)
 
+    def __str__(self) -> str:
+        items = map(str, self._list())
+        return f"[{', '.join(items)}]"
+
+    def __repr__(self) -> str:
+        items = map(repr, self._list())
+        return f"{_arc4_type_repr(type(self))}({', '.join(items)})"
+
 
 class DynamicBytes(DynamicArray[Byte]):
     """A variable sized array of bytes."""
@@ -896,6 +951,12 @@ class DynamicBytes(DynamicArray[Byte]):
     @property
     def native(self) -> algopy.Bytes:
         return self.bytes[_ABI_LENGTH_SIZE:]
+
+    def __str__(self) -> str:
+        return str(self.native)
+
+    def __repr__(self) -> str:
+        return _arc4_repr(self)
 
 
 _TTuple = typing.TypeVarTuple("_TTuple")
@@ -999,6 +1060,12 @@ class Tuple(
             tuple(_decode_tuple_items(self._value, self.type_info.child_types)),
         )
 
+    def __str__(self) -> str:
+        return str(self.native)
+
+    def __repr__(self) -> str:
+        return _arc4_repr(self)
+
 
 class _StructTypeInfo(_TypeInfo):
     def __init__(self, struct_type: type[Struct]) -> None:
@@ -1091,7 +1158,8 @@ class Struct(MutableBytes, metaclass=_StructMeta):
         return Tuple(tuple_items)
 
 
-class ARC4Client(typing.Protocol): ...
+class ARC4Client:
+    pass
 
 
 class _ABICall:
@@ -1415,3 +1483,11 @@ def _read_length(value: bytes) -> tuple[int, bytes]:
     length = int.from_bytes(value[:_ABI_LENGTH_SIZE])
     data = value[_ABI_LENGTH_SIZE:]
     return length, data
+
+
+def _arc4_repr(value: object) -> str:
+    return f"{_arc4_type_repr(type(value))}({value!s})"
+
+
+def _arc4_type_repr(value: type) -> str:
+    return f"arc4.{value.__name__}"
