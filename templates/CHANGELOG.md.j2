@@ -1,0 +1,10 @@
+{% import '.macros.j2' as macros -%}
+# CHANGELOG
+{%- if context.history.unreleased | length > 0 %}
+## Unreleased
+{{ macros.render_type_commits(context.history.unreleased) }}
+{%- endif %}
+{%- for version, release in context.history.released.items() %}
+## {{ version.as_semver_tag() }} ({{ release.tagged_date.strftime("%Y-%m-%d") }})
+{{ macros.render_type_commits(release["elements"]) }}
+{%- endfor %}
