@@ -249,7 +249,7 @@ def test_bid(
     )
 
     # Act
-    with context.txn.create_group(txn_op_fields={"sender": bidder}):
+    with context.txn.create_group(active_txn_overrides={"sender": bidder}):
         contract.bid(
             owner=owner,
             asset=test_asset,

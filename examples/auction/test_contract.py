@@ -50,12 +50,11 @@ def test_start_auction(
     )
 
     # Act
-    with context.txn.create_group(txn_op_fields={"sender": context.default_sender}):
-        contract.start_auction(
-            starting_price,
-            auction_duration,
-            axfer_txn,
-        )
+    contract.start_auction(
+        starting_price,
+        auction_duration,
+        axfer_txn,
+    )
 
     # Assert
     assert contract.auction_end == latest_timestamp + auction_duration
@@ -97,7 +96,7 @@ def test_claim_bids(
     contract.previous_bid = previous_bid
 
     # Act
-    with context.txn.create_group(txn_op_fields={"sender": account}):
+    with context.txn.create_group(active_txn_overrides={"sender": account}):
         contract.claim_bids()
 
     # Assert
@@ -138,15 +137,11 @@ def test_delete_application(
 
     # Act
     # setting sender will determine creator
-    with context.txn.create_group(txn_op_fields={"sender": account}):
+    with context.txn.create_group(active_txn_overrides={"sender": account}):
         contract = AuctionContract()
 
     with context.txn.create_group(
-        gtxns=[
-            context.any.txn.application_call(
-                on_completion=algopy.OnCompleteAction.DeleteApplication
-            )
-        ]
+        active_txn_overrides={"on_completion": algopy.OnCompleteAction.DeleteApplication}
     ):
         contract.delete_application()
 
@@ -154,8 +149,8 @@ def test_delete_application(
     inner_transactions = context.txn.last_group.last_itxn.payment
     assert inner_transactions
     assert inner_transactions.type == algopy.TransactionType.Payment
-    assert inner_transactions.receiver == context.default_sender
-    assert inner_transactions.close_remainder_to == context.default_sender
+    assert inner_transactions.receiver == account
+    assert inner_transactions.close_remainder_to == account
 
 
 @pytest.mark.usefixtures("context")

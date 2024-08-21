@@ -183,7 +183,7 @@ def create_abimethod_txns(
 ) -> list[algopy.gtxn.TransactionBase]:
     method = algosdk.abi.Method.from_signature(arc4_signature)
     method_selector = Bytes(method.get_selector())
-    txn_fields = lazy_context.get_txn_op_fields()
+    txn_fields = lazy_context.get_active_txn_fields()
 
     contract_app = lazy_context.ledger.get_app(app_id)
     txn_app = txn_fields.setdefault("app_id", contract_app)
@@ -215,7 +215,7 @@ def create_abimethod_txns(
 
 
 def create_baremethod_txns(app_id: int) -> list[algopy.gtxn.TransactionBase]:
-    txn_fields = lazy_context.get_txn_op_fields()
+    txn_fields = lazy_context.get_active_txn_fields()
 
     contract_app = lazy_context.ledger.get_app(app_id)
     txn_fields.setdefault("app_id", contract_app)
