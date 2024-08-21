@@ -293,7 +293,7 @@ def _generate_arc4_signature_from_fn(fn: typing.Callable[_P, _R], arc4_name: str
 
 
 def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa: PLR0911, PLR0912
-    from algopy_testing.arc4 import Struct, _ABIEncoded
+    from algopy_testing.arc4 import _ABIEncoded
     from algopy_testing.gtxn import Transaction, TransactionBase
     from algopy_testing.models import Account, Application, Asset
 
@@ -308,7 +308,7 @@ def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa:
         raise TypeError(f"expected type: {annotation!r}")
 
     # arc4 types
-    if issubclass(annotation, _ABIEncoded | Struct):
+    if issubclass(annotation, _ABIEncoded):
         return annotation._type_info.arc4_name
     # txn types
     if issubclass(annotation, Transaction):

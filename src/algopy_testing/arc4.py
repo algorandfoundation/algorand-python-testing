@@ -133,7 +133,7 @@ def _new_parameterized_class(cls: type, type_params: Sequence[type], type_info: 
 
 def _check_is_arc4(items: Sequence[typing.Any]) -> Sequence[_ABIEncoded]:
     for item in items:
-        if not isinstance(item, _ABIEncoded | Struct):
+        if not isinstance(item, _ABIEncoded):
             raise TypeError("expected ARC4 type")
     return items
 
@@ -1090,10 +1090,10 @@ def _tuple_type_from_struct(struct: type[Struct]) -> type[Tuple]:  # type: ignor
     return _parameterize_type(Tuple, *field_types)
 
 
-class Struct(MutableBytes, metaclass=_StructMeta):
+class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):  # type: ignore[misc]
     """Base class for ARC4 Struct types."""
 
-    _type_info: typing.ClassVar[_StructTypeInfo]
+    _type_info: typing.ClassVar[_StructTypeInfo]  # type: ignore[misc]
 
     def __init_subclass__(cls) -> None:
         dataclasses.dataclass(cls)
@@ -1200,9 +1200,8 @@ def emit(event: str | Struct, /, *args: object) -> None:
 def native_value_to_arc4(value: object) -> _ABIEncoded:  # noqa: PLR0911
     import algopy
 
-    if isinstance(value, _ABIEncoded | Struct):
-        # Struct still matches the _ABIEncoded protocol
-        return value  # type: ignore[return-value]
+    if isinstance(value, _ABIEncoded):
+        return value
     if isinstance(value, bool):
         return Bool(value)
     if isinstance(value, algopy.UInt64):
@@ -1341,7 +1340,7 @@ def _encode(  # noqa: PLR0912
     )
     while i < values_length:
         value = values[i]
-        assert isinstance(value, _ABIEncoded | Struct), "expected ARC4 value"
+        assert isinstance(value, _ABIEncoded), "expected ARC4 value"
         is_dynamic_index.append(value._type_info.is_dynamic)
         if is_dynamic_index[-1]:
             heads.append(b"\x00\x00")
