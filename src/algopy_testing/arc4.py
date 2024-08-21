@@ -942,7 +942,7 @@ class _TupleMeta(type(_ABIEncoded), typing.Generic[typing.Unpack[_TTuple]]):  # 
 
 class Tuple(
     _ABIEncoded,
-    tuple[*_TTuple],
+    tuple[typing.Unpack[_TTuple]],
     typing.Generic[typing.Unpack[_TTuple]],
     metaclass=_TupleMeta,
 ):
