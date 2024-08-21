@@ -108,7 +108,7 @@ check = [
   "pydoclint --config=pyproject.toml src",
 ]
 fix = [
-  "docformatter -i -r --black --style sphinx src",
+  "- docformatter -i -r --black --style sphinx src",
   "black .",
   "ruff check --fix",
 ]
