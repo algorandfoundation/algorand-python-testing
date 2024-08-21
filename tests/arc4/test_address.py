@@ -1,8 +1,8 @@
-import algopy_testing.primitives as algopy
+import _algopy_testing.primitives as algopy
 import algosdk
 import pytest
-from algopy_testing import arc4
-from algopy_testing.models import Account
+from _algopy_testing import arc4
+from _algopy_testing.models import Account
 
 _abi_address_type = algosdk.abi.ABIType.from_string("address")
 

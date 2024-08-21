@@ -1,9 +1,9 @@
 from collections.abc import Generator
 
 import pytest
+from _algopy_testing import AlgopyTestContext, algopy_testing_context
+from _algopy_testing.models.asset import Asset, AssetFields
 from algopy import Account, Bytes, UInt64
-from algopy_testing import AlgopyTestContext, algopy_testing_context
-from algopy_testing.models.asset import Asset, AssetFields
 
 
 @pytest.fixture()

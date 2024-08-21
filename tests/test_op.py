@@ -2,21 +2,21 @@ import contextlib
 import typing
 from pathlib import Path
 
+import _algopy_testing
 import algopy
-import algopy_testing
 import algosdk
 import coincurve
 import ecdsa  # type: ignore  # noqa: PGH003
 import ecdsa.util  # type: ignore  # noqa: PGH003
 import nacl.signing
 import pytest
+from _algopy_testing import algopy_testing_context, op
+from _algopy_testing.context import AlgopyTestContext
+from _algopy_testing.op.block import Block
+from _algopy_testing.primitives.bytes import Bytes
+from _algopy_testing.primitives.uint64 import UInt64
+from _algopy_testing.utils import convert_native_to_stack
 from algokit_utils import LogicError, get_localnet_default_account
-from algopy_testing import algopy_testing_context, op
-from algopy_testing.context import AlgopyTestContext
-from algopy_testing.op.block import Block
-from algopy_testing.primitives.bytes import Bytes
-from algopy_testing.primitives.uint64 import UInt64
-from algopy_testing.utils import convert_native_to_stack
 from algosdk.v2client.algod import AlgodClient
 from Cryptodome.Hash import keccak
 from ecdsa import SECP256k1, SigningKey, curves
@@ -401,7 +401,7 @@ def test_verify_vrf_verify(
         return op.vrf_verify(op.VrfVerify.VrfAlgorand, a, b, c)
 
     avm_result = run_real_vrf_verify()
-    mocker.patch("algopy_testing.op.vrf_verify", return_value=(avm_result[0], True))
+    mocker.patch("_algopy_testing.op.vrf_verify", return_value=(avm_result[0], True))
     mocked_result = run_mocked_vrf_verify()
 
     assert avm_result == mocked_result
@@ -634,8 +634,8 @@ def test_acct_params_get(
     ],
 )
 def test_app_local_put_get_and_delete(
-    context: algopy_testing.AlgopyTestContext,
-    localnet_creator: algopy_testing.Account,
+    context: _algopy_testing.AlgopyTestContext,
+    localnet_creator: _algopy_testing.Account,
     get_state_app_local_avm_opted_in: AVMInvoker,
     key: bytes,
     value: bytes | int,
@@ -686,7 +686,7 @@ def test_app_local_put_get_and_delete(
 
 def test_app_local_ex_get(
     context: AlgopyTestContext,
-    localnet_creator: algopy_testing.Account,
+    localnet_creator: _algopy_testing.Account,
     get_state_app_local_avm_result: AVMInvoker,
     get_state_app_local_ex_avm_result: AVMInvoker,
 ) -> None:
@@ -716,7 +716,7 @@ def test_app_local_ex_get(
 
 def test_app_local_ex_get_arc4(
     context: AlgopyTestContext,
-    localnet_creator: algopy_testing.Account,
+    localnet_creator: _algopy_testing.Account,
     get_state_app_local_avm_result: AVMInvoker,
     get_state_app_local_ex_avm_result: AVMInvoker,
 ) -> None:

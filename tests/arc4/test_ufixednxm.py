@@ -2,9 +2,9 @@ import typing
 
 import algokit_utils
 import pytest
-from algopy_testing import arc4
-from algopy_testing.constants import ARC4_RETURN_PREFIX
-from algopy_testing.primitives.bytes import Bytes
+from _algopy_testing import arc4
+from _algopy_testing.constants import ARC4_RETURN_PREFIX
+from _algopy_testing.primitives.bytes import Bytes
 
 from tests.common import AVMInvoker
 from tests.util import int_to_bytes

@@ -1,7 +1,7 @@
+import _algopy_testing
 import algopy
-import algopy_testing
 import pytest
-from algopy_testing._context_helpers.context_storage import algopy_testing_context
+from _algopy_testing._context_helpers.context_storage import algopy_testing_context
 
 from tests.artifacts.StateOps.contract import LocalStateContract
 from tests.common import AVMInvoker
@@ -43,7 +43,7 @@ def test_get_local_arc4_value(
             contract.opt_in()
         test_result = getattr(contract, method_name)(ctx.default_sender)
         assert isinstance(test_result, expected_type)
-        if isinstance(test_result, algopy_testing.arc4.Address):
+        if isinstance(test_result, _algopy_testing.arc4.Address):
             assert test_result.native.public_key == avm_result
         else:
             assert test_result.native == avm_result  # type: ignore[attr-defined]

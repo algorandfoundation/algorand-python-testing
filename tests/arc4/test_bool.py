@@ -3,8 +3,8 @@ import re
 import algokit_utils
 import algopy
 import pytest
-from algopy_testing import arc4
-from algopy_testing.constants import ARC4_RETURN_PREFIX
+from _algopy_testing import arc4
+from _algopy_testing.constants import ARC4_RETURN_PREFIX
 
 from tests.common import AVMInvoker
 

@@ -3,7 +3,7 @@ import typing
 
 import algosdk
 import pytest
-from algopy_testing import Bytes, arc4
+from _algopy_testing import Bytes, arc4
 
 from tests.util import int_to_bytes
 

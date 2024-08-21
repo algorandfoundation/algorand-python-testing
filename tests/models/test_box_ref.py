@@ -2,13 +2,13 @@ from collections.abc import Generator
 
 import algopy
 import pytest
-from algopy_testing import algopy_testing_context
-from algopy_testing.constants import MAX_BOX_SIZE, MAX_BYTES_SIZE
-from algopy_testing.context import AlgopyTestContext
-from algopy_testing.primitives.bytes import Bytes
-from algopy_testing.primitives.string import String
-from algopy_testing.state.box import BoxRef
-from algopy_testing.utils import as_bytes, as_string
+from _algopy_testing import algopy_testing_context
+from _algopy_testing.constants import MAX_BOX_SIZE, MAX_BYTES_SIZE
+from _algopy_testing.context import AlgopyTestContext
+from _algopy_testing.primitives.bytes import Bytes
+from _algopy_testing.primitives.string import String
+from _algopy_testing.state.box import BoxRef
+from _algopy_testing.utils import as_bytes, as_string
 
 TEST_BOX_KEY = b"test_key"
 BOX_NOT_CREATED_ERROR = "Box has not been created"

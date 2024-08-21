@@ -3,15 +3,15 @@ from collections.abc import Generator
 
 import algopy
 import pytest
-from algopy_testing import algopy_testing_context, arc4
-from algopy_testing.context import AlgopyTestContext
-from algopy_testing.op.pure import itob
-from algopy_testing.primitives.biguint import BigUInt
-from algopy_testing.primitives.bytes import Bytes
-from algopy_testing.primitives.string import String
-from algopy_testing.primitives.uint64 import UInt64
-from algopy_testing.state.box import Box
-from algopy_testing.utils import as_bytes, as_string
+from _algopy_testing import algopy_testing_context, arc4
+from _algopy_testing.context import AlgopyTestContext
+from _algopy_testing.op.pure import itob
+from _algopy_testing.primitives.biguint import BigUInt
+from _algopy_testing.primitives.bytes import Bytes
+from _algopy_testing.primitives.string import String
+from _algopy_testing.primitives.uint64 import UInt64
+from _algopy_testing.state.box import Box
+from _algopy_testing.utils import as_bytes, as_string
 
 from tests.artifacts.BoxContract.contract import BoxContract
 

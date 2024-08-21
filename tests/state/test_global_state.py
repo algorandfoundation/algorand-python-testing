@@ -2,11 +2,11 @@ from collections.abc import Generator
 from typing import Any
 
 import pytest
-from algopy_testing import arc4
-from algopy_testing._context_helpers.context_storage import algopy_testing_context
-from algopy_testing.context import AlgopyTestContext
-from algopy_testing.primitives.bytes import Bytes
-from algopy_testing.state.global_state import GlobalState
+from _algopy_testing import arc4
+from _algopy_testing._context_helpers.context_storage import algopy_testing_context
+from _algopy_testing.context import AlgopyTestContext
+from _algopy_testing.primitives.bytes import Bytes
+from _algopy_testing.state.global_state import GlobalState
 
 
 @pytest.fixture()

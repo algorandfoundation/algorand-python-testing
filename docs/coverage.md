@@ -1,8 +1,6 @@
 # Coverage
 
-See which `algorand-python` stubs are implemented by the `algorand-python-testing` library. See the [Concepts](testing-guide/concepts.md#types-of-algopy-stub-implementations) section for more details on the implementation categories.
-
-Based on the definitions provided and the implementation details in the `src` directory, here is the classification for the abstractions outlined in the table under the `Name` column:
+See which `algorand-python` stubs are implemented by the `algorand-python-testing` library. See the [Concepts](testing-guide/concepts.md#types-of-algopy-stub-implementations) section for more details on the implementation categories. Refer to the [`algorand-python` stubs API](api.md) for the full list of the stubs for which the `algorand-python-testing` library provides implementations referenced in the table below.
 
 | Name                                        | Implementation type |
 | ------------------------------------------- | ------------------- |
@@ -159,4 +157,3 @@ Based on the definitions provided and the implementation details in the `src` di
 | algopy.op.EllipticCurve                     | Mockable            |
 | algopy.op.VrfVerify                         | Mockable            |
 | algopy.op.vrf_verify                        | Mockable            |
-

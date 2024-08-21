@@ -3,11 +3,11 @@ from collections.abc import Iterator
 import algopy
 import algosdk
 import pytest
-from algopy_testing import algopy_testing_context
-from algopy_testing.constants import MAX_BYTES_SIZE, MAX_UINT64
-from algopy_testing.context import AlgopyTestContext
-from algopy_testing.primitives.bytes import Bytes
-from algopy_testing.primitives.string import String
+from _algopy_testing import algopy_testing_context
+from _algopy_testing.constants import MAX_BYTES_SIZE, MAX_UINT64
+from _algopy_testing.context import AlgopyTestContext
+from _algopy_testing.primitives.bytes import Bytes
+from _algopy_testing.primitives.string import String
 
 
 @pytest.fixture()
