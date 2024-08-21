@@ -1,7 +1,6 @@
 import contextlib
 
 import algopy_testing
-import algosdk
 import pytest
 from algopy_testing._context_helpers.context_storage import algopy_testing_context
 from algopy_testing.enums import OnCompleteAction
@@ -35,8 +34,6 @@ def test_get_local_arc4_value(
     method_name: str,
     expected_type: type,
 ) -> None:
-    with contextlib.suppress(algosdk.error.AlgodHTTPError):
-        get_local_state_avm_result("opt_in", on_complete=algosdk.transaction.OnComplete.OptInOC)
     avm_result = get_local_state_avm_result(method_name, a=localnet_creator_address)
 
     with algopy_testing_context(default_sender=localnet_creator_address) as ctx:
