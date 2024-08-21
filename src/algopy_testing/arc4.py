@@ -152,6 +152,14 @@ class _ABIEncoded(BytesBacked):
 
         return algopy.Bytes(self._value)
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, _ABIEncoded):
+            return self.type_info == other.type_info and self.bytes == other.bytes
+        return NotImplemented
+
+    def __hash__(self) -> int:
+        return hash(self.bytes)
+
 
 def arc4_signature(signature: str, /) -> algopy.Bytes:
     """Convert a signature to ARC4 bytes."""
