@@ -11,6 +11,7 @@ project = "Algorand Python Testing"
 copyright = "2024, Algorand Foundation"  # noqa: A001
 author = "Algorand Foundation"
 
+
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
@@ -19,6 +20,9 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
     "myst_parser",
+    "autodoc2",
+    "sphinx.ext.doctest",
+    "sphinxmermaid",
 ]
 
 templates_path = ["_templates"]
@@ -42,7 +46,6 @@ nitpick_ignore_regex = [
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
 html_theme = "furo"
 html_static_path = ["_static"]
 html_css_files = [
@@ -52,7 +55,28 @@ html_css_files = [
 python_maximum_signature_line_length = 80
 
 # -- Options for myst ---
-myst_enable_extensions = [
-    "colon_fence",
-    "fieldlist",
+myst_enable_extensions = ["colon_fence", "fieldlist"]
+
+# -- Options for autodoc2
+autodoc2_packages = [
+    {
+        "path": "../src/algopy_testing",
+        "auto_mode": False,
+    },
 ]
+autodoc2_render_plugin = "myst"
+autodoc2_hidden_objects = [
+    "dunder",
+    "private",
+    "undoc",
+]
+add_module_names = False
+autodoc2_index_template = None
+
+# -- Options for doctest --
+doctest_test_doctest_blocks = "default"
+
+# -- Options for mermaid --
+sphinxmermaid_mermaid_init = {
+    "theme": "dark",
+}

@@ -1,5 +1,10 @@
 # Algorand Python Testing
 
+[![docs-repository](https://img.shields.io/badge/url-repository-74dfdc?logo=github&style=flat.svg)](https://github.com/algorandfoundation/algorand-python-testing/)
+[![learn-AlgoKit](https://img.shields.io/badge/learn-AlgoKit-74dfdc?logo=algorand&mac=flat.svg)](https://developer.algorand.org/algokit/)
+[![github-stars](https://img.shields.io/github/stars/algorandfoundation/algorand-python-testing?color=74dfdc&logo=star&style=flat)](https://github.com/algorandfoundation/algorand-python-testing)
+[![visitor-badge](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Falgorandfoundation%2Falgorand-python-testing&countColor=%2374dfdc&style=flat)](https://developer.algorand.org/algokit/)
+
 `algorand-python-testing` is a companion package to [Algorand Python](https://github.com/algorandfoundation/puya) that enables efficient unit testing of Algorand Python smart contracts in an offline environment. This package emulates key AVM behaviors without requiring a network connection, offering fast and reliable testing capabilities with a familiar Pythonic interface.
 
 The `algorand-python-testing` package provides:
@@ -8,17 +13,27 @@ The `algorand-python-testing` package provides:
 -   An offline testing environment that simulates core AVM functionality
 -   A familiar Pythonic experience, compatible with testing frameworks like [pytest](https://docs.pytest.org/en/latest/), [unittest](https://docs.python.org/3/library/unittest.html), and [hypothesis](https://hypothesis.readthedocs.io/en/latest/)
 
-> **NOTE**: This package is currently in **preview** and should be used with caution until the first stable release.
+```{testsetup}
+import algopy
+import algopy_testing
+from algopy_testing import algopy_testing_context
+
+# Create the context manager for snippets below
+ctx_manager = algopy_testing_context()
+
+# Enter the context
+context = ctx_manager.__enter__()
+```
 
 ## Quick Start
 
-The `algorand-python` package is a main prerequisite for using `algorand-python-testing`. It provides stubs and type annotations for the Algorand Python syntax, offering valuable code completion and type checking capabilities when writing smart contracts. However, it's important to note that you cannot directly execute this Python code in a standard Python interpreter. This is because the code is designed to be compiled by the [`puya`](https://github.com/algorandfoundation/puya) compiler into [TEAL](https://developer.algorand.org/docs/reference/teal/index.html) code, which is then deployed on the Algorand Network.
+`algopy` is a prerequisite for `algorand-python-testing`, providing stubs and type annotations for Algorand Python syntax. It enhances code completion and type checking when writing smart contracts. Note that this code isn't directly executable in standard Python interpreters; it's compiled by `puya` into TEAL for Algorand Network deployment.
 
-Traditionally, testing Algorand smart contracts involved deploying them on sandboxed Algorand Networks and interacting with actual application instances. While this approach is extremely valuable and robust, it may not always be the most efficient, requires network connection and can't offer a lot of versatility when it comes to testing Algorand Python code.
+Traditionally, testing Algorand smart contracts involved deployment on sandboxed networks and interacting with live instances. While robust, this approach can be inefficient and lacks versatility for testing Algorand Python code.
 
-This is where `algorand-python-testing` comes into play. It allows developers to leverage the rich ecosystem of Python testing frameworks and perform unit tests on their code without the need for deployment on the Algorand Network. This approach enables faster iteration cycles and more granular testing of smart contract logic.
+Enter `algorand-python-testing`: it leverages Python's rich testing ecosystem for unit testing without network deployment. This enables rapid iteration and granular logic testing.
 
-> **NOTE**: While unit testing capabilities of `algorand-python-testing` are highly beneficial and recommended, it's important to note that this package does not advocate for only writing unit tests for Algorand Python code. It adds a new dimension to the testing capabilities of the smart contracts and is highly recommended to be used in conjunction with other test types, especially the ones that run against **real** Algorand Network.
+> **NOTE**: While `algorand-python-testing` offers valuable unit testing capabilities, it's not a replacement for comprehensive testing. Use it alongside other test types, particularly those running against the actual Algorand Network, for thorough contract validation.
 
 ### Prerequisites
 
@@ -27,78 +42,137 @@ This is where `algorand-python-testing` comes into play. It allows developers to
 
 ### Installation
 
-To get started with unit testing your `Algorand Python` smart contracts, install the package:
-
-#### using `pip`
+`algorand-python-testing` is distributed via [PyPI](https://pypi.org/project/algorand-python-testing/). Install the package using `pip`:
 
 ```bash
-pip install algopy-python-testing
-
+pip install algorand-python-testing
 ```
 
-#### using `poetry`
+or using `poetry`:
 
 ```bash
-poetry add algopy-python-testing
+poetry add algorand-python-testing
 ```
 
 ### Testing your first contract
 
-Let's write an introductory "Hello World" contract and test it using the `algopy-testing-python` framework.
-
-Assume the following starter contract (available as starter on all `algokit init -t python` based templates):
+Let's write a simple contract and test it using the `algorand-python-testing` framework.
 
 #### Contract Definition
 
-```python
-from algopy import ARC4Contract, arc4
+```{testcode}
+import algopy
+from algopy import arc4
 
-class HelloWorld(ARC4Contract):
-    @arc4.abimethod()
-    def hello(self, name: arc4.String) -> arc4.String:
-        return "Hello, " + name
+class VotingContract(algopy.ARC4Contract):
+    def __init__(self) -> None:
+        self.topic = algopy.GlobalState(algopy.Bytes(b"default_topic"), key="topic", description="Voting topic")
+        self.votes = algopy.GlobalState(
+            algopy.UInt64(0),
+            key="votes",
+            description="Votes for the option",
+        )
+        self.voted = algopy.LocalState(algopy.UInt64, key="voted", description="Tracks if an account has voted")
+
+    @arc4.abimethod
+    def set_topic(self, topic: arc4.String) -> None:
+        self.topic.value = topic.bytes
+
+    @arc4.abimethod
+    def vote(self, pay: algopy.gtxn.PaymentTransaction) -> arc4.Bool:
+        assert algopy.op.Global.group_size == algopy.UInt64(2), "Expected 2 transactions"
+        assert pay.amount == algopy.UInt64(10_000), "Incorrect payment amount"
+        assert pay.sender == algopy.Txn.sender, "Payment sender must match transaction sender"
+
+        _value, exists = self.voted.maybe(algopy.Txn.sender)
+        if exists:
+            return arc4.Bool(False)  # Already voted
+        self.votes.value += algopy.UInt64(1)
+        self.voted[algopy.Txn.sender] = algopy.UInt64(1)
+        return arc4.Bool(True)
+
+    @arc4.abimethod(readonly=True)
+    def get_votes(self) -> arc4.UInt64:
+        return arc4.UInt64(self.votes.value)
+
+    def clear_state_program(self) -> bool:
+        return True
 ```
 
 #### Test Definition
 
-```python
-from algopy_testing import algopy_testing_context
-from contracts.hello_world import HelloWorld
+```{testcode}
+from collections.abc import Generator
+import pytest
+from algopy_testing import AlgopyTestContext, algopy_testing_context
+from algopy import arc4
 
-def test_hello_world():
-    with algopy_testing_context() as ctx:
-        # Arrange
-        input_size = 10
-        random_input = ctx.any_string(input_size)
-        contract = HelloWorld()
+# Create a test context
+with algopy_testing_context() as context:
 
-        # Act
-        result = contract.hello(random_input)
+    # Initialize the contract
+    contract = VotingContract()
 
-        # Assert
-        assert result == f"Hello, {random_input}"
+    # Test vote function
+    voter = context.default_sender
+    payment = context.any.txn.payment(
+        sender=voter,
+        amount=algopy.UInt64(10_000),
+    )
+
+    result = contract.vote(payment)
+    print(f"Vote result: {result.native}")
+    print(f"Total votes: {contract.votes.value}")
+    print(f"Voter {voter} voted: {contract.voted[voter]}")
+
+    # Test set_topic function
+    new_topic = context.any.arc4.string(10)
+    contract.set_topic(new_topic)
+    print(f"New topic: {new_topic.native}")
+    print(f"Contract topic: {contract.topic.value}")
+
+    # Test get_votes function
+    contract.votes.value = algopy.UInt64(5)
+    votes = contract.get_votes()
+    print(f"Current votes: {votes.native}")
 ```
 
-Let's analyze the `test_hello_world()` function:
+```{testoutput}
+:hide:
 
-1. Function Definition: Tests the `HelloWorld` contract.
-2. Testing Context: Uses `algopy_testing_context()` to simulate an Algorand environment.
-3. Test Setup:
-    - Generates a random 10-character string input of type `algopy.String`.
-    - Instantiates the `HelloWorld` contract.
-4. Contract Interaction:
-   Invokes the contract's `hello()` method with the random input. This occurs within a Python interpreter, not on the actual Algorand network. This provides the ability to inspect the contract's state and debug execution as a regular Python program.
-5. Assertion:
-   Verifies the expected behavior: `assert result == f"Hello, {random_input}"`.
+Vote result: True
+Total votes: 1
+Voter ... voted: 1
+New topic: ...
+Contract topic: ...
+Current votes: 5
+```
 
-Key features of `algopy_testing_context`:
+This example demonstrates key aspects of testing with `algorand-python-testing` for ARC4-based contracts:
 
--   Simulated AVM environment
--   Random, type-specific test data generation
--   Contract instantiation and interaction in a simulated deployment
--   Behavior assertion without live blockchain deployment
+1. ARC4 Contract Features:
 
-The `any_*` methods (e.g., `any_string()`) are powerful tools for generating diverse test inputs, enabling comprehensive test suites across various potential inputs.
+    - Use of `algopy.ARC4Contract` as the base class for the contract.
+    - ABI methods defined using the `@arc4.abimethod` decorator.
+    - Use of ARC4-specific types like `arc4.String`, `arc4.Bool`, and `arc4.UInt64`.
+    - Readonly method annotation with `@arc4.abimethod(readonly=True)`.
+
+2. Testing ARC4 Contracts:
+
+    - Creation of an `ARC4Contract` instance within the test context.
+    - Use of `context.any.arc4` for generating ARC4-specific random test data.
+    - Direct invocation of ABI methods on the contract instance.
+
+3. Transaction Handling:
+
+    - Use of `context.any.txn` to create test transactions.
+    - Passing transaction objects as parameters to contract methods.
+
+4. State Verification:
+    - Checking global and local state changes after method execution.
+    - Verifying return values from ABI methods using ARC4-specific types.
+
+> **NOTE**: Thorough testing is crucial in smart contract development due to their immutable nature post-deployment. Comprehensive unit and integration tests ensure contract validity and reliability. Optimizing for efficiency can significantly improve user experience by reducing transaction fees and simplifying interactions. Investing in robust testing and optimization practices is crucial and offers many benefits in the long run.
 
 ### Next steps
 
@@ -111,7 +185,14 @@ caption: Contents
 hidden: true
 ---
 
-usage
+testing-guide/index
 examples
 coverage
+glossary
+api
+algopy
+```
+
+```{testcleanup}
+ctx_manager.__exit__(None, None, None)
 ```
