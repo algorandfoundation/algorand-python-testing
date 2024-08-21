@@ -309,7 +309,7 @@ def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa:
 
     # arc4 types
     if issubclass(annotation, _ABIEncoded | Struct):
-        return annotation.type_info.arc4_name
+        return annotation._type_info.arc4_name
     # txn types
     if issubclass(annotation, Transaction):
         return "txn"
