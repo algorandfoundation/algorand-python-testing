@@ -1,5 +1,4 @@
-import contextlib
-
+import algopy
 import algopy_testing
 import pytest
 from algopy_testing._context_helpers.context_storage import algopy_testing_context
@@ -12,20 +11,20 @@ from tests.common import AVMInvoker
 @pytest.mark.parametrize(
     ("method_name", "expected_type"),
     [
-        ("get_implicit_key_arc4_uint", algopy_testing.arc4.UInt64),
-        ("get_implicit_key_arc4_string", algopy_testing.arc4.String),
-        ("get_implicit_key_arc4_byte", algopy_testing.arc4.Byte),
-        ("get_implicit_key_arc4_bool", algopy_testing.arc4.Bool),
-        ("get_implicit_key_arc4_address", algopy_testing.arc4.Address),
-        ("get_implicit_key_arc4_uint128", algopy_testing.arc4.UInt128),
-        ("get_implicit_key_arc4_dynamic_bytes", algopy_testing.arc4.DynamicBytes),
-        ("get_arc4_uint", algopy_testing.arc4.UInt64),
-        ("get_arc4_string", algopy_testing.arc4.String),
-        ("get_arc4_byte", algopy_testing.arc4.Byte),
-        ("get_arc4_bool", algopy_testing.arc4.Bool),
-        ("get_arc4_address", algopy_testing.arc4.Address),
-        ("get_arc4_uint128", algopy_testing.arc4.UInt128),
-        ("get_arc4_dynamic_bytes", algopy_testing.arc4.DynamicBytes),
+        ("get_implicit_key_arc4_uint", algopy.arc4.UInt64),
+        ("get_implicit_key_arc4_string", algopy.arc4.String),
+        ("get_implicit_key_arc4_byte", algopy.arc4.Byte),
+        ("get_implicit_key_arc4_bool", algopy.arc4.Bool),
+        ("get_implicit_key_arc4_address", algopy.arc4.Address),
+        ("get_implicit_key_arc4_uint128", algopy.arc4.UInt128),
+        ("get_implicit_key_arc4_dynamic_bytes", algopy.arc4.DynamicBytes),
+        ("get_arc4_uint", algopy.arc4.UInt64),
+        ("get_arc4_string", algopy.arc4.String),
+        ("get_arc4_byte", algopy.arc4.Byte),
+        ("get_arc4_bool", algopy.arc4.Bool),
+        ("get_arc4_address", algopy.arc4.Address),
+        ("get_arc4_uint128", algopy.arc4.UInt128),
+        ("get_arc4_dynamic_bytes", algopy.arc4.DynamicBytes),
     ],
 )
 def test_get_local_arc4_value(
