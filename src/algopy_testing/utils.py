@@ -94,8 +94,6 @@ def as_bytes(value: object, *, max_size: int = MAX_BYTES_SIZE) -> bytes:
             pass
         case algopy_testing.Bytes(value=bytes_value):
             pass
-        case algopy_testing.state.box._ProxyValue() as proxy_value:
-            return as_bytes(proxy_value._value, max_size=max_size)
         case _:
             raise TypeError(f"value must be a bytes or Bytes type, not {type(value).__name__!r}")
     if len(bytes_value) > max_size:

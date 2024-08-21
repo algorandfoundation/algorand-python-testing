@@ -1,0 +1,7 @@
+#pragma version 10
+
+tests.artifacts.StateMutations.contract.Contract.clear_state_program:
+    // tests/artifacts/StateMutations/contract.py:22
+    // class Contract(ARC4Contract):
+    int 1
+    return

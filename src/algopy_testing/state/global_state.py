@@ -4,6 +4,7 @@ import typing
 from typing import overload
 
 from algopy_testing._context_helpers import lazy_context
+from algopy_testing._mutable import set_attr_on_mutate
 from algopy_testing.primitives import Bytes, String
 from algopy_testing.state.utils import deserialize, serialize
 
@@ -89,13 +90,17 @@ class GlobalState(typing.Generic[_T]):
     def value(self) -> _T:
         if self._key is None:
             if self._pending_value is not None:
-                return self._pending_value
-            raise KeyError("Key is not set")
-        try:
-            native = lazy_context.ledger.get_global_state(self.app_id, self._key)
-        except KeyError as e:
-            raise ValueError("Value is not set") from e
-        return deserialize(self.type_, native)
+                value = self._pending_value
+            else:
+                raise KeyError("Key is not set")
+        else:
+            try:
+                native = lazy_context.ledger.get_global_state(self.app_id, self._key)
+            except KeyError as e:
+                raise ValueError("Value is not set") from e
+            else:
+                value = deserialize(self.type_, native)
+        return set_attr_on_mutate(self, "value", value)
 
     @value.setter
     def value(self, value: _T) -> None:

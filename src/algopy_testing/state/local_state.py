@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 
 from algopy_testing._context_helpers import lazy_context
+from algopy_testing._mutable import set_item_on_mutate
 from algopy_testing.models import Account
 from algopy_testing.primitives import Bytes, String
 from algopy_testing.state.utils import deserialize, serialize
@@ -53,7 +54,9 @@ class LocalState(typing.Generic[_T]):
     def __getitem__(self, key: algopy.Account | algopy.UInt64 | int) -> _T:
         account = _get_account(key)
         native = lazy_context.ledger.get_local_state(self.app_id, account, self._key)
-        return deserialize(self.type_, native)
+        value = deserialize(self.type_, native)
+
+        return set_item_on_mutate(self, key, value)
 
     def __delitem__(self, key: algopy.Account | algopy.UInt64 | int) -> None:
         account = _get_account(key)

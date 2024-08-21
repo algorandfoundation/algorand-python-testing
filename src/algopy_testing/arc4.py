@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import dataclasses
 import decimal
 import types
@@ -9,6 +8,11 @@ import typing
 import algosdk
 from Cryptodome.Hash import SHA512
 
+from algopy_testing._mutable import (
+    MutableBytes,
+    add_mutable_callback,
+    set_item_on_mutate,
+)
 from algopy_testing.constants import (
     ARC4_RETURN_PREFIX,
     BITS_IN_BYTE,
@@ -608,13 +612,13 @@ class _StaticArrayMeta(type(_ABIEncoded), typing.Generic[_TArrayItem, _TArrayLen
 
 class StaticArray(
     _ABIEncoded,
+    MutableBytes,
     typing.Generic[_TArrayItem, _TArrayLength],
     metaclass=_StaticArrayMeta,
 ):
     """A fixed length ARC4 Array of the specified type and length."""
 
     type_info: _StaticArrayTypeInfo
-    _value: bytes
 
     def __new__(cls, *items: _TArrayItem) -> typing.Self:
         try:
@@ -630,6 +634,7 @@ class StaticArray(
         return instance
 
     def __init__(self, *_items: _TArrayItem):
+        super().__init__()
         items = _check_is_arc4(_items)
         for item in items:
             if self.type_info.item_type != item.type_info:
@@ -653,14 +658,9 @@ class StaticArray(
 
         return algopy.UInt64(self.type_info.size)
 
-    @typing.overload
-    def __getitem__(self, value: algopy.UInt64 | int, /) -> _TArrayItem: ...
-
-    @typing.overload
-    def __getitem__(self, value: slice, /) -> list[_TArrayItem]: ...
-
-    def __getitem__(self, index: algopy.UInt64 | int | slice) -> _TArrayItem | list[_TArrayItem]:
-        return self._list()[index]
+    def __getitem__(self, index: algopy.UInt64 | int) -> _TArrayItem:
+        value = self._list()[index]
+        return set_item_on_mutate(self, index, value)
 
     def __setitem__(self, index: algopy.UInt64 | int, item: _TArrayItem) -> _TArrayItem:
         if item.type_info != self.type_info.item_type:
@@ -671,10 +671,6 @@ class StaticArray(
         x[index] = item
         self._value = _encode(x)
         return item
-
-    def copy(self) -> typing.Self:
-        # """Create a copy of this array"""
-        return copy.deepcopy(self)
 
     def _list(self) -> list[_TArrayItem]:
         return _decode_tuple_items(self._value, [self.type_info.item_type] * self.type_info.size)
@@ -697,6 +693,7 @@ class Address(StaticArray[Byte, typing.Literal[32]]):
     type_info = _AddressTypeInfo()
 
     def __init__(self, value: Account | str | algopy.Bytes = algosdk.constants.ZERO_ADDRESS):
+        super().__init__()
         if isinstance(value, str):
             try:
                 bytes_value = algosdk.encoding.decode_address(value)
@@ -767,13 +764,13 @@ class _DynamicArrayMeta(type(_ABIEncoded), typing.Generic[_TArrayItem, _TArrayLe
 
 class DynamicArray(  # TODO: inherit from StaticArray?
     _ABIEncoded,
+    MutableBytes,
     typing.Generic[_TArrayItem],
     metaclass=_DynamicArrayMeta,
 ):
     """A dynamically sized ARC4 Array of the specified type."""
 
     type_info: _DynamicArrayTypeInfo
-    _value: bytes
 
     def __new__(cls, *items: _TArrayItem) -> typing.Self:
         try:
@@ -788,6 +785,7 @@ class DynamicArray(  # TODO: inherit from StaticArray?
         return instance
 
     def __init__(self, *_items: _TArrayItem):
+        super().__init__()
         items = _check_is_arc4(_items)
         for item in items:
             if self.type_info.item_type != item.type_info:
@@ -811,13 +809,9 @@ class DynamicArray(  # TODO: inherit from StaticArray?
 
         return algopy.UInt64(len(self._list()))
 
-    @typing.overload
-    def __getitem__(self, value: algopy.UInt64 | int, /) -> _TArrayItem: ...
-
-    @typing.overload
-    def __getitem__(self, value: slice, /) -> list[_TArrayItem]: ...
-    def __getitem__(self, index: algopy.UInt64 | int | slice) -> _TArrayItem | list[_TArrayItem]:
-        return self._list()[index]
+    def __getitem__(self, index: algopy.UInt64 | int) -> _TArrayItem:
+        value = self._list()[index]
+        return set_item_on_mutate(self, index, value)
 
     def __setitem__(self, index: algopy.UInt64 | int, item: _TArrayItem) -> _TArrayItem:
         if item.type_info != self.type_info.item_type:
@@ -861,10 +855,6 @@ class DynamicArray(  # TODO: inherit from StaticArray?
         item = x.pop()
         self._value = self._encode_with_length(x)
         return item
-
-    def copy(self) -> typing.Self:
-        """Create a copy of this array."""
-        return copy.deepcopy(self)
 
     def __bool__(self) -> bool:
         """Returns `True` if not an empty array."""
@@ -950,6 +940,7 @@ class _TupleMeta(type(_ABIEncoded), typing.Generic[typing.Unpack[_TTuple]]):  # 
 
 class Tuple(
     _ABIEncoded,
+    MutableBytes,
     tuple[typing.Unpack[_TTuple]],
     typing.Generic[typing.Unpack[_TTuple]],
     metaclass=_TupleMeta,
@@ -958,7 +949,6 @@ class Tuple(
 
     __slots__ = ()  # to satisfy SLOT001
     type_info: _TupleTypeInfo
-    _value: bytes
 
     def __new__(
         cls,
@@ -974,6 +964,7 @@ class Tuple(
         return instance
 
     def __init__(self, _items: tuple[typing.Unpack[_TTuple]] = (), /):  # type: ignore[assignment]
+        super().__init__()
         items = _check_is_arc4(_items)
         if items:
             for item, expected_type in zip(items, self.type_info.child_types, strict=True):
@@ -987,8 +978,16 @@ class Tuple(
     def __len__(self) -> int:
         return len(self.native)
 
-    def __getitem__(self, index: typing.SupportsIndex | slice) -> object:  # type: ignore[override]
-        return self.native[index]
+    def __getitem__(self, index: int) -> object:  # type: ignore[override]
+        value = self.native[index]
+
+        # can't mutate tuple, but can re-encode underlying _value
+        def _set_value(updated_value: object) -> None:
+            items = self.native
+            new_items = items[:index] + (updated_value, items[index + 1 :])
+            self._value = _encode(new_items)
+
+        return add_mutable_callback(_set_value, value)
 
     def __iter__(self) -> typing.Iterator[_ABIEncoded]:
         return iter(self.native)  # type: ignore[arg-type]
@@ -1001,6 +1000,30 @@ class Tuple(
         )
 
 
+class _StructTypeInfo(_TypeInfo):
+    def __init__(self, struct_type: type[Struct]) -> None:
+        self.struct_type = struct_type
+        self.fields = dataclasses.fields(struct_type)
+        self.field_names = [field.name for field in self.fields]
+
+    @property
+    def typ(self) -> type:
+        return self.struct_type
+
+    @property
+    def child_types(self) -> Iterable[_TypeInfo]:
+        return _tuple_type_from_struct(self.struct_type).type_info.child_types
+
+    @property
+    def arc4_name(self) -> str:
+        inner_name = ",".join([t.arc4_name for t in self.child_types])
+        return f"({inner_name})"
+
+    @property
+    def is_dynamic(self) -> bool:
+        return any(t.is_dynamic for t in self.child_types)
+
+
 @typing.dataclass_transform(
     eq_default=False, order_default=False, kw_only_default=False, field_specifiers=()
 )
@@ -1009,18 +1032,37 @@ class _StructMeta(type):
 
 
 def _tuple_type_from_struct(struct: type[Struct]) -> type[Tuple]:  # type: ignore[type-arg]
-    field_types = [f.type for f in dataclasses.fields(struct)]
+    field_types = [f.type for f in struct.type_info.fields]
     return _parameterize_type(Tuple, *field_types)
 
 
-class Struct(metaclass=_StructMeta):
+class Struct(MutableBytes, metaclass=_StructMeta):
     """Base class for ARC4 Struct types."""
 
-    type_info: typing.ClassVar[_TypeInfo]  # TODO: 1.0 this could clash with user values
+    type_info: typing.ClassVar[_StructTypeInfo]  # TODO: 1.0 this could clash with user values
 
     def __init_subclass__(cls) -> None:
         dataclasses.dataclass(cls)
-        cls.type_info = _tuple_type_from_struct(cls).type_info
+        cls.type_info = _StructTypeInfo(cls)
+
+    def __post_init__(self) -> None:
+        # calling base class here to init Mutable
+        # see https://docs.python.org/3/library/dataclasses.html#post-init-processing
+        super().__init__()
+        self._update_backing_value()
+
+    def __getattribute__(self, name: str) -> typing.Any:
+        value = super().__getattribute__(name)
+        return add_mutable_callback(lambda _: self._update_backing_value(), value)
+
+    def __setattr__(self, key: str, value: typing.Any) -> None:
+        super().__setattr__(key, value)
+        # don't update backing value until base class has been init'd
+        if hasattr(self, "_on_mutate") and key in self.type_info.field_names:
+            self._update_backing_value()
+
+    def _update_backing_value(self) -> None:
+        self._value = self._as_tuple._value
 
     @classmethod
     def from_bytes(cls, value: algopy.Bytes | bytes, /) -> typing.Self:
@@ -1047,10 +1089,6 @@ class Struct(metaclass=_StructMeta):
         # in the object graph, not just immediate fields
         tuple_items = tuple(getattr(self, field.name) for field in dataclasses.fields(self))
         return Tuple(tuple_items)
-
-    def copy(self) -> typing.Self:
-        """Create a copy of this struct."""
-        return copy.deepcopy(self)
 
 
 class ARC4Client(typing.Protocol): ...
@@ -1268,7 +1306,7 @@ def _encode(  # noqa: PLR0912
                         "expected before index should have number of bool mod 8 equal 0"
                     )
                 after = min(7, after)
-                consecutive_bool_list = typing.cast(list[Bool], values[i : i + after + 1])
+                consecutive_bool_list = [values[i] for i in range(i, i + after + 1)]
                 compressed_int = _compress_multiple_bool(consecutive_bool_list)
                 heads.append(bytes([compressed_int]))
                 i += after
@@ -1362,7 +1400,7 @@ def _decode_tuple_items(  # noqa: PLR0912
     values = []
     for child_type, child_value in zip(child_types, value_partitions, strict=False):
         cls = child_type.typ
-        assert issubclass(cls, _ABIEncoded), "expected ARC4 type"
+        assert issubclass(cls, _ABIEncoded | Struct), "expected ARC4 type"
         assert child_value is not None, "expected ARC4 value"
         val = cls.from_bytes(child_value)
         values.append(val)

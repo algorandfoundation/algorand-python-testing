@@ -4,6 +4,7 @@ import typing
 
 import algopy_testing
 from algopy_testing._context_helpers import lazy_context
+from algopy_testing._mutable import set_attr_on_mutate, set_item_on_mutate
 from algopy_testing.constants import MAX_BOX_SIZE
 from algopy_testing.state.utils import cast_from_bytes, cast_to_bytes
 from algopy_testing.utils import as_bytes, as_string
@@ -47,7 +48,8 @@ class Box(typing.Generic[_TValue]):
     def value(self) -> _TValue:
         if not lazy_context.ledger.box_exists(self.app_id, self.key):
             raise RuntimeError("Box has not been created")
-        return cast_from_bytes(self._type, lazy_context.ledger.get_box(self.app_id, self.key))
+        value = cast_from_bytes(self._type, lazy_context.ledger.get_box(self.app_id, self.key))
+        return set_attr_on_mutate(self, "value", value)
 
     @value.setter
     def value(self, value: _TValue) -> None:
@@ -249,11 +251,12 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
             raise RuntimeError("Box key prefix is not defined")
         return self._key_prefix
 
-    def __getitem__(self, key: _TKey) -> _ProxyValue:
+    def __getitem__(self, key: _TKey) -> _TValue:
         box_content, box_exists = self.maybe(key)
         if not box_exists:
             raise RuntimeError("Box has not been created")
-        return _ProxyValue(self, key, box_content)
+
+        return set_item_on_mutate(self, key, box_content)
 
     def __setitem__(self, key: _TKey, value: _TValue) -> None:
         key_bytes = self._full_key(key)
@@ -291,26 +294,3 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
 
     def _full_key(self, key: _TKey) -> algopy.Bytes:
         return self.key_prefix + cast_to_bytes(key)
-
-
-class _ProxyValue:
-    """Allows mutating attributes of objects retrieved from a BoxMap."""
-
-    def __init__(self, box_map: BoxMap[_TKey, _TValue], key: _TKey, value: _TValue) -> None:
-        self._box_map = box_map
-        self._key = key
-        self._value = value
-
-    def __getattr__(self, name: str) -> typing.Any:
-        return getattr(self._value, name)
-
-    def __setattr__(self, name: str, value: typing.Any) -> None:
-        if name.startswith("_"):
-            super().__setattr__(name, value)
-        else:
-            new_value = self._value.__class__(**{**self._value.__dict__, name: value})
-            self._box_map[self._key] = new_value
-            self._value = new_value
-
-    def __repr__(self) -> str:
-        return repr(self._value)
