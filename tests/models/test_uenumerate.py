@@ -2,8 +2,8 @@ import math
 
 import algopy
 import pytest
-from algopy_testing.constants import MAX_UINT64
-from algopy_testing.models.unsigned_builtins import uenumerate, urange
+from _algopy_testing.constants import MAX_UINT64
+from _algopy_testing.models.unsigned_builtins import uenumerate, urange
 
 
 @pytest.mark.parametrize(

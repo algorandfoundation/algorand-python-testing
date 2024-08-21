@@ -61,7 +61,11 @@ myst_enable_extensions = ["colon_fence", "fieldlist"]
 autodoc2_packages = [
     {
         "path": "../src/algopy_testing",
-        "auto_mode": False,
+        "auto_mode": True,
+    },
+    {
+        "path": "../src/_algopy_testing",
+        "auto_mode": True,
     },
 ]
 autodoc2_render_plugin = "myst"

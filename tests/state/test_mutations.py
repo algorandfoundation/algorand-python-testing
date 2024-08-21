@@ -1,20 +1,20 @@
 from collections.abc import Generator
 
+import _algopy_testing
 import algopy
-import algopy_testing
 import pytest
 
 from tests.artifacts.StateMutations.statemutations import StateMutations
 
 
 @pytest.fixture()
-def context() -> Generator[algopy_testing.AlgopyTestContext, None, None]:
-    with algopy_testing.algopy_testing_context() as ctx:
+def context() -> Generator[_algopy_testing.AlgopyTestContext, None, None]:
+    with _algopy_testing.algopy_testing_context() as ctx:
         yield ctx
 
 
 def test_state_mutations(
-    context: algopy_testing.AlgopyTestContext,
+    context: _algopy_testing.AlgopyTestContext,
 ) -> None:
     contract = StateMutations()
 

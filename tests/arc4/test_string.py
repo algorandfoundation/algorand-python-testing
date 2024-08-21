@@ -3,8 +3,8 @@ import re
 import algokit_utils
 import algopy
 import pytest
-from algopy_testing import arc4
-from algopy_testing.constants import ARC4_RETURN_PREFIX, MAX_LOG_SIZE
+from _algopy_testing import arc4
+from _algopy_testing.constants import ARC4_RETURN_PREFIX, MAX_LOG_SIZE
 
 from tests.common import AVMInvoker
 from tests.util import int_to_bytes

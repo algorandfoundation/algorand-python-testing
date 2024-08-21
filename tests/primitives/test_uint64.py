@@ -4,8 +4,8 @@ from collections.abc import Callable
 
 import algokit_utils
 import pytest
+from _algopy_testing.constants import MAX_UINT64, MAX_UINT512
 from algopy import UInt64
-from algopy_testing.constants import MAX_UINT64, MAX_UINT512
 
 from tests.common import AVMInvoker
 

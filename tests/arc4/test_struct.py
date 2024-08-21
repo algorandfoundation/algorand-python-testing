@@ -1,7 +1,7 @@
 import typing
 
 import pytest
-from algopy_testing import arc4
+from _algopy_testing import arc4
 from algosdk import abi
 
 from tests.util import int_to_bytes

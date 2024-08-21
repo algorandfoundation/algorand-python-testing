@@ -5,8 +5,8 @@ from pathlib import Path
 
 import algokit_utils
 import pytest
+from _algopy_testing.constants import MAX_BYTES_SIZE, MAX_UINT64, MAX_UINT512
 from algopy import BigUInt, UInt64, op
-from algopy_testing.constants import MAX_BYTES_SIZE, MAX_UINT64, MAX_UINT512
 from algosdk.v2client.algod import AlgodClient
 
 from tests.common import AVMInvoker, create_avm_invoker

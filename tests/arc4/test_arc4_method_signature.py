@@ -1,9 +1,9 @@
 from collections.abc import Generator
 from pathlib import Path
 
+import _algopy_testing
 import algokit_utils
 import algopy
-import algopy_testing
 import algosdk
 import pytest
 from algokit_utils.beta.algorand_client import AlgorandClient, AssetCreateParams, PayParams
@@ -30,13 +30,13 @@ def get_avm_result(algod_client: AlgodClient) -> AVMInvoker:
 
 
 @pytest.fixture()
-def context() -> Generator[algopy_testing.AlgopyTestContext, None, None]:
-    with algopy_testing.algopy_testing_context() as ctx:
+def context() -> Generator[_algopy_testing.AlgopyTestContext, None, None]:
+    with _algopy_testing.algopy_testing_context() as ctx:
         yield ctx
 
 
 @pytest.fixture()
-def funded_account(algod_client: AlgodClient, context: algopy_testing.AlgopyTestContext) -> str:
+def funded_account(algod_client: AlgodClient, context: _algopy_testing.AlgopyTestContext) -> str:
     pk, address = algosdk.account.generate_account()
     assert isinstance(address, str)
     algokit_utils.ensure_funded(
@@ -53,7 +53,7 @@ def funded_account(algod_client: AlgodClient, context: algopy_testing.AlgopyTest
 
 
 @pytest.fixture()
-def other_app_id(algod_client: AlgodClient, context: algopy_testing.AlgopyTestContext) -> int:
+def other_app_id(algod_client: AlgodClient, context: _algopy_testing.AlgopyTestContext) -> int:
     second_invoker = create_avm_invoker(APP_SPEC, algod_client)
     client = second_invoker.client
     app_id = client.app_id
@@ -65,7 +65,7 @@ def other_app_id(algod_client: AlgodClient, context: algopy_testing.AlgopyTestCo
 
 def test_app_args_is_correct_with_simple_args(
     get_avm_result: AVMInvoker,
-    context: algopy_testing.AlgopyTestContext,
+    context: _algopy_testing.AlgopyTestContext,
 ) -> None:
     # arrange
     contract = SignaturesContract()
@@ -90,7 +90,7 @@ def test_app_args_is_correct_with_simple_args(
 
 def test_app_args_is_correct_with_alias(
     get_avm_result: AVMInvoker,
-    context: algopy_testing.AlgopyTestContext,
+    context: _algopy_testing.AlgopyTestContext,
 ) -> None:
     # arrange
     contract = SignaturesContract()
@@ -113,7 +113,7 @@ def test_app_args_is_correct_with_alias(
 
 
 def test_app_args_is_correct_with_txn(
-    context: algopy_testing.AlgopyTestContext,
+    context: _algopy_testing.AlgopyTestContext,
     get_avm_result: AVMInvoker,
     localnet_creator_address: str,
     algorand: AlgorandClient,
@@ -155,7 +155,7 @@ def test_app_args_is_correct_with_txn(
 
 
 def test_app_args_is_correct_with_asset(
-    context: algopy_testing.AlgopyTestContext,
+    context: _algopy_testing.AlgopyTestContext,
     localnet_creator_address: str,
     algorand: AlgorandClient,
     get_avm_result: AVMInvoker,
@@ -191,7 +191,7 @@ def test_app_args_is_correct_with_asset(
 
 
 def test_app_args_is_correct_with_account(
-    context: algopy_testing.AlgopyTestContext,
+    context: _algopy_testing.AlgopyTestContext,
     funded_account: str,
     get_avm_result: AVMInvoker,
 ) -> None:
@@ -224,7 +224,7 @@ def test_app_args_is_correct_with_account(
 
 
 def test_app_args_is_correct_with_application(
-    context: algopy_testing.AlgopyTestContext,
+    context: _algopy_testing.AlgopyTestContext,
     other_app_id: int,
     get_avm_result: AVMInvoker,
 ) -> None:
@@ -269,7 +269,7 @@ def test_app_args_is_correct_with_application(
 
 
 def test_app_args_is_correct_with_complex(
-    context: algopy_testing.AlgopyTestContext,
+    context: _algopy_testing.AlgopyTestContext,
     funded_account: str,
 ) -> None:
     # arrange
@@ -305,7 +305,7 @@ def test_app_args_is_correct_with_complex(
 
 
 def test_prepare_txns_with_complex(
-    context: algopy_testing.AlgopyTestContext,
+    context: _algopy_testing.AlgopyTestContext,
     get_avm_result: AVMInvoker,
     algorand: AlgorandClient,
     localnet_creator_address: str,

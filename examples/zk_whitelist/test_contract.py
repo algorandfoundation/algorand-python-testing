@@ -3,8 +3,7 @@ from collections.abc import Generator
 
 import algopy
 import pytest
-from algopy_testing import AlgopyTestContext, algopy_testing_context
-from algopy_testing.utils import arc4_prefix
+from algopy_testing import AlgopyTestContext, algopy_testing_context, arc4_prefix
 
 from .contract import ZkWhitelistContract
 

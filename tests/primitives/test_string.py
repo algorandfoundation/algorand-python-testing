@@ -1,6 +1,6 @@
 import pytest
+from _algopy_testing.constants import MAX_LOG_SIZE
 from algopy import String
-from algopy_testing.constants import MAX_LOG_SIZE
 
 from tests.common import AVMInvoker
 
