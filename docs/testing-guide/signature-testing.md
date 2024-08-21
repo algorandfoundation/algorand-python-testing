@@ -5,6 +5,7 @@ Test Algorand smart signatures (LogicSigs) with ease using the Algorand Python T
 ```{testsetup}
 import algopy
 import algopy_testing
+from algopy_testing import algopy_testing_context
 
 # Create the context manager for snippets below
 ctx_manager = algopy_testing_context()
@@ -67,3 +68,7 @@ assert context.execute_logicsig(hashed_time_locked_lsig, secret)
 ```
 
 For more details on available operations, see the [coverage](../coverage.md).
+
+```{testcleanup}
+ctx_manager.__exit__(None, None, None)
+```

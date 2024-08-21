@@ -5,6 +5,7 @@
 ```{testsetup}
 import algopy
 import algopy_testing
+from algopy_testing import algopy_testing_context
 
 # Create the context manager for snippets below
 ctx_manager = algopy_testing_context()
@@ -26,7 +27,7 @@ class MyContract(algopy.ARC4Contract):
 # In your test
 contract = MyContract()
 contract.state_a.value = algopy.UInt64(10)
-contract.state_b = algopy.UInt64(20)
+contract.state_b.value = algopy.UInt64(20)
 ```
 
 ## Local State
@@ -73,7 +74,8 @@ box_content = context.ledger.get_box(contract, key_a)
 assert context.ledger.box_exists(contract, key_a)
 
 # Set box content manually
-context.ledger.set_box(contract, key_a, algopy.op.itob(algopy.UInt64(1)))
+with context.txn.create_group():
+    context.ledger.set_box(contract, key_a, algopy.op.itob(algopy.UInt64(1)))
 ```
 
 ## Scratch Space
@@ -89,8 +91,7 @@ class MyContract(algopy.Contract, scratch_slots=(1, 2, algopy.urange(3, 20))):
 
 # In your test
 contract = MyContract()
-with context.txn.create_group([context.any.txn.application_call()]):
-    result = contract.approval_program()
+result = contract.approval_program()
 
 assert result
 scratch_space = context.txn.last_group.get_scratch_space()
@@ -98,3 +99,7 @@ assert scratch_space[1] == algopy.UInt64(5)
 ```
 
 For more detailed information, explore the example contracts in the `examples/` directory, the [coverage](../coverage.md) page, and the [API documentation](../api.md).
+
+```{testcleanup}
+ctx_manager.__exit__(None, None, None)
+```

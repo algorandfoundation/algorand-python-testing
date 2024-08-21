@@ -4,6 +4,18 @@ The [coverage](coverage.md) file provides a comprehensive list of all opcodes an
 
 `Native` opcodes are assumed to function as they do in the Algorand Virtual Machine, given their stateless nature. If you encounter issues with any `Native` opcodes, please raise an issue in the [`algorand-python-testing` repo](https://github.com/algorandfoundation/algorand-python-testing/issues/new/choose) or contribute a PR following the [Contributing](https://github.com/algorandfoundation/algorand-python-testing/blob/main/CONTRIBUTING.md) guide.
 
+```{testsetup}
+import algopy
+import algopy_testing
+from algopy_testing import algopy_testing_context
+
+# Create the context manager for snippets below
+ctx_manager = algopy_testing_context()
+
+# Enter the context
+context = ctx_manager.__enter__()
+```
+
 ## Implemented Types
 
 These types are fully implemented in Python and behave identically to their AVM counterparts:
@@ -68,29 +80,28 @@ These types necessitate interaction with the transaction context:
 ### algopy.op.Global
 
 ```{testcode}
-from algopy_testing import algopy_testing_context
 import algopy.op as op
 
-with algopy_testing_context() as ctx:
-    ctx.ledger.patch_global_fields(
-        min_txn_fee=algopy.UInt64(1000),
-        min_balance=algopy.UInt64(100000)
-    )
+class MyContract(algopy.ARC4Contract):
+    @algopy.arc4.abimethod
+    def check_globals(self) -> algopy.UInt64:
+        return op.Global.min_txn_fee + op.Global.min_balance
 
-    class MyContract(algopy.ARC4Contract):
-        @algopy.arc4.abimethod
-        def check_globals(self) -> algopy.UInt64:
-            return op.Global.min_txn_fee + op.Global.min_balance
+... # setup context (below assumes available under 'ctx' variable)
 
-    contract = MyContract()
-    result = contract.check_globals()
-    assert result == algopy.UInt64(101000)
+context.ledger.patch_global_fields(
+    min_txn_fee=algopy.UInt64(1000),
+    min_balance=algopy.UInt64(100000)
+)
+
+contract = MyContract()
+result = contract.check_globals()
+assert result == algopy.UInt64(101000)
 ```
 
 ### algopy.op.Txn
 
 ```{testcode}
-from algopy_testing import algopy_testing_context
 import algopy.op as op
 
 class MyContract(algopy.ARC4Contract):
@@ -98,18 +109,18 @@ class MyContract(algopy.ARC4Contract):
     def check_txn_fields(self) -> algopy.Bytes:
         return op.Txn.sender
 
-with algopy_testing_context() as ctx:
-    contract = MyContract()
-    custom_sender = ctx.any.account()
-    with ctx.txn.create_group(txn_op_fields={"sender": custom_sender}):
-        result = contract.check_txn_fields()
-    assert result == custom_sender
+... # setup context (below assumes available under 'ctx' variable)
+
+contract = MyContract()
+custom_sender = context.any.account()
+with context.txn.create_group(active_txn_overrides={"sender": custom_sender}):
+    result = contract.check_txn_fields()
+assert result == custom_sender
 ```
 
 ### algopy.op.AssetHoldingGet
 
 ```{testcode}
-from algopy_testing import algopy_testing_context
 import algopy.op as op
 
 class AssetContract(algopy.ARC4Contract):
@@ -118,18 +129,18 @@ class AssetContract(algopy.ARC4Contract):
         balance, _ = op.AssetHoldingGet.asset_balance(account, asset)
         return balance
 
-with algopy_testing_context() as ctx:
-    asset = ctx.any.asset(total=algopy.UInt64(1000000))
-    account = ctx.any.account(opted_asset_balances={asset.id: algopy.UInt64(5000)})
-    contract = AssetContract()
-    result = contract.check_asset_holding(account, asset)
-    assert result == algopy.UInt64(5000)
+... # setup context (below assumes available under 'ctx' variable)
+
+asset = context.any.asset(total=algopy.UInt64(1000000))
+account = context.any.account(opted_asset_balances={asset.id: algopy.UInt64(5000)})
+contract = AssetContract()
+result = contract.check_asset_holding(account, asset)
+assert result == algopy.UInt64(5000)
 ```
 
 ### algopy.op.AppGlobal
 
 ```{testcode}
-from algopy_testing import algopy_testing_context
 import algopy.op as op
 
 class StateContract(algopy.ARC4Contract):
@@ -138,60 +149,57 @@ class StateContract(algopy.ARC4Contract):
         op.AppGlobal.put(key, value)
         return op.AppGlobal.get_uint64(key)
 
-with algopy_testing_context() as ctx:
-    contract = StateContract()
-    key, value = algopy.Bytes(b"test_key"), algopy.UInt64(42)
-    result = contract.set_and_get_state(key, value)
-    assert result == value
-    stored_value = ctx.ledger.get_global_state(contract, key)
-    assert stored_value == 42
+... # setup context (below assumes available under 'ctx' variable)
+
+contract = StateContract()
+key, value = algopy.Bytes(b"test_key"), algopy.UInt64(42)
+result = contract.set_and_get_state(key, value)
+assert result == value
+stored_value = context.ledger.get_global_state(contract, key)
+assert stored_value == 42
 ```
 
 ### algopy.op.Block
 
 ```{testcode}
-from algopy_testing import algopy_testing_context
 import algopy.op as op
 
-with algopy_testing_context() as ctx:
-    ctx.ledger.set_block(1000, seed=123456, timestamp=1625097600)
+class BlockInfoContract(algopy.ARC4Contract):
+    @algopy.arc4.abimethod
+    def get_block_seed(self) -> algopy.Bytes:
+        return op.Block.blk_seed(1000)
 
-    class BlockInfoContract(algopy.ARC4Contract):
-        @algopy.arc4.abimethod
-        def get_block_seed(self) -> algopy.Bytes:
-            return op.Block.blk_seed(1000)
+... # setup context (below assumes available under 'ctx' variable)
 
-    contract = BlockInfoContract()
-    seed = contract.get_block_seed()
-    assert seed == algopy.op.itob(123456)
+context.ledger.set_block(1000, seed=123456, timestamp=1625097600)
+contract = BlockInfoContract()
+seed = contract.get_block_seed()
+assert seed == algopy.op.itob(123456)
 ```
 
 ### algopy.op.AcctParamsGet
 
 ```{testcode}
-from algopy_testing import algopy_testing_context
 import algopy.op as op
 
-with algopy_testing_context() as ctx:
-    account = ctx.any.account(balance=algopy.UInt64(1000000))
+class AccountParamsContract(algopy.ARC4Contract):
+    @algopy.arc4.abimethod
+    def get_account_balance(self, account: algopy.Account) -> algopy.UInt64:
+        balance, exists = op.AcctParamsGet.acct_balance(account)
+        assert exists
+        return balance
 
-    class AccountParamsContract(algopy.ARC4Contract):
-        @algopy.arc4.abimethod
-        def get_account_balance(self, account: algopy.Account) -> algopy.UInt64:
-            balance, exists = op.AcctParamsGet.acct_balance(account)
-            assert exists
-            return balance
+... # setup context (below assumes available under 'ctx' variable)
 
-    contract = AccountParamsContract()
-    balance = contract.get_account_balance(account)
-    assert balance == algopy.UInt64(1000000)
+account = context.any.account(balance=algopy.UInt64(1000000))
+contract = AccountParamsContract()
+balance = contract.get_account_balance(account)
+assert balance == algopy.UInt64(1000000)
 ```
 
 ### algopy.op.AppParamsGet
 
 ```{testcode}
-from algopy_testing import algopy_testing_context
-
 class AppParamsContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
     def get_app_creator(self, app_id: algopy.Application) -> algopy.arc4.Address:
@@ -199,12 +207,12 @@ class AppParamsContract(algopy.ARC4Contract):
         assert exists
         return creator
 
+... # setup context (below assumes available under 'ctx' variable)
 
-with algopy_testing_context() as ctx:
-    contract = AppParamsContract()
-    app = ctx.any.application()
-    creator = contract.get_app_creator(app)
-    assert creator == ctx.default_sender
+contract = AppParamsContract()
+app = context.any.application()
+creator = contract.get_app_creator(app)
+assert creator == context.default_sender
 ```
 
 ### algopy.op.AssetParamsGet
@@ -213,19 +221,19 @@ with algopy_testing_context() as ctx:
 from algopy_testing import algopy_testing_context
 import algopy.op as op
 
-with algopy_testing_context() as ctx:
-    asset = ctx.any.asset(total=algopy.UInt64(1000000), decimals=algopy.UInt64(6))
+class AssetParamsContract(algopy.ARC4Contract):
+    @algopy.arc4.abimethod
+    def get_asset_total(self, asset_id: algopy.UInt64) -> algopy.UInt64:
+        total, exists = op.AssetParamsGet.asset_total(asset_id)
+        assert exists
+        return total
 
-    class AssetParamsContract(algopy.ARC4Contract):
-        @algopy.arc4.abimethod
-        def get_asset_total(self, asset_id: algopy.UInt64) -> algopy.UInt64:
-            total, exists = op.AssetParamsGet.asset_total(asset_id)
-            assert exists
-            return total
+... # setup context (below assumes available under 'ctx' variable)
 
-    contract = AssetParamsContract()
-    total = contract.get_asset_total(asset.id)
-    assert total == algopy.UInt64(1000000)
+asset = context.any.asset(total=algopy.UInt64(1000000), decimals=algopy.UInt64(6))
+contract = AssetParamsContract()
+total = contract.get_asset_total(asset.id)
+assert total == algopy.UInt64(1000000)
 ```
 
 ### algopy.op.Box
@@ -234,21 +242,22 @@ with algopy_testing_context() as ctx:
 from algopy_testing import algopy_testing_context
 import algopy.op as op
 
-with algopy_testing_context() as ctx:
-    class BoxStorageContract(algopy.ARC4Contract):
-        @algopy.arc4.abimethod
-        def store_and_retrieve(self, key: algopy.Bytes, value: algopy.Bytes) -> algopy.Bytes:
-            op.Box.put(key, value)
-            retrieved_value, exists = op.Box.get(key)
-            assert exists
-            return retrieved_value
+class BoxStorageContract(algopy.ARC4Contract):
+    @algopy.arc4.abimethod
+    def store_and_retrieve(self, key: algopy.Bytes, value: algopy.Bytes) -> algopy.Bytes:
+        op.Box.put(key, value)
+        retrieved_value, exists = op.Box.get(key)
+        assert exists
+        return retrieved_value
 
-    contract = BoxStorageContract()
-    key, value = algopy.Bytes(b"test_key"), algopy.Bytes(b"test_value")
-    result = contract.store_and_retrieve(key, value)
-    assert result == value
-    stored_value = ctx.ledger.get_box(contract, key)
-    assert stored_value == value.value
+... # setup context (below assumes available under 'ctx' variable)
+
+contract = BoxStorageContract()
+key, value = algopy.Bytes(b"test_key"), algopy.Bytes(b"test_value")
+result = contract.store_and_retrieve(key, value)
+assert result == value
+stored_value = context.ledger.get_box(contract, key)
+assert stored_value == value.value
 ```
 
 ## Mockable Opcodes
@@ -258,24 +267,28 @@ These opcodes are mockable in `algorand-python-testing`, allowing for controlled
 ### algopy.compile_contract
 
 ```{testcode}
-import unittest
 from unittest.mock import patch, MagicMock
 import algopy
-from algopy_testing.primitives import Bytes
 
 mocked_response = MagicMock()
-mocked_response.approval_program = (Bytes(b'mock_approval'), Bytes(b'mock_approval'))
-mocked_response.clear_state_program = (Bytes(b'mock_clear'), Bytes(b'mock_clear'))
+mocked_response.local_bytes = algopy.UInt64(4)
 
 class MockContract(algopy.Contract):
-    pass
+    ...
 
-with patch('algopy.compile_contract', return_value=mocked_response) as mock_compile_contract:
-    compiled = algopy.compile_contract(MockContract)
+class ContractFactory(algopy.ARC4Contract):
+    ...
 
-compiled.approval_program == (Bytes(b'mock_approval'), Bytes(b'mock_approval'))
-compiled.clear_state_program == (Bytes(b'mock_clear'), Bytes(b'mock_clear'))
-mock_compile_contract.assert_called_once_with(MockContract)
+    @algopy.arc4.abimethod
+    def compile_and_get_bytes(self) -> algopy.UInt64:
+        contract_response = algopy.compile_contract(MockContract)
+        return contract_response.local_bytes
+
+... # setup context (below assumes available under 'ctx' variable)
+
+contract = ContractFactory()
+with patch('algopy.compile_contract', return_value=mocked_response):
+    assert contract.compile_and_get_bytes() == 4
 ```
 
 ### algopy.arc4.abi_call
@@ -284,28 +297,36 @@ mock_compile_contract.assert_called_once_with(MockContract)
 import unittest
 from unittest.mock import patch, MagicMock
 import algopy
-from algopy_testing.primitives import UInt64
+import typing
+
+class MockAbiCall:
+    def __call__(
+        self, *args: typing.Any, **_kwargs: typing.Any
+    ) -> tuple[typing.Any, typing.Any]:
+        return (
+            algopy.arc4.UInt64(11),
+            MagicMock(),
+        )
+
+    def __getitem__(self, _item: object) -> typing.Self:
+        return self
 
 class MyContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
     def my_method(self, arg1: algopy.UInt64, arg2: algopy.UInt64) -> algopy.UInt64:
-        return algopy.arc4.abi_call[arc4.UInt64]("my_other_method", arg1, arg2)[0].native
+        return algopy.arc4.abi_call[algopy.arc4.UInt64]("my_other_method", arg1, arg2)[0].native
 
-class TestMyContract(unittest.TestCase):
-    def test_mock_abi_call(self):
-        with algopy_testing_context() as ctx:
-            mock_abi_call = MagicMock(return_value=UInt64(11))
-            contract = MyContract()
-            with patch('algopy.arc4.abi_call', mock_abi_call):
-                result = contract.my_method(UInt64(10), UInt64(1))
-            self.assertEqual(result, UInt64(11))
-            mock_abi_call.assert_called_once_with("my_other_method", UInt64(10), UInt64(1))
+... # setup context (below assumes available under 'ctx' variable)
+
+contract = MyContract()
+with patch('algopy.arc4.abi_call', MockAbiCall()):
+    result = contract.my_method(algopy.UInt64(10), algopy.UInt64(1))
+assert result == 11
 ```
 
 ### algopy.op.vrf_verify
 
 ```{testcode}
-import unittest
 from unittest.mock import patch, MagicMock
 import algopy
 from algopy_testing.primitives import Bytes
@@ -333,7 +354,6 @@ test_mock_vrf_verify()
 ### algopy.op.EllipticCurve
 
 ```{testcode}
-import unittest
 from unittest.mock import patch, MagicMock
 import algopy
 from algopy_testing.primitives import Bytes
@@ -361,3 +381,7 @@ Mocking these opcodes allows you to:
 1. Control complex operations' behavior not covered by _implemented_ and _emulated_ types.
 2. Test edge cases and error conditions.
 3. Isolate contract logic from external dependencies.
+
+```{testcleanup}
+ctx_manager.__exit__(None, None, None)
+```

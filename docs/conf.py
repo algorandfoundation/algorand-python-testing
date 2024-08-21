@@ -74,12 +74,6 @@ add_module_names = False
 autodoc2_index_template = None
 
 # -- Options for doctest --
-doctest_global_setup = """
-import algopy
-from algopy import arc4
-import algopy_testing
-from algopy_testing import AlgopyTestContext, algopy_testing_context
-"""
 doctest_test_doctest_blocks = "default"
 
 # -- Options for mermaid --

@@ -9,12 +9,13 @@ For 'primitive `algopy` types such as `Account`, `Application`, `Asset`, `UInt64
 ```{testsetup}
 import algopy
 import algopy_testing
+from algopy_testing import algopy_testing_context
 
 # Create the context manager for snippets below
 ctx_manager = algopy_testing_context()
 
 # Enter the context
-ctx = ctx_manager.__enter__()
+context = ctx_manager.__enter__()
 ```
 
 ## UInt64
@@ -27,10 +28,10 @@ uint64_value = algopy.UInt64(100)
 ...
 
 # Generate a random UInt64 value
-random_uint64 = ctx.any.uint64()
+random_uint64 = context.any.uint64()
 
 # Specify a range
-random_uint64 = ctx.any.uint64(min_value=1000, max_value=9999)
+random_uint64 = context.any.uint64(min_value=1000, max_value=9999)
 ```
 
 ## Bytes
@@ -44,10 +45,10 @@ bytes_value = algopy.Bytes(b"Hello, Algorand!")
 ...
 
 # Generate random byte sequences
-random_bytes = ctx.any.bytes()
+random_bytes = context.any.bytes()
 
 # Specify the length
-random_bytes = ctx.any.bytes(length=32)
+random_bytes = context.any.bytes(length=32)
 ```
 
 ## String
@@ -57,10 +58,10 @@ random_bytes = ctx.any.bytes(length=32)
 string_value = algopy.String("Hello, Algorand!")
 
 # Generate random strings
-random_string = ctx.any.string()
+random_string = context.any.string()
 
 # Specify the length
-random_string = ctx.any.string(length=16)
+random_string = context.any.string(length=16)
 ```
 
 ## BigUInt
@@ -70,7 +71,7 @@ random_string = ctx.any.string(length=16)
 biguint_value = algopy.BigUInt(100)
 
 # Generate a random BigUInt value
-random_biguint = ctx.any.biguint()
+random_biguint = context.any.biguint()
 ```
 
 ## Asset
@@ -83,8 +84,7 @@ asset = algopy.Asset(asset_id=1001)
 ...
 
 # Generate a random asset
-random_asset = ctx.any.asset(
-    id=...,  # Optional: Uses next value under asset id counter in test context
+random_asset = context.any.asset(
     creator=...,  # Optional: Creator account
     name=...,  # Optional: Asset name
     unit_name=...,  # Optional: Unit name
@@ -100,10 +100,10 @@ random_asset = ctx.any.asset(
 )
 
 # Get an asset by ID
-asset = ctx.ledger.get_asset(asset_id=random_asset.id)
+asset = context.ledger.get_asset(asset_id=random_asset.id)
 
 # Update an asset
-ctx.ledger.update_asset(
+context.ledger.update_asset(
     asset_id=random_asset.id,
     name=...,  # Optional: New asset name
     total=...,  # Optional: New total supply
@@ -129,7 +129,7 @@ account = algopy.Account(raw_address) # zero address by default
 ...
 
 # Generate a random account
-random_account = ctx.any.account(
+random_account = context.any.account(
     address=str(raw_address),  # Optional: Specify a custom address, defaults to a random address
     opted_asset_balances=...,  # Optional: Specify opted asset balances as dict of algopy.UInt64 as key and algopy.UInt64 as value
     opted_apps=[],  # Optional: Specify opted apps as sequence of algopy.Application objects
@@ -144,20 +144,20 @@ random_account = ctx.any.account(
 )
 
 # Generate a random account that is opted into a specific asset
-mock_asset = ctx.any.asset()
-mock_account = ctx.any.account(
+mock_asset = context.any.asset()
+mock_account = context.any.account(
     opted_asset_balances={mock_asset.id: algopy.UInt64(123)}
 )
 
 # Get an account by address
-account = ctx.ledger.get_account(str(mock_account))
+account = context.ledger.get_account(str(mock_account))
 
 # Update an account
-ctx.ledger.update_account(
+context.ledger.update_account(
     str(mock_account),
     balance=...,  # Optional: New balance
     min_balance=...,  # Optional: New minimum balance
-    auth_address=ctx.any.account(),  # Optional: New auth address
+    auth_address=context.any.account(),  # Optional: New auth address
     total_assets=...,  # Optional: New total number of assets
     total_created_assets=...,  # Optional: New total number of created assets
     total_apps_created=...,  # Optional: New total number of created applications
@@ -181,7 +181,7 @@ application = algopy.Application()
 ...
 
 # Generate a random application
-random_app = ctx.any.application(
+random_app = context.any.application(
     address=...,  # Optional: Specify a custom address for the application
     approval_program=algopy.Bytes(b''),  # Optional: Specify a custom approval program
     clear_state_program=algopy.Bytes(b''),  # Optional: Specify a custom clear state program
@@ -190,14 +190,14 @@ random_app = ctx.any.application(
     local_num_uint=algopy.UInt64(1),  # Optional: Number of local uint values
     local_num_bytes=algopy.UInt64(1),  # Optional: Number of local byte values
     extra_program_pages=algopy.UInt64(1),  # Optional: Number of extra program pages
-    creator=ctx.default_sender  # Optional: Specify the creator account
+    creator=context.default_sender  # Optional: Specify the creator account
 )
 
 # Get an application by ID
-app = ctx.ledger.get_app(app_id=random_app.id)
+app = context.ledger.get_app(app_id=random_app.id)
 
 # Update an application
-ctx.ledger.update_app(
+context.ledger.update_app(
     app_id=random_app.id,
     approval_program=...,  # Optional: New approval program
     clear_state_program=...,  # Optional: New clear state program
@@ -210,12 +210,16 @@ ctx.ledger.update_app(
 )
 
 # Patch logs for an application. When accessing via transactions or inner transaction related opcodes, will return the patched logs unless new logs where added into the transaction during execution.
-test_app = ctx.any.application(logs=b"log entry" or [b"log entry 1", b"log entry 2"])
+test_app = context.any.application(logs=b"log entry" or [b"log entry 1", b"log entry 2"])
 
 # Get app associated with the active contract
 class MyContract(algopy.ARC4Contract):
     ...
 
 contract = MyContract()
-active_app = ctx.get_app_for_contract(contract)
+active_app = context.ledger.get_app(contract)
+```
+
+```{testcleanup}
+ctx_manager.__exit__(None, None, None)
 ```

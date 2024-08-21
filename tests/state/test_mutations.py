@@ -11,7 +11,6 @@ from tests.artifacts.StateMutations.statemutations import StateMutations
 def context() -> Generator[algopy_testing.AlgopyTestContext, None, None]:
     with algopy_testing.algopy_testing_context() as ctx:
         yield ctx
-        ctx.reset()
 
 
 def test_state_mutations(

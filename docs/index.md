@@ -13,6 +13,18 @@ The `algorand-python-testing` package provides:
 -   An offline testing environment that simulates core AVM functionality
 -   A familiar Pythonic experience, compatible with testing frameworks like [pytest](https://docs.pytest.org/en/latest/), [unittest](https://docs.python.org/3/library/unittest.html), and [hypothesis](https://hypothesis.readthedocs.io/en/latest/)
 
+```{testsetup}
+import algopy
+import algopy_testing
+from algopy_testing import algopy_testing_context
+
+# Create the context manager for snippets below
+ctx_manager = algopy_testing_context()
+
+# Enter the context
+context = ctx_manager.__enter__()
+```
+
 ## Quick Start
 
 `algopy` is a prerequisite for `algorand-python-testing`, providing stubs and type annotations for Algorand Python syntax. It enhances code completion and type checking when writing smart contracts. Note that this code isn't directly executable in standard Python interpreters; it's compiled by `puya` into TEAL for Algorand Network deployment.
@@ -179,4 +191,8 @@ coverage
 glossary
 api
 algopy
+```
+
+```{testcleanup}
+ctx_manager.__exit__(None, None, None)
 ```

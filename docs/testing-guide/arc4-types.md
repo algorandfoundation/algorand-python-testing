@@ -13,12 +13,13 @@ For all `algopy.arc4` types with and without respective _value generator_, insta
 ```{testsetup}
 import algopy
 import algopy_testing
+from algopy_testing import algopy_testing_context
 
 # Create the context manager for snippets below
 ctx_manager = algopy_testing_context()
 
 # Enter the context
-ctx = ctx_manager.__enter__()
+context = ctx_manager.__enter__()
 ```
 
 ## Unsigned Integers
@@ -34,22 +35,22 @@ uint64_value = arc4.UInt64(18446744073709551615)
 
 ... # instantiate test context
 # Generate a random unsigned arc4 integer with default range
-uint8 = ctx.any.arc4.uint8()
-uint16 = ctx.any.arc4.uint16()
-uint32 = ctx.any.arc4.uint32()
-uint64 = ctx.any.arc4.uint64()
-biguint128 = ctx.any.arc4.biguint128()
-biguint256 = ctx.any.arc4.biguint256()
-biguint512 = ctx.any.arc4.biguint512()
+uint8 = context.any.arc4.uint8()
+uint16 = context.any.arc4.uint16()
+uint32 = context.any.arc4.uint32()
+uint64 = context.any.arc4.uint64()
+biguint128 = context.any.arc4.biguint128()
+biguint256 = context.any.arc4.biguint256()
+biguint512 = context.any.arc4.biguint512()
 
 # Generate a random unsigned arc4 integer with specified range
-uint8_custom = ctx.any.arc4.uint8(min_value=10, max_value=100)
-uint16_custom = ctx.any.arc4.uint16(min_value=1000, max_value=5000)
-uint32_custom = ctx.any.arc4.uint32(min_value=100000, max_value=1000000)
-uint64_custom = ctx.any.arc4.uint64(min_value=1000000000, max_value=10000000000)
-biguint128_custom = ctx.any.arc4.biguint128(min_value=1000000000000000, max_value=10000000000000000)
-biguint256_custom = ctx.any.arc4.biguint256(min_value=1000000000000000000000000, max_value=10000000000000000000000000)
-biguint512_custom = ctx.any.arc4.biguint512(min_value=10000000000000000000000000000000000, max_value=10000000000000000000000000000000000)
+uint8_custom = context.any.arc4.uint8(min_value=10, max_value=100)
+uint16_custom = context.any.arc4.uint16(min_value=1000, max_value=5000)
+uint32_custom = context.any.arc4.uint32(min_value=100000, max_value=1000000)
+uint64_custom = context.any.arc4.uint64(min_value=1000000000, max_value=10000000000)
+biguint128_custom = context.any.arc4.biguint128(min_value=1000000000000000, max_value=10000000000000000)
+biguint256_custom = context.any.arc4.biguint256(min_value=1000000000000000000000000, max_value=10000000000000000000000000)
+biguint512_custom = context.any.arc4.biguint512(min_value=10000000000000000000000000000000000, max_value=10000000000000000000000000000000000)
 ```
 
 ## Address
@@ -61,7 +62,7 @@ from algopy import arc4
 address_value = arc4.Address("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ")
 
 # Generate a random address
-random_address = ctx.any.arc4.address()
+random_address = context.any.arc4.address()
 
 # Access native underlaying type
 native = random_address.native
@@ -76,7 +77,7 @@ from algopy import arc4
 bytes_value = arc4.DynamicBytes(b"Hello, Algorand!")
 
 # Generate random dynamic bytes
-random_dynamic_bytes = ctx.any.arc4.dynamic_bytes(n=123) # n is the number of bits in the arc4 dynamic bytes
+random_dynamic_bytes = context.any.arc4.dynamic_bytes(n=123) # n is the number of bits in the arc4 dynamic bytes
 ```
 
 ## String
@@ -88,5 +89,9 @@ from algopy import arc4
 string_value = arc4.String("Hello, Algorand!")
 
 # Generate random string
-random_string = ctx.any.arc4.string(n=12) # n is the number of bits in the arc4 string
+random_string = context.any.arc4.string(n=12) # n is the number of bits in the arc4 string
+```
+
+```{testcleanup}
+ctx_manager.__exit__(None, None, None)
 ```

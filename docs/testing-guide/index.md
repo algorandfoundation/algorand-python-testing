@@ -40,7 +40,7 @@ By using this framework, you can ensure your Algorand Python smart contracts fun
 Key features of the framework include:
 
 -   `AlgopyTestContext`: The main entry point for testing, providing access to various testing utilities and simulated blockchain state
--   AVM Type Simulation: Accurate representations of AVM types like `UInt64`, `Bytes`, and `String`
+-   AVM Type Simulation: Accurate representations of AVM types like `UInt64` and `Bytes`
 -   ARC4 Support: Tools for testing ARC4 contracts and methods, including struct definitions and ABI encoding/decoding
 -   Transaction Simulation: Ability to create and execute various transaction types
 -   State Management: Tools for managing and verifying global and local state changes
