@@ -1,4 +1,34 @@
 # CHANGELOG
+## v0.3.0-beta.6 (2024-08-21)
+
+### Documentation
+
+* documentation for initial stable release of `algorand-python-testing` (#8) ([`9d97d0d`](https://github.com/algorandfoundation/algorand-python-testing/commit/9d97d0de5ff9897e642ec3f11a186f2fb95375bb))
+
+  * docs: wip
+
+  * chore: refresh pyproject
+
+  * docs: refining docs (wip)
+
+  * chore: integrating doctests
+
+  * docs: revamping docs with latest features
+
+  * docs: minor consistency with main readme; patching doctests
+
+  * docs: removing the box from examples
+
+  * docs: refine op codes section
+
+  * chore: merge conflicts
+
+  * chore: apply suggestions from code review
+
+  Co-authored-by: Daniel McGregor &lt;daniel.mcgregor@makerx.com.au&gt;
+
+  * docs: addressing docs pr comments
+
 ## v0.3.0-beta.5 (2024-08-21)
 
 ### Fix
