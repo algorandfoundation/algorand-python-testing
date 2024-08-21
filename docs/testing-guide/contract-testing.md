@@ -10,7 +10,7 @@ The code snippets showcasing the contract testing capabilities are using [pytest
 
 ## `algopy.ARC4Contract`
 
-Classes prefixed with `algopy.ARC4Contract` are **required** to be instantiated withing test context. As part of instantiation, the test context will automatically create a matching `algopy.Application` object instance.
+Subclasses of `algopy.ARC4Contract` are **required** to be instantiated with an active test context. As part of instantiation, the test context will automatically create a matching `algopy.Application` object instance.
 
 Within the class implementation, methods decorated with `algopy.arc4.abimethod` and `algopy.arc4.baremethod` will automatically assemble an `algopy.gtxn.ApplicationCallTransaction` transaction to emulate the AVM application call. This behavior can be overriden by setting the transaction group manually as part of test setup, this is done via implicit invocation of `algopy_testing.context.any_application()` _value generator_ (refer to [APIs](../apis.md) for more details).
 
@@ -104,7 +104,7 @@ For more examples of tests using `algopy.ARC4Contract`, see the [examples](../ex
 
 ## `algopy.Contract``
 
-Classes prefixed with `algopy.Contract` (parent class of `algopy.ARC4Contract`) are **required** to be instantiated withing test context. As part of instantiation, the test context will automatically create a matching `algopy.Application` object instance. This behaviour is identical to `algopy.ARC4Contract` class instances.
+Subclasses of `algopy.Contract` are **required** to be instantiated with an active test context. As part of instantiation, the test context will automatically create a matching `algopy.Application` object instance. This behaviour is identical to `algopy.ARC4Contract` class instances.
 
 Unlike `algopy.ARC4Contract`, `algopy.Contract` requires manual setup of the transaction context and explicit method calls. Here's an example demonstrating how to test a `Contract` class:
 

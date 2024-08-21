@@ -121,9 +121,9 @@ class SimpleContract(algopy.ARC4Contract):
 with algopy_testing_context() as ctx:
     # Create a contract instance
     contract = SimpleContract()
-    # Use scoped_txn_fields to temporarily change the sender
+    # Use active_txn_overrides to change the sender
     patched_sender = ctx.any.account()
-    with ctx.txn.create_group(txn_op_fields={"sender": patched_sender}):
+    with ctx.txn.create_group(active_txn_overrides={"sender": patched_sender}):
         # Call the contract method
         result = contract.check_sender()
 
@@ -143,7 +143,7 @@ with algopy_testing_context() as ctx:
 
 Inner transactions are AVM transactions that are signed and executed by AVM applications (instances of deployed smart contracts or signatures).
 
-When testing smart contracts, to stay consistent with AVM, the framework _does not allow you to submit inner transactions outside of contract/subroutine/logicsig invocation_, but you can interact with and manage inner transactions using the test context manager as follows:
+When testing smart contracts, to stay consistent with AVM, the framework _does not allow you to submit inner transactions outside of contract/subroutine invocation, but you can interact with and manage inner transactions using the test context manager as follows:
 
 ```{testcode}
 import algopy

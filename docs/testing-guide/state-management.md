@@ -25,7 +25,7 @@ class MyContract(algopy.ARC4Contract):
 
 # In your test
 contract = MyContract()
-contract.state_a = algopy.UInt64(10)
+contract.state_a.value = algopy.UInt64(10)
 contract.state_b = algopy.UInt64(20)
 ```
 

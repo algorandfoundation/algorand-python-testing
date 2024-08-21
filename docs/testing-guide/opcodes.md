@@ -289,7 +289,7 @@ from algopy_testing.primitives import UInt64
 class MyContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
     def my_method(self, arg1: algopy.UInt64, arg2: algopy.UInt64) -> algopy.UInt64:
-        return algopy.arc4.abi_call("my_other_method", arg1, arg2)
+        return algopy.arc4.abi_call[arc4.UInt64]("my_other_method", arg1, arg2)[0].native
 
 class TestMyContract(unittest.TestCase):
     def test_mock_abi_call(self):
