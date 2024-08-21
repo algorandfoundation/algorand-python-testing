@@ -33,7 +33,11 @@ def test_simple_contract(context: AlgopyTestContext) -> None:
 
     # Act
     with context.txn.create_group(
-        gtxns=[context.any.txn.application_call(scratch_space=[0, 5, b"Hello World"])]
+        gtxns=[
+            context.any.txn.application_call(
+                app_id=context.get_app_for_contract(contract), scratch_space=[0, 5, b"Hello World"]
+            )
+        ]
     ):
         result = contract.approval_program()
 
