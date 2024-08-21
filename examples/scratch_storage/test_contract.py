@@ -35,7 +35,7 @@ def test_simple_contract(context: AlgopyTestContext) -> None:
     with context.txn.create_group(
         gtxns=[
             context.any.txn.application_call(
-                app_id=context.get_app_for_contract(contract), scratch_space=[0, 5, b"Hello World"]
+                app_id=context.ledger.get_app(contract), scratch_space=[0, 5, b"Hello World"]
             )
         ]
     ):

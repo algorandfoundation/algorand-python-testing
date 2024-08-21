@@ -96,7 +96,7 @@ def test_last_itxn_access() -> None:
         itxn: algopy.itxn.AssetTransferInnerTransaction = (
             context.txn.last_group.last_itxn.asset_transfer
         )
-        app = context.get_app_for_contract(contract)
+        app = context.ledger.get_app(contract)
         assert itxn.asset_sender == app.address
         assert itxn.asset_receiver == app.address
         assert itxn.asset_amount == UInt64(0)

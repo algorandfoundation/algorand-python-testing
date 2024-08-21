@@ -232,7 +232,7 @@ def test_app_args_is_correct_with_application(
     contract = SignaturesContract()
     contract.create()
 
-    self_app = context.get_app_for_contract(contract)
+    self_app = context.ledger.get_app(contract)
 
     # act
     get_avm_result(

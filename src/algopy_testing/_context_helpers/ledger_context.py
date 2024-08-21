@@ -138,18 +138,21 @@ class LedgerContext:
             raise ValueError("Asset not found in testing context!")
         self.asset_data[asset_id].update(asset_fields)
 
-    def get_app(self, app: algopy.UInt64 | int) -> algopy.Application:
-        """Get an application by ID.
+    def get_app(
+        self, app_id: algopy.Contract | algopy.Application | algopy.UInt64 | int
+    ) -> algopy.Application:
+        """Get an application by ID, contract or app reference.
 
         Args:
-            app (algopy.UInt64 | int): The application ID.
+            app_id (algopy.Contract | algopy.UInt64 | int): The application ID. If not provided as
+            int, auto extracts id from contract or app reference.
 
         Returns:
             algopy.Application: The application object.
         """
         import algopy
 
-        app_data = self._get_app_data(app)
+        app_data = self._get_app_data(app_id)
         return algopy.Application(app_data.app_id)
 
     def app_exists(self, app: algopy.UInt64 | int) -> bool:

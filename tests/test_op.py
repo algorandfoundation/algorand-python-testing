@@ -691,7 +691,7 @@ def test_app_local_ex_get(
     get_state_app_local_ex_avm_result: AVMInvoker,
 ) -> None:
     mock_secondary_contract = StateAppLocalExContract()
-    mock_secondary_app = context.get_app_for_contract(mock_secondary_contract)
+    mock_secondary_app = context.ledger.get_app(mock_secondary_contract)
     assert mock_secondary_app.local_num_uint == 1
     assert mock_secondary_app.local_num_bytes == 2
 
@@ -721,7 +721,7 @@ def test_app_local_ex_get_arc4(
     get_state_app_local_ex_avm_result: AVMInvoker,
 ) -> None:
     mock_secondary_contract = StateAppLocalExContract()
-    mock_secondary_app = context.get_app_for_contract(mock_secondary_contract)
+    mock_secondary_app = context.ledger.get_app(mock_secondary_contract)
     assert mock_secondary_app.local_num_uint == 1
     assert mock_secondary_app.local_num_bytes == 2
 
@@ -811,7 +811,7 @@ def test_app_global_ex_get(
     get_state_app_global_ex_avm_result: AVMInvoker,
 ) -> None:
     mock_secondary_contract = StateAppGlobalExContract()
-    mock_secondary_app = context.get_app_for_contract(mock_secondary_contract)
+    mock_secondary_app = context.ledger.get_app(mock_secondary_contract)
     assert mock_secondary_app.global_num_uint == 2
     assert mock_secondary_app.global_num_bytes == 4
 
@@ -842,7 +842,7 @@ def test_app_global_ex_get_arc4(
     key_name: str,
 ) -> None:
     mock_secondary_contract = StateAppGlobalExContract()
-    mock_secondary_app = context.get_app_for_contract(mock_secondary_contract)
+    mock_secondary_app = context.ledger.get_app(mock_secondary_contract)
     assert mock_secondary_app.global_num_uint == 2
     assert mock_secondary_app.global_num_bytes == 4
 
@@ -911,7 +911,7 @@ def test_itxn_ops(context: AlgopyTestContext) -> None:
     assert approval_pages == [appl_itxn.approval_program]
     assert appl_itxn.on_completion == algopy.OnCompleteAction.DeleteApplication
     assert appl_itxn.fee == algopy.UInt64(algosdk.constants.MIN_TXN_FEE)
-    assert appl_itxn.sender == context.get_app_for_contract(contract).address
+    assert appl_itxn.sender == context.ledger.get_app(contract).address
     # NOTE: would implementing emulation for this behavior be useful
     # in unit testing context (vs integration tests)?
     # considering we don't emulate balance (transfer, accounting for fees and etc)
@@ -922,7 +922,7 @@ def test_itxn_ops(context: AlgopyTestContext) -> None:
     # Test payment transaction fields
     assert pay_itxn.receiver == context.default_sender
     assert pay_itxn.amount == algopy.UInt64(1000)
-    assert pay_itxn.sender == context.get_app_for_contract(contract).address
+    assert pay_itxn.sender == context.ledger.get_app(contract).address
     assert pay_itxn.type == algopy.TransactionType.Payment
     assert pay_itxn.type_bytes == algopy.Bytes(b"pay")
 

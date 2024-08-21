@@ -79,17 +79,6 @@ class AlgopyTestContext:
         """
         return self._txn_context
 
-    def get_app_for_contract(
-        self, contract: algopy.Contract | algopy.ARC4Contract
-    ) -> algopy.Application:
-        """Get the application for a given contract.
-
-        :param contract: The contract to get the application for
-        :return: The application associated with the contract
-        :rtype: algopy.Application
-        """
-        return self.ledger.get_app(contract.__app_id__)
-
     def set_template_var(self, name: str, value: typing.Any) -> None:
         """Set a template variable for the current context.
 

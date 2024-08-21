@@ -11,6 +11,7 @@ import algosdk
 import algopy_testing
 from algopy_testing._context_helpers import lazy_context
 from algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM
+from algopy_testing.enums import OnCompleteAction
 from algopy_testing.primitives import BigUInt, Bytes, String, UInt64
 
 _P = typing.ParamSpec("_P")
@@ -34,6 +35,15 @@ if typing.TYPE_CHECKING:
     )
 _CreateValues = typing.Literal["allow", "require", "disallow"]
 ARC4_METADATA_ATTR = "arc4_metadata"
+
+
+def _parse_allow_actions(allow_actions: Sequence[_AllowActions]) -> list[OnCompleteAction]:
+    allow_ac = []
+    for action in allow_actions:
+        if isinstance(action, str):
+            action = OnCompleteAction._from_str(action)
+        allow_ac.append(action)
+    return allow_ac
 
 
 @dataclasses.dataclass
@@ -134,6 +144,8 @@ def abimethod(  # noqa: PLR0913
     readonly: bool = False,
     default_args: Mapping[str, str | object] | None = None,
 ) -> Callable[[Callable[_P, _R]], Callable[_P, _R]] | Callable[_P, _R]:
+    allow_actions = _parse_allow_actions(allow_actions)
+
     if fn is None:
         return functools.partial(
             abimethod,
@@ -166,6 +178,7 @@ def abimethod(  # noqa: PLR0913
             app_id=app_id,
             arc4_signature=metadata.arc4_signature,
             args=ordered_args,
+            allow_actions=allow_actions,
         )
         with context.txn._maybe_implicit_txn_group(txns):
             check_routing_conditions(app_id, metadata)
@@ -180,6 +193,7 @@ def create_abimethod_txns(
     app_id: int,
     arc4_signature: str,
     args: Sequence[object],
+    allow_actions: Sequence[_AllowActions],
 ) -> list[algopy.gtxn.TransactionBase]:
     method = algosdk.abi.Method.from_signature(arc4_signature)
     method_selector = Bytes(method.get_selector())
@@ -197,6 +211,12 @@ def create_abimethod_txns(
         app=contract_app,
     )
 
+    try:
+        (allow_action,) = allow_actions
+    except ValueError:
+        pass
+    else:
+        txn_fields.setdefault("on_completion", allow_action)
     txn_fields.setdefault("accounts", txn_arrays.accounts)
     txn_fields.setdefault("assets", txn_arrays.assets)
     txn_fields.setdefault("apps", txn_arrays.apps)
