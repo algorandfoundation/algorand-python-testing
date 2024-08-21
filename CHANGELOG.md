@@ -1,4 +1,22 @@
 # CHANGELOG
+## v0.3.0-beta.5 (2024-08-21)
+
+### Fix
+
+* ensure mutable types (ARC4 tuple, array and structs) have their changes propagated back to container-like types (global/local state, boxes, ARC4 mutable types) (#14) ([`1f1f2ea`](https://github.com/algorandfoundation/algorand-python-testing/commit/1f1f2ea43a2f4f906cbcd5709b8e86b5c1f2bc63))
+
+  * fix: add default __eq__ implementation for ARC4 types
+
+  * fix: ensure mutable types (ARC4 tuple, array and structs) have their changes propagated back to container-like types (global/local state, boxes, ARC4 mutable types)
+
+  * feat: add __str__ and __repr__ implementations for ARC4 types
+
+  * refactor: make ARC4 type_info private
+
+  * refactor: make ARC4 struct inherit _ABIEncoded
+
+  * refactor: removing get_app_for_contract; expanding get_app; parsing on_complete
+
 ## v0.3.0-beta.4 (2024-08-21)
 
 ### Feature
