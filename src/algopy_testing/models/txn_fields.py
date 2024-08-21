@@ -65,19 +65,22 @@ class AssetConfigFields(TransactionBaseFields, total=False):
     created_asset: algopy.Asset
 
 
-class ApplicationCallFields(TransactionBaseFields, total=False):
-    app_id: algopy.Application
+class ActiveTransactionFields(TransactionBaseFields, total=False):
     on_completion: algopy.OnCompleteAction
+    app_args: Sequence[algopy.Bytes]
+    accounts: Sequence[algopy.Account]
+    assets: Sequence[algopy.Asset]
+    apps: Sequence[algopy.Application]
+
+
+class ApplicationCallFields(ActiveTransactionFields, total=False):
+    app_id: algopy.Application
     global_num_uint: algopy.UInt64
     global_num_bytes: algopy.UInt64
     local_num_uint: algopy.UInt64
     local_num_bytes: algopy.UInt64
     extra_program_pages: algopy.UInt64
     logs: Sequence[algopy.Bytes]
-    app_args: Sequence[algopy.Bytes]
-    accounts: Sequence[algopy.Account]
-    assets: Sequence[algopy.Asset]
-    apps: Sequence[algopy.Application]
     approval_program: Sequence[algopy.Bytes]
     clear_state_program: Sequence[algopy.Bytes]
     created_app: algopy.Application

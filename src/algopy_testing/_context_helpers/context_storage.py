@@ -47,11 +47,11 @@ class _InternalContext:
     def any(self) -> AlgopyValueGenerator:
         return self.value.any
 
-    def get_txn_op_fields(self) -> dict[str, typing.Any]:
+    def get_active_txn_fields(self) -> dict[str, typing.Any]:
         active_group = self.txn._active_group
         if active_group is None:
             return {}
-        return (active_group._txn_op_fields or {}).copy()
+        return (active_group._active_txn_overrides or {}).copy()
 
     @property
     def active_group(self) -> TransactionGroup:

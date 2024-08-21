@@ -21,7 +21,7 @@ if typing.TYPE_CHECKING:
     import algopy
 
     from algopy_testing._itxn_loader import InnerTransactionResultType
-    from algopy_testing.models.txn_fields import TransactionBaseFields
+    from algopy_testing.models.txn_fields import ActiveTransactionFields
 
 from algopy_testing import gtxn
 from algopy_testing._itxn_loader import ITxnLoader
@@ -77,6 +77,8 @@ class TransactionContext:
         else:
             if not active_group.txns:
                 active_group._set_txn_group(gtxns)
+            elif gtxns[-1].app_id != active_group.active_app_id:
+                raise ValueError("Executing contract has different app_id than active txn")
             ctx = contextlib.nullcontext()
         with ctx:
             yield
@@ -130,16 +132,20 @@ class TransactionContext:
             typing.Sequence[algopy.gtxn.TransactionBase | DeferredAppCall[typing.Any]] | None
         ) = None,
         active_txn_index: int | None = None,
-        txn_op_fields: TransactionBaseFields | None = None,
+        active_txn_overrides: ActiveTransactionFields | None = None,
     ) -> Iterator[None]:
         """Adds a new transaction group using a list of transactions and an optional
         index to indicate the active transaction within the group.
 
         :param gtxns: List of transactions
         :param active_txn_index: Index of the active transaction
-        :param txn_op_fields: Additional transaction operation fields
+        :param active_txn_overrides: Overrides for active txn
         :return: None
         """
+        if gtxns and active_txn_overrides:
+            raise ValueError("cannot specified gtxns and active_txn_overrides at the same time")
+        if active_txn_index is not None and not gtxns:
+            raise ValueError("must specify gtxns if providing active_txn_index")
 
         processed_gtxns = []
 
@@ -159,7 +165,7 @@ class TransactionContext:
         self._active_group = TransactionGroup(
             txns=processed_gtxns,
             active_txn_index=active_txn_index,
-            txn_op_fields=typing.cast(dict[str, typing.Any], txn_op_fields),
+            active_txn_overrides=typing.cast(dict[str, typing.Any], active_txn_overrides),
         )
         try:
             yield
@@ -186,12 +192,12 @@ class TransactionGroup:
         self,
         txns: Sequence[algopy.gtxn.TransactionBase] = (),
         active_txn_index: int | None = None,
-        txn_op_fields: dict[str, typing.Any] | None = None,
+        active_txn_overrides: dict[str, typing.Any] | None = None,
     ):
         self._set_txn_group(txns, active_txn_index)
         self._itxn_groups: list[Sequence[InnerTransactionResultType]] = []
         self._constructing_itxn_group: list[InnerTransaction] = []
-        self._txn_op_fields = txn_op_fields or {}
+        self._active_txn_overrides = active_txn_overrides or {}
 
     def _set_txn_group(
         self,

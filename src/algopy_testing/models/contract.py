@@ -45,7 +45,7 @@ class _ContractMeta(type):
         app_data = lazy_context.get_app_data(app_id)
         app_data.is_creating = True
 
-        fields = lazy_context.get_txn_op_fields()
+        fields = lazy_context.get_active_txn_fields()
         fields["app_id"] = app_ref
 
         # TODO: 1.0 provide app_id during instantiation without requiring a txn
