@@ -150,8 +150,10 @@ post-install-commands = [
 ]
 
 [tool.hatch.envs.docs.scripts]
-build = "sphinx-build -b doctest docs docs/_build -W --keep-going -n -E"
-dev = "sphinx-build -b doctest docs docs/_build && sphinx-autobuild docs docs/_build"
+test = "sphinx-build -b doctest docs docs/_build -W --keep-going -n -E"
+clear = "rm -rf docs/_build"
+build = "hatch run docs:clear && sphinx-build docs docs/_build -W --keep-going -n -E"
+dev = "hatch run docs:test  && sphinx-autobuild docs docs/_build"
 
 # Examples environment
 [tool.hatch.envs.examples]

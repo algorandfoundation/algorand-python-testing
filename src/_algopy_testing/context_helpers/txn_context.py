@@ -145,6 +145,8 @@ class TransactionContext:
         :param active_txn_overrides: Overrides for active txn
         :return: None
         """
+        if self._active_group is not None:
+            raise RuntimeError("Nested `create_group` calls are not allowed.")
         if gtxns and active_txn_overrides:
             raise ValueError("cannot specified gtxns and active_txn_overrides at the same time")
         if active_txn_index is not None and not gtxns:
@@ -164,18 +166,18 @@ class TransactionContext:
             last_app_call_txn = app_calls[-1]._txns[-1]
             active_txn_index = processed_gtxns.index(last_app_call_txn)
 
-        previous_group = self._active_group
-        active_group = self._active_group = TransactionGroup(
+        new_group = TransactionGroup(
             txns=processed_gtxns,
             active_txn_index=active_txn_index,
             active_txn_overrides=typing.cast(dict[str, typing.Any], active_txn_overrides),
         )
+        self._active_group = new_group
         try:
             yield
         finally:
-            if active_group.txns:
-                self._groups.append(active_group)
-            self._active_group = previous_group
+            if new_group.txns:
+                self._groups.append(new_group)
+            self._active_group = None
 
     @contextlib.contextmanager
     def _get_or_create_group(self) -> Iterator[TransactionGroup]:

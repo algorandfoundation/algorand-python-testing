@@ -84,3 +84,13 @@ doctest_test_doctest_blocks = "default"
 sphinxmermaid_mermaid_init = {
     "theme": "dark",
 }
+
+# Ignore specific warning types
+# TODO : remove upon refining autodoc2 (or finding alternative to sphinx)
+suppress_warnings = [
+    "myst.xref_missing",
+    "autodoc2.dup_item",
+    "ref.python",  # Ignore Python reference warnings
+    "ref.class",  # Ignore class reference warnings
+    "ref.obj",  # Ignore object reference warnings
+]

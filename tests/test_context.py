@@ -1,3 +1,6 @@
+import typing
+from contextlib import ExitStack
+
 import algopy.itxn
 import algosdk
 import pytest
@@ -13,6 +16,12 @@ from tests.artifacts.Arc4InnerTxns.contract import Arc4InnerTxnsContract
 from tests.artifacts.GlobalStateValidator.contract import GlobalStateValidator
 
 _ARC4_PREFIX_LEN = 2
+
+
+@pytest.fixture()
+def context() -> typing.Generator[AlgopyTestContext, None, None]:
+    with algopy_testing_context() as ctx:
+        yield ctx
 
 
 def test_patch_global_fields() -> None:
@@ -207,3 +216,31 @@ def test_arc4_variable_length_methods(
         value = func(bit_length)
         assert isinstance(value, type_)
         assert len(value.bytes) == expected_length + _ARC4_PREFIX_LEN  # type: ignore[attr-defined]
+
+
+def test_nested_contexts_exception() -> None:
+    with ExitStack() as stack:
+        _ = stack.enter_context(algopy_testing_context())
+        with pytest.raises(
+            RuntimeError, match="Nested `algopy_testing_context`s are not allowed."
+        ):
+            __ = stack.enter_context(algopy_testing_context())
+
+
+def test_nested_create_group(context: AlgopyTestContext) -> None:
+    with (
+        pytest.raises(RuntimeError, match="Nested `create_group` calls are not allowed."),
+        context.txn.create_group(),
+        context.txn.create_group(),
+    ):
+        pass
+
+
+def test_sequential_create_group(context: AlgopyTestContext) -> None:
+    with context.txn.create_group(gtxns=[context.any.txn.payment()]):
+        pass
+
+    with context.txn.create_group(gtxns=[context.any.txn.application_call()]):
+        pass
+
+    assert len(context.txn._groups) == 2
