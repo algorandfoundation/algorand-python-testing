@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 import _algopy_testing
 from _algopy_testing.context_helpers import lazy_context
-from _algopy_testing.decorators.arc4 import maybe_arc4_metadata
+from _algopy_testing.decorators.arc4 import get_active_txn_fields, maybe_arc4_metadata
 from _algopy_testing.mutable import set_attr_on_mutate
 from _algopy_testing.primitives import Bytes, UInt64
 from _algopy_testing.protocols import BytesBacked, UInt64Backed
@@ -41,9 +41,10 @@ class _ContractMeta(type):
         context = lazy_context.value
         app_ref = context.any.application()  # new reference to get a unique app_id
         app_id = app_ref.id.value
-        instance = cls.__new__(cls)  # type: ignore[call-overload]
+        instance: Contract = cls.__new__(cls, *args, **kwargs)  # type: ignore[arg-type]
         instance.__app_id__ = app_id
         app_data = lazy_context.get_app_data(app_id)
+        app_data.contract = instance
         app_data.is_creating = True
 
         fields = lazy_context.get_active_txn_fields()
@@ -64,13 +65,7 @@ class _ContractMeta(type):
             global_num_uint=_algopy_testing.UInt64(state_totals.global_uints),
             local_num_bytes=_algopy_testing.UInt64(state_totals.local_bytes),
             local_num_uint=_algopy_testing.UInt64(state_totals.local_uints),
-            creator=txn.sender,
         )
-
-        app_data = lazy_context.get_app_data(app_id)
-        app_data.contract = instance
-        app_data.is_creating = _has_create_methods(cls)
-
         return instance
 
 
@@ -110,20 +105,18 @@ class Contract(metaclass=_ContractMeta):
         # TODO: find a less convoluted pattern
         if name in ("approval_program", "clear_state_program"):
 
-            def set_active_contract(
-                *args: typing.Any, **kwargs: dict[str, typing.Any]
-            ) -> typing.Any:
+            def create_txn_group(*args: typing.Any, **kwargs: dict[str, typing.Any]) -> typing.Any:
                 context = lazy_context.value
-                # TODO: 1.0 should populate the app txn as much as possible like abimethod does
                 app = context.ledger.get_app(_get_self_or_active_app_id(self))
-                txns = [context.any.txn.application_call(app_id=app)]
+                txn_fields = get_active_txn_fields(app)
+                txns = [context.any.txn.application_call(**txn_fields)]
                 with context.txn._maybe_implicit_txn_group(txns):
                     try:
                         return attr(*args, **kwargs)
                     finally:
                         lazy_context.get_app_data(self).is_creating = False
 
-            return set_active_contract
+            return create_txn_group
 
         if callable(attr) and not name.startswith("__"):
 

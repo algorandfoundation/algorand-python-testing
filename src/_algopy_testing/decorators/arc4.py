@@ -199,32 +199,42 @@ def create_abimethod_txns(
     args: Sequence[object],
     allow_actions: Sequence[_AllowActions],
 ) -> list[algopy.gtxn.TransactionBase]:
+    contract_app = lazy_context.ledger.get_app(app_id)
+    txn_fields = get_active_txn_fields(contract_app, allow_actions)
+
     method = algosdk.abi.Method.from_signature(arc4_signature)
     method_selector = Bytes(method.get_selector())
-    txn_fields = lazy_context.get_active_txn_fields()
-
-    contract_app = lazy_context.ledger.get_app(app_id)
-    txn_app = txn_fields.setdefault("app_id", contract_app)
-    txn_fields.setdefault("sender", lazy_context.value.default_sender)
-    if contract_app != txn_app:
-        raise ValueError("txn app_id does not match contract")
     txn_arrays = _extract_arrays_from_args(
         args,
         method_selector=method_selector,
         sender=txn_fields["sender"],
         app=contract_app,
     )
+    txn_fields.setdefault("accounts", txn_arrays.accounts)
+    txn_fields.setdefault("assets", txn_arrays.assets)
+    txn_fields.setdefault("apps", txn_arrays.apps)
+    txn_fields.setdefault("app_args", txn_arrays.app_args)
 
+    app_txn = lazy_context.any.txn.application_call(**txn_fields)
+    return [*txn_arrays.txns, app_txn]
+
+
+def get_active_txn_fields(
+    app: algopy.Application, allow_actions: Sequence[_AllowActions] = ()
+) -> dict[str, typing.Any]:
+    txn_fields = lazy_context.get_active_txn_overrides()
+    txn_app = txn_fields.setdefault("app_id", app)
+    txn_fields.setdefault("sender", lazy_context.value.default_sender)
+    if app != txn_app:
+        raise ValueError("txn app_id does not match contract")
+
+    # if there is a single allowed action then use that
     try:
         (allow_action,) = allow_actions
     except ValueError:
         pass
     else:
         txn_fields.setdefault("on_completion", allow_action)
-    txn_fields.setdefault("accounts", txn_arrays.accounts)
-    txn_fields.setdefault("assets", txn_arrays.assets)
-    txn_fields.setdefault("apps", txn_arrays.apps)
-    txn_fields.setdefault("app_args", txn_arrays.app_args)
     # at some point could get the actual values by using puya to compile the contract
     # this should be opt-in behaviour, as that it would be too slow to always do
     txn_fields.setdefault(
@@ -233,24 +243,14 @@ def create_abimethod_txns(
     txn_fields.setdefault(
         "clear_state_program_pages", [_algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)]
     )
-
-    app_txn = lazy_context.any.txn.application_call(**txn_fields)
-    return [*txn_arrays.txns, app_txn]
+    return txn_fields
 
 
-def create_baremethod_txns(app_id: int) -> list[algopy.gtxn.TransactionBase]:
-    txn_fields = lazy_context.get_active_txn_fields()
-
-    contract_app = lazy_context.ledger.get_app(app_id)
-    txn_fields.setdefault("app_id", contract_app)
-
-    txn_fields.setdefault(
-        "approval_program_pages", [_algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)]
-    )
-    txn_fields.setdefault(
-        "clear_state_program_pages", [_algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)]
-    )
-    txn_fields.setdefault("sender", lazy_context.value.default_sender)
+def create_baremethod_txns(
+    app_id: int, allow_actions: Sequence[_AllowActions]
+) -> list[algopy.gtxn.TransactionBase]:
+    app = lazy_context.ledger.get_app(app_id)
+    txn_fields = get_active_txn_fields(app, allow_actions)
     return [
         lazy_context.value.any.txn.application_call(
             **txn_fields,
@@ -415,7 +415,7 @@ def baremethod(
         assert isinstance(contract, _algopy_testing.ARC4Contract), "expected ARC4 contract"
         assert fn is not None, "expected function"
 
-        txns = create_baremethod_txns(contract.__app_id__)
+        txns = create_baremethod_txns(contract.__app_id__, allow_actions)
 
         with lazy_context.txn._maybe_implicit_txn_group(txns):
             check_routing_conditions(contract.__app_id__, metadata)

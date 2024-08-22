@@ -47,7 +47,7 @@ class _InternalContext:
     def any(self) -> AlgopyValueGenerator:
         return self.value.any
 
-    def get_active_txn_fields(self) -> dict[str, typing.Any]:
+    def get_active_txn_overrides(self) -> dict[str, typing.Any]:
         active_group = self.txn._active_group
         if active_group is None:
             return {}
