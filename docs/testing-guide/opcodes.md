@@ -105,8 +105,8 @@ from algopy import op
 
 class MyContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
-    def check_txn_fields(self) -> algopy.Bytes:
-        return op.Txn.sender
+    def check_txn_fields(self) -> algopy.arc4.Address:
+        return algopy.arc4.Address(op.Txn.sender)
 
 ... # setup context (below assumes available under 'ctx' variable)
 
@@ -204,7 +204,7 @@ class AppParamsContract(algopy.ARC4Contract):
     def get_app_creator(self, app_id: algopy.Application) -> algopy.arc4.Address:
         creator, exists = algopy.op.AppParamsGet.app_creator(app_id)
         assert exists
-        return creator
+        return algopy.arc4.Address(creator)
 
 ... # setup context (below assumes available under 'ctx' variable)
 
