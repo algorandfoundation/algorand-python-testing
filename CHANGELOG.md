@@ -1,4 +1,10 @@
 # CHANGELOG
+## v0.3.0-beta.8 (2024-08-22)
+
+### Feature
+
+* include ARC4 results in log, and handle &gt; 15 ARC4 arguments (#18) ([`fd83ee8`](https://github.com/algorandfoundation/algorand-python-testing/commit/fd83ee8525a393d4a1a66f20acdb661906d84b51))
+
 ## v0.3.0-beta.7 (2024-08-21)
 
 ## v0.3.0-beta.6 (2024-08-21)
