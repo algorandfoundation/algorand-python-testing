@@ -24,6 +24,9 @@ jobs:
           python-version: "3.12"
           cache: "pip"
 
+      - name: Test doctests
+        run: hatch run docs:test
+
       - name: Build doc
         run: hatch run docs:build
 
