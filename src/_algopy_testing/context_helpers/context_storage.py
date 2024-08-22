@@ -78,13 +78,13 @@ class _InternalContext:
 
     def get_asset_data(self, asset_id: int | algopy.UInt64) -> AssetFields:
         try:
-            return self.ledger.asset_data[int(asset_id)]
+            return self.ledger._asset_data[int(asset_id)]
         except KeyError:
             raise ValueError("Unknown asset, check correct testing context is active") from None
 
     def get_account_data(self, account_public_key: str) -> AccountContextData:
         try:
-            return self.ledger.account_data[account_public_key]
+            return self.ledger._account_data[account_public_key]
         except KeyError:
             raise ValueError("Unknown account, check correct testing context is active") from None
 

@@ -23,25 +23,25 @@ class LedgerContext:
     def __init__(self) -> None:
         from _algopy_testing.models.account import AccountContextData, get_empty_account
 
-        self.account_data = defaultdict[str, AccountContextData](get_empty_account)
-        self.app_data: dict[int, ApplicationContextData] = {}
-        self.asset_data: dict[int, AssetFields] = {}
-        self.blocks: dict[int, dict[str, int]] = {}
-        self.global_fields: GlobalFields = get_default_global_fields()
+        self._account_data = defaultdict[str, AccountContextData](get_empty_account)
+        self._app_data: dict[int, ApplicationContextData] = {}
+        self._asset_data: dict[int, AssetFields] = {}
+        self._blocks: dict[int, dict[str, int]] = {}
+        self._global_fields: GlobalFields = get_default_global_fields()
 
         self._asset_id = iter(range(1001, 2**64))
         self._app_id = iter(range(1001, 2**64))
 
-    def get_next_asset_id(self) -> int:
+    def _get_next_asset_id(self) -> int:
         while True:
             asset_id = next(self._asset_id)
-            if asset_id not in self.asset_data:
+            if asset_id not in self._asset_data:
                 return asset_id
 
-    def get_next_app_id(self) -> int:
+    def _get_next_app_id(self) -> int:
         while True:
             app_id = next(self._app_id)
-            if app_id not in self.app_data:
+            if app_id not in self._app_data:
                 return app_id
 
     def get_account(self, address: str) -> algopy.Account:
@@ -68,7 +68,7 @@ class LedgerContext:
             bool: True if the account exists, False otherwise.
         """
         assert_address_is_valid(address)
-        return address in self.account_data
+        return address in self._account_data
 
     def update_account(
         self,
@@ -84,11 +84,11 @@ class LedgerContext:
             **account_fields: The fields to update.
         """
         assert_address_is_valid(address)
-        self.account_data[address].fields.update(account_fields)
+        self._account_data[address].fields.update(account_fields)
 
         if opted_asset_balances is not None:
             for asset_id, balance in opted_asset_balances.items():
-                self.account_data[address].opted_asset_balances[UInt64(asset_id)] = balance
+                self._account_data[address].opted_asset_balances[UInt64(asset_id)] = balance
 
     def get_asset(self, asset_id: algopy.UInt64 | int) -> algopy.Asset:
         """Get an asset by ID.
@@ -105,7 +105,7 @@ class LedgerContext:
         import algopy
 
         asset_id = int(asset_id) if isinstance(asset_id, algopy.UInt64) else asset_id
-        if asset_id not in self.asset_data:
+        if asset_id not in self._asset_data:
             raise ValueError("Asset not found in testing context!")
 
         return algopy.Asset(asset_id)
@@ -122,7 +122,7 @@ class LedgerContext:
         import algopy
 
         asset_id = int(asset_id) if isinstance(asset_id, algopy.UInt64) else asset_id
-        return asset_id in self.asset_data
+        return asset_id in self._asset_data
 
     def update_asset(self, asset_id: int, **asset_fields: typing.Unpack[AssetFields]) -> None:
         """Update asset fields.
@@ -134,9 +134,9 @@ class LedgerContext:
         Raises:
             ValueError: If the asset is not found.
         """
-        if asset_id not in self.asset_data:
+        if asset_id not in self._asset_data:
             raise ValueError("Asset not found in testing context!")
-        self.asset_data[asset_id].update(asset_fields)
+        self._asset_data[asset_id].update(asset_fields)
 
     def get_app(
         self, app_id: algopy.Contract | algopy.Application | algopy.UInt64 | int
@@ -164,7 +164,7 @@ class LedgerContext:
             bool: True if the application exists, False otherwise.
         """
         app_id = _get_app_id(app_id)
-        return app_id in self.app_data
+        return app_id in self._app_data
 
     def update_app(
         self, app_id: int, **application_fields: typing.Unpack[ApplicationFields]
@@ -343,7 +343,7 @@ class LedgerContext:
             seed (algopy.UInt64 | int): The block seed.
             timestamp (algopy.UInt64 | int): The block timestamp.
         """
-        self.blocks[index] = {"seed": int(seed), "timestamp": int(timestamp)}
+        self._blocks[index] = {"seed": int(seed), "timestamp": int(timestamp)}
 
     def get_block_content(self, index: int, key: str) -> int:
         """Get block content.
@@ -358,7 +358,7 @@ class LedgerContext:
         Raises:
             ValueError: If the block content is not found.
         """
-        content = self.blocks.get(index, {}).get(key, None)
+        content = self._blocks.get(index, {}).get(key, None)
         if content is None:
             raise KeyError(
                 f"Block content for index {index} and key {key} not found in testing context!"
@@ -383,7 +383,7 @@ class LedgerContext:
                 f"Invalid field(s) found during patch for `Global`: {', '.join(invalid_keys)}"
             )
 
-        self.global_fields.update(global_fields)
+        self._global_fields.update(global_fields)
 
     def _get_app_data(
         self, app: algopy.UInt64 | algopy.Application | algopy.Contract | int
@@ -401,7 +401,7 @@ class LedgerContext:
         """
         app_id = _get_app_id(app)
         try:
-            return self.app_data[app_id]
+            return self._app_data[app_id]
         except KeyError:
             raise ValueError("Unknown app id, is there an active transaction?") from None
 

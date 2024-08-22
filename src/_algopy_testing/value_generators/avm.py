@@ -98,7 +98,7 @@ class AVMValueGenerator:
         new_account_address = address or algosdk.account.generate_account()[1]
         new_account = algopy.Account(new_account_address)
         # defaultdict of account_data ensures we get a new initialized account
-        account_data = lazy_context.ledger.account_data[new_account_address]
+        account_data = lazy_context.get_account_data(new_account_address)
         # update so defaults are preserved
         account_data.fields.update(account_fields)
         # can set these since it is a new account
@@ -112,14 +112,14 @@ class AVMValueGenerator:
         r"""Generate and add a new asset with a unique ID."""
         import algopy
 
-        if asset_id and asset_id in lazy_context.ledger.asset_data:
+        if asset_id and asset_id in lazy_context.ledger._asset_data:
             raise ValueError("Asset with such ID already exists in testing context!")
 
         for key in asset_fields:
             if key not in AssetFields.__annotations__:
                 raise AttributeError(f"Invalid field '{key}' for Asset")
 
-        new_asset = algopy.Asset(asset_id or lazy_context.ledger.get_next_asset_id())
+        new_asset = algopy.Asset(asset_id or lazy_context.ledger._get_next_asset_id())
         default_asset_fields = {
             "total": lazy_context.any.uint64(),
             "decimals": lazy_context.any.uint64(1, 6),
@@ -135,7 +135,7 @@ class AVMValueGenerator:
             "reserve": algopy.Account(algosdk.constants.ZERO_ADDRESS),
         }
         merged_fields = dict(ChainMap(asset_fields, default_asset_fields))  # type: ignore[arg-type]
-        lazy_context.ledger.asset_data[int(new_asset.id)] = AssetFields(**merged_fields)  # type: ignore[typeddict-item]
+        lazy_context.ledger._asset_data[int(new_asset.id)] = AssetFields(**merged_fields)  # type: ignore[typeddict-item]
         return new_asset
 
     def application(  # type: ignore[misc]
@@ -147,9 +147,9 @@ class AVMValueGenerator:
     ) -> algopy.Application:
         r"""Generate and add a new application with a unique ID."""
 
-        new_app_id = id if id is not None else lazy_context.ledger.get_next_app_id()
+        new_app_id = id if id is not None else lazy_context.ledger._get_next_app_id()
 
-        if new_app_id in lazy_context.ledger.app_data:
+        if new_app_id in lazy_context.ledger._app_data:
             raise ValueError(
                 f"Application id {new_app_id} has already been configured in test context!"
             )
@@ -184,7 +184,7 @@ class AVMValueGenerator:
                 raise TypeError(f"incorrect type for {field!r}")
             app_fields[field] = value  # type: ignore[literal-required]
 
-        lazy_context.ledger.app_data[new_app_id] = ApplicationContextData(
+        lazy_context.ledger._app_data[new_app_id] = ApplicationContextData(
             fields=app_fields,
             app_id=new_app_id,
             logs=logs or [],

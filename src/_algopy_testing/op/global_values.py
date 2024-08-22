@@ -38,7 +38,7 @@ class GlobalFields(TypedDict, total=False):
 class _Global:
     @property
     def _fields(self) -> GlobalFields:
-        return lazy_context.ledger.global_fields
+        return lazy_context.ledger._global_fields
 
     @property
     def current_application_address(self) -> algopy.Account:
