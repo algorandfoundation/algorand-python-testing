@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 
 from _algopy_testing.protocols import UInt64Backed
+from _algopy_testing.utils import resolve_asset_index
 
 if typing.TYPE_CHECKING:
     import algopy
@@ -65,39 +66,19 @@ class Asset(UInt64Backed):
             "Please mock this method using your python testing framework of choice."
         )
 
-    def __getattr__(self, name: str) -> object:
+    @property
+    def fields(self) -> AssetFields:
         from _algopy_testing.context_helpers import lazy_context
 
-        if int(self.id) not in lazy_context.ledger.asset_data:
-            # check if its not 0 (which means its not
-            # instantiated/opted-in yet, and instantiated directly
-            # without invoking any_asset).
-            if self.id == 0:
-                # Handle dunder methods specially
-                if name.startswith("__") and name.endswith("__"):
-                    return getattr(type(self), name)
-                # For non-dunder attributes, check in __dict__
-                if name in self.__dict__:
-                    return self.__dict__[name]
-                raise AttributeError(
-                    f"'{self.__class__.__name__}' object has no attribute '{name}'"
-                )
+        return lazy_context.get_asset_data(resolve_asset_index(self.id))
 
-            raise ValueError(
-                "`algopy.Asset` is not present in the test context! "
-                "Use `context.add_asset()` or `context.any.asset()` to add the asset to "
-                "your test setup."
-            )
-
-        return_value = lazy_context.get_asset_data(self.id).get(name)
-        if return_value is None:
+    def __getattr__(self, name: str) -> typing.Any:
+        try:
+            return self.fields[name]  # type: ignore[literal-required]
+        except KeyError:
             raise AttributeError(
-                f"The value for '{name}' in the test context is None. "
-                f"Make sure to patch the global field '{name}' using your `AlgopyTestContext` "
-                "instance."
-            )
-
-        return return_value
+                f"'{self.__class__.__name__}' object has no attribute '{name}'"
+            ) from None
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Asset):

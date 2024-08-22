@@ -29,6 +29,28 @@ if TYPE_CHECKING:
     from _algopy_testing.op.global_values import GlobalFields
 
 
+def resolve_app_index(app_id_or_index: algopy.UInt64 | int) -> int:
+    from _algopy_testing.context_helpers import lazy_context
+
+    if app_id_or_index >= 1001:
+        app_id = app_id_or_index
+    else:
+        txn = lazy_context.active_group.active_txn
+        app_id = txn.apps(app_id_or_index).id
+    return int(app_id)
+
+
+def resolve_asset_index(asset_id_or_index: algopy.UInt64 | int) -> int:
+    from _algopy_testing.context_helpers import lazy_context
+
+    if asset_id_or_index >= 1001:
+        asset_id = asset_id_or_index
+    else:
+        txn = lazy_context.active_group.active_txn
+        asset_id = txn.assets(asset_id_or_index).id
+    return int(asset_id)
+
+
 def generate_random_int(min_value: int, max_value: int) -> int:
     return secrets.randbelow(max_value - min_value + 1) + min_value
 

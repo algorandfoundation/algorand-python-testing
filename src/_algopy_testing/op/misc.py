@@ -10,7 +10,11 @@ from _algopy_testing.enums import TransactionType
 from _algopy_testing.models import Account, Application, Asset
 from _algopy_testing.primitives.bytes import Bytes
 from _algopy_testing.primitives.uint64 import UInt64
-from _algopy_testing.utils import raise_mocked_function_error
+from _algopy_testing.utils import (
+    raise_mocked_function_error,
+    resolve_app_index,
+    resolve_asset_index,
+)
 
 if typing.TYPE_CHECKING:
     import algopy
@@ -23,10 +27,7 @@ def err() -> None:
 def _get_app(app: algopy.Application | algopy.UInt64 | int) -> Application:
     if isinstance(app, Application):
         return app
-    if app >= 1001:
-        return lazy_context.ledger.get_app(app)
-    txn = lazy_context.active_group.active_txn
-    return txn.apps(app)
+    return lazy_context.ledger.get_app(resolve_app_index(app))
 
 
 def _get_account(acc: algopy.Account | algopy.UInt64 | int) -> Account:
@@ -39,10 +40,7 @@ def _get_account(acc: algopy.Account | algopy.UInt64 | int) -> Account:
 def _get_asset(asset: algopy.Asset | algopy.UInt64 | int) -> Asset:
     if isinstance(asset, Asset):
         return asset
-    if asset >= 1001:
-        return lazy_context.ledger.get_asset(asset)
-    txn = lazy_context.active_group.active_txn
-    return txn.assets(asset)
+    return lazy_context.ledger.get_asset(resolve_asset_index(asset))
 
 
 def _get_bytes(b: algopy.Bytes | bytes) -> bytes:
