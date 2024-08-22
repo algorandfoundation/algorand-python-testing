@@ -145,6 +145,8 @@ class TransactionContext:
         :param active_txn_overrides: Overrides for active txn
         :return: None
         """
+        if self._active_group is not None:
+            raise RuntimeError("Nested `create_group` calls are not allowed.")
         if gtxns and active_txn_overrides:
             raise ValueError("cannot specified gtxns and active_txn_overrides at the same time")
         if active_txn_index is not None and not gtxns:

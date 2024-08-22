@@ -104,6 +104,9 @@ def algopy_testing_context(
     """
     from _algopy_testing.context import AlgopyTestContext
 
+    if _var.get(None) is not None:
+        raise RuntimeError("Nested `algopy_testing_context`s are not allowed.")
+
     token = _var.set(
         AlgopyTestContext(
             default_sender=default_sender,
