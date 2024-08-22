@@ -8,7 +8,6 @@ For 'primitive `algopy` types such as `Account`, `Application`, `Asset`, `UInt64
 
 ```{testsetup}
 import algopy
-import algopy_testing
 from algopy_testing import algopy_testing_context
 
 # Create the context manager for snippets below

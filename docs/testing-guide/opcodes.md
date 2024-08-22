@@ -6,7 +6,6 @@ The [coverage](coverage.md) file provides a comprehensive list of all opcodes an
 
 ```{testsetup}
 import algopy
-import algopy_testing
 from algopy_testing import algopy_testing_context
 
 # Create the context manager for snippets below
@@ -29,7 +28,7 @@ The following opcodes are demonstrated:
 -   `op.ecdsa_verify`
 
 ```{testcode}
-import algopy.op as op
+from algopy import op
 
 # SHA256 hash
 data = algopy.Bytes(b"Hello, World!")
@@ -59,7 +58,7 @@ The following opcodes are demonstrated:
 -   `op.setbit_uint64`
 
 ```{testcode}
-import algopy.op as op
+from algopy import op
 
 # Addition with carry
 result, carry = op.addw(algopy.UInt64(2**63), algopy.UInt64(2**63))
@@ -80,7 +79,7 @@ These types necessitate interaction with the transaction context:
 ### algopy.op.Global
 
 ```{testcode}
-import algopy.op as op
+from algopy import op
 
 class MyContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
@@ -102,7 +101,7 @@ assert result == algopy.UInt64(101000)
 ### algopy.op.Txn
 
 ```{testcode}
-import algopy.op as op
+from algopy import op
 
 class MyContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
@@ -121,7 +120,7 @@ assert result == custom_sender
 ### algopy.op.AssetHoldingGet
 
 ```{testcode}
-import algopy.op as op
+from algopy import op
 
 class AssetContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
@@ -141,7 +140,7 @@ assert result == algopy.UInt64(5000)
 ### algopy.op.AppGlobal
 
 ```{testcode}
-import algopy.op as op
+from algopy import op
 
 class StateContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
@@ -162,7 +161,7 @@ assert stored_value == 42
 ### algopy.op.Block
 
 ```{testcode}
-import algopy.op as op
+from algopy import op
 
 class BlockInfoContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
@@ -180,7 +179,7 @@ assert seed == algopy.op.itob(123456)
 ### algopy.op.AcctParamsGet
 
 ```{testcode}
-import algopy.op as op
+from algopy import op
 
 class AccountParamsContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
@@ -218,8 +217,7 @@ assert creator == context.default_sender
 ### algopy.op.AssetParamsGet
 
 ```{testcode}
-from algopy_testing import algopy_testing_context
-import algopy.op as op
+from algopy import op
 
 class AssetParamsContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
@@ -239,8 +237,7 @@ assert total == algopy.UInt64(1000000)
 ### algopy.op.Box
 
 ```{testcode}
-from algopy_testing import algopy_testing_context
-import algopy.op as op
+from algopy import op
 
 class BoxStorageContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
@@ -329,23 +326,22 @@ assert result == 11
 ```{testcode}
 from unittest.mock import patch, MagicMock
 import algopy
-from algopy_testing.primitives import Bytes
 
 def test_mock_vrf_verify():
-    mock_result = (Bytes(b'mock_output'), True)
+    mock_result = (algopy.Bytes(b'mock_output'), True)
     with patch('algopy.op.vrf_verify', return_value=mock_result) as mock_vrf_verify:
         result = algopy.op.vrf_verify(
             algopy.op.VrfVerify.VrfAlgorand,
-            Bytes(b'proof'),
-            Bytes(b'message'),
-            Bytes(b'public_key')
+            algopy.Bytes(b'proof'),
+            algopy.Bytes(b'message'),
+            algopy.Bytes(b'public_key')
         )
     assert result == mock_result
     mock_vrf_verify.assert_called_once_with(
         algopy.op.VrfVerify.VrfAlgorand,
-        Bytes(b'proof'),
-        Bytes(b'message'),
-        Bytes(b'public_key')
+        algopy.Bytes(b'proof'),
+        algopy.Bytes(b'message'),
+        algopy.Bytes(b'public_key')
     )
 
 test_mock_vrf_verify()
@@ -356,19 +352,18 @@ test_mock_vrf_verify()
 ```{testcode}
 from unittest.mock import patch, MagicMock
 import algopy
-from algopy_testing.primitives import Bytes
 
 def test_mock_elliptic_curve_decompress():
-    mock_result = (Bytes(b'x_coord'), Bytes(b'y_coord'))
+    mock_result = (algopy.Bytes(b'x_coord'), algopy.Bytes(b'y_coord'))
     with patch('algopy.op.EllipticCurve.decompress', return_value=mock_result) as mock_decompress:
         result = algopy.op.EllipticCurve.decompress(
             algopy.op.EC.BN254g1,
-            Bytes(b'compressed_point')
+            algopy.Bytes(b'compressed_point')
         )
     assert result == mock_result
     mock_decompress.assert_called_once_with(
         algopy.op.EC.BN254g1,
-        Bytes(b'compressed_point')
+        algopy.Bytes(b'compressed_point')
     )
 
 test_mock_elliptic_curve_decompress()
