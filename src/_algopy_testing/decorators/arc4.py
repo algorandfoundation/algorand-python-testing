@@ -306,7 +306,7 @@ def _extract_arrays_from_args(
 
 
 def _generate_arc4_signature_from_fn(fn: typing.Callable[_P, _R], arc4_name: str) -> str:
-    annotations = fn.__annotations__.copy()
+    annotations = inspect.get_annotations(fn, eval_str=True).copy()
     returns = algosdk.abi.Returns(_type_to_arc4(annotations.pop("return")))
     method = algosdk.abi.Method(
         name=arc4_name,

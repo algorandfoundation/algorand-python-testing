@@ -69,14 +69,19 @@ class TransactionContext:
     @contextlib.contextmanager
     def _maybe_implicit_txn_group(
         self, gtxns: typing.Sequence[algopy.gtxn.TransactionBase]
-    ) -> Iterator[None]:
+    ) -> Iterator[TransactionGroup]:
         """Only creates a group if there isn't one already active."""
+        expected_app_id = gtxns[-1].app_id.id
         with self._get_or_create_group() as active_group:
             if not active_group.txns:
                 active_group._set_txn_group(gtxns)
-            elif gtxns[-1].app_id != active_group.active_app_id:
-                raise ValueError("Executing contract has different app_id than active txn")
-            yield
+            elif expected_app_id != active_group.active_app_id:
+                from _algopy_testing.context_helpers import lazy_context
+
+                app_data = lazy_context.get_app_data(active_group.active_app_id)
+                if not (app_data.is_creating and expected_app_id == 0):
+                    raise ValueError("Executing contract has different app_id than active txn")
+            yield active_group
 
     def defer_app_call(
         self,

@@ -47,14 +47,20 @@ class _ContractMeta(type):
         app_data.contract = instance
         app_data.is_creating = True
 
-        fields = lazy_context.get_active_txn_fields()
-        fields["app_id"] = app_ref
-
-        # TODO: 1.0 provide app_id during instantiation without requiring a txn
+        fields = get_active_txn_fields(app_ref)
         txn = context.any.txn.application_call(**fields)
-        with context.txn.create_group([txn]):
-            instance = super().__call__(*args, **kwargs)
-            instance.__app_id__ = app_id
+        with context.txn._maybe_implicit_txn_group([txn]) as active_group:
+            if active_group.active_app_id != app_id:
+                raise ValueError(
+                    "contract being instantiated has different app_id than active txn"
+                )
+            creator = active_group.active_txn.sender
+            context.ledger.update_app(
+                app_id,
+                creator=creator,
+            )
+            instance.__init__(*args, **kwargs)  # type: ignore[misc]
+        app_data.is_creating = _has_create_methods(cls)
 
         assert isinstance(instance, Contract)
         cls_state_totals = cls._state_totals or StateTotals()  # type: ignore[attr-defined]
