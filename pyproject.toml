@@ -41,7 +41,7 @@ Source = "https://github.com/algorandfoundation/puya/tree/main/algopy_testing"
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/algopy", 'src/algopy_testing']
+packages = ["src/algopy", 'src/algopy_testing', 'src/_algopy_testing']
 
 [[tool.hatch.envs.all.matrix]]
 python = ["3.12"]
@@ -126,7 +126,6 @@ clean_dist = "rm -rf dist"
 
 # docs environment
 [tool.hatch.envs.docs]
-detached = true
 path = ".venv.docs"
 type = "virtual"
 python = "3.12"
@@ -141,13 +140,13 @@ dependencies = [
     "ipykernel",
     "pytest",
     "py-algorand-sdk",
-    "algokit-utils",
-    "pycryptodomex>=3.6.0,<4",
-    "pynacl>=1.4.0,<2",
-    "ecdsa>=0.17.0",
-    "coincurve>=19.0.1",
-    "algorand-python",
-    "algorand-python-testing @ {root:uri}",
+]
+# environment has algopy_testing included as an editable dependency
+# however it also includes the package dependencies
+# the stubs can't be in the same as the project when it is editable
+# so explicitly remove them
+post-install-commands = [
+  "hatch run docs:pip uninstall -y algorand-python",
 ]
 
 [tool.hatch.envs.docs.scripts]
