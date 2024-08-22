@@ -18,8 +18,8 @@ _ARC4_PREFIX_LEN = 2
 def test_patch_global_fields() -> None:
     with algopy_testing_context() as context:
         context.ledger.patch_global_fields(min_txn_fee=UInt64(100), min_balance=UInt64(10))
-        assert context.ledger.global_fields["min_txn_fee"] == 100
-        assert context.ledger.global_fields["min_balance"] == 10
+        assert context.ledger._global_fields["min_txn_fee"] == 100
+        assert context.ledger._global_fields["min_balance"] == 10
 
         with pytest.raises(AttributeError, match="InvalidField"):
             context.ledger.patch_global_fields(InvalidField=123)  # type: ignore   # noqa: PGH003
@@ -112,14 +112,14 @@ def test_context_reset() -> None:
             clear_state_program=Bytes(b"TestClear"),
         )
         context.reset()
-        assert len(context.ledger.account_data) == 0
-        assert len(context.ledger.asset_data) == 0
-        assert len(context.ledger.app_data) == 0
+        assert len(context.ledger._account_data) == 0
+        assert len(context.ledger._asset_data) == 0
+        assert len(context.ledger._app_data) == 0
         with pytest.raises(ValueError, match="No group transactions found"):
             assert context.txn.last_group
         assert len(context.txn._groups) == 0
-        assert context.ledger.get_next_asset_id() == 1001
-        assert context.ledger.get_next_app_id() == 1001
+        assert context.ledger._get_next_asset_id() == 1001
+        assert context.ledger._get_next_app_id() == 1001
 
 
 def test_algopy_testing_context() -> None:

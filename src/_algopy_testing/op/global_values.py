@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import time
 import typing
 from typing import TypedDict, TypeVar
 
@@ -38,7 +37,7 @@ class GlobalFields(TypedDict, total=False):
 class _Global:
     @property
     def _fields(self) -> GlobalFields:
-        return lazy_context.ledger.global_fields
+        return lazy_context.ledger._global_fields
 
     @property
     def current_application_address(self) -> algopy.Account:
@@ -60,8 +59,7 @@ class _Global:
         try:
             return self._fields["latest_timestamp"]
         except KeyError:
-            # TODO: 1.0 Construct this while setting default values rather than here.
-            return UInt64(int(time.time()))
+            return UInt64(lazy_context.active_group._latest_timestamp)
 
     @property
     def group_size(self) -> algopy.UInt64:

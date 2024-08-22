@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import inspect
 import typing
 
 from _algopy_testing.primitives import UInt64
 from _algopy_testing.protocols import UInt64Backed
-from _algopy_testing.utils import as_int64
+from _algopy_testing.utils import as_int64, resolve_app_index
 
 if typing.TYPE_CHECKING:
     from collections.abc import Sequence
@@ -70,22 +69,15 @@ class Application(UInt64Backed):
     def fields(self) -> ApplicationFields:
         from _algopy_testing.context_helpers import lazy_context
 
-        if self._id == 0:
-            raise ValueError("cannot access properties of an app with an id of 0") from None
-        return lazy_context.get_app_data(self._id).fields
+        return lazy_context.get_app_data(resolve_app_index(self._id)).fields
 
     def __getattr__(self, name: str) -> typing.Any:
-        if name in inspect.get_annotations(ApplicationFields):
-            value = self.fields.get(name)
-            # TODO: 1.0 ensure reasonable default values are present (like account does)
-            if value is None:
-                raise ValueError(
-                    f"The Application value '{name}' has not been defined on the test context. "
-                    f"Make sure to patch the field '{name}' using your `AlgopyTestContext` "
-                    "instance."
-                )
-            return value
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+        try:
+            return self.fields[name]  # type: ignore[literal-required]
+        except KeyError:
+            raise AttributeError(
+                f"'{self.__class__.__name__}' object has no attribute '{name}'"
+            ) from None
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Application):

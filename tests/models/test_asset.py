@@ -88,9 +88,7 @@ def test_asset_attributes(context: AlgopyTestContext) -> None:
 def test_asset_attribute_error(context: AlgopyTestContext) -> None:
     asset = context.any.asset()
 
-    with pytest.raises(
-        AttributeError, match="The value for 'non_existent' in the test context is None"
-    ):
+    with pytest.raises(AttributeError, match="'Asset' object has no attribute 'non_existent'"):
         asset.non_existent  # noqa: B018
 
 

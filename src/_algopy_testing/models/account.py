@@ -82,7 +82,7 @@ class Account(BytesBacked):
     def data(self) -> AccountContextData:
         from _algopy_testing.context_helpers import lazy_context
 
-        return lazy_context.ledger.account_data[self.public_key]
+        return lazy_context.get_account_data(self.public_key)
 
     @property
     def balance(self) -> algopy.UInt64:
