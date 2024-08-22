@@ -115,8 +115,8 @@ from algopy_testing import AlgopyTestContext, algopy_testing_context
 
 class SimpleContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
-    def check_sender(self) -> algopy.Bytes:
-        return algopy.Txn.sender
+    def check_sender(self) -> algopy.arc4.Address:
+        return algopy.arc4.Address(algopy.Txn.sender)
 ...
 
 # Create a contract instance

@@ -4,8 +4,8 @@ import typing
 
 import algosdk
 
-from _algopy_testing._context_helpers import LedgerContext, TransactionContext
-from _algopy_testing._value_generators import AlgopyValueGenerator
+from _algopy_testing.context_helpers import LedgerContext, TransactionContext
+from _algopy_testing.value_generators import AlgopyValueGenerator
 
 if typing.TYPE_CHECKING:
     from collections.abc import Sequence

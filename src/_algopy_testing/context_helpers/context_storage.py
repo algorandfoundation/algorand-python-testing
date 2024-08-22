@@ -9,13 +9,13 @@ if typing.TYPE_CHECKING:
 
     import algopy
 
-    from _algopy_testing._context_helpers.ledger_context import LedgerContext
-    from _algopy_testing._context_helpers.txn_context import TransactionContext, TransactionGroup
-    from _algopy_testing._value_generators import AlgopyValueGenerator
     from _algopy_testing.context import AlgopyTestContext
+    from _algopy_testing.context_helpers.ledger_context import LedgerContext
+    from _algopy_testing.context_helpers.txn_context import TransactionContext, TransactionGroup
     from _algopy_testing.models.account import AccountContextData
     from _algopy_testing.models.application import ApplicationContextData
     from _algopy_testing.models.asset import AssetFields
+    from _algopy_testing.value_generators import AlgopyValueGenerator
 
 _var: ContextVar[AlgopyTestContext] = ContextVar("_var")
 
@@ -47,7 +47,7 @@ class _InternalContext:
     def any(self) -> AlgopyValueGenerator:
         return self.value.any
 
-    def get_active_txn_fields(self) -> dict[str, typing.Any]:
+    def get_active_txn_overrides(self) -> dict[str, typing.Any]:
         active_group = self.txn._active_group
         if active_group is None:
             return {}

@@ -6,7 +6,7 @@ from copy import deepcopy
 
 import algosdk
 
-from _algopy_testing._context_helpers import lazy_context
+from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.enums import TransactionType
 from _algopy_testing.models import Account, Asset
 from _algopy_testing.models.txn_fields import (

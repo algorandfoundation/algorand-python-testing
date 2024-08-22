@@ -1,4 +1,4 @@
-from _algopy_testing._compiled import (
+from _algopy_testing.compiled import (
     CompiledContract,
     CompiledLogicSig,
     compile_contract,

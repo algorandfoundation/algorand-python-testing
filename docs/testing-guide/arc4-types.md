@@ -12,7 +12,6 @@ For all `algopy.arc4` types with and without respective _value generator_, insta
 
 ```{testsetup}
 import algopy
-import algopy_testing
 from algopy_testing import algopy_testing_context
 
 # Create the context manager for snippets below

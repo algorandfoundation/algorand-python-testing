@@ -1,5 +1,5 @@
-from _algopy_testing._context_helpers import lazy_context
 from _algopy_testing.constants import UINT64_BYTES_LENGTH
+from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.primitives.bytes import Bytes
 from _algopy_testing.primitives.uint64 import UInt64
 from _algopy_testing.protocols import BytesBacked

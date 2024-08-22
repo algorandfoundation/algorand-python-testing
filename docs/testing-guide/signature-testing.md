@@ -4,7 +4,6 @@ Test Algorand smart signatures (LogicSigs) with ease using the Algorand Python T
 
 ```{testsetup}
 import algopy
-import algopy_testing
 from algopy_testing import algopy_testing_context
 
 # Create the context manager for snippets below

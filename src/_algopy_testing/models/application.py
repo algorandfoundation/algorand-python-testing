@@ -68,7 +68,7 @@ class Application(UInt64Backed):
 
     @property
     def fields(self) -> ApplicationFields:
-        from _algopy_testing._context_helpers import lazy_context
+        from _algopy_testing.context_helpers import lazy_context
 
         if self._id == 0:
             raise ValueError("cannot access properties of an app with an id of 0") from None

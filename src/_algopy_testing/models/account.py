@@ -80,7 +80,7 @@ class Account(BytesBacked):
 
     @property
     def data(self) -> AccountContextData:
-        from _algopy_testing._context_helpers import lazy_context
+        from _algopy_testing.context_helpers import lazy_context
 
         return lazy_context.ledger.account_data[self.public_key]
 

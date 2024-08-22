@@ -17,7 +17,7 @@ from ecdsa import (  # type: ignore  # noqa: PGH003
     VerifyingKey,
 )
 
-from _algopy_testing._context_helpers import lazy_context
+from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.enums import OnCompleteAction
 from _algopy_testing.primitives import Bytes, UInt64
 from _algopy_testing.utils import as_bytes, raise_mocked_function_error

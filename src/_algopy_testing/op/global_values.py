@@ -6,7 +6,7 @@ from typing import TypedDict, TypeVar
 
 import algosdk
 
-from _algopy_testing._context_helpers import lazy_context
+from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.models import Account
 from _algopy_testing.primitives import UInt64
 

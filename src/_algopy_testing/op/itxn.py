@@ -2,7 +2,7 @@ import contextlib
 import typing
 from collections.abc import Callable, Sequence
 
-from _algopy_testing._context_helpers import lazy_context
+from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.op.constants import OP_MEMBER_TO_TXN_MEMBER
 
 

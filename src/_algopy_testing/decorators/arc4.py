@@ -9,8 +9,8 @@ import typing
 import algosdk
 
 import _algopy_testing
-from _algopy_testing._context_helpers import lazy_context
-from _algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM
+from _algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM, ARC4_RETURN_PREFIX
+from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.enums import OnCompleteAction
 from _algopy_testing.primitives import BigUInt, Bytes, String, UInt64
 
@@ -144,6 +144,8 @@ def abimethod(  # noqa: PLR0913
     readonly: bool = False,
     default_args: Mapping[str, str | object] | None = None,
 ) -> Callable[[Callable[_P, _R]], Callable[_P, _R]] | Callable[_P, _R]:
+    from _algopy_testing.utilities.log import log
+
     allow_actions = _parse_allow_actions(allow_actions)
 
     if fn is None:
@@ -183,7 +185,9 @@ def abimethod(  # noqa: PLR0913
         with context.txn._maybe_implicit_txn_group(txns):
             check_routing_conditions(app_id, metadata)
             result = fn(*args, **kwargs)
-            # TODO: 1.0 add result along with ARC4 log prefix to application logs?
+            if result is not None:
+                abi_result = _algopy_testing.arc4.native_value_to_arc4(result)
+                log(ARC4_RETURN_PREFIX, abi_result)
             return result
 
     return wrapper
@@ -195,32 +199,42 @@ def create_abimethod_txns(
     args: Sequence[object],
     allow_actions: Sequence[_AllowActions],
 ) -> list[algopy.gtxn.TransactionBase]:
+    contract_app = lazy_context.ledger.get_app(app_id)
+    txn_fields = get_active_txn_fields(contract_app, allow_actions)
+
     method = algosdk.abi.Method.from_signature(arc4_signature)
     method_selector = Bytes(method.get_selector())
-    txn_fields = lazy_context.get_active_txn_fields()
-
-    contract_app = lazy_context.ledger.get_app(app_id)
-    txn_app = txn_fields.setdefault("app_id", contract_app)
-    txn_fields.setdefault("sender", lazy_context.value.default_sender)
-    if contract_app != txn_app:
-        raise ValueError("txn app_id does not match contract")
     txn_arrays = _extract_arrays_from_args(
         args,
         method_selector=method_selector,
         sender=txn_fields["sender"],
         app=contract_app,
     )
+    txn_fields.setdefault("accounts", txn_arrays.accounts)
+    txn_fields.setdefault("assets", txn_arrays.assets)
+    txn_fields.setdefault("apps", txn_arrays.apps)
+    txn_fields.setdefault("app_args", txn_arrays.app_args)
 
+    app_txn = lazy_context.any.txn.application_call(**txn_fields)
+    return [*txn_arrays.txns, app_txn]
+
+
+def get_active_txn_fields(
+    app: algopy.Application, allow_actions: Sequence[_AllowActions] = ()
+) -> dict[str, typing.Any]:
+    txn_fields = lazy_context.get_active_txn_overrides()
+    txn_app = txn_fields.setdefault("app_id", app)
+    txn_fields.setdefault("sender", lazy_context.value.default_sender)
+    if app != txn_app:
+        raise ValueError("txn app_id does not match contract")
+
+    # if there is a single allowed action then use that
     try:
         (allow_action,) = allow_actions
     except ValueError:
         pass
     else:
         txn_fields.setdefault("on_completion", allow_action)
-    txn_fields.setdefault("accounts", txn_arrays.accounts)
-    txn_fields.setdefault("assets", txn_arrays.assets)
-    txn_fields.setdefault("apps", txn_arrays.apps)
-    txn_fields.setdefault("app_args", txn_arrays.app_args)
     # at some point could get the actual values by using puya to compile the contract
     # this should be opt-in behaviour, as that it would be too slow to always do
     txn_fields.setdefault(
@@ -229,24 +243,14 @@ def create_abimethod_txns(
     txn_fields.setdefault(
         "clear_state_program_pages", [_algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)]
     )
-
-    app_txn = lazy_context.any.txn.application_call(**txn_fields)
-    return [*txn_arrays.txns, app_txn]
+    return txn_fields
 
 
-def create_baremethod_txns(app_id: int) -> list[algopy.gtxn.TransactionBase]:
-    txn_fields = lazy_context.get_active_txn_fields()
-
-    contract_app = lazy_context.ledger.get_app(app_id)
-    txn_fields.setdefault("app_id", contract_app)
-
-    txn_fields.setdefault(
-        "approval_program_pages", [_algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)]
-    )
-    txn_fields.setdefault(
-        "clear_state_program_pages", [_algopy_testing.Bytes(ALWAYS_APPROVE_TEAL_PROGRAM)]
-    )
-    txn_fields.setdefault("sender", lazy_context.value.default_sender)
+def create_baremethod_txns(
+    app_id: int, allow_actions: Sequence[_AllowActions]
+) -> list[algopy.gtxn.TransactionBase]:
+    app = lazy_context.ledger.get_app(app_id)
+    txn_fields = get_active_txn_fields(app, allow_actions)
     return [
         lazy_context.value.any.txn.application_call(
             **txn_fields,
@@ -273,36 +277,36 @@ def _extract_arrays_from_args(
     apps = [app]
     assets = list[_algopy_testing.Asset]()
     accounts = [sender]
-    app_args = [method_selector]
+    app_args = list[_algopy_testing.arc4._ABIEncoded]()
     for arg in args:
         match arg:
             case _algopy_testing.gtxn.TransactionBase() as txn:
                 txns.append(txn)
             case _algopy_testing.Account() as acc:
-                app_args.append(_algopy_testing.arc4.UInt8(len(accounts)).bytes)
+                app_args.append(_algopy_testing.arc4.UInt8(len(accounts)))
                 accounts.append(acc)
             case _algopy_testing.Asset() as asset:
-                app_args.append(_algopy_testing.arc4.UInt8(len(assets)).bytes)
+                app_args.append(_algopy_testing.arc4.UInt8(len(assets)))
                 assets.append(asset)
             case _algopy_testing.Application() as arg_app:
-                app_args.append(_algopy_testing.arc4.UInt8(len(apps)).bytes)
+                app_args.append(_algopy_testing.arc4.UInt8(len(apps)))
                 apps.append(arg_app)
             case _ as maybe_native:
-                app_args.append(_algopy_testing.arc4.native_value_to_arc4(maybe_native).bytes)
-    if len(app_args) > 16:
-        # TODO:1.0 pack extra args into an ARC4 tuple
-        raise NotImplementedError
+                app_args.append(_algopy_testing.arc4.native_value_to_arc4(maybe_native))
+    if len(app_args) > 15:
+        packed = _algopy_testing.arc4.Tuple(tuple(app_args[14:]))
+        app_args[14:] = [packed]
     return _TxnArrays(
         txns=txns,
         apps=apps,
         assets=assets,
         accounts=accounts,
-        app_args=app_args,
+        app_args=[method_selector, *(a.bytes for a in app_args)],
     )
 
 
 def _generate_arc4_signature_from_fn(fn: typing.Callable[_P, _R], arc4_name: str) -> str:
-    annotations = fn.__annotations__.copy()
+    annotations = inspect.get_annotations(fn, eval_str=True).copy()
     returns = algosdk.abi.Returns(_type_to_arc4(annotations.pop("return")))
     method = algosdk.abi.Method(
         name=arc4_name,
@@ -411,7 +415,7 @@ def baremethod(
         assert isinstance(contract, _algopy_testing.ARC4Contract), "expected ARC4 contract"
         assert fn is not None, "expected function"
 
-        txns = create_baremethod_txns(contract.__app_id__)
+        txns = create_baremethod_txns(contract.__app_id__, allow_actions)
 
         with lazy_context.txn._maybe_implicit_txn_group(txns):
             check_routing_conditions(contract.__app_id__, metadata)

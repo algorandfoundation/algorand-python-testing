@@ -26,11 +26,10 @@ def context() -> Generator[AlgopyTestContext, None, None]:
             yield ctx
 
 
-def test_init_without_key(
-    context: AlgopyTestContext,  # noqa: ARG001
-) -> None:
-    contract = ATestContract()
-    assert contract.uint_64_box_ref.key == b"uint_64_box_ref"
+def test_init_without_key() -> None:
+    with algopy_testing_context():
+        contract = ATestContract()
+        assert contract.uint_64_box_ref.key == b"uint_64_box_ref"
 
 
 @pytest.mark.parametrize(

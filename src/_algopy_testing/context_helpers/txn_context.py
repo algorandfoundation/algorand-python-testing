@@ -5,7 +5,7 @@ import typing
 
 import algosdk
 
-from _algopy_testing._itxn_loader import ITxnGroupLoader
+from _algopy_testing import gtxn
 from _algopy_testing.decorators.arc4 import (
     check_routing_conditions,
     create_abimethod_txns,
@@ -14,21 +14,19 @@ from _algopy_testing.decorators.arc4 import (
     get_ordered_args,
 )
 from _algopy_testing.enums import OnCompleteAction
+from _algopy_testing.gtxn import TransactionBase
+from _algopy_testing.itxn import InnerTransaction, submit_txns
+from _algopy_testing.itxn_loader import ITxnGroupLoader, ITxnLoader
+from _algopy_testing.models import Application
+from _algopy_testing.primitives import UInt64
 
 if typing.TYPE_CHECKING:
     from collections.abc import Callable, Iterator, Sequence
 
     import algopy
 
-    from _algopy_testing._itxn_loader import InnerTransactionResultType
+    from _algopy_testing.itxn_loader import InnerTransactionResultType
     from _algopy_testing.models.txn_fields import ActiveTransactionFields
-
-from _algopy_testing import gtxn
-from _algopy_testing._itxn_loader import ITxnLoader
-from _algopy_testing.gtxn import TransactionBase
-from _algopy_testing.itxn import InnerTransaction, submit_txns
-from _algopy_testing.models import Application
-from _algopy_testing.primitives import UInt64
 
 TReturn = typing.TypeVar("TReturn")
 TParamSpec = typing.ParamSpec("TParamSpec")
@@ -71,19 +69,19 @@ class TransactionContext:
     @contextlib.contextmanager
     def _maybe_implicit_txn_group(
         self, gtxns: typing.Sequence[algopy.gtxn.TransactionBase]
-    ) -> Iterator[None]:
+    ) -> Iterator[TransactionGroup]:
         """Only creates a group if there isn't one already active."""
-        active_group = self._active_group
-        if not active_group:
-            ctx: typing.ContextManager[None] = self.create_group(gtxns)
-        else:
+        expected_app_id = gtxns[-1].app_id.id
+        with self._get_or_create_group() as active_group:
             if not active_group.txns:
                 active_group._set_txn_group(gtxns)
-            elif gtxns[-1].app_id != active_group.active_app_id:
-                raise ValueError("Executing contract has different app_id than active txn")
-            ctx = contextlib.nullcontext()
-        with ctx:
-            yield
+            elif expected_app_id != active_group.active_app_id:
+                from _algopy_testing.context_helpers import lazy_context
+
+                app_data = lazy_context.get_app_data(active_group.active_app_id)
+                if not (app_data.is_creating and expected_app_id == 0):
+                    raise ValueError("Executing contract has different app_id than active txn")
+            yield active_group
 
     def defer_app_call(
         self,
@@ -113,6 +111,7 @@ class TransactionContext:
             raise ValueError("The provided method must be an instance method of an ARC4 contract")
 
         app_id = contract.__app_id__
+        allow_actions = arc4_metadata.allow_actions or [OnCompleteAction.NoOp]
         # Handle ABI methods
         if arc4_metadata.arc4_signature:
             ordered_args = get_ordered_args(fn, args, kwargs)
@@ -120,11 +119,11 @@ class TransactionContext:
                 app_id=app_id,
                 arc4_signature=arc4_metadata.arc4_signature,
                 args=ordered_args,
-                allow_actions=arc4_metadata.allow_actions or [OnCompleteAction.NoOp],
+                allow_actions=allow_actions,
             )
         # Handle bare methods
         else:
-            txns = create_baremethod_txns(app_id)
+            txns = create_baremethod_txns(app_id, allow_actions)
 
         return DeferredAppCall(app_id=app_id, txns=txns, method=method, args=args, kwargs=kwargs)
 
@@ -165,7 +164,7 @@ class TransactionContext:
             active_txn_index = processed_gtxns.index(last_app_call_txn)
 
         previous_group = self._active_group
-        self._active_group = TransactionGroup(
+        active_group = self._active_group = TransactionGroup(
             txns=processed_gtxns,
             active_txn_index=active_txn_index,
             active_txn_overrides=typing.cast(dict[str, typing.Any], active_txn_overrides),
@@ -173,9 +172,20 @@ class TransactionContext:
         try:
             yield
         finally:
-            if self._active_group.txns:
-                self._groups.append(self._active_group)
+            if active_group.txns:
+                self._groups.append(active_group)
             self._active_group = previous_group
+
+    @contextlib.contextmanager
+    def _get_or_create_group(self) -> Iterator[TransactionGroup]:
+        if not self._active_group:
+            ctx: typing.ContextManager[None] = self.create_group()
+        else:
+            ctx = contextlib.nullcontext()
+        with ctx:
+            active_group = self._active_group
+            assert active_group is not None
+            yield active_group
 
     @property
     def last_group(self) -> TransactionGroup:
@@ -212,9 +222,7 @@ class TransactionGroup:
             self.active_txn_index = 0
             return
         if not all(isinstance(txn, gtxn.TransactionBase) for txn in txns):
-            raise ValueError(
-                "All transactions must be instances of TransactionBase or DeferredAppCall"
-            )
+            raise ValueError("All transactions must be instances of TransactionBase")
 
         if len(txns) > algosdk.constants.TX_GROUP_LIMIT:
             raise ValueError(
