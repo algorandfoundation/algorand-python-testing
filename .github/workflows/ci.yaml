@@ -42,3 +42,6 @@ jobs:
 
       - name: Run tests (examples)
         run: hatch run examples:tests
+
+      - name: Check doctests
+        run: hatch run docs:test
