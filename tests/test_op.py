@@ -10,13 +10,9 @@ import ecdsa  # type: ignore  # noqa: PGH003
 import ecdsa.util  # type: ignore  # noqa: PGH003
 import nacl.signing
 import pytest
-from _algopy_testing import algopy_testing_context, op
-from _algopy_testing.context import AlgopyTestContext
-from _algopy_testing.op.block import Block
-from _algopy_testing.primitives.bytes import Bytes
-from _algopy_testing.primitives.uint64 import UInt64
-from _algopy_testing.utils import convert_native_to_stack
 from algokit_utils import LogicError, get_localnet_default_account
+from algopy import op
+from algopy_testing import AlgopyTestContext, algopy_testing_context
 from algosdk.v2client.algod import AlgodClient
 from Cryptodome.Hash import keccak
 from ecdsa import SECP256k1, SigningKey, curves
@@ -68,12 +64,12 @@ def _generate_ecdsa_test_data(curve: curves.Curve) -> dict[str, typing.Any]:
     recovery_id = 0  # Recovery ID is typically 0 or 1
 
     return {
-        "data": Bytes(message_hash),
-        "r": Bytes(r.to_bytes(32, byteorder="big")),
-        "s": Bytes(s.to_bytes(32, byteorder="big")),
-        "recovery_id": UInt64(recovery_id),
-        "pubkey_x": Bytes(vk.to_string()[:32]),
-        "pubkey_y": Bytes(vk.to_string()[32:]),
+        "data": algopy.Bytes(message_hash),
+        "r": algopy.Bytes(r.to_bytes(32, byteorder="big")),
+        "s": algopy.Bytes(s.to_bytes(32, byteorder="big")),
+        "recovery_id": algopy.UInt64(recovery_id),
+        "pubkey_x": algopy.Bytes(vk.to_string()[:32]),
+        "pubkey_y": algopy.Bytes(vk.to_string()[32:]),
     }
 
 
@@ -141,7 +137,6 @@ def get_state_acct_params_avm_result(algod_client: AlgodClient) -> AVMInvoker:
         (b"", 0),
         (b"0" * (MAX_ARG_LEN - 14), 0),
         (b"abc", 0),
-        (Bytes(b"abc").value, MAX_BYTES_SIZE - 3),
         (b"abc", MAX_BYTES_SIZE - 3),
     ],
 )
@@ -158,7 +153,6 @@ def test_sha256(get_crypto_ops_avm_result: AVMInvoker, input_value: bytes, pad_s
         (b"", 0),
         (b"0" * (MAX_ARG_LEN - 14), 0),
         (b"abc", 0),
-        (Bytes(b"abc").value, MAX_BYTES_SIZE - 3),
         (b"abc", MAX_BYTES_SIZE - 3),
     ],
 )
@@ -177,7 +171,6 @@ def test_sha3_256(
         (b"", 0),
         (b"0" * (MAX_ARG_LEN - 14), 0),
         (b"abc", 0),
-        (Bytes(b"abc").value, MAX_BYTES_SIZE - 3),
         (b"abc", MAX_BYTES_SIZE - 3),
     ],
 )
@@ -196,7 +189,6 @@ def test_keccak_256(
         (b"", 0),
         (b"0" * (MAX_ARG_LEN - 14), 0),
         (b"abc", 0),
-        (Bytes(b"abc").value, MAX_BYTES_SIZE - 3),
         (b"abc", MAX_BYTES_SIZE - 3),
     ],
 )
@@ -391,17 +383,20 @@ def test_verify_vrf_verify(
     )
     c = bytes.fromhex("3a2740da7a0788ebb12a52154acbcca1813c128ca0b249e93f8eb6563fee418d")
 
-    def run_real_vrf_verify() -> tuple[Bytes, bool]:
+    def run_real_vrf_verify() -> tuple[algopy.Bytes, bool]:
         sp = algod_client.suggested_params()
         sp.fee = 6000
-        result = get_crypto_ops_avm_result("verify_vrf_verify", a=a, b=b, c=c, suggested_params=sp)
-        return (Bytes(bytes(result[0])), bool(result[1]))  # type: ignore  # noqa: PGH003
+        result: tuple[list[int], bool] = get_crypto_ops_avm_result(  # type: ignore[assignment]
+            "verify_vrf_verify", a=a, b=b, c=c, suggested_params=sp
+        )
 
-    def run_mocked_vrf_verify() -> tuple[Bytes, bool]:
+        return (algopy.Bytes(bytes(result[0])), result[1])
+
+    def run_mocked_vrf_verify() -> tuple[algopy.Bytes, bool]:
         return op.vrf_verify(op.VrfVerify.VrfAlgorand, a, b, c)
 
     avm_result = run_real_vrf_verify()
-    mocker.patch("_algopy_testing.op.vrf_verify", return_value=(avm_result[0], True))
+    mocker.patch("algopy.op.vrf_verify", return_value=(avm_result[0], True))
     mocked_result = run_mocked_vrf_verify()
 
     assert avm_result == mocked_result
@@ -539,13 +534,13 @@ def test_app_params_get(
         assert client.app_address
         app = ctx.any.application(
             id=app_id,
-            approval_program=Bytes(client.approval.raw_binary),
-            clear_state_program=Bytes(client.clear.raw_binary),
-            global_num_uint=UInt64(0),
-            global_num_bytes=UInt64(0),
-            local_num_uint=UInt64(0),
-            local_num_bytes=UInt64(0),
-            extra_program_pages=UInt64(0),
+            approval_program=algopy.Bytes(client.approval.raw_binary),
+            clear_state_program=algopy.Bytes(client.clear.raw_binary),
+            global_num_uint=algopy.UInt64(0),
+            global_num_bytes=algopy.UInt64(0),
+            local_num_uint=algopy.UInt64(0),
+            local_num_bytes=algopy.UInt64(0),
+            extra_program_pages=algopy.UInt64(0),
             creator=algopy.Account(get_localnet_default_account(algod_client).address),
             address=algopy.Account(client.app_address),
         )
@@ -634,7 +629,7 @@ def test_acct_params_get(
     ],
 )
 def test_app_local_put_get_and_delete(
-    context: _algopy_testing.AlgopyTestContext,
+    context: AlgopyTestContext,
     localnet_creator: _algopy_testing.Account,
     get_state_app_local_avm_opted_in: AVMInvoker,
     key: bytes,
@@ -655,8 +650,8 @@ def test_app_local_put_get_and_delete(
     contract = StateAppLocalContract()
     getattr(contract, put_method_name)(
         a=localnet_creator,
-        b=Bytes(key),
-        c=Bytes(value) if isinstance(value, bytes) else UInt64(value),
+        b=algopy.Bytes(key),
+        c=algopy.Bytes(value) if isinstance(value, bytes) else algopy.UInt64(value),
     )
 
     # Get operation
@@ -665,7 +660,7 @@ def test_app_local_put_get_and_delete(
         a=localnet_creator.public_key,
         b=key,
     )
-    mock_result = getattr(contract, get_method_name)(a=localnet_creator, b=Bytes(key))
+    mock_result = getattr(contract, get_method_name)(a=localnet_creator, b=algopy.Bytes(key))
     assert avm_result == mock_result == value
 
     # Delete operation
@@ -674,13 +669,13 @@ def test_app_local_put_get_and_delete(
         a=localnet_creator.public_key,
         b=key,
     )
-    contract.verify_delete(a=localnet_creator, b=Bytes(key))
+    contract.verify_delete(a=localnet_creator, b=algopy.Bytes(key))
 
     # Verify deletion
     avm_result = get_state_app_local_avm_opted_in(
         "verify_exists", a=localnet_creator.public_key, b=key
     )
-    mock_result = contract.verify_exists(a=localnet_creator, b=Bytes(key))
+    mock_result = contract.verify_exists(a=localnet_creator, b=algopy.Bytes(key))
     assert avm_result == mock_result, "verify_exists does not match"
 
 
@@ -767,8 +762,8 @@ def test_app_global_put_get_and_delete(
     )
     contract = StateAppGlobalContract()
     getattr(contract, method_name)(
-        a=Bytes(key),
-        b=Bytes(value) if isinstance(value, bytes) else UInt64(value),
+        a=algopy.Bytes(key),
+        b=algopy.Bytes(value) if isinstance(value, bytes) else algopy.UInt64(value),
     )
 
     # Get operation
@@ -777,7 +772,7 @@ def test_app_global_put_get_and_delete(
         get_method,
         a=key,
     )
-    mock_result = getattr(contract, get_method)(a=Bytes(key))
+    mock_result = getattr(contract, get_method)(a=algopy.Bytes(key))
     assert avm_result == mock_result == expected
 
     # Delete operation
@@ -785,7 +780,7 @@ def test_app_global_put_get_and_delete(
         "verify_delete",
         a=key,
     )
-    contract.verify_delete(a=Bytes(key))
+    contract.verify_delete(a=algopy.Bytes(key))
 
     # Verify deletion
     if method_name == "verify_put_bytes":
@@ -802,7 +797,7 @@ def test_app_global_put_get_and_delete(
             )
             == 0
         )
-    assert getattr(contract, get_method)(a=Bytes(key)) == 0
+    assert getattr(contract, get_method)(a=algopy.Bytes(key)) == 0
 
 
 def test_app_global_ex_get(
@@ -882,7 +877,7 @@ def test_scratch_slots(
         pass
 
     # Test get
-    assert context.txn.last_group.get_scratch_slot(index) == convert_native_to_stack(value)
+    assert context.txn.last_group.get_scratch_slot(index) == value
 
     # Test invalid index
     with pytest.raises(ValueError, match="invalid scratch slot"):
@@ -949,7 +944,7 @@ def test_blk_seed_existing_block(context: AlgopyTestContext) -> None:
     block_index = 42
     block_seed = 123
     context.ledger.set_block(block_index, block_seed, 1234567890)
-    result = Block.blk_seed(UInt64(block_index))
+    result = op.Block.blk_seed(algopy.UInt64(block_index))
     assert op.btoi(result) == block_seed
 
 
@@ -957,19 +952,19 @@ def test_blk_seed_existing_block(context: AlgopyTestContext) -> None:
 def test_blk_seed_missing_block() -> None:
     block_index = 42
     with pytest.raises(KeyError, match=f"Block {block_index}*"):
-        Block.blk_seed(UInt64(block_index))
+        op.Block.blk_seed(algopy.UInt64(block_index))
 
 
 def test_blk_timestamp_existing_block(context: AlgopyTestContext) -> None:
     block_index = 42
     block_timestamp = 1234567890
     context.ledger.set_block(block_index, 123, block_timestamp)
-    result = Block.blk_timestamp(UInt64(block_index))
-    assert result == UInt64(block_timestamp)
+    result = op.Block.blk_timestamp(algopy.UInt64(block_index))
+    assert result == algopy.UInt64(block_timestamp)
 
 
 @pytest.mark.usefixtures("context")
 def test_blk_timestamp_missing_block() -> None:
     block_index = 42
     with pytest.raises(KeyError, match=f"Block {block_index}*"):
-        Block.blk_timestamp(UInt64(block_index))
+        op.Block.blk_timestamp(algopy.UInt64(block_index))
