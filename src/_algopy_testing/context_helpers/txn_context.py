@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import time
 import typing
 
 import algosdk
@@ -207,6 +208,7 @@ class TransactionGroup:
         active_txn_index: int | None = None,
         active_txn_overrides: dict[str, typing.Any] | None = None,
     ):
+        self._latest_timestamp = int(time.time())
         self._set_txn_group(txns, active_txn_index)
         self._itxn_groups: list[Sequence[InnerTransactionResultType]] = []
         self._constructing_itxn_group: list[InnerTransaction] = []
