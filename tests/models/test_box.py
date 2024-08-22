@@ -30,11 +30,10 @@ def context() -> Generator[AlgopyTestContext, None, None]:
             yield ctx
 
 
-def test_init_without_key(
-    context: AlgopyTestContext,  # noqa: ARG001
-) -> None:
-    contract = ATestContract()
-    assert contract.uint_64_box.key == b"uint_64_box"
+def test_init_without_key() -> None:
+    with algopy_testing_context():
+        contract = ATestContract()
+        assert contract.uint_64_box.key == b"uint_64_box"
 
 
 @pytest.mark.parametrize(
@@ -202,17 +201,18 @@ def _assert_box_content_equality(
         assert box_content == op_box_content
 
 
-def test_enums_in_boxes(context: AlgopyTestContext) -> None:
+def test_enums_in_boxes() -> None:
     # Arrange
-    contract = BoxContract()
+    with algopy_testing_context() as context:
+        contract = BoxContract()
 
-    # Act
-    defered_store = context.txn.defer_app_call(contract.store_enums)
-    defered_read = context.txn.defer_app_call(contract.read_enums)
-    with context.txn.create_group([defered_store, defered_read]):
-        defered_store.submit()
-        oca, txn = defered_read.submit()
+        # Act
+        defered_store = context.txn.defer_app_call(contract.store_enums)
+        defered_read = context.txn.defer_app_call(contract.read_enums)
+        with context.txn.create_group([defered_store, defered_read]):
+            defered_store.submit()
+            oca, txn = defered_read.submit()
 
-    # Assert
-    assert context.ledger.get_box(contract, b"oca") == itob(oca.native)
-    assert context.ledger.get_box(contract, b"txn") == itob(txn.native)
+        # Assert
+        assert context.ledger.get_box(contract, b"oca") == itob(oca.native)
+        assert context.ledger.get_box(contract, b"txn") == itob(txn.native)
