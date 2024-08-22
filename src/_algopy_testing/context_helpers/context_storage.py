@@ -9,13 +9,13 @@ if typing.TYPE_CHECKING:
 
     import algopy
 
-    from _algopy_testing._context_helpers.ledger_context import LedgerContext
-    from _algopy_testing._context_helpers.txn_context import TransactionContext, TransactionGroup
-    from _algopy_testing._value_generators import AlgopyValueGenerator
     from _algopy_testing.context import AlgopyTestContext
+    from _algopy_testing.context_helpers.ledger_context import LedgerContext
+    from _algopy_testing.context_helpers.txn_context import TransactionContext, TransactionGroup
     from _algopy_testing.models.account import AccountContextData
     from _algopy_testing.models.application import ApplicationContextData
     from _algopy_testing.models.asset import AssetFields
+    from _algopy_testing.value_generators import AlgopyValueGenerator
 
 _var: ContextVar[AlgopyTestContext] = ContextVar("_var")
 

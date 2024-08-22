@@ -8,13 +8,13 @@ from collections import ChainMap
 import algosdk
 
 import _algopy_testing
-from _algopy_testing._context_helpers import lazy_context
 from _algopy_testing.constants import (
     ALWAYS_APPROVE_TEAL_PROGRAM,
     MAX_BYTES_SIZE,
     MAX_UINT64,
     MAX_UINT512,
 )
+from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.models.account import AccountFields
 from _algopy_testing.models.application import ApplicationContextData, ApplicationFields
 from _algopy_testing.models.asset import AssetFields

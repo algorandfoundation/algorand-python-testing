@@ -5,9 +5,9 @@ import typing
 from dataclasses import dataclass
 
 import _algopy_testing
-from _algopy_testing._context_helpers import lazy_context
-from _algopy_testing._mutable import set_attr_on_mutate
+from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.decorators.arc4 import maybe_arc4_metadata
+from _algopy_testing.mutable import set_attr_on_mutate
 from _algopy_testing.primitives import Bytes, UInt64
 from _algopy_testing.protocols import BytesBacked, UInt64Backed
 from _algopy_testing.state.utils import deserialize, serialize

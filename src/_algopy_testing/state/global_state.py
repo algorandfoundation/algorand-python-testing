@@ -3,8 +3,8 @@ from __future__ import annotations
 import typing
 from typing import overload
 
-from _algopy_testing._context_helpers import lazy_context
-from _algopy_testing._mutable import set_attr_on_mutate
+from _algopy_testing.context_helpers import lazy_context
+from _algopy_testing.mutable import set_attr_on_mutate
 from _algopy_testing.primitives import Bytes, String
 from _algopy_testing.state.utils import deserialize, serialize
 

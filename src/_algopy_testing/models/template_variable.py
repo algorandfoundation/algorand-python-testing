@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from _algopy_testing._context_helpers.context_storage import lazy_context
+from _algopy_testing.context_helpers import lazy_context
 
 _T = typing.TypeVar("_T")
 

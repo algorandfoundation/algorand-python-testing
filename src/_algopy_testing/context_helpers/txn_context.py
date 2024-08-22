@@ -5,7 +5,7 @@ import typing
 
 import algosdk
 
-from _algopy_testing._itxn_loader import ITxnGroupLoader
+from _algopy_testing import gtxn
 from _algopy_testing.decorators.arc4 import (
     check_routing_conditions,
     create_abimethod_txns,
@@ -14,21 +14,19 @@ from _algopy_testing.decorators.arc4 import (
     get_ordered_args,
 )
 from _algopy_testing.enums import OnCompleteAction
+from _algopy_testing.gtxn import TransactionBase
+from _algopy_testing.itxn import InnerTransaction, submit_txns
+from _algopy_testing.itxn_loader import ITxnGroupLoader, ITxnLoader
+from _algopy_testing.models import Application
+from _algopy_testing.primitives import UInt64
 
 if typing.TYPE_CHECKING:
     from collections.abc import Callable, Iterator, Sequence
 
     import algopy
 
-    from _algopy_testing._itxn_loader import InnerTransactionResultType
+    from _algopy_testing.itxn_loader import InnerTransactionResultType
     from _algopy_testing.models.txn_fields import ActiveTransactionFields
-
-from _algopy_testing import gtxn
-from _algopy_testing._itxn_loader import ITxnLoader
-from _algopy_testing.gtxn import TransactionBase
-from _algopy_testing.itxn import InnerTransaction, submit_txns
-from _algopy_testing.models import Application
-from _algopy_testing.primitives import UInt64
 
 TReturn = typing.TypeVar("TReturn")
 TParamSpec = typing.ParamSpec("TParamSpec")

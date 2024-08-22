@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from _algopy_testing import op
-from _algopy_testing._context_helpers import lazy_context
+from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.primitives import UInt64
 
 if TYPE_CHECKING:

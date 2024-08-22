@@ -9,8 +9,8 @@ import typing
 import algosdk
 
 import _algopy_testing
-from _algopy_testing._context_helpers import lazy_context
 from _algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM
+from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.enums import OnCompleteAction
 from _algopy_testing.primitives import BigUInt, Bytes, String, UInt64
 

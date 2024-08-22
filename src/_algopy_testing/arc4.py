@@ -8,11 +8,6 @@ import typing
 import algosdk
 from Cryptodome.Hash import SHA512
 
-from _algopy_testing._mutable import (
-    MutableBytes,
-    add_mutable_callback,
-    set_item_on_mutate,
-)
 from _algopy_testing.constants import (
     ARC4_RETURN_PREFIX,
     BITS_IN_BYTE,
@@ -21,6 +16,11 @@ from _algopy_testing.constants import (
     UINT512_SIZE,
 )
 from _algopy_testing.models.account import Account
+from _algopy_testing.mutable import (
+    MutableBytes,
+    add_mutable_callback,
+    set_item_on_mutate,
+)
 from _algopy_testing.primitives import Bytes
 from _algopy_testing.protocols import BytesBacked
 from _algopy_testing.utils import (

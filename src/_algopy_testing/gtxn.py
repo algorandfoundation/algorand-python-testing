@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import typing
 
-from _algopy_testing._context_helpers import lazy_context
 from _algopy_testing.constants import MAX_ITEMS_IN_LOG
+from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.enums import TransactionType
 from _algopy_testing.models import Application
 from _algopy_testing.models.txn_fields import TransactionFieldsGetter, combine_into_max_byte_pages

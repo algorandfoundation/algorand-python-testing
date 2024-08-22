@@ -1,7 +1,7 @@
 import _algopy_testing
 import algopy
 import pytest
-from _algopy_testing._context_helpers.context_storage import algopy_testing_context
+from _algopy_testing.context_helpers.context_storage import algopy_testing_context
 
 from tests.artifacts.StateOps.contract import LocalStateContract
 from tests.common import AVMInvoker

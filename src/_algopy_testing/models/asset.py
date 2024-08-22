@@ -41,7 +41,7 @@ class Asset(UInt64Backed):
         return cls(value)
 
     def balance(self, account: algopy.Account) -> algopy.UInt64:
-        from _algopy_testing._context_helpers import lazy_context
+        from _algopy_testing.context_helpers import lazy_context
 
         account_data = lazy_context.get_account_data(account.public_key)
 
@@ -66,7 +66,7 @@ class Asset(UInt64Backed):
         )
 
     def __getattr__(self, name: str) -> object:
-        from _algopy_testing._context_helpers import lazy_context
+        from _algopy_testing.context_helpers import lazy_context
 
         if int(self.id) not in lazy_context.ledger.asset_data:
             # check if its not 0 (which means its not

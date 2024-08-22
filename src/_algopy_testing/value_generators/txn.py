@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 
 from _algopy_testing import gtxn
-from _algopy_testing._context_helpers import lazy_context
+from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.models.application import Application
 from _algopy_testing.models.txn_fields import get_txn_defaults
 
