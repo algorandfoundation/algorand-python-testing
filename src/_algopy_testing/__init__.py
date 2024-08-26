@@ -25,9 +25,6 @@ from _algopy_testing.value_generators.arc4 import ARC4ValueGenerator
 from _algopy_testing.value_generators.avm import AVMValueGenerator
 from _algopy_testing.value_generators.txn import TxnValueGenerator
 
-# TODO: clean up and ensure only algopy_testing namespace specific user facing abstractions
-# are exposed Only keep the _value_generators, ledger_context, txn_context,
-# context, and arc4_prexif from utils (make utils private)
 __all__ = [
     "ARC4Contract",
     "ARC4ValueGenerator",
