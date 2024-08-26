@@ -28,6 +28,8 @@ if TYPE_CHECKING:
 
     from _algopy_testing.op.global_values import GlobalFields
 
+    _TBytes = typing.TypeVar("_TBytes", bytes, algopy.Bytes)
+
 
 def resolve_app_index(app_id_or_index: algopy.UInt64 | int) -> int:
     from _algopy_testing.context_helpers import lazy_context
@@ -168,7 +170,7 @@ def get_new_scratch_space() -> list[algopy.Bytes | algopy.UInt64]:
     return [algopy.UInt64(0)] * 256
 
 
-def arc4_prefix(value: bytes) -> bytes:
+def arc4_prefix(value: _TBytes) -> _TBytes:
     """Return the value with the ARC4 prefix prepended."""
     return ARC4_RETURN_PREFIX + value
 
