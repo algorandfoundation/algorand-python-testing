@@ -88,19 +88,8 @@ def gaid(a: algopy.UInt64 | int, /) -> algopy.UInt64:
 
 
 def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
-    # TODO: 1.0 add tests
-    active_txn = lazy_context.active_group.active_txn
-
     account = _get_account(a)
-    balance = account.balance
-    # Deduct the fee for the current transaction
-    if account == active_txn.sender:
-        fee = active_txn.fee
-        assert isinstance(fee, UInt64)
-        balance -= fee
-
-    return balance
-
+    return account.balance
 
 def min_balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     account = _get_account(a)

@@ -1,7 +1,7 @@
 #pragma version 10
 
 tests.artifacts.StateOps.contract.StateAppLocalContract.approval_program:
-    // tests/artifacts/StateOps/contract.py:339
+    // tests/artifacts/StateOps/contract.py:349
     // class StateAppLocalContract(ARC4Contract):
     txn NumAppArgs
     bz main_bare_routing@13
@@ -19,7 +19,7 @@ tests.artifacts.StateOps.contract.StateAppLocalContract.approval_program:
     err // reject transaction
 
 main_opt_in_route@2:
-    // tests/artifacts/StateOps/contract.py:351
+    // tests/artifacts/StateOps/contract.py:361
     // @arc4.abimethod(allow_actions=["OptIn"])
     txn OnCompletion
     int OptIn
@@ -32,21 +32,21 @@ main_opt_in_route@2:
     return
 
 main_verify_get_bytes_route@3:
-    // tests/artifacts/StateOps/contract.py:356
+    // tests/artifacts/StateOps/contract.py:366
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:339
+    // tests/artifacts/StateOps/contract.py:349
     // class StateAppLocalContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
     txnas Accounts
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/StateOps/contract.py:356
+    // tests/artifacts/StateOps/contract.py:366
     // @arc4.abimethod()
     callsub verify_get_bytes
     dup
@@ -63,21 +63,21 @@ main_verify_get_bytes_route@3:
     return
 
 main_verify_get_uint64_route@4:
-    // tests/artifacts/StateOps/contract.py:361
+    // tests/artifacts/StateOps/contract.py:371
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:339
+    // tests/artifacts/StateOps/contract.py:349
     // class StateAppLocalContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
     txnas Accounts
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/StateOps/contract.py:361
+    // tests/artifacts/StateOps/contract.py:371
     // @arc4.abimethod()
     callsub verify_get_uint64
     itob
@@ -89,14 +89,14 @@ main_verify_get_uint64_route@4:
     return
 
 main_verify_get_ex_bytes_route@5:
-    // tests/artifacts/StateOps/contract.py:366
+    // tests/artifacts/StateOps/contract.py:376
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:339
+    // tests/artifacts/StateOps/contract.py:349
     // class StateAppLocalContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
@@ -106,7 +106,7 @@ main_verify_get_ex_bytes_route@5:
     txnas Applications
     txna ApplicationArgs 3
     extract 2 0
-    // tests/artifacts/StateOps/contract.py:366
+    // tests/artifacts/StateOps/contract.py:376
     // @arc4.abimethod()
     callsub verify_get_ex_bytes
     dup
@@ -123,14 +123,14 @@ main_verify_get_ex_bytes_route@5:
     return
 
 main_verify_get_ex_uint64_route@6:
-    // tests/artifacts/StateOps/contract.py:371
+    // tests/artifacts/StateOps/contract.py:381
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:339
+    // tests/artifacts/StateOps/contract.py:349
     // class StateAppLocalContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
@@ -140,7 +140,7 @@ main_verify_get_ex_uint64_route@6:
     txnas Applications
     txna ApplicationArgs 3
     extract 2 0
-    // tests/artifacts/StateOps/contract.py:371
+    // tests/artifacts/StateOps/contract.py:381
     // @arc4.abimethod()
     callsub verify_get_ex_uint64
     itob
@@ -152,42 +152,42 @@ main_verify_get_ex_uint64_route@6:
     return
 
 main_verify_delete_route@7:
-    // tests/artifacts/StateOps/contract.py:376
+    // tests/artifacts/StateOps/contract.py:386
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:339
+    // tests/artifacts/StateOps/contract.py:349
     // class StateAppLocalContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
     txnas Accounts
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/StateOps/contract.py:376
+    // tests/artifacts/StateOps/contract.py:386
     // @arc4.abimethod()
     callsub verify_delete
     int 1
     return
 
 main_verify_exists_route@8:
-    // tests/artifacts/StateOps/contract.py:380
+    // tests/artifacts/StateOps/contract.py:390
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:339
+    // tests/artifacts/StateOps/contract.py:349
     // class StateAppLocalContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
     txnas Accounts
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/StateOps/contract.py:380
+    // tests/artifacts/StateOps/contract.py:390
     // @arc4.abimethod()
     callsub verify_exists
     byte 0x00
@@ -202,14 +202,14 @@ main_verify_exists_route@8:
     return
 
 main_verify_put_uint64_route@9:
-    // tests/artifacts/StateOps/contract.py:385
+    // tests/artifacts/StateOps/contract.py:395
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:339
+    // tests/artifacts/StateOps/contract.py:349
     // class StateAppLocalContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
@@ -218,21 +218,21 @@ main_verify_put_uint64_route@9:
     extract 2 0
     txna ApplicationArgs 3
     btoi
-    // tests/artifacts/StateOps/contract.py:385
+    // tests/artifacts/StateOps/contract.py:395
     // @arc4.abimethod()
     callsub verify_put_uint64
     int 1
     return
 
 main_verify_put_bytes_route@10:
-    // tests/artifacts/StateOps/contract.py:389
+    // tests/artifacts/StateOps/contract.py:399
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    // tests/artifacts/StateOps/contract.py:339
+    // tests/artifacts/StateOps/contract.py:349
     // class StateAppLocalContract(ARC4Contract):
     txna ApplicationArgs 1
     btoi
@@ -241,14 +241,14 @@ main_verify_put_bytes_route@10:
     extract 2 0
     txna ApplicationArgs 3
     extract 2 0
-    // tests/artifacts/StateOps/contract.py:389
+    // tests/artifacts/StateOps/contract.py:399
     // @arc4.abimethod()
     callsub verify_put_bytes
     int 1
     return
 
 main_bare_routing@13:
-    // tests/artifacts/StateOps/contract.py:339
+    // tests/artifacts/StateOps/contract.py:349
     // class StateAppLocalContract(ARC4Contract):
     txn OnCompletion
     !
@@ -262,27 +262,27 @@ main_bare_routing@13:
 
 // tests.artifacts.StateOps.contract.StateAppLocalContract.opt_in() -> void:
 opt_in:
-    // tests/artifacts/StateOps/contract.py:351-352
+    // tests/artifacts/StateOps/contract.py:361-362
     // @arc4.abimethod(allow_actions=["OptIn"])
     // def opt_in(self) -> None:
     proto 0 0
-    // tests/artifacts/StateOps/contract.py:353
+    // tests/artifacts/StateOps/contract.py:363
     // self.local_bytes[Global.creator_address] = Bytes(b"dummy_bytes")
     global CreatorAddress
-    // tests/artifacts/StateOps/contract.py:348
+    // tests/artifacts/StateOps/contract.py:358
     // key="local_bytes",
     byte "local_bytes"
-    // tests/artifacts/StateOps/contract.py:353
+    // tests/artifacts/StateOps/contract.py:363
     // self.local_bytes[Global.creator_address] = Bytes(b"dummy_bytes")
     byte 0x64756d6d795f6279746573
     app_local_put
-    // tests/artifacts/StateOps/contract.py:354
+    // tests/artifacts/StateOps/contract.py:364
     // self.local_uint64[Global.creator_address] = UInt64(999)
     global CreatorAddress
-    // tests/artifacts/StateOps/contract.py:343
+    // tests/artifacts/StateOps/contract.py:353
     // key="local_uint64",
     byte "local_uint64"
-    // tests/artifacts/StateOps/contract.py:354
+    // tests/artifacts/StateOps/contract.py:364
     // self.local_uint64[Global.creator_address] = UInt64(999)
     int 999
     app_local_put
@@ -291,79 +291,79 @@ opt_in:
 
 // tests.artifacts.StateOps.contract.StateAppLocalContract.verify_get_bytes(a: bytes, b: bytes) -> bytes:
 verify_get_bytes:
-    // tests/artifacts/StateOps/contract.py:356-357
+    // tests/artifacts/StateOps/contract.py:366-367
     // @arc4.abimethod()
     // def verify_get_bytes(self, a: Account, b: Bytes) -> Bytes:
     proto 2 1
-    // tests/artifacts/StateOps/contract.py:358
+    // tests/artifacts/StateOps/contract.py:368
     // value = op.AppLocal.get_bytes(a, b)
     frame_dig -2
     frame_dig -1
     app_local_get
-    // tests/artifacts/StateOps/contract.py:359
+    // tests/artifacts/StateOps/contract.py:369
     // return value
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAppLocalContract.verify_get_uint64(a: bytes, b: bytes) -> uint64:
 verify_get_uint64:
-    // tests/artifacts/StateOps/contract.py:361-362
+    // tests/artifacts/StateOps/contract.py:371-372
     // @arc4.abimethod()
     // def verify_get_uint64(self, a: Account, b: Bytes) -> UInt64:
     proto 2 1
-    // tests/artifacts/StateOps/contract.py:363
+    // tests/artifacts/StateOps/contract.py:373
     // value = op.AppLocal.get_uint64(a, b)
     frame_dig -2
     frame_dig -1
     app_local_get
-    // tests/artifacts/StateOps/contract.py:364
+    // tests/artifacts/StateOps/contract.py:374
     // return value
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAppLocalContract.verify_get_ex_bytes(a: bytes, b: uint64, c: bytes) -> bytes:
 verify_get_ex_bytes:
-    // tests/artifacts/StateOps/contract.py:366-367
+    // tests/artifacts/StateOps/contract.py:376-377
     // @arc4.abimethod()
     // def verify_get_ex_bytes(self, a: Account, b: Application, c: Bytes) -> Bytes:
     proto 3 1
-    // tests/artifacts/StateOps/contract.py:368
+    // tests/artifacts/StateOps/contract.py:378
     // value, _val = op.AppLocal.get_ex_bytes(a, b, c)
     frame_dig -3
     frame_dig -2
     frame_dig -1
     app_local_get_ex
     pop
-    // tests/artifacts/StateOps/contract.py:369
+    // tests/artifacts/StateOps/contract.py:379
     // return value
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAppLocalContract.verify_get_ex_uint64(a: bytes, b: uint64, c: bytes) -> uint64:
 verify_get_ex_uint64:
-    // tests/artifacts/StateOps/contract.py:371-372
+    // tests/artifacts/StateOps/contract.py:381-382
     // @arc4.abimethod()
     // def verify_get_ex_uint64(self, a: Account, b: Application, c: Bytes) -> UInt64:
     proto 3 1
-    // tests/artifacts/StateOps/contract.py:373
+    // tests/artifacts/StateOps/contract.py:383
     // value, _val = op.AppLocal.get_ex_uint64(a, b, c)
     frame_dig -3
     frame_dig -2
     frame_dig -1
     app_local_get_ex
     pop
-    // tests/artifacts/StateOps/contract.py:374
+    // tests/artifacts/StateOps/contract.py:384
     // return value
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAppLocalContract.verify_delete(a: bytes, b: bytes) -> void:
 verify_delete:
-    // tests/artifacts/StateOps/contract.py:376-377
+    // tests/artifacts/StateOps/contract.py:386-387
     // @arc4.abimethod()
     // def verify_delete(self, a: Account, b: Bytes) -> None:
     proto 2 0
-    // tests/artifacts/StateOps/contract.py:378
+    // tests/artifacts/StateOps/contract.py:388
     // op.AppLocal.delete(a, b)
     frame_dig -2
     frame_dig -1
@@ -373,29 +373,29 @@ verify_delete:
 
 // tests.artifacts.StateOps.contract.StateAppLocalContract.verify_exists(a: bytes, b: bytes) -> uint64:
 verify_exists:
-    // tests/artifacts/StateOps/contract.py:380-381
+    // tests/artifacts/StateOps/contract.py:390-391
     // @arc4.abimethod()
     // def verify_exists(self, a: Account, b: Bytes) -> bool:
     proto 2 1
-    // tests/artifacts/StateOps/contract.py:382
+    // tests/artifacts/StateOps/contract.py:392
     // _value, exists = op.AppLocal.get_ex_uint64(a, 0, b)
     frame_dig -2
     int 0
     frame_dig -1
     app_local_get_ex
     bury 1
-    // tests/artifacts/StateOps/contract.py:383
+    // tests/artifacts/StateOps/contract.py:393
     // return exists
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAppLocalContract.verify_put_uint64(a: bytes, b: bytes, c: uint64) -> void:
 verify_put_uint64:
-    // tests/artifacts/StateOps/contract.py:385-386
+    // tests/artifacts/StateOps/contract.py:395-396
     // @arc4.abimethod()
     // def verify_put_uint64(self, a: Account, b: Bytes, c: UInt64) -> None:
     proto 3 0
-    // tests/artifacts/StateOps/contract.py:387
+    // tests/artifacts/StateOps/contract.py:397
     // op.AppLocal.put(a, b, c)
     frame_dig -3
     frame_dig -2
@@ -406,11 +406,11 @@ verify_put_uint64:
 
 // tests.artifacts.StateOps.contract.StateAppLocalContract.verify_put_bytes(a: bytes, b: bytes, c: bytes) -> void:
 verify_put_bytes:
-    // tests/artifacts/StateOps/contract.py:389-390
+    // tests/artifacts/StateOps/contract.py:399-400
     // @arc4.abimethod()
     // def verify_put_bytes(self, a: Account, b: Bytes, c: Bytes) -> None:
     proto 3 0
-    // tests/artifacts/StateOps/contract.py:391
+    // tests/artifacts/StateOps/contract.py:401
     // op.AppLocal.put(a, b, c)
     frame_dig -3
     frame_dig -2
