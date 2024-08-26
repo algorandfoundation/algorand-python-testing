@@ -12,7 +12,7 @@ import nacl.signing
 import pytest
 from algokit_utils import LogicError, get_localnet_default_account
 from algopy import op
-from algopy_testing import AlgopyTestContext, algopy_testing_context
+from algopy_testing import AlgopyTestContext, algopy_testing_context, arc4_prefix
 from algosdk.v2client.algod import AlgodClient
 from Cryptodome.Hash import keccak
 from ecdsa import SECP256k1, SigningKey, curves
@@ -968,3 +968,31 @@ def test_blk_timestamp_missing_block() -> None:
     block_index = 42
     with pytest.raises(KeyError, match=f"Block {block_index}*"):
         op.Block.blk_timestamp(algopy.UInt64(block_index))
+
+
+def test_gaid(context: AlgopyTestContext) -> None:
+    from tests.artifacts.CreatedAppAsset.contract import AppExpectingEffects
+
+    # arrange
+    created_asset = context.any.asset()
+    created_app = context.any.application()
+    asset_create_txn = context.any.txn.asset_config(created_asset=created_asset)
+    app_create_txn = context.any.txn.application_call(created_app=created_app)
+
+    contract = AppExpectingEffects()
+
+    # act
+    asset_id, app_id = contract.create_group(asset_create_txn, app_create_txn)
+
+    # assert
+    assert asset_id == created_asset.id
+    assert app_id == created_app.id
+
+    # arrange
+    app_call_txn = context.any.txn.application_call(
+        app_args=[algopy.arc4.arc4_signature("some_value()uint64")],
+        logs=[arc4_prefix(algopy.arc4.UInt64(2).bytes)],
+    )
+
+    # act
+    contract.log_group(app_call_txn)

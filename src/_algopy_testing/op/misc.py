@@ -74,7 +74,6 @@ gload_bytes = _gload
 
 
 def gaid(a: algopy.UInt64 | int, /) -> algopy.UInt64:
-    # TODO: 1.0 add tests
     group = lazy_context.active_group
     if a >= group.active_txn.group_index:
         raise ValueError("can only get id's for transactions earlier in the group")
