@@ -46,7 +46,7 @@ main_verify_acct_balance_route@2:
     return
 
 main_verify_acct_min_balance_route@3:
-    // tests/artifacts/StateOps/contract.py:33
+    // tests/artifacts/StateOps/contract.py:38
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -58,7 +58,7 @@ main_verify_acct_min_balance_route@3:
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:33
+    // tests/artifacts/StateOps/contract.py:38
     // @arc4.abimethod()
     callsub verify_acct_min_balance
     itob
@@ -70,7 +70,7 @@ main_verify_acct_min_balance_route@3:
     return
 
 main_verify_acct_auth_addr_route@4:
-    // tests/artifacts/StateOps/contract.py:41
+    // tests/artifacts/StateOps/contract.py:51
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -82,7 +82,7 @@ main_verify_acct_auth_addr_route@4:
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:41
+    // tests/artifacts/StateOps/contract.py:51
     // @arc4.abimethod()
     callsub verify_acct_auth_addr
     byte 0x151f7c75
@@ -93,7 +93,7 @@ main_verify_acct_auth_addr_route@4:
     return
 
 main_verify_acct_total_num_uint_route@5:
-    // tests/artifacts/StateOps/contract.py:49
+    // tests/artifacts/StateOps/contract.py:59
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -105,7 +105,7 @@ main_verify_acct_total_num_uint_route@5:
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:49
+    // tests/artifacts/StateOps/contract.py:59
     // @arc4.abimethod()
     callsub verify_acct_total_num_uint
     itob
@@ -117,7 +117,7 @@ main_verify_acct_total_num_uint_route@5:
     return
 
 main_verify_acct_total_num_byte_slice_route@6:
-    // tests/artifacts/StateOps/contract.py:57
+    // tests/artifacts/StateOps/contract.py:67
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -129,7 +129,7 @@ main_verify_acct_total_num_byte_slice_route@6:
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:57
+    // tests/artifacts/StateOps/contract.py:67
     // @arc4.abimethod()
     callsub verify_acct_total_num_byte_slice
     itob
@@ -141,7 +141,7 @@ main_verify_acct_total_num_byte_slice_route@6:
     return
 
 main_verify_acct_total_extra_app_pages_route@7:
-    // tests/artifacts/StateOps/contract.py:67
+    // tests/artifacts/StateOps/contract.py:77
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -153,7 +153,7 @@ main_verify_acct_total_extra_app_pages_route@7:
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:67
+    // tests/artifacts/StateOps/contract.py:77
     // @arc4.abimethod()
     callsub verify_acct_total_extra_app_pages
     itob
@@ -165,7 +165,7 @@ main_verify_acct_total_extra_app_pages_route@7:
     return
 
 main_verify_acct_total_apps_created_route@8:
-    // tests/artifacts/StateOps/contract.py:77
+    // tests/artifacts/StateOps/contract.py:87
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -177,7 +177,7 @@ main_verify_acct_total_apps_created_route@8:
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:77
+    // tests/artifacts/StateOps/contract.py:87
     // @arc4.abimethod()
     callsub verify_acct_total_apps_created
     itob
@@ -189,7 +189,7 @@ main_verify_acct_total_apps_created_route@8:
     return
 
 main_verify_acct_total_apps_opted_in_route@9:
-    // tests/artifacts/StateOps/contract.py:85
+    // tests/artifacts/StateOps/contract.py:95
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -201,7 +201,7 @@ main_verify_acct_total_apps_opted_in_route@9:
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:85
+    // tests/artifacts/StateOps/contract.py:95
     // @arc4.abimethod()
     callsub verify_acct_total_apps_opted_in
     itob
@@ -213,7 +213,7 @@ main_verify_acct_total_apps_opted_in_route@9:
     return
 
 main_verify_acct_total_assets_created_route@10:
-    // tests/artifacts/StateOps/contract.py:93
+    // tests/artifacts/StateOps/contract.py:103
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -225,7 +225,7 @@ main_verify_acct_total_assets_created_route@10:
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:93
+    // tests/artifacts/StateOps/contract.py:103
     // @arc4.abimethod()
     callsub verify_acct_total_assets_created
     itob
@@ -237,7 +237,7 @@ main_verify_acct_total_assets_created_route@10:
     return
 
 main_verify_acct_total_assets_route@11:
-    // tests/artifacts/StateOps/contract.py:103
+    // tests/artifacts/StateOps/contract.py:113
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -249,7 +249,7 @@ main_verify_acct_total_assets_route@11:
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:103
+    // tests/artifacts/StateOps/contract.py:113
     // @arc4.abimethod()
     callsub verify_acct_total_assets
     itob
@@ -261,7 +261,7 @@ main_verify_acct_total_assets_route@11:
     return
 
 main_verify_acct_total_boxes_route@12:
-    // tests/artifacts/StateOps/contract.py:111
+    // tests/artifacts/StateOps/contract.py:121
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -273,7 +273,7 @@ main_verify_acct_total_boxes_route@12:
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:111
+    // tests/artifacts/StateOps/contract.py:121
     // @arc4.abimethod()
     callsub verify_acct_total_boxes
     itob
@@ -285,7 +285,7 @@ main_verify_acct_total_boxes_route@12:
     return
 
 main_verify_acct_total_box_bytes_route@13:
-    // tests/artifacts/StateOps/contract.py:119
+    // tests/artifacts/StateOps/contract.py:129
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -297,7 +297,7 @@ main_verify_acct_total_box_bytes_route@13:
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:119
+    // tests/artifacts/StateOps/contract.py:129
     // @arc4.abimethod()
     callsub verify_acct_total_box_bytes
     itob
@@ -348,6 +348,32 @@ verify_acct_balance:
     ==
     assert // expected funded by index to match
     // tests/artifacts/StateOps/contract.py:31
+    // assert value == a.balance, "expected Account balance to match"
+    frame_dig -1
+    acct_params_get AcctBalance
+    assert // account funded
+    dig 1
+    ==
+    assert // expected Account balance to match
+    // tests/artifacts/StateOps/contract.py:32
+    // assert value == algopy.op.balance(a), "expected op.balance to match"
+    frame_dig -1
+    balance
+    dig 1
+    ==
+    assert // expected op.balance to match
+    // tests/artifacts/StateOps/contract.py:34
+    // _get_1st_ref_index()
+    callsub _get_1st_ref_index
+    // tests/artifacts/StateOps/contract.py:33-35
+    // assert value == algopy.op.balance(
+    //     _get_1st_ref_index()
+    // ), "expected op.balance by index to match"
+    balance
+    dig 1
+    ==
+    assert // expected op.balance by index to match
+    // tests/artifacts/StateOps/contract.py:36
     // return value
     retsub
 
@@ -367,116 +393,107 @@ _get_1st_ref_index:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_min_balance(a: bytes) -> uint64:
 verify_acct_min_balance:
-    // tests/artifacts/StateOps/contract.py:33-34
+    // tests/artifacts/StateOps/contract.py:38-39
     // @arc4.abimethod()
     // def verify_acct_min_balance(self, a: algopy.Account) -> algopy.UInt64:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:35
+    // tests/artifacts/StateOps/contract.py:40
     // value, funded = op.AcctParamsGet.acct_min_balance(a)
     frame_dig -1
     acct_params_get AcctMinBalance
     swap
-    // tests/artifacts/StateOps/contract.py:36
+    // tests/artifacts/StateOps/contract.py:41
     // value_index, funded_index = op.AcctParamsGet.acct_min_balance(_get_1st_ref_index())
     callsub _get_1st_ref_index
     acct_params_get AcctMinBalance
     cover 2
-    // tests/artifacts/StateOps/contract.py:37
+    // tests/artifacts/StateOps/contract.py:42
     // assert value == value_index, "expected value by index to match"
     dig 1
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:38
+    // tests/artifacts/StateOps/contract.py:43
     // assert funded == funded_index, "expected funded by index to match"
     cover 2
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:39
+    // tests/artifacts/StateOps/contract.py:44
+    // assert value == a.min_balance, "expected Account min_balance to match"
+    frame_dig -1
+    acct_params_get AcctMinBalance
+    assert // account funded
+    dig 1
+    ==
+    assert // expected Account min_balance to match
+    // tests/artifacts/StateOps/contract.py:45
+    // assert value == algopy.op.min_balance(a), "expected op.min_balance to match"
+    frame_dig -1
+    min_balance
+    dig 1
+    ==
+    assert // expected op.min_balance to match
+    // tests/artifacts/StateOps/contract.py:47
+    // _get_1st_ref_index()
+    callsub _get_1st_ref_index
+    // tests/artifacts/StateOps/contract.py:46-48
+    // assert value == algopy.op.min_balance(
+    //     _get_1st_ref_index()
+    // ), "expected op.min_balance by index to match"
+    min_balance
+    dig 1
+    ==
+    assert // expected op.min_balance by index to match
+    // tests/artifacts/StateOps/contract.py:49
     // return value
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_auth_addr(a: bytes) -> bytes:
 verify_acct_auth_addr:
-    // tests/artifacts/StateOps/contract.py:41-42
+    // tests/artifacts/StateOps/contract.py:51-52
     // @arc4.abimethod()
     // def verify_acct_auth_addr(self, a: algopy.Account) -> arc4.Address:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:43
+    // tests/artifacts/StateOps/contract.py:53
     // value, funded = op.AcctParamsGet.acct_auth_addr(a)
     frame_dig -1
     acct_params_get AcctAuthAddr
     swap
-    // tests/artifacts/StateOps/contract.py:44
+    // tests/artifacts/StateOps/contract.py:54
     // value_index, funded_index = op.AcctParamsGet.acct_auth_addr(_get_1st_ref_index())
     callsub _get_1st_ref_index
     acct_params_get AcctAuthAddr
     cover 2
-    // tests/artifacts/StateOps/contract.py:45
+    // tests/artifacts/StateOps/contract.py:55
     // assert value == value_index, "expected value by index to match"
     dig 1
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:46
+    // tests/artifacts/StateOps/contract.py:56
     // assert funded == funded_index, "expected funded by index to match"
     cover 2
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:47
+    // tests/artifacts/StateOps/contract.py:57
     // return arc4.Address(value)
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_num_uint(a: bytes) -> uint64:
 verify_acct_total_num_uint:
-    // tests/artifacts/StateOps/contract.py:49-50
+    // tests/artifacts/StateOps/contract.py:59-60
     // @arc4.abimethod()
     // def verify_acct_total_num_uint(self, a: algopy.Account) -> algopy.UInt64:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:51
+    // tests/artifacts/StateOps/contract.py:61
     // value, funded = op.AcctParamsGet.acct_total_num_uint(a)
     frame_dig -1
     acct_params_get AcctTotalNumUint
     swap
-    // tests/artifacts/StateOps/contract.py:52
+    // tests/artifacts/StateOps/contract.py:62
     // value_index, funded_index = op.AcctParamsGet.acct_total_num_uint(_get_1st_ref_index())
     callsub _get_1st_ref_index
     acct_params_get AcctTotalNumUint
-    cover 2
-    // tests/artifacts/StateOps/contract.py:53
-    // assert value == value_index, "expected value by index to match"
-    dig 1
-    ==
-    assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:54
-    // assert funded == funded_index, "expected funded by index to match"
-    cover 2
-    ==
-    assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:55
-    // return value
-    retsub
-
-
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_num_byte_slice(a: bytes) -> uint64:
-verify_acct_total_num_byte_slice:
-    // tests/artifacts/StateOps/contract.py:57-58
-    // @arc4.abimethod()
-    // def verify_acct_total_num_byte_slice(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
-    // tests/artifacts/StateOps/contract.py:59
-    // value, funded = op.AcctParamsGet.acct_total_num_byte_slice(a)
-    frame_dig -1
-    acct_params_get AcctTotalNumByteSlice
-    swap
-    // tests/artifacts/StateOps/contract.py:61
-    // _get_1st_ref_index()
-    callsub _get_1st_ref_index
-    // tests/artifacts/StateOps/contract.py:60-62
-    // value_index, funded_index = op.AcctParamsGet.acct_total_num_byte_slice(
-    //     _get_1st_ref_index()
-    // )
-    acct_params_get AcctTotalNumByteSlice
     cover 2
     // tests/artifacts/StateOps/contract.py:63
     // assert value == value_index, "expected value by index to match"
@@ -493,25 +510,25 @@ verify_acct_total_num_byte_slice:
     retsub
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_extra_app_pages(a: bytes) -> uint64:
-verify_acct_total_extra_app_pages:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_num_byte_slice(a: bytes) -> uint64:
+verify_acct_total_num_byte_slice:
     // tests/artifacts/StateOps/contract.py:67-68
     // @arc4.abimethod()
-    // def verify_acct_total_extra_app_pages(self, a: algopy.Account) -> algopy.UInt64:
+    // def verify_acct_total_num_byte_slice(self, a: algopy.Account) -> algopy.UInt64:
     proto 1 1
     // tests/artifacts/StateOps/contract.py:69
-    // value, funded = op.AcctParamsGet.acct_total_extra_app_pages(a)
+    // value, funded = op.AcctParamsGet.acct_total_num_byte_slice(a)
     frame_dig -1
-    acct_params_get AcctTotalExtraAppPages
+    acct_params_get AcctTotalNumByteSlice
     swap
     // tests/artifacts/StateOps/contract.py:71
     // _get_1st_ref_index()
     callsub _get_1st_ref_index
     // tests/artifacts/StateOps/contract.py:70-72
-    // value_index, funded_index = op.AcctParamsGet.acct_total_extra_app_pages(
+    // value_index, funded_index = op.AcctParamsGet.acct_total_num_byte_slice(
     //     _get_1st_ref_index()
     // )
-    acct_params_get AcctTotalExtraAppPages
+    acct_params_get AcctTotalNumByteSlice
     cover 2
     // tests/artifacts/StateOps/contract.py:73
     // assert value == value_index, "expected value by index to match"
@@ -528,87 +545,87 @@ verify_acct_total_extra_app_pages:
     retsub
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_apps_created(a: bytes) -> uint64:
-verify_acct_total_apps_created:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_extra_app_pages(a: bytes) -> uint64:
+verify_acct_total_extra_app_pages:
     // tests/artifacts/StateOps/contract.py:77-78
     // @arc4.abimethod()
-    // def verify_acct_total_apps_created(self, a: algopy.Account) -> algopy.UInt64:
+    // def verify_acct_total_extra_app_pages(self, a: algopy.Account) -> algopy.UInt64:
     proto 1 1
     // tests/artifacts/StateOps/contract.py:79
-    // value, funded = op.AcctParamsGet.acct_total_apps_created(a)
+    // value, funded = op.AcctParamsGet.acct_total_extra_app_pages(a)
     frame_dig -1
-    acct_params_get AcctTotalAppsCreated
+    acct_params_get AcctTotalExtraAppPages
     swap
-    // tests/artifacts/StateOps/contract.py:80
-    // value_index, funded_index = op.AcctParamsGet.acct_total_apps_created(_get_1st_ref_index())
-    callsub _get_1st_ref_index
-    acct_params_get AcctTotalAppsCreated
-    cover 2
     // tests/artifacts/StateOps/contract.py:81
+    // _get_1st_ref_index()
+    callsub _get_1st_ref_index
+    // tests/artifacts/StateOps/contract.py:80-82
+    // value_index, funded_index = op.AcctParamsGet.acct_total_extra_app_pages(
+    //     _get_1st_ref_index()
+    // )
+    acct_params_get AcctTotalExtraAppPages
+    cover 2
+    // tests/artifacts/StateOps/contract.py:83
     // assert value == value_index, "expected value by index to match"
     dig 1
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:82
+    // tests/artifacts/StateOps/contract.py:84
     // assert funded == funded_index, "expected funded by index to match"
     cover 2
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:83
+    // tests/artifacts/StateOps/contract.py:85
+    // return value
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_apps_created(a: bytes) -> uint64:
+verify_acct_total_apps_created:
+    // tests/artifacts/StateOps/contract.py:87-88
+    // @arc4.abimethod()
+    // def verify_acct_total_apps_created(self, a: algopy.Account) -> algopy.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:89
+    // value, funded = op.AcctParamsGet.acct_total_apps_created(a)
+    frame_dig -1
+    acct_params_get AcctTotalAppsCreated
+    swap
+    // tests/artifacts/StateOps/contract.py:90
+    // value_index, funded_index = op.AcctParamsGet.acct_total_apps_created(_get_1st_ref_index())
+    callsub _get_1st_ref_index
+    acct_params_get AcctTotalAppsCreated
+    cover 2
+    // tests/artifacts/StateOps/contract.py:91
+    // assert value == value_index, "expected value by index to match"
+    dig 1
+    ==
+    assert // expected value by index to match
+    // tests/artifacts/StateOps/contract.py:92
+    // assert funded == funded_index, "expected funded by index to match"
+    cover 2
+    ==
+    assert // expected funded by index to match
+    // tests/artifacts/StateOps/contract.py:93
     // return value
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_apps_opted_in(a: bytes) -> uint64:
 verify_acct_total_apps_opted_in:
-    // tests/artifacts/StateOps/contract.py:85-86
+    // tests/artifacts/StateOps/contract.py:95-96
     // @arc4.abimethod()
     // def verify_acct_total_apps_opted_in(self, a: algopy.Account) -> algopy.UInt64:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:87
+    // tests/artifacts/StateOps/contract.py:97
     // value, funded = op.AcctParamsGet.acct_total_apps_opted_in(a)
     frame_dig -1
     acct_params_get AcctTotalAppsOptedIn
     swap
-    // tests/artifacts/StateOps/contract.py:88
+    // tests/artifacts/StateOps/contract.py:98
     // value_index, funded_index = op.AcctParamsGet.acct_total_apps_opted_in(_get_1st_ref_index())
     callsub _get_1st_ref_index
     acct_params_get AcctTotalAppsOptedIn
-    cover 2
-    // tests/artifacts/StateOps/contract.py:89
-    // assert value == value_index, "expected value by index to match"
-    dig 1
-    ==
-    assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:90
-    // assert funded == funded_index, "expected funded by index to match"
-    cover 2
-    ==
-    assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:91
-    // return value
-    retsub
-
-
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_assets_created(a: bytes) -> uint64:
-verify_acct_total_assets_created:
-    // tests/artifacts/StateOps/contract.py:93-94
-    // @arc4.abimethod()
-    // def verify_acct_total_assets_created(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
-    // tests/artifacts/StateOps/contract.py:95
-    // value, funded = op.AcctParamsGet.acct_total_assets_created(a)
-    frame_dig -1
-    acct_params_get AcctTotalAssetsCreated
-    swap
-    // tests/artifacts/StateOps/contract.py:97
-    // _get_1st_ref_index()
-    callsub _get_1st_ref_index
-    // tests/artifacts/StateOps/contract.py:96-98
-    // value_index, funded_index = op.AcctParamsGet.acct_total_assets_created(
-    //     _get_1st_ref_index()
-    // )
-    acct_params_get AcctTotalAssetsCreated
     cover 2
     // tests/artifacts/StateOps/contract.py:99
     // assert value == value_index, "expected value by index to match"
@@ -625,94 +642,129 @@ verify_acct_total_assets_created:
     retsub
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_assets(a: bytes) -> uint64:
-verify_acct_total_assets:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_assets_created(a: bytes) -> uint64:
+verify_acct_total_assets_created:
     // tests/artifacts/StateOps/contract.py:103-104
     // @arc4.abimethod()
-    // def verify_acct_total_assets(self, a: algopy.Account) -> algopy.UInt64:
+    // def verify_acct_total_assets_created(self, a: algopy.Account) -> algopy.UInt64:
     proto 1 1
     // tests/artifacts/StateOps/contract.py:105
-    // value, funded = op.AcctParamsGet.acct_total_assets(a)
+    // value, funded = op.AcctParamsGet.acct_total_assets_created(a)
     frame_dig -1
-    acct_params_get AcctTotalAssets
+    acct_params_get AcctTotalAssetsCreated
     swap
-    // tests/artifacts/StateOps/contract.py:106
-    // value_index, funded_index = op.AcctParamsGet.acct_total_assets(_get_1st_ref_index())
-    callsub _get_1st_ref_index
-    acct_params_get AcctTotalAssets
-    cover 2
     // tests/artifacts/StateOps/contract.py:107
+    // _get_1st_ref_index()
+    callsub _get_1st_ref_index
+    // tests/artifacts/StateOps/contract.py:106-108
+    // value_index, funded_index = op.AcctParamsGet.acct_total_assets_created(
+    //     _get_1st_ref_index()
+    // )
+    acct_params_get AcctTotalAssetsCreated
+    cover 2
+    // tests/artifacts/StateOps/contract.py:109
     // assert value == value_index, "expected value by index to match"
     dig 1
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:108
+    // tests/artifacts/StateOps/contract.py:110
     // assert funded == funded_index, "expected funded by index to match"
     cover 2
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:109
+    // tests/artifacts/StateOps/contract.py:111
+    // return value
+    retsub
+
+
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_assets(a: bytes) -> uint64:
+verify_acct_total_assets:
+    // tests/artifacts/StateOps/contract.py:113-114
+    // @arc4.abimethod()
+    // def verify_acct_total_assets(self, a: algopy.Account) -> algopy.UInt64:
+    proto 1 1
+    // tests/artifacts/StateOps/contract.py:115
+    // value, funded = op.AcctParamsGet.acct_total_assets(a)
+    frame_dig -1
+    acct_params_get AcctTotalAssets
+    swap
+    // tests/artifacts/StateOps/contract.py:116
+    // value_index, funded_index = op.AcctParamsGet.acct_total_assets(_get_1st_ref_index())
+    callsub _get_1st_ref_index
+    acct_params_get AcctTotalAssets
+    cover 2
+    // tests/artifacts/StateOps/contract.py:117
+    // assert value == value_index, "expected value by index to match"
+    dig 1
+    ==
+    assert // expected value by index to match
+    // tests/artifacts/StateOps/contract.py:118
+    // assert funded == funded_index, "expected funded by index to match"
+    cover 2
+    ==
+    assert // expected funded by index to match
+    // tests/artifacts/StateOps/contract.py:119
     // return value
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_boxes(a: bytes) -> uint64:
 verify_acct_total_boxes:
-    // tests/artifacts/StateOps/contract.py:111-112
+    // tests/artifacts/StateOps/contract.py:121-122
     // @arc4.abimethod()
     // def verify_acct_total_boxes(self, a: algopy.Account) -> algopy.UInt64:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:113
+    // tests/artifacts/StateOps/contract.py:123
     // value, funded = op.AcctParamsGet.acct_total_boxes(a)
     frame_dig -1
     acct_params_get AcctTotalBoxes
     swap
-    // tests/artifacts/StateOps/contract.py:114
+    // tests/artifacts/StateOps/contract.py:124
     // value_index, funded_index = op.AcctParamsGet.acct_total_boxes(_get_1st_ref_index())
     callsub _get_1st_ref_index
     acct_params_get AcctTotalBoxes
     cover 2
-    // tests/artifacts/StateOps/contract.py:115
+    // tests/artifacts/StateOps/contract.py:125
     // assert value == value_index, "expected value by index to match"
     dig 1
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:116
+    // tests/artifacts/StateOps/contract.py:126
     // assert funded == funded_index, "expected funded by index to match"
     cover 2
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:117
+    // tests/artifacts/StateOps/contract.py:127
     // return value
     retsub
 
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_box_bytes(a: bytes) -> uint64:
 verify_acct_total_box_bytes:
-    // tests/artifacts/StateOps/contract.py:119-120
+    // tests/artifacts/StateOps/contract.py:129-130
     // @arc4.abimethod()
     // def verify_acct_total_box_bytes(self, a: algopy.Account) -> algopy.UInt64:
     proto 1 1
-    // tests/artifacts/StateOps/contract.py:121
+    // tests/artifacts/StateOps/contract.py:131
     // value, funded = op.AcctParamsGet.acct_total_box_bytes(a)
     frame_dig -1
     acct_params_get AcctTotalBoxBytes
     swap
-    // tests/artifacts/StateOps/contract.py:122
+    // tests/artifacts/StateOps/contract.py:132
     // value_index, funded_index = op.AcctParamsGet.acct_total_box_bytes(_get_1st_ref_index())
     callsub _get_1st_ref_index
     acct_params_get AcctTotalBoxBytes
     cover 2
-    // tests/artifacts/StateOps/contract.py:123
+    // tests/artifacts/StateOps/contract.py:133
     // assert value == value_index, "expected value by index to match"
     dig 1
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:124
+    // tests/artifacts/StateOps/contract.py:134
     // assert funded == funded_index, "expected funded by index to match"
     cover 2
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:125
+    // tests/artifacts/StateOps/contract.py:135
     // return value
     retsub

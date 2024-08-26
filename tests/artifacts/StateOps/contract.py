@@ -28,6 +28,11 @@ class StateAcctParamsGetContract(ARC4Contract):
         value_index, funded_index = op.AcctParamsGet.acct_balance(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
+        assert value == a.balance, "expected Account balance to match"
+        assert value == algopy.op.balance(a), "expected op.balance to match"
+        assert value == algopy.op.balance(
+            _get_1st_ref_index()
+        ), "expected op.balance by index to match"
         return value
 
     @arc4.abimethod()
@@ -36,6 +41,11 @@ class StateAcctParamsGetContract(ARC4Contract):
         value_index, funded_index = op.AcctParamsGet.acct_min_balance(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
+        assert value == a.min_balance, "expected Account min_balance to match"
+        assert value == algopy.op.min_balance(a), "expected op.min_balance to match"
+        assert value == algopy.op.min_balance(
+            _get_1st_ref_index()
+        ), "expected op.min_balance by index to match"
         return value
 
     @arc4.abimethod()

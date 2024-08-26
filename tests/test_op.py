@@ -591,6 +591,7 @@ def test_acct_params_get(
     dummy_account = generate_test_account(algod_client)
 
     mock_account = context.any.account(
+        address=dummy_account.address,
         balance=algopy.UInt64(INITIAL_BALANCE_MICRO_ALGOS + 100_000),
         min_balance=algopy.UInt64(100_000),
         auth_address=algopy.Account(algosdk.constants.ZERO_ADDRESS),
@@ -614,7 +615,10 @@ def test_acct_params_get(
     avm_result = get_state_acct_params_avm_result(
         method_name, a=dummy_account.address, suggested_params=sp
     )
-    mock_result = getattr(mock_contract, method_name)(mock_account)
+    with context.txn.create_group(
+        active_txn_overrides={"fee": algopy.UInt64(1000), "sender": mock_account}
+    ):
+        mock_result = getattr(mock_contract, method_name)(mock_account)
 
     if isinstance(expected_value, str):
         expected_value = algopy.Account(expected_value)
