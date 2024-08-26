@@ -83,7 +83,10 @@ class Asset(UInt64Backed):
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Asset):
             return self.id == other.id
-        return self.id == other
+        elif isinstance(other, int):
+            return self.id == other
+        else:
+            return NotImplemented
 
     def __bool__(self) -> bool:
         return self.id != 0

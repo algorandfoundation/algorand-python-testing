@@ -82,7 +82,11 @@ class Application(UInt64Backed):
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Application):
             return self._id == other._id
-        return self._id == as_int64(other)
+        # can compare Applications to int types only (not uint64)
+        elif isinstance(other, int):
+            return self._id == other
+        else:
+            return NotImplemented
 
     def __bool__(self) -> bool:
         return self._id != 0

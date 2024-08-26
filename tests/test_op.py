@@ -996,3 +996,12 @@ def test_gaid(context: AlgopyTestContext) -> None:
 
     # act
     contract.log_group(app_call_txn)
+
+
+@pytest.mark.usefixtures("context")
+def test_contains() -> None:
+    from tests.artifacts.Contains.contract import MyContract
+
+    contract = MyContract()
+
+    contract.approval_program()

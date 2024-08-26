@@ -131,13 +131,12 @@ class Account(BytesBacked):
         return self.public_key
 
     def __eq__(self, other: object) -> bool:
-        match other:
-            case Account() as other_acc:
-                return self._public_key == other_acc._public_key
-            case str() as other_str:
-                return self.public_key == other_str
-            case _:
-                return NotImplemented
+        if isinstance(other, Account):
+            return self._public_key == other._public_key
+        elif isinstance(other, str):
+            return self.public_key == other
+        else:
+            return NotImplemented
 
     def __bool__(self) -> bool:
         return bool(self._public_key) and self._public_key != algosdk.encoding.decode_address(

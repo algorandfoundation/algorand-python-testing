@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import decimal
+import functools
 import types
 import typing
 
@@ -169,7 +170,8 @@ class _ABIEncoded(BytesBacked):
     def __eq__(self, other: object) -> bool:
         if isinstance(other, _ABIEncoded):
             return self._type_info == other._type_info and self.bytes == other.bytes
-        return NotImplemented
+        else:
+            return NotImplemented
 
     def __hash__(self) -> int:
         return hash(self.bytes)
@@ -234,7 +236,11 @@ class String(_ABIEncoded):
         return String(as_string(other) + self.native)
 
     def __eq__(self, other: String | str) -> bool:  # type: ignore[override]
-        return self.native == as_string(other)
+        try:
+            other_string = as_string(other)
+        except TypeError:
+            return NotImplemented
+        return self.native == other_string
 
     def __bool__(self) -> bool:
         """Returns `True` if length is not zero."""
@@ -294,47 +300,12 @@ class _UIntN(_ABIEncoded, typing.Generic[_TBitSize], metaclass=_UIntNMeta):
         bytes_value = int_to_bytes(value, self._type_info.max_bytes_len)
         self._value = as_bytes(bytes_value)
 
-    def __eq__(  # type: ignore[override]
-        self,
-        other: UIntN[_TBitSize] | BigUIntN[_TBitSize] | algopy.UInt64 | algopy.BigUInt | int,
-    ) -> bool:
-        raise NotImplementedError
-
-    def __ne__(  # type: ignore[override]
-        self,
-        other: UIntN[_TBitSize] | BigUIntN[_TBitSize] | algopy.UInt64 | algopy.BigUInt | int,
-    ) -> bool:
-        raise NotImplementedError
-
-    def __le__(
-        self,
-        other: UIntN[_TBitSize] | BigUIntN[_TBitSize] | algopy.UInt64 | algopy.BigUInt | int,
-    ) -> bool:
-        raise NotImplementedError
-
-    def __lt__(
-        self,
-        other: UIntN[_TBitSize] | BigUIntN[_TBitSize] | algopy.UInt64 | algopy.BigUInt | int,
-    ) -> bool:
-        raise NotImplementedError
-
-    def __ge__(
-        self,
-        other: UIntN[_TBitSize] | BigUIntN[_TBitSize] | algopy.UInt64 | algopy.BigUInt | int,
-    ) -> bool:
-        raise NotImplementedError
-
-    def __gt__(
-        self,
-        other: UIntN[_TBitSize] | BigUIntN[_TBitSize] | algopy.UInt64 | algopy.BigUInt | int,
-    ) -> bool:
-        raise NotImplementedError
-
     def __bool__(self) -> bool:
         """Returns `True` if not equal to zero."""
         raise NotImplementedError
 
 
+@functools.total_ordering
 class UIntN(_UIntN, typing.Generic[_TBitSize]):  # type: ignore[type-arg]
     """An ARC4 UInt consisting of the number of bits specified.
 
@@ -349,22 +320,18 @@ class UIntN(_UIntN, typing.Generic[_TBitSize]):  # type: ignore[type-arg]
         return algopy.UInt64(int.from_bytes(self._value))
 
     def __eq__(self, other: object) -> bool:
-        return as_int64(self.native) == as_int(other, max=None)
-
-    def __ne__(self, other: object) -> bool:
-        return as_int64(self.native) != as_int(other, max=None)
-
-    def __le__(self, other: object) -> bool:
-        return as_int64(self.native) <= as_int(other, max=None)
+        try:
+            other_int = as_int64(other)
+        except (TypeError, ValueError):
+            return NotImplemented
+        return as_int64(self.native) == other_int
 
     def __lt__(self, other: object) -> bool:
-        return as_int64(self.native) < as_int(other, max=None)
-
-    def __ge__(self, other: object) -> bool:
-        return as_int64(self.native) >= as_int(other, max=None)
-
-    def __gt__(self, other: object) -> bool:
-        return as_int64(self.native) > as_int(other, max=None)
+        try:
+            other_int = as_int64(other)
+        except (TypeError, ValueError):
+            return NotImplemented
+        return as_int64(self.native) < other_int
 
     def __bool__(self) -> bool:
         return bool(self.native)
@@ -376,6 +343,7 @@ class UIntN(_UIntN, typing.Generic[_TBitSize]):  # type: ignore[type-arg]
         return _arc4_repr(self)
 
 
+@functools.total_ordering
 class BigUIntN(_UIntN, typing.Generic[_TBitSize]):  # type: ignore[type-arg]
     """An ARC4 UInt consisting of the number of bits specified.
 
@@ -390,22 +358,18 @@ class BigUIntN(_UIntN, typing.Generic[_TBitSize]):  # type: ignore[type-arg]
         return algopy.BigUInt.from_bytes(self._value)
 
     def __eq__(self, other: object) -> bool:
-        return as_int512(self.native) == as_int(other, max=None)
-
-    def __ne__(self, other: object) -> bool:
-        return as_int512(self.native) != as_int(other, max=None)
-
-    def __le__(self, other: object) -> bool:
-        return as_int512(self.native) <= as_int(other, max=None)
+        try:
+            other_int = as_int512(other)
+        except (TypeError, ValueError):
+            return NotImplemented
+        return as_int512(self.native) == other_int
 
     def __lt__(self, other: object) -> bool:
-        return as_int512(self.native) < as_int(other, max=None)
-
-    def __ge__(self, other: object) -> bool:
-        return as_int512(self.native) >= as_int(other, max=None)
-
-    def __gt__(self, other: object) -> bool:
-        return as_int512(self.native) > as_int(other, max=None)
+        try:
+            other_int = as_int512(other)
+        except (TypeError, ValueError):
+            return NotImplemented
+        return as_int512(self.native) < other_int
 
     def __bool__(self) -> bool:
         return bool(self.native)
@@ -749,8 +713,11 @@ class Address(StaticArray[Byte, typing.Literal[32]]):
         `Account` or `str`"""
         if isinstance(other, Address | Account):
             return self.bytes == other.bytes
-        other_bytes: bytes = algosdk.encoding.decode_address(other)
-        return self.bytes == other_bytes
+        elif isinstance(other, str):
+            other_bytes: bytes = algosdk.encoding.decode_address(other)
+            return self.bytes == other_bytes
+        else:
+            return NotImplemented
 
     def __str__(self) -> str:
         return str(self.native)

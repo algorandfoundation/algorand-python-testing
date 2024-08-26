@@ -29,7 +29,11 @@ class String(BytesBacked):
         return bool(self.value)
 
     def __eq__(self, other: object) -> bool:
-        return self.value == as_string(other)
+        try:
+            other_string = as_string(other)
+        except TypeError:
+            return NotImplemented
+        return self.value == other_string
 
     def __contains__(self, item: object) -> bool:
         return as_string(item) in self.value
