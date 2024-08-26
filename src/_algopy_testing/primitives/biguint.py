@@ -37,7 +37,11 @@ class BigUInt(BytesBacked):
     # however will raise a TypeError if compared to something that is not a numeric value
     # as this would be a compile error when compiled to TEAL
     def __eq__(self, other: object) -> bool:
-        return as_int512(self) == as_int512(other)
+        try:
+            other_uint = as_int512(other)
+        except TypeError:
+            return NotImplemented
+        return as_int512(self) == other_uint
 
     def __lt__(self, other: BigUInt | UInt64 | int) -> bool:
         return as_int512(self) < as_int512(other)

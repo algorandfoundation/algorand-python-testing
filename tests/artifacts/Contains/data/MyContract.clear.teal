@@ -1,0 +1,7 @@
+#pragma version 10
+
+tests.artifacts.Contains.contract.MyContract.clear_state_program:
+    // tests/artifacts/Contains/contract.py:40
+    // return UInt64(1)
+    int 1
+    return

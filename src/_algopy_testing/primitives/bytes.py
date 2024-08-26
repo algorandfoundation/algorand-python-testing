@@ -75,7 +75,11 @@ class Bytes:
             return Bytes(self.value[slice(int_index, int_index + 1)])
 
     def __eq__(self, other: object) -> bool:
-        return self.value == as_bytes(other)
+        try:
+            other_bytes = as_bytes(other)
+        except TypeError:
+            return NotImplemented
+        return self.value == other_bytes
 
     def __and__(self, other: bytes | Bytes) -> Bytes:
         return self._operate_bitwise(other, "and_")
