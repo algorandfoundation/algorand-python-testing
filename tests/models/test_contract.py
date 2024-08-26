@@ -23,14 +23,32 @@ class ContractTxnInit(algopy.Contract):
         return True
 
 
-class ContractARC4Create(algopy.ARC4Contract):
+class ContractARC4Create(
+    algopy.ARC4Contract,
+    state_totals=algopy.StateTotals(
+        global_bytes=4,
+        global_uints=5,
+        local_bytes=6,
+        local_uints=7,
+    ),
+):
 
     def __init__(self) -> None:
         self.creator = algopy.Txn.sender
+        self._name = algopy.String("name")
+        self._scratch_slots = algopy.UInt64()
+        self._state_totals = algopy.UInt64()
 
     @algopy.arc4.abimethod(create="require")
     def create(self, val: algopy.UInt64) -> None:
         self.arg1 = val
+        assert algopy.Global.current_application_id.global_num_bytes == 4
+        assert algopy.Global.current_application_id.global_num_uint == 5
+        assert algopy.Global.current_application_id.local_num_bytes == 6
+        assert algopy.Global.current_application_id.local_num_uint == 7
+        assert self._name == "name"
+        assert self._scratch_slots == 0
+        assert self._state_totals == 0
 
 
 @pytest.fixture()

@@ -33,6 +33,10 @@ class _StateTotals:
 
 
 class _ContractMeta(type):
+    _name: str
+    _scratch_slots: typing.Any
+    _state_totals: StateTotals | None
+
     def __init__(cls, *args: typing.Any, **kwargs: typing.Any) -> None:
         super().__init__(*args, **kwargs)
         cls.global_state_types = dict[str, type]()
@@ -63,7 +67,7 @@ class _ContractMeta(type):
         app_data.is_creating = _has_create_methods(cls)
 
         assert isinstance(instance, Contract)
-        cls_state_totals = cls._state_totals or StateTotals()  # type: ignore[attr-defined]
+        cls_state_totals = cls._state_totals or StateTotals()
         state_totals = _get_state_totals(instance, cls_state_totals)
         context.ledger.update_app(
             app_id,
@@ -80,9 +84,6 @@ class Contract(metaclass=_ContractMeta):
     #       on this class, that aren't part of the official stubs
     #       to reduce the potential for clashes with classes that inherit from this
     __app_id__: int
-    _name: typing.ClassVar[str]
-    _scratch_slots: typing.ClassVar[typing.Any | None]
-    _state_totals: typing.ClassVar[StateTotals | None]
 
     def __init_subclass__(
         cls,
@@ -93,8 +94,6 @@ class Contract(metaclass=_ContractMeta):
         ) = None,
         state_totals: StateTotals | None = None,
     ):
-        # TODO: 1.0 add test : check storing these on cls does not interfere with instances
-        #       by having a contract with _name, _scratch_slots and _state_totals attributes
         cls._name = name or cls.__name__
         cls._scratch_slots = scratch_slots
         cls._state_totals = state_totals
@@ -209,7 +208,6 @@ def _get_state_totals(contract: Contract, cls_state_totals: StateTotals) -> _Sta
         else:
             local_bytes += 1
 
-    # TODO: 1.0 add tests for state overrides
     # apply any cls specific overrides
     if cls_state_totals.global_uints is not None:
         global_uints = cls_state_totals.global_uints
