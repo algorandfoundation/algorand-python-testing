@@ -27,7 +27,6 @@ class GlobalFields(TypedDict, total=False):
     latest_timestamp: algopy.UInt64
     group_id: algopy.Bytes  # TODO: mock/infer from active txn group?
     caller_application_id: algopy.Application
-    caller_application_address: algopy.Account
     asset_create_min_balance: algopy.UInt64
     asset_opt_in_min_balance: algopy.UInt64
     genesis_hash: algopy.Bytes
@@ -47,6 +46,15 @@ class _Global:
     @property
     def current_application_id(self) -> algopy.Application:
         return lazy_context.active_app
+
+    @property
+    def caller_application_id(self) -> algopy.Application:
+        return self._fields["caller_application_id"]
+
+    @property
+    def caller_application_address(self) -> algopy.Account:
+        app_address = algosdk.logic.get_application_address(int(self.caller_application_id.id))
+        return Account(app_address)
 
     @property
     def creator_address(self) -> algopy.Account:
