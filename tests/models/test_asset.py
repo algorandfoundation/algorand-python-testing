@@ -37,7 +37,7 @@ def test_asset_from_int() -> None:
 def test_asset_balance(context: AlgopyTestContext) -> None:
     account = context.any.account()
     asset = context.any.asset()
-    context.ledger.update_asset_holdings(account, asset, balance=1000)
+    context.ledger.update_asset_holdings(asset, account, balance=1000)
 
     assert asset.balance(account) == UInt64(1000)
 

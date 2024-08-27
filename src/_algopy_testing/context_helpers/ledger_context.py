@@ -93,8 +93,8 @@ class LedgerContext:
 
     def update_asset_holdings(
         self,
-        account: algopy.Account | str,
         asset: algopy.Asset | algopy.UInt64 | int,
+        account: algopy.Account | str,
         *,
         balance: algopy.UInt64 | int | None = None,
         frozen: bool | None = None,
