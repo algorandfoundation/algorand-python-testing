@@ -30,7 +30,7 @@ def test_patch_global_fields() -> None:
         assert context.ledger._global_fields["min_txn_fee"] == 100
         assert context.ledger._global_fields["min_balance"] == 10
 
-        with pytest.raises(AttributeError, match="InvalidField"):
+        with pytest.raises(ValueError, match="InvalidField"):
             context.ledger.patch_global_fields(InvalidField=123)  # type: ignore   # noqa: PGH003
 
 

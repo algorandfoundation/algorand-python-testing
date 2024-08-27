@@ -403,16 +403,14 @@ class LedgerContext:
             **global_fields: The fields to patch.
 
         Raises:
-            AttributeError: If invalid fields are provided.
+            ValueError: If invalid fields are provided.
         """
         from _algopy_testing.op.global_values import GlobalFields
 
         invalid_keys = global_fields.keys() - GlobalFields.__annotations__.keys()
 
         if invalid_keys:
-            raise AttributeError(
-                f"Invalid field(s) found during patch for `Global`: {', '.join(invalid_keys)}"
-            )
+            raise ValueError(f"Invalid Global fields: {', '.join(invalid_keys)}")
 
         self._global_fields.update(global_fields)
 
