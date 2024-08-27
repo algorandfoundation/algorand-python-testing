@@ -53,18 +53,22 @@ def get_empty_account() -> AccountContextData:
 
 
 @dataclasses.dataclass
+class AssetHolding:
+    balance: algopy.UInt64
+    frozen: bool
+
+
+@dataclasses.dataclass
 class AccountContextData:
     """Stores account-related information.
 
     Attributes:
-        opted_asset_balances (dict[int, algopy.UInt64]): Mapping of asset IDs to balances.
+        opted_assets (dict[int, AssetHolding]): Mapping of asset IDs to holdings.
         opted_apps (dict[int, algopy.UInt64]): Mapping of application IDs to instances.
         fields (AccountFields): Additional account fields.
     """
 
-    opted_asset_balances: dict[algopy.UInt64, algopy.UInt64] = dataclasses.field(
-        default_factory=dict
-    )
+    opted_assets: dict[algopy.UInt64, AssetHolding] = dataclasses.field(default_factory=dict)
     opted_apps: dict[algopy.UInt64, algopy.Application] = dataclasses.field(default_factory=dict)
     fields: AccountFields = dataclasses.field(default_factory=AccountFields)  # type: ignore[arg-type]
 
@@ -96,7 +100,7 @@ class Account(BytesBacked):
         from _algopy_testing.models import Application, Asset
 
         if isinstance(asset_or_app, Asset):
-            return asset_or_app.id in self.data.opted_asset_balances
+            return asset_or_app.id in self.data.opted_assets
         elif isinstance(asset_or_app, Application):
             return asset_or_app.id in self.data.opted_apps
 

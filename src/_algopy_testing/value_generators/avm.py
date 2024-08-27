@@ -15,7 +15,7 @@ from _algopy_testing.constants import (
     MAX_UINT512,
 )
 from _algopy_testing.context_helpers import lazy_context
-from _algopy_testing.models.account import AccountFields
+from _algopy_testing.models.account import AccountFields, AssetHolding
 from _algopy_testing.models.application import ApplicationContextData, ApplicationFields
 from _algopy_testing.models.asset import AssetFields
 from _algopy_testing.utils import generate_random_int
@@ -102,7 +102,12 @@ class AVMValueGenerator:
         # update so defaults are preserved
         account_data.fields.update(account_fields)
         # can set these since it is a new account
-        account_data.opted_asset_balances = opted_asset_balances or {}
+        account_data.opted_assets = {}
+        for asset_id, balance in (opted_asset_balances or {}).items():
+            asset = lazy_context.get_asset_data(asset_id)
+            account_data.opted_assets[asset_id] = AssetHolding(
+                balance=balance, frozen=asset["default_frozen"]
+            )
         account_data.opted_apps = {app.id: app for app in opted_apps}
         return new_account
 

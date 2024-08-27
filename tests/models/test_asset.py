@@ -37,9 +37,7 @@ def test_asset_from_int() -> None:
 def test_asset_balance(context: AlgopyTestContext) -> None:
     account = context.any.account()
     asset = context.any.asset()
-    context.ledger.update_account(
-        account.public_key, opted_asset_balances={asset.id.value: UInt64(1000)}
-    )
+    context.ledger.update_asset_holdings(account, asset, balance=1000)
 
     assert asset.balance(account) == UInt64(1000)
 
@@ -52,15 +50,18 @@ def test_asset_balance_not_opted_in(context: AlgopyTestContext) -> None:
         asset.balance(account)
 
 
-def test_asset_frozen() -> None:
-    asset = Asset(1)
-    account = Account()
+@pytest.mark.parametrize(
+    "default_frozen",
+    [
+        True,
+        False,
+    ],
+)
+def test_asset_frozen(context: AlgopyTestContext, *, default_frozen: bool) -> None:
+    asset = context.any.asset(default_frozen=default_frozen)
+    account = context.any.account(opted_asset_balances={asset.id: UInt64()})
 
-    with pytest.raises(
-        NotImplementedError,
-        match="The 'frozen' method is being executed in a python testing context",
-    ):
-        asset.frozen(account)
+    assert asset.frozen(account) == default_frozen
 
 
 def test_asset_attributes(context: AlgopyTestContext) -> None:

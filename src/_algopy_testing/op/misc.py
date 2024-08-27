@@ -91,6 +91,7 @@ def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     account = _get_account(a)
     return account.balance
 
+
 def min_balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
     account = _get_account(a)
     return account.min_balance
@@ -170,18 +171,14 @@ class _AssetHoldingGet:
             return UInt64(0), False
 
         account_data = lazy_context.get_account_data(account.public_key)
-        asset_balance = account_data.opted_asset_balances.get(asset.id)
-        if asset_balance is None:
+        holding = account_data.opted_assets.get(asset.id)
+        if holding is None:
             return UInt64(0), False
 
         if field == "balance":
-            return asset_balance, True
+            return holding.balance, True
         elif field == "frozen":
-            try:
-                asset_data = lazy_context.ledger.get_asset(asset.id)
-            except KeyError:
-                return UInt64(0), False
-            return asset_data.default_frozen, True
+            return holding.frozen, True
         else:
             raise ValueError(f"Invalid asset holding field: {field}")
 
