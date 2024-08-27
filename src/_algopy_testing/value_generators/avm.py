@@ -98,8 +98,8 @@ class AVMValueGenerator:
         account_data.fields.update(account_fields)
         for asset_id, balance in (opted_asset_balances or {}).items():
             ledger.update_asset_holdings(
-                new_account_address,
                 asset_id,
+                new_account_address,
                 balance=balance,
             )
         account_data.opted_apps = {_get_app_id(app): ledger.get_app(app) for app in opted_apps}
