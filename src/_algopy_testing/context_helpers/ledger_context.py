@@ -58,17 +58,18 @@ class LedgerContext:
         assert_address_is_valid(address)
         return algopy.Account(address)
 
-    def account_exists(self, address: str) -> bool:
-        """Check if an account exists.
+    def account_is_funded(self, account: algopy.Account | str) -> bool:
+        """Check if an account has funds.
 
         Args:
             address (str): The account address.
 
         Returns:
-            bool: True if the account exists, False otherwise.
+            bool: True if the account has an algo balance > 0, False otherwise.
         """
+        address = _get_address(account)
         assert_address_is_valid(address)
-        return address in self._account_data
+        return self._account_data[address].fields["balance"] > 0
 
     def update_account(
         self,
@@ -450,3 +451,7 @@ def _get_app_id(app: algopy.UInt64 | algopy.Application | algopy.Contract | int)
     else:
         raise TypeError("invalid type")
     return app_id
+
+
+def _get_address(account: algopy.Account | str) -> str:
+    return account if isinstance(account, str) else account.public_key

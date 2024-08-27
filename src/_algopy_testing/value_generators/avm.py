@@ -85,7 +85,7 @@ class AVMValueGenerator:
     ) -> algopy.Account:
         import algopy
 
-        if address is not None and lazy_context.ledger.account_exists(address):
+        if address is not None and address in lazy_context.ledger._account_data:
             raise ValueError(
                 "Account with such address already exists in testing context! "
                 "Use `context.ledger.get_account(address)` to retrieve the existing account."
