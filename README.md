@@ -32,17 +32,18 @@ Alternatively, if you want to start from scratch:
     ```python
     from algopy_testing import algopy_testing_context
     from your_contract import YourContract
-
+    
     def test_your_contract():
-        # Arrange
-        contract = YourContract()
-        expected_result = ... # Your expected result here
-
-        # Act
-        result = contract.your_method()  # Your test code here
-
-        # Assert
-        assert result == expected_result
+        with algopy_testing_context() as context:
+            # Arrange
+            contract = YourContract()
+            expected_result = ... # Your expected result here
+    
+            # Act
+            result = contract.your_method(context.any.uint64())  # Your test code here
+    
+            # Assert
+            assert result == expected_result
     ```
 
 5. Run your tests using your preferred Python testing framework (e.g., pytest, unittest)
