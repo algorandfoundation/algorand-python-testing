@@ -542,7 +542,6 @@ def test_app_params_get(
             local_num_bytes=algopy.UInt64(0),
             extra_program_pages=algopy.UInt64(0),
             creator=algopy.Account(get_localnet_default_account(algod_client).address),
-            address=algopy.Account(client.app_address),
         )
 
         contract = StateAppParamsContract()

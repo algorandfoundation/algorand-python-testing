@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import typing
 
+import algosdk.logic
+
 from _algopy_testing.primitives import UInt64
 from _algopy_testing.protocols import UInt64Backed
 from _algopy_testing.utils import as_int64
@@ -23,7 +25,6 @@ class ApplicationFields(typing.TypedDict, total=False):
     local_num_bytes: algopy.UInt64
     extra_program_pages: algopy.UInt64
     creator: algopy.Account
-    address: algopy.Account
 
 
 AccountKey = str
@@ -56,6 +57,13 @@ class Application(UInt64Backed):
     @property
     def id(self) -> algopy.UInt64:
         return UInt64(self._id)
+
+    @property
+    def address(self) -> algopy.Account:
+        from _algopy_testing.models import Account
+
+        address = algosdk.logic.get_application_address(self._id)
+        return Account(address)
 
     @property
     def int_(self) -> int:
