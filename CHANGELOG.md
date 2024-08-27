@@ -1,4 +1,34 @@
 # CHANGELOG
+## v0.4.0-beta.1 (2024-08-27)
+
+### Feature
+
+* add support for frozen on asset holdings, including a new ledger function `update_asset_holdings` for setting asset holding balances and frozen states ([`d777ca0`](https://github.com/algorandfoundation/algorand-python-testing/commit/d777ca0a318a8ade7a20363c9ce77fe8a8bf5d68))
+
+* expand accepted types when interacting with accounts, applications and assets ([`f448a97`](https://github.com/algorandfoundation/algorand-python-testing/commit/f448a97cb154c9f90ecf42c599b240f12928af20))
+
+  wip
+
+* replaced `account_exists` with `account_is_funded` as the later is more useful ([`4d08690`](https://github.com/algorandfoundation/algorand-python-testing/commit/4d086903eb93a70ce1d485cdd7b12d8472ef16db))
+
+### Fix
+
+* use correct type for Globals.caller_application_id ([`a30d85a`](https://github.com/algorandfoundation/algorand-python-testing/commit/a30d85a4416dfc2c5d901f3ace2265384ef60c01))
+
+* do not allow specifying `address` for applications, it is derived from the app_id ([`00fe1bc`](https://github.com/algorandfoundation/algorand-python-testing/commit/00fe1bc8ea247dcc36b01154db36b984b151e396))
+
+* do not treat asset and application ids as possible foreign array indexes ([`94a989f`](https://github.com/algorandfoundation/algorand-python-testing/commit/94a989f77169da2ae437c629cd5f4d8a872263f6))
+
+* removed incorrect deduction in `algopy.op.balance` ([`76e67c5`](https://github.com/algorandfoundation/algorand-python-testing/commit/76e67c5e3dd1cda388a2a948d452ba89805add6a))
+
+* ensure all comparable types return `NotImplemented` when a comparison is not possible ([`b055fa6`](https://github.com/algorandfoundation/algorand-python-testing/commit/b055fa68531e0b7923773ec10c2097a3d64b9dbe))
+
+* `arc4_prefix` annotated to also accept `algopy.Bytes` ([`40328ca`](https://github.com/algorandfoundation/algorand-python-testing/commit/40328ca3701b3e255193e206e8a7b1bdb441a346))
+
+### Documentation
+
+* include usage of `algopy_testing_context` in README.md quick start ([`4702f60`](https://github.com/algorandfoundation/algorand-python-testing/commit/4702f60cfe7d09956a5ae6dbdcd72da29fdda808))
+
 ## v0.3.0 (2024-08-22)
 
 ## v0.3.0-beta.10 (2024-08-22)
