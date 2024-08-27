@@ -45,14 +45,14 @@ class Asset(UInt64Backed):
 
         account_data = lazy_context.get_account_data(account.public_key)
 
-        if int(self.id) not in account_data.opted_assets:
+        if self.int_ not in account_data.opted_assets:
             raise ValueError(
                 "The asset is not opted into the account! "
                 "Use `ctx.any.account(opted_asset_balances={{ASSET_ID: VALUE}})` "
                 "to set emulated opted asset into the account."
             )
 
-        return account_data.opted_assets[self.id].balance
+        return account_data.opted_assets[self.int_].balance
 
     def frozen(self, account: algopy.Account) -> bool:
         from _algopy_testing.context_helpers import lazy_context
@@ -64,7 +64,7 @@ class Asset(UInt64Backed):
                 "Use `ctx.any.account(opted_asset_balances={{ASSET_ID: VALUE}})` "
                 "to set emulated opted asset into the account."
             )
-        return account_data.opted_assets[self.id].frozen
+        return account_data.opted_assets[self.int_].frozen
 
     @property
     def fields(self) -> AssetFields:

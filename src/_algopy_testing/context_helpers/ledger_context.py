@@ -107,10 +107,11 @@ class LedgerContext:
 
         address = _get_address(account)
         account_data = self._account_data[address]
-        asset = self.get_asset(_get_asset_id(asset))
+        asset_id = _get_asset_id(asset)
+        asset = self.get_asset(asset_id)
 
         holdings = account_data.opted_assets.setdefault(
-            asset.id,
+            asset_id,
             AssetHolding(balance=UInt64(), frozen=asset.default_frozen),
         )
         if balance is not None:

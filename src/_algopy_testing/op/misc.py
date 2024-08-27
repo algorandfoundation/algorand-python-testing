@@ -171,8 +171,9 @@ class _AssetHoldingGet:
             return UInt64(0), False
 
         account_data = lazy_context.get_account_data(account.public_key)
-        holding = account_data.opted_assets.get(asset.id)
-        if holding is None:
+        try:
+            holding = account_data.opted_assets[asset.id.value]
+        except KeyError:
             return UInt64(0), False
 
         if field == "balance":
