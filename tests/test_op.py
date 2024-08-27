@@ -1008,3 +1008,36 @@ def test_contains() -> None:
     contract = MyContract()
 
     contract.approval_program()
+
+
+def test_globals(context: AlgopyTestContext) -> None:
+    creator = context.any.account()
+    app = context.any.application(creator=creator)
+    txn1 = context.any.txn.application_call(app_id=app)
+    with context.txn.create_group(gtxns=[txn1]):
+        first_group_id = algopy.Global.group_id
+        first_timestamp = algopy.Global.latest_timestamp
+        assert first_group_id.length == 32
+        assert first_timestamp != 0
+        assert algopy.Global.group_size == 1
+        assert algopy.Global.round == 1
+        assert algopy.Global.caller_application_id == 0
+        assert algopy.Global.creator_address == creator
+        assert algopy.Global.current_application_id == app
+        assert algopy.Global.current_application_address == app.address
+
+    txn2 = context.any.txn.payment()
+    txn3 = context.any.txn.application_call()
+    caller = context.any.application()
+    context.ledger.patch_global_fields(caller_application_id=caller.id)
+    with context.txn.create_group(gtxns=[txn2, txn3]):
+        second_group_id = algopy.Global.group_id
+        second_timestamp = algopy.Global.latest_timestamp
+        assert second_group_id.length == 32
+        assert algopy.Global.group_size == 2
+        assert algopy.Global.round == 2
+        assert algopy.Global.caller_application_id == caller.id
+        assert algopy.Global.caller_application_address == caller.address
+
+    assert first_group_id != second_group_id, "expected unique group ids"
+    assert first_timestamp <= second_timestamp, "expected unique group ids"

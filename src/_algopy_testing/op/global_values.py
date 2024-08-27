@@ -25,8 +25,7 @@ class GlobalFields(TypedDict, total=False):
     logic_sig_version: algopy.UInt64
     round: algopy.UInt64
     latest_timestamp: algopy.UInt64
-    group_id: algopy.Bytes  # TODO: mock/infer from active txn group?
-    caller_application_id: algopy.Application
+    group_id: algopy.Bytes
     caller_application_id: algopy.UInt64
     asset_create_min_balance: algopy.UInt64
     asset_opt_in_min_balance: algopy.UInt64
@@ -74,6 +73,26 @@ class _Global:
     def group_size(self) -> algopy.UInt64:
         group = lazy_context.active_group
         return UInt64(len(group.txns))
+
+    @property
+    def group_id(self) -> algopy.Bytes:
+        from _algopy_testing import op
+
+        try:
+            return self._fields["group_id"]
+        except KeyError:
+            group_hash = hash(lazy_context.active_group)
+            group_hash_bytes = group_hash.to_bytes((group_hash.bit_length() + 7) // 8)
+            return op.sha256(group_hash_bytes)
+
+    @property
+    def round(self) -> algopy.UInt64:
+        try:
+            return self._fields["round"]
+        except KeyError:
+            # size of groups will suffice as an increasing integer similar to ground
+            num_groups = len(lazy_context.txn._groups) + 1
+            return UInt64(num_groups)
 
     @property
     def zero_address(self) -> algopy.Account:
