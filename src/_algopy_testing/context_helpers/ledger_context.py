@@ -6,7 +6,12 @@ from collections import defaultdict
 from _algopy_testing.constants import MAX_BOX_SIZE
 from _algopy_testing.models.account import Account
 from _algopy_testing.primitives.uint64 import UInt64
-from _algopy_testing.utils import as_bytes, assert_address_is_valid, get_default_global_fields
+from _algopy_testing.utils import (
+    as_bytes,
+    assert_address_is_valid,
+    convert_stack_to_native,
+    get_default_global_fields,
+)
 
 if typing.TYPE_CHECKING:
     import algopy
@@ -73,7 +78,7 @@ class LedgerContext:
 
     def update_account(
         self,
-        address: str,
+        account: algopy.Account | str,
         opted_asset_balances: dict[int, algopy.UInt64] | None = None,
         **account_fields: typing.Unpack[AccountFields],
     ) -> None:
@@ -84,6 +89,7 @@ class LedgerContext:
             opted_asset_balances (dict[int, algopy.UInt64] | None): The opted asset balances .
             **account_fields: The fields to update.
         """
+        address = _get_address(account)
         assert_address_is_valid(address)
         self._account_data[address].fields.update(account_fields)
 
@@ -105,13 +111,13 @@ class LedgerContext:
         """
         import algopy
 
-        asset_id = int(asset_id) if isinstance(asset_id, algopy.UInt64) else asset_id
+        asset_id = _get_asset_id(asset_id)
         if asset_id not in self._asset_data:
             raise ValueError("Asset not found in testing context!")
 
         return algopy.Asset(asset_id)
 
-    def asset_exists(self, asset_id: algopy.UInt64 | int) -> bool:
+    def asset_exists(self, asset: algopy.Asset | algopy.UInt64 | int) -> bool:
         """Check if an asset exists.
 
         Args:
@@ -120,12 +126,12 @@ class LedgerContext:
         Returns:
             bool: True if the asset exists, False otherwise.
         """
-        import algopy
-
-        asset_id = int(asset_id) if isinstance(asset_id, algopy.UInt64) else asset_id
+        asset_id = _get_asset_id(asset)
         return asset_id in self._asset_data
 
-    def update_asset(self, asset_id: int, **asset_fields: typing.Unpack[AssetFields]) -> None:
+    def update_asset(
+        self, asset: algopy.Asset | algopy.UInt64 | int, **asset_fields: typing.Unpack[AssetFields]
+    ) -> None:
         """Update asset fields.
 
         Args:
@@ -135,6 +141,7 @@ class LedgerContext:
         Raises:
             ValueError: If the asset is not found.
         """
+        asset_id = _get_asset_id(asset)
         if asset_id not in self._asset_data:
             raise ValueError("Asset not found in testing context!")
         self._asset_data[asset_id].update(asset_fields)
@@ -155,28 +162,30 @@ class LedgerContext:
         app_data = self._get_app_data(app_id)
         return algopy.Application(app_data.app_id)
 
-    def app_exists(self, app_id: algopy.UInt64 | int) -> bool:
+    def app_exists(self, app: algopy.Application | algopy.UInt64 | int) -> bool:
         """Check if an application exists.
 
         Args:
-            app (algopy.UInt64 | int): The application ID.
+            app: The application to check.
 
         Returns:
             bool: True if the application exists, False otherwise.
         """
-        app_id = _get_app_id(app_id)
+        app_id = _get_app_id(app)
         return app_id in self._app_data
 
     def update_app(
-        self, app_id: int, **application_fields: typing.Unpack[ApplicationFields]
+        self,
+        app: algopy.Application | algopy.UInt64 | int,
+        **application_fields: typing.Unpack[ApplicationFields],
     ) -> None:
         """Update application fields.
 
         Args:
-            app_id (int): The application ID.
+            app: The application to update.
             **application_fields: The fields to update.
         """
-        app_data = self._get_app_data(app_id)
+        app_data = self._get_app_data(app)
         app_data.fields.update(application_fields)
 
     def get_global_state(
@@ -199,7 +208,7 @@ class LedgerContext:
         self,
         app: algopy.Contract | algopy.Application | algopy.UInt64 | int,
         key: bytes | algopy.Bytes,
-        value: int | bytes | None,
+        value: algopy.Bytes | algopy.UInt64 | int | bytes | None,
     ) -> None:
         """Set global state for an application.
 
@@ -214,7 +223,7 @@ class LedgerContext:
             if key_bytes in global_state:
                 del global_state[key_bytes]
         else:
-            global_state[key_bytes] = value
+            global_state[key_bytes] = convert_stack_to_native(value)
 
     def get_local_state(
         self,
@@ -243,7 +252,7 @@ class LedgerContext:
         app: algopy.Contract | algopy.Application | algopy.UInt64 | int,
         account: algopy.Account | str,
         key: algopy.Bytes | bytes,
-        value: int | bytes | None,
+        value: algopy.Bytes | algopy.UInt64 | int | bytes | None,
     ) -> None:
         """Set local state for an application and account.
 
@@ -261,7 +270,7 @@ class LedgerContext:
             if composite_key in local_state:
                 del local_state[composite_key]
         else:
-            local_state[composite_key] = value
+            local_state[composite_key] = convert_stack_to_native(value)
 
     def get_box(
         self,
@@ -455,3 +464,10 @@ def _get_app_id(app: algopy.UInt64 | algopy.Application | algopy.Contract | int)
 
 def _get_address(account: algopy.Account | str) -> str:
     return account if isinstance(account, str) else account.public_key
+
+
+def _get_asset_id(asset: algopy.Asset | algopy.UInt64 | int) -> int:
+    from _algopy_testing.models import Asset
+
+    asset_id = asset.id if isinstance(asset, Asset) else asset
+    return int(asset_id)

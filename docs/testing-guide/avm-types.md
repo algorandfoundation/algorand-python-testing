@@ -103,7 +103,7 @@ asset = context.ledger.get_asset(asset_id=random_asset.id)
 
 # Update an asset
 context.ledger.update_asset(
-    asset_id=random_asset.id,
+    asset=random_asset,
     name=...,  # Optional: New asset name
     total=...,  # Optional: New total supply
     decimals=...,  # Optional: Number of decimals
@@ -130,7 +130,7 @@ account = algopy.Account(raw_address) # zero address by default
 # Generate a random account
 random_account = context.any.account(
     address=str(raw_address),  # Optional: Specify a custom address, defaults to a random address
-    opted_asset_balances=...,  # Optional: Specify opted asset balances as dict of algopy.UInt64 as key and algopy.UInt64 as value
+    opted_asset_balances={},  # Optional: Specify opted asset balances as dict of algopy.UInt64 as key and algopy.UInt64 as value
     opted_apps=[],  # Optional: Specify opted apps as sequence of algopy.Application objects
     balance=...,  # Optional: Specify an initial balance
     min_balance=...,  # Optional: Specify a minimum balance
@@ -181,7 +181,6 @@ application = algopy.Application()
 
 # Generate a random application
 random_app = context.any.application(
-    address=...,  # Optional: Specify a custom address for the application
     approval_program=algopy.Bytes(b''),  # Optional: Specify a custom approval program
     clear_state_program=algopy.Bytes(b''),  # Optional: Specify a custom clear state program
     global_num_uint=algopy.UInt64(1),  # Optional: Number of global uint values
@@ -197,7 +196,7 @@ app = context.ledger.get_app(app_id=random_app.id)
 
 # Update an application
 context.ledger.update_app(
-    app_id=random_app.id,
+    app=random_app,
     approval_program=...,  # Optional: New approval program
     clear_state_program=...,  # Optional: New clear state program
     global_num_uint=...,  # Optional: New number of global uint values
