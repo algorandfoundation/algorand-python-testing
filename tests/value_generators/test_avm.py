@@ -68,16 +68,19 @@ def test_avm_string_generator(context: AlgopyTestContext, length: int | None) ->
 
 
 def test_avm_account_generator(context: AlgopyTestContext) -> None:
-    account = context.any.account()
+    # funded
+    account = context.any.account(balance=algopy.UInt64(123))
     assert isinstance(account, algopy.Account)
-    assert context.ledger.account_exists(account.public_key)
+    assert context.ledger.account_is_funded(account.public_key)
 
+    # unfunded
     custom_address = algosdk.account.generate_account()[1]
     account = context.any.account(address=custom_address)
     assert isinstance(account, algopy.Account)
     assert account.public_key == custom_address
-    assert context.ledger.account_exists(custom_address)
+    assert not context.ledger.account_is_funded(custom_address)
 
+    # duplicate
     with pytest.raises(ValueError, match="Account with such address already exists"):
         context.any.account(address=custom_address)
 
