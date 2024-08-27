@@ -15,7 +15,7 @@ from _algopy_testing.constants import (
     MAX_UINT512,
 )
 from _algopy_testing.context_helpers import lazy_context
-from _algopy_testing.models.account import AccountFields, AssetHolding
+from _algopy_testing.models.account import AccountFields
 from _algopy_testing.models.application import ApplicationContextData, ApplicationFields
 from _algopy_testing.models.asset import AssetFields
 from _algopy_testing.utils import generate_random_int
@@ -70,10 +70,13 @@ class AVMValueGenerator:
     def account(
         self,
         address: str | None = None,
-        opted_asset_balances: dict[algopy.UInt64, algopy.UInt64] | None = None,
-        opted_apps: typing.Sequence[algopy.Application] = (),
+        opted_asset_balances: (
+            dict[algopy.Asset | algopy.UInt64 | int, algopy.UInt64 | int] | None
+        ) = None,
+        opted_apps: typing.Sequence[algopy.Application | algopy.UInt64 | int] = (),
         **account_fields: typing.Unpack[AccountFields],
     ) -> algopy.Account:
+        """Initialize a new account with specified fields and balances."""
         import algopy
 
         if address is not None and address in lazy_context.ledger._account_data:
@@ -86,26 +89,26 @@ class AVMValueGenerator:
             if key not in AccountFields.__annotations__:
                 raise AttributeError(f"Invalid field '{key}' for Account")
 
+        ledger = lazy_context.ledger
         new_account_address = address or algosdk.account.generate_account()[1]
         new_account = algopy.Account(new_account_address)
         # defaultdict of account_data ensures we get a new initialized account
         account_data = lazy_context.get_account_data(new_account_address)
         # update so defaults are preserved
         account_data.fields.update(account_fields)
-        # can set these since it is a new account
-        account_data.opted_assets = {}
         for asset_id, balance in (opted_asset_balances or {}).items():
-            asset = lazy_context.get_asset_data(asset_id)
-            account_data.opted_assets[asset_id] = AssetHolding(
-                balance=balance, frozen=asset["default_frozen"]
+            ledger.update_asset_holdings(
+                new_account_address,
+                asset_id,
+                balance=balance,
             )
-        account_data.opted_apps = {app.id: app for app in opted_apps}
+        account_data.opted_apps = {_get_app_id(app): ledger.get_app(app) for app in opted_apps}
         return new_account
 
     def asset(
         self, asset_id: int | None = None, **asset_fields: typing.Unpack[AssetFields]
     ) -> algopy.Asset:
-        r"""Generate and add a new asset with a unique ID."""
+        """Generate and add a new asset with a unique ID."""
         import algopy
 
         if asset_id and asset_id in lazy_context.ledger._asset_data:
@@ -193,3 +196,10 @@ class AVMValueGenerator:
         """
         length = length or MAX_BYTES_SIZE
         return _algopy_testing.Bytes(secrets.token_bytes(length))
+
+
+def _get_app_id(app: algopy.Application | algopy.UInt64 | int) -> int:
+    from _algopy_testing.models import Application
+
+    app_id = app.id if isinstance(app, Application) else app
+    return int(app_id)

@@ -33,22 +33,21 @@ class AccountFields(typing.TypedDict, total=False):
 
 
 def get_empty_account() -> AccountContextData:
-    zero = UInt64()
     return AccountContextData(
         fields={
-            "balance": zero,
+            "balance": UInt64(),
             "min_balance": UInt64(DEFAULT_ACCOUNT_MIN_BALANCE),
             "auth_address": Account(),
-            "total_num_uint": zero,
-            "total_num_byte_slice": zero,
-            "total_extra_app_pages": zero,
-            "total_apps_created": zero,
-            "total_apps_opted_in": zero,
-            "total_assets_created": zero,
-            "total_assets": zero,
-            "total_boxes": zero,
-            "total_box_bytes": zero,
-        }
+            "total_num_uint": UInt64(),
+            "total_num_byte_slice": UInt64(),
+            "total_extra_app_pages": UInt64(),
+            "total_apps_created": UInt64(),
+            "total_apps_opted_in": UInt64(),
+            "total_assets_created": UInt64(),
+            "total_assets": UInt64(),
+            "total_boxes": UInt64(),
+            "total_box_bytes": UInt64(),
+        },
     )
 
 
@@ -64,12 +63,12 @@ class AccountContextData:
 
     Attributes:
         opted_assets (dict[int, AssetHolding]): Mapping of asset IDs to holdings.
-        opted_apps (dict[int, algopy.UInt64]): Mapping of application IDs to instances.
+        opted_apps (dict[int, algopy.Application]): Mapping of application IDs to instances.
         fields (AccountFields): Additional account fields.
     """
 
-    opted_assets: dict[algopy.UInt64, AssetHolding] = dataclasses.field(default_factory=dict)
-    opted_apps: dict[algopy.UInt64, algopy.Application] = dataclasses.field(default_factory=dict)
+    opted_assets: dict[int, AssetHolding] = dataclasses.field(default_factory=dict)
+    opted_apps: dict[int, algopy.Application] = dataclasses.field(default_factory=dict)
     fields: AccountFields = dataclasses.field(default_factory=AccountFields)  # type: ignore[arg-type]
 
 
