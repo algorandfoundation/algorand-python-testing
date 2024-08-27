@@ -143,10 +143,9 @@ class AVMValueGenerator:
         lazy_context.ledger._asset_data[int(new_asset.id)] = AssetFields(**merged_fields)  # type: ignore[typeddict-item]
         return new_asset
 
-    def application(  # type: ignore[misc]
+    def application(
         self,
         id: int | None = None,
-        address: algopy.Account | None = None,
         logs: list[bytes] | None = None,  # type: ignore[valid-type]
         **application_fields: typing.Unpack[ApplicationFields],
     ) -> algopy.Application:
@@ -175,8 +174,6 @@ class AVMValueGenerator:
             "local_num_bytes": _algopy_testing.UInt64(0),
             "extra_program_pages": _algopy_testing.UInt64(0),
             "creator": lazy_context.value.default_sender,
-            "address": address
-            or _algopy_testing.Account(algosdk.logic.get_application_address(new_app_id)),
         }
 
         # Merge provided fields with defaults, prioritizing provided fields
