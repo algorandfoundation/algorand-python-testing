@@ -140,6 +140,15 @@ def convert_native_to_stack(
     return value
 
 
+def convert_stack_to_native(
+    value: algopy.Bytes | algopy.UInt64 | bytes | int,
+) -> bytes | int:
+    if isinstance(value, int | bytes):
+        return value
+    else:
+        return value.value
+
+
 def check_type(value: object, typ: type | types.UnionType) -> None:
     if not isinstance(value, typ):
         expected_name = typ.__name__ if isinstance(typ, type) else str(typ)
