@@ -79,23 +79,44 @@ class LedgerContext:
     def update_account(
         self,
         account: algopy.Account | str,
-        opted_asset_balances: dict[int, algopy.UInt64] | None = None,
         **account_fields: typing.Unpack[AccountFields],
     ) -> None:
         """Update account fields.
 
         Args:
-            address (str): The account address.
-            opted_asset_balances (dict[int, algopy.UInt64] | None): The opted asset balances .
+            account: The account.
             **account_fields: The fields to update.
         """
         address = _get_address(account)
         assert_address_is_valid(address)
         self._account_data[address].fields.update(account_fields)
 
-        if opted_asset_balances is not None:
-            for asset_id, balance in opted_asset_balances.items():
-                self._account_data[address].opted_asset_balances[UInt64(asset_id)] = balance
+    def update_asset_holdings(
+        self,
+        account: algopy.Account | str,
+        asset: algopy.Asset | algopy.UInt64 | int,
+        *,
+        balance: algopy.UInt64 | int | None = None,
+        frozen: bool | None = None,
+    ) -> None:
+        """Update asset holdings for account, only specified values will be updated.
+
+        Account will also be opted-in to asset
+        """
+        from _algopy_testing.models.account import AssetHolding
+
+        address = _get_address(account)
+        account_data = self._account_data[address]
+        asset = self.get_asset(_get_asset_id(asset))
+
+        holdings = account_data.opted_assets.setdefault(
+            asset.id,
+            AssetHolding(balance=UInt64(), frozen=asset.default_frozen),
+        )
+        if balance is not None:
+            holdings.balance = UInt64(int(balance))
+        if frozen is not None:
+            holdings.frozen = frozen
 
     def get_asset(self, asset_id: algopy.UInt64 | int) -> algopy.Asset:
         """Get an asset by ID.

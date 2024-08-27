@@ -46,25 +46,26 @@ class Asset(UInt64Backed):
 
         account_data = lazy_context.get_account_data(account.public_key)
 
-        if not account_data:
-            raise ValueError("Account not found in testing context!")
-
-        if int(self.id) not in account_data.opted_asset_balances:
+        if int(self.id) not in account_data.opted_assets:
             raise ValueError(
                 "The asset is not opted into the account! "
                 "Use `ctx.any.account(opted_asset_balances={{ASSET_ID: VALUE}})` "
                 "to set emulated opted asset into the account."
             )
 
-        return account_data.opted_asset_balances[self.id]
+        return account_data.opted_assets[self.id].balance
 
-    def frozen(self, _account: algopy.Account) -> bool:
-        # TODO: 1.0 expand data structure on AccountContextData.opted_asset_balances
-        #       to support frozen attribute
-        raise NotImplementedError(
-            "The 'frozen' method is being executed in a python testing context. "
-            "Please mock this method using your python testing framework of choice."
-        )
+    def frozen(self, account: algopy.Account) -> bool:
+        from _algopy_testing.context_helpers import lazy_context
+
+        account_data = lazy_context.get_account_data(account.public_key)
+        if int(self.id) not in account_data.opted_assets:
+            raise ValueError(
+                "The asset is not opted into the account! "
+                "Use `ctx.any.account(opted_asset_balances={{ASSET_ID: VALUE}})` "
+                "to set emulated opted asset into the account."
+            )
+        return account_data.opted_assets[self.id].frozen
 
     @property
     def fields(self) -> AssetFields:
