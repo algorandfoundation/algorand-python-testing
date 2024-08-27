@@ -167,6 +167,7 @@ def get_default_global_fields() -> GlobalFields:
         "min_balance": algopy.UInt64(DEFAULT_ACCOUNT_MIN_BALANCE),
         "max_txn_life": algopy.UInt64(DEFAULT_MAX_TXN_LIFE),
         "zero_address": algopy.Account(algosdk.constants.ZERO_ADDRESS),
+        "caller_application_id": algopy.UInt64(),
         "asset_create_min_balance": algopy.UInt64(DEFAULT_ASSET_CREATE_MIN_BALANCE),
         "asset_opt_in_min_balance": algopy.UInt64(DEFAULT_ASSET_OPT_IN_MIN_BALANCE),
         "genesis_hash": algopy.Bytes(DEFAULT_GLOBAL_GENESIS_HASH),
