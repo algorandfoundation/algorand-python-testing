@@ -3,7 +3,6 @@ from __future__ import annotations
 import typing
 
 from _algopy_testing.protocols import UInt64Backed
-from _algopy_testing.utils import resolve_asset_index
 
 if typing.TYPE_CHECKING:
     import algopy
@@ -71,7 +70,7 @@ class Asset(UInt64Backed):
     def fields(self) -> AssetFields:
         from _algopy_testing.context_helpers import lazy_context
 
-        return lazy_context.get_asset_data(resolve_asset_index(self.id))
+        return lazy_context.get_asset_data(self.id)
 
     def __getattr__(self, name: str) -> typing.Any:
         try:

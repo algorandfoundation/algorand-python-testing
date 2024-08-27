@@ -4,7 +4,7 @@ import typing
 
 from _algopy_testing.primitives import UInt64
 from _algopy_testing.protocols import UInt64Backed
-from _algopy_testing.utils import as_int64, resolve_app_index
+from _algopy_testing.utils import as_int64
 
 if typing.TYPE_CHECKING:
     from collections.abc import Sequence
@@ -69,7 +69,7 @@ class Application(UInt64Backed):
     def fields(self) -> ApplicationFields:
         from _algopy_testing.context_helpers import lazy_context
 
-        return lazy_context.get_app_data(resolve_app_index(self._id)).fields
+        return lazy_context.get_app_data(self._id).fields
 
     def __getattr__(self, name: str) -> typing.Any:
         try:
