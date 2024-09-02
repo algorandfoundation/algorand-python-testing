@@ -1053,8 +1053,8 @@ class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):  # type: ignore[
 
     _type_info: typing.ClassVar[_StructTypeInfo]  # type: ignore[misc]
 
-    def __init_subclass__(cls) -> None:
-        dataclasses.dataclass(cls)
+    def __init_subclass__(cls, **kwargs: dict[str, typing.Any]) -> None:
+        dataclasses.dataclass(cls, **kwargs)
         cls._type_info = _StructTypeInfo(cls)
 
     def __post_init__(self) -> None:
