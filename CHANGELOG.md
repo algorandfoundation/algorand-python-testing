@@ -1,4 +1,16 @@
 # CHANGELOG
+## v0.4.1-beta.1 (2024-09-03)
+
+### Fix
+
+* ability to pass kw_only flag to dataclass when defining struct subclass (#23) ([`24bcf9d`](https://github.com/algorandfoundation/algorand-python-testing/commit/24bcf9d8af34eb2675ddf85ce9d71802f82f2d6a))
+
+  * fix: ability to pass kw_only flag to dataclass when defining struct subclass
+
+  * chore: add dependabot yaml
+
+  * chore: adding ability to pass args to struct init subclass
+
 ## v0.4.0 (2024-08-27)
 
 ## v0.4.0-beta.2 (2024-08-27)
