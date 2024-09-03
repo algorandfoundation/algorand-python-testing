@@ -16,6 +16,13 @@ _arc4_uint64 = arc4.UInt64(42)
 _arc4_bool = arc4.Bool(True)
 
 
+class StructWithKwOnly(arc4.Struct, kw_only=True):
+    a: arc4.UInt64
+    b: arc4.UInt64
+    c: arc4.Bool
+    d: arc4.String
+
+
 class Swapped(arc4.Struct):
     b: arc4.UInt64
     c: arc4.Bool
@@ -327,6 +334,19 @@ def test_from_bytes(abi_type: abi.ABIType, abi_value: tuple, arc4_type: type[Swa
         i += 1
 
     assert len(abi_value) == len(arc4_result)
+
+
+def test_struct_kw_only() -> None:
+    struct = StructWithKwOnly(
+        a=arc4.UInt64(1), b=arc4.UInt64(2), c=arc4.Bool(True), d=arc4.String("hello")
+    )
+    assert struct.a == 1
+    assert struct.b == 2
+    assert struct.c.native
+    assert struct.d == "hello"
+
+    with pytest.raises(TypeError, match="takes 1 positional argument but 5 were given"):
+        StructWithKwOnly(arc4.UInt64(1), arc4.UInt64(2), arc4.Bool(True), arc4.String("hello"))  # type: ignore[misc]
 
 
 def _compare_abi_and_arc4_values(
