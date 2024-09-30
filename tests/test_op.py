@@ -938,9 +938,8 @@ def test_itxn_ops(context: AlgopyTestContext) -> None:
     assert context.txn.last_active.num_logs == algopy.UInt64(0)
     assert context.txn.last_active.last_log == algopy.Bytes(b"")
 
-    # Test created_app and created_asset (should be created for these transactions)
+    # Test created_app attr (should be set after the application call)
     assert hasattr(appl_itxn, "created_app")
-    assert hasattr(pay_itxn, "created_asset")
 
 
 def test_blk_seed_existing_block(context: AlgopyTestContext) -> None:
