@@ -25,7 +25,7 @@ Alternatively, if you want to start from scratch:
 2. Install [AlgoKit CLI](https://github.com/algorandfoundation/algokit-cli?tab=readme-ov-file#install)
 3. Install Algorand Python Testing into your project:
     ```bash
-    pip install algorand-testing-python
+    pip install algorand-python-testing
     ```
 4. Create a test file (e.g., `test_contract.py`):
 
