@@ -1,0 +1,1424 @@
+{
+  "version": 3,
+  "sources": [
+    "../contract.py"
+  ],
+  "mappings": ";;;;;;;;;;;;;;AAqaA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;;;;;AAAA;;AAsCK;;AAAA;AAAA;AAAA;;AAAA;AAtCL;;;AAAA;;;AAAA;;;AAAA;;;AAsCK;;;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AAlCL;;;AAAA;;;AAAA;;;AAAA;AAkCK;;;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AA9BL;;;AAAA;;;AA8BK;;;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AA1BL;;;AAAA;AAAA;;AAAA;;;AAAA;;;AA0BK;;;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AAtBL;;;AAAA;AAAA;;AAAA;;;AAAA;;;AAsBK;;;AAAA;;AAAA;AAAA;AAAA;;;AAAA;;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AALA;;AAAA;AAAA;AAAA;;AAAA;AAjBL;;;AAAA;;;AAiBK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AALA;;AAAA;AAAA;AAAA;;AAAA;AAZL;;;AAAA;;;AAYK;;;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAZL;;AAAA;;;;;;;;;AAYA;;;AAEQ;;AAAQ;AACR;AAER;;;AAEQ;;AAAQ;AACR;AAER;;;AAEe;;AAAA;;AAAA;AAAP;AAER;;;AAEe;;AAAA;;AAAA;AAAP;AAER;;;AAEQ;;AAAA;;AAER;;;AAEQ;;AAAA;;AAAA;;AAER;;;AAEQ;;AAAA;;AAAA;",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppGlobalContract.__algopy_entrypoint_with_init",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 1 0"
+    },
+    "5": {
+      "op": "bytecblock 0x151f7c75 0x00"
+    },
+    "14": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#2"
+      ],
+      "stack_out": [
+        "tmp%0#2"
+      ]
+    },
+    "16": {
+      "op": "bz main_bare_routing@12",
+      "stack_out": []
+    },
+    "19": {
+      "op": "pushbytess 0xa997a187 0x4db8aa41 0x6693ab92 0x857fd923 0x93a852e1 0x36996451 0x3920a57b // method \"verify_get_bytes(byte[])byte[]\", method \"verify_get_uint64(byte[])uint64\", method \"verify_get_ex_bytes(application,byte[])(byte[],bool)\", method \"verify_get_ex_uint64(application,byte[])(uint64,bool)\", method \"verify_delete(byte[])void\", method \"verify_put_uint64(byte[],uint64)void\", method \"verify_put_bytes(byte[],byte[])void\""
+    },
+    "56": {
+      "op": "txna ApplicationArgs 0"
+    },
+    "59": {
+      "op": "match main_verify_get_bytes_route@5 main_verify_get_uint64_route@6 main_verify_get_ex_bytes_route@7 main_verify_get_ex_uint64_route@8 main_verify_delete_route@9 main_verify_put_uint64_route@10 main_verify_put_bytes_route@11"
+    },
+    "75": {
+      "block": "main_after_if_else@14",
+      "stack_in": [],
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "76": {
+      "op": "return"
+    },
+    "77": {
+      "block": "main_verify_put_bytes_route@11",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%51#0"
+      ],
+      "stack_out": [
+        "tmp%51#0"
+      ]
+    },
+    "79": {
+      "op": "!",
+      "defined_out": [
+        "tmp%52#0"
+      ],
+      "stack_out": [
+        "tmp%52#0"
+      ]
+    },
+    "80": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "81": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%53#0"
+      ],
+      "stack_out": [
+        "tmp%53#0"
+      ]
+    },
+    "83": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "84": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%55#0"
+      ],
+      "stack_out": [
+        "tmp%55#0"
+      ]
+    },
+    "87": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "tmp%56#0"
+      ],
+      "stack_out": [
+        "tmp%56#0"
+      ]
+    },
+    "90": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "tmp%56#0",
+        "tmp%57#0"
+      ],
+      "stack_out": [
+        "tmp%56#0",
+        "tmp%57#0"
+      ]
+    },
+    "93": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "tmp%56#0",
+        "tmp%58#0"
+      ],
+      "stack_out": [
+        "tmp%56#0",
+        "tmp%58#0"
+      ]
+    },
+    "96": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppGlobalContract.verify_put_bytes",
+      "op": "callsub verify_put_bytes",
+      "stack_out": []
+    },
+    "99": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "100": {
+      "op": "return"
+    },
+    "101": {
+      "block": "main_verify_put_uint64_route@10",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%43#0"
+      ],
+      "stack_out": [
+        "tmp%43#0"
+      ]
+    },
+    "103": {
+      "op": "!",
+      "defined_out": [
+        "tmp%44#0"
+      ],
+      "stack_out": [
+        "tmp%44#0"
+      ]
+    },
+    "104": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "105": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%45#0"
+      ],
+      "stack_out": [
+        "tmp%45#0"
+      ]
+    },
+    "107": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "108": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%47#0"
+      ],
+      "stack_out": [
+        "tmp%47#0"
+      ]
+    },
+    "111": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "tmp%48#0"
+      ],
+      "stack_out": [
+        "tmp%48#0"
+      ]
+    },
+    "114": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "tmp%48#0",
+        "tmp%49#0"
+      ],
+      "stack_out": [
+        "tmp%48#0",
+        "tmp%49#0"
+      ]
+    },
+    "117": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%48#0",
+        "tmp%50#0"
+      ],
+      "stack_out": [
+        "tmp%48#0",
+        "tmp%50#0"
+      ]
+    },
+    "118": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppGlobalContract.verify_put_uint64",
+      "op": "callsub verify_put_uint64",
+      "stack_out": []
+    },
+    "121": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "122": {
+      "op": "return"
+    },
+    "123": {
+      "block": "main_verify_delete_route@9",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%37#0"
+      ],
+      "stack_out": [
+        "tmp%37#0"
+      ]
+    },
+    "125": {
+      "op": "!",
+      "defined_out": [
+        "tmp%38#0"
+      ],
+      "stack_out": [
+        "tmp%38#0"
+      ]
+    },
+    "126": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "127": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%39#0"
+      ],
+      "stack_out": [
+        "tmp%39#0"
+      ]
+    },
+    "129": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "130": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%41#0"
+      ],
+      "stack_out": [
+        "tmp%41#0"
+      ]
+    },
+    "133": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "tmp%42#0"
+      ],
+      "stack_out": [
+        "tmp%42#0"
+      ]
+    },
+    "136": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppGlobalContract.verify_delete",
+      "op": "callsub verify_delete",
+      "stack_out": []
+    },
+    "139": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "140": {
+      "op": "return"
+    },
+    "141": {
+      "block": "main_verify_get_ex_uint64_route@8",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%27#0"
+      ],
+      "stack_out": [
+        "tmp%27#0"
+      ]
+    },
+    "143": {
+      "op": "!",
+      "defined_out": [
+        "tmp%28#0"
+      ],
+      "stack_out": [
+        "tmp%28#0"
+      ]
+    },
+    "144": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "145": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%29#0"
+      ],
+      "stack_out": [
+        "tmp%29#0"
+      ]
+    },
+    "147": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "148": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%31#0"
+      ],
+      "stack_out": [
+        "tmp%31#0"
+      ]
+    },
+    "151": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%32#0"
+      ],
+      "stack_out": [
+        "tmp%32#0"
+      ]
+    },
+    "152": {
+      "op": "txnas Applications",
+      "defined_out": [
+        "tmp%33#0"
+      ],
+      "stack_out": [
+        "tmp%33#0"
+      ]
+    },
+    "154": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "tmp%33#0",
+        "tmp%34#0"
+      ],
+      "stack_out": [
+        "tmp%33#0",
+        "tmp%34#0"
+      ]
+    },
+    "157": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "tmp%33#0",
+        "tmp%35#0"
+      ],
+      "stack_out": [
+        "tmp%33#0",
+        "tmp%35#0"
+      ]
+    },
+    "160": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppGlobalContract.verify_get_ex_uint64",
+      "op": "callsub verify_get_ex_uint64",
+      "defined_out": [
+        "elements_to_encode%2#0",
+        "elements_to_encode%3#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%2#0",
+        "elements_to_encode%3#0"
+      ]
+    },
+    "163": {
+      "op": "swap",
+      "stack_out": [
+        "elements_to_encode%3#0",
+        "elements_to_encode%2#0"
+      ]
+    },
+    "164": {
+      "op": "itob",
+      "defined_out": [
+        "elements_to_encode%3#0",
+        "val_as_bytes%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%3#0",
+        "val_as_bytes%1#0"
+      ]
+    },
+    "165": {
+      "op": "bytec_1 // 0x00",
+      "defined_out": [
+        "0x00",
+        "elements_to_encode%3#0",
+        "val_as_bytes%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%3#0",
+        "val_as_bytes%1#0",
+        "0x00"
+      ]
+    },
+    "166": {
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0",
+        "0x00",
+        "elements_to_encode%3#0",
+        "val_as_bytes%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%3#0",
+        "val_as_bytes%1#0",
+        "0x00",
+        "0"
+      ]
+    },
+    "167": {
+      "op": "uncover 3",
+      "stack_out": [
+        "val_as_bytes%1#0",
+        "0x00",
+        "0",
+        "elements_to_encode%3#0"
+      ]
+    },
+    "169": {
+      "op": "setbit",
+      "defined_out": [
+        "encoded_bool%1#0",
+        "val_as_bytes%1#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%1#0",
+        "encoded_bool%1#0"
+      ]
+    },
+    "170": {
+      "op": "concat",
+      "defined_out": [
+        "encoded_tuple_buffer%6#0"
+      ],
+      "stack_out": [
+        "encoded_tuple_buffer%6#0"
+      ]
+    },
+    "171": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "encoded_tuple_buffer%6#0"
+      ],
+      "stack_out": [
+        "encoded_tuple_buffer%6#0",
+        "0x151f7c75"
+      ]
+    },
+    "172": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "encoded_tuple_buffer%6#0"
+      ]
+    },
+    "173": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%36#0"
+      ],
+      "stack_out": [
+        "tmp%36#0"
+      ]
+    },
+    "174": {
+      "op": "log",
+      "stack_out": []
+    },
+    "175": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "176": {
+      "op": "return"
+    },
+    "177": {
+      "block": "main_verify_get_ex_bytes_route@7",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%17#0"
+      ],
+      "stack_out": [
+        "tmp%17#0"
+      ]
+    },
+    "179": {
+      "op": "!",
+      "defined_out": [
+        "tmp%18#0"
+      ],
+      "stack_out": [
+        "tmp%18#0"
+      ]
+    },
+    "180": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "181": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%19#0"
+      ],
+      "stack_out": [
+        "tmp%19#0"
+      ]
+    },
+    "183": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "184": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%21#0"
+      ],
+      "stack_out": [
+        "tmp%21#0"
+      ]
+    },
+    "187": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%22#0"
+      ],
+      "stack_out": [
+        "tmp%22#0"
+      ]
+    },
+    "188": {
+      "op": "txnas Applications",
+      "defined_out": [
+        "tmp%23#0"
+      ],
+      "stack_out": [
+        "tmp%23#0"
+      ]
+    },
+    "190": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "tmp%23#0",
+        "tmp%24#0"
+      ],
+      "stack_out": [
+        "tmp%23#0",
+        "tmp%24#0"
+      ]
+    },
+    "193": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "tmp%23#0",
+        "tmp%25#0"
+      ],
+      "stack_out": [
+        "tmp%23#0",
+        "tmp%25#0"
+      ]
+    },
+    "196": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppGlobalContract.verify_get_ex_bytes",
+      "op": "callsub verify_get_ex_bytes",
+      "defined_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0"
+      ]
+    },
+    "199": {
+      "op": "dig 1",
+      "defined_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%0#0 (copy)",
+        "elements_to_encode%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "elements_to_encode%0#0 (copy)"
+      ]
+    },
+    "201": {
+      "op": "len",
+      "defined_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "length%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "length%1#0"
+      ]
+    },
+    "202": {
+      "op": "itob",
+      "defined_out": [
+        "as_bytes%1#0",
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "as_bytes%1#0"
+      ]
+    },
+    "203": {
+      "op": "extract 6 2",
+      "defined_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "length_uint16%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "length_uint16%1#0"
+      ]
+    },
+    "206": {
+      "op": "uncover 2",
+      "stack_out": [
+        "elements_to_encode%1#0",
+        "length_uint16%1#0",
+        "elements_to_encode%0#0"
+      ]
+    },
+    "208": {
+      "op": "concat",
+      "defined_out": [
+        "elements_to_encode%1#0",
+        "encoded_value%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%1#0",
+        "encoded_value%1#0"
+      ]
+    },
+    "209": {
+      "op": "bytec_1 // 0x00",
+      "defined_out": [
+        "0x00",
+        "elements_to_encode%1#0",
+        "encoded_value%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%1#0",
+        "encoded_value%1#0",
+        "0x00"
+      ]
+    },
+    "210": {
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0",
+        "0x00",
+        "elements_to_encode%1#0",
+        "encoded_value%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%1#0",
+        "encoded_value%1#0",
+        "0x00",
+        "0"
+      ]
+    },
+    "211": {
+      "op": "uncover 3",
+      "stack_out": [
+        "encoded_value%1#0",
+        "0x00",
+        "0",
+        "elements_to_encode%1#0"
+      ]
+    },
+    "213": {
+      "op": "setbit",
+      "defined_out": [
+        "encoded_bool%0#0",
+        "encoded_value%1#0"
+      ],
+      "stack_out": [
+        "encoded_value%1#0",
+        "encoded_bool%0#0"
+      ]
+    },
+    "214": {
+      "op": "pushbytes 0x0003",
+      "defined_out": [
+        "0x0003",
+        "encoded_bool%0#0",
+        "encoded_value%1#0"
+      ],
+      "stack_out": [
+        "encoded_value%1#0",
+        "encoded_bool%0#0",
+        "0x0003"
+      ]
+    },
+    "218": {
+      "op": "swap",
+      "stack_out": [
+        "encoded_value%1#0",
+        "0x0003",
+        "encoded_bool%0#0"
+      ]
+    },
+    "219": {
+      "op": "concat",
+      "defined_out": [
+        "encoded_tuple_buffer%2#0",
+        "encoded_value%1#0"
+      ],
+      "stack_out": [
+        "encoded_value%1#0",
+        "encoded_tuple_buffer%2#0"
+      ]
+    },
+    "220": {
+      "op": "swap",
+      "stack_out": [
+        "encoded_tuple_buffer%2#0",
+        "encoded_value%1#0"
+      ]
+    },
+    "221": {
+      "op": "concat",
+      "defined_out": [
+        "encoded_tuple_buffer%3#0"
+      ],
+      "stack_out": [
+        "encoded_tuple_buffer%3#0"
+      ]
+    },
+    "222": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "encoded_tuple_buffer%3#0"
+      ],
+      "stack_out": [
+        "encoded_tuple_buffer%3#0",
+        "0x151f7c75"
+      ]
+    },
+    "223": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "encoded_tuple_buffer%3#0"
+      ]
+    },
+    "224": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%26#0"
+      ],
+      "stack_out": [
+        "tmp%26#0"
+      ]
+    },
+    "225": {
+      "op": "log",
+      "stack_out": []
+    },
+    "226": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "227": {
+      "op": "return"
+    },
+    "228": {
+      "block": "main_verify_get_uint64_route@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0"
+      ]
+    },
+    "230": {
+      "op": "!",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "231": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "232": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%12#0"
+      ]
+    },
+    "234": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "235": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%14#0"
+      ],
+      "stack_out": [
+        "tmp%14#0"
+      ]
+    },
+    "238": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%15#0"
+      ]
+    },
+    "241": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppGlobalContract.verify_get_uint64",
+      "op": "callsub verify_get_uint64",
+      "defined_out": [
+        "to_encode%1#0"
+      ],
+      "stack_out": [
+        "to_encode%1#0"
+      ]
+    },
+    "244": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%0#0"
+      ]
+    },
+    "245": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "246": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%0#0"
+      ]
+    },
+    "247": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%16#0"
+      ],
+      "stack_out": [
+        "tmp%16#0"
+      ]
+    },
+    "248": {
+      "op": "log",
+      "stack_out": []
+    },
+    "249": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "250": {
+      "op": "return"
+    },
+    "251": {
+      "block": "main_verify_get_bytes_route@5",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "253": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "254": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "255": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "257": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "258": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "261": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "264": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppGlobalContract.verify_get_bytes",
+      "op": "callsub verify_get_bytes",
+      "defined_out": [
+        "to_encode%0#0"
+      ],
+      "stack_out": [
+        "to_encode%0#0"
+      ]
+    },
+    "267": {
+      "op": "dup",
+      "defined_out": [
+        "to_encode%0#0",
+        "to_encode%0#0 (copy)"
+      ],
+      "stack_out": [
+        "to_encode%0#0",
+        "to_encode%0#0 (copy)"
+      ]
+    },
+    "268": {
+      "op": "len",
+      "defined_out": [
+        "length%0#0",
+        "to_encode%0#0"
+      ],
+      "stack_out": [
+        "to_encode%0#0",
+        "length%0#0"
+      ]
+    },
+    "269": {
+      "op": "itob",
+      "defined_out": [
+        "as_bytes%0#0",
+        "to_encode%0#0"
+      ],
+      "stack_out": [
+        "to_encode%0#0",
+        "as_bytes%0#0"
+      ]
+    },
+    "270": {
+      "op": "extract 6 2",
+      "defined_out": [
+        "length_uint16%0#0",
+        "to_encode%0#0"
+      ],
+      "stack_out": [
+        "to_encode%0#0",
+        "length_uint16%0#0"
+      ]
+    },
+    "273": {
+      "op": "swap",
+      "stack_out": [
+        "length_uint16%0#0",
+        "to_encode%0#0"
+      ]
+    },
+    "274": {
+      "op": "concat",
+      "defined_out": [
+        "encoded_value%0#0"
+      ],
+      "stack_out": [
+        "encoded_value%0#0"
+      ]
+    },
+    "275": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "encoded_value%0#0"
+      ],
+      "stack_out": [
+        "encoded_value%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "276": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "encoded_value%0#0"
+      ]
+    },
+    "277": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "278": {
+      "op": "log",
+      "stack_out": []
+    },
+    "279": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "280": {
+      "op": "return"
+    },
+    "281": {
+      "block": "main_bare_routing@12",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%59#0"
+      ],
+      "stack_out": [
+        "tmp%59#0"
+      ]
+    },
+    "283": {
+      "op": "bnz main_after_if_else@14",
+      "stack_out": []
+    },
+    "286": {
+      "op": "txn ApplicationID"
+    },
+    "288": {
+      "op": "!"
+    },
+    "289": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating"
+    },
+    "290": {
+      "op": "intc_0 // 1"
+    },
+    "291": {
+      "op": "return"
+    },
+    "292": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppGlobalContract.verify_get_bytes",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_get_bytes",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "295": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "297": {
+      "op": "app_global_get",
+      "defined_out": [
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "298": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "299": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppGlobalContract.verify_get_uint64",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_get_uint64",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "302": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "304": {
+      "op": "app_global_get",
+      "defined_out": [
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "305": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "306": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppGlobalContract.verify_get_ex_bytes",
+      "params": {
+        "a#0": "uint64",
+        "b#0": "bytes"
+      },
+      "block": "verify_get_ex_bytes",
+      "stack_in": [],
+      "op": "proto 2 2"
+    },
+    "309": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "311": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)",
+        "b#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)",
+        "b#0 (copy)"
+      ]
+    },
+    "313": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%1#0"
+      ]
+    },
+    "314": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "315": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppGlobalContract.verify_get_ex_uint64",
+      "params": {
+        "a#0": "uint64",
+        "b#0": "bytes"
+      },
+      "block": "verify_get_ex_uint64",
+      "stack_in": [],
+      "op": "proto 2 2"
+    },
+    "318": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "320": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)",
+        "b#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)",
+        "b#0 (copy)"
+      ]
+    },
+    "322": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%1#0"
+      ]
+    },
+    "323": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "324": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppGlobalContract.verify_delete",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_delete",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "327": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "329": {
+      "op": "app_global_del",
+      "stack_out": []
+    },
+    "330": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "331": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppGlobalContract.verify_put_uint64",
+      "params": {
+        "a#0": "bytes",
+        "b#0": "uint64"
+      },
+      "block": "verify_put_uint64",
+      "stack_in": [],
+      "op": "proto 2 0"
+    },
+    "334": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "336": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)",
+        "b#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)",
+        "b#0 (copy)"
+      ]
+    },
+    "338": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "339": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "340": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppGlobalContract.verify_put_bytes",
+      "params": {
+        "a#0": "bytes",
+        "b#0": "bytes"
+      },
+      "block": "verify_put_bytes",
+      "stack_in": [],
+      "op": "proto 2 0"
+    },
+    "343": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "345": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)",
+        "b#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)",
+        "b#0 (copy)"
+      ]
+    },
+    "347": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "348": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}

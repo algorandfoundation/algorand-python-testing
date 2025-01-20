@@ -1,124 +1,94 @@
 #pragma version 10
+#pragma typetrack false
 
-tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.approval_program:
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 1 0 4 6
+    bytecblock 0x0000 0x0000000000000001 0x000132
     // tests/artifacts/Arc4ABIMethod/contract.py:25
     // class SignaturesContract(ARC4Contract):
-    method "create()void"
-    method "sink(string,uint8[])void"
-    method "alias(string,uint8[])void"
-    method "with_txn(string,pay,uint8[])void"
-    method "with_asset(string,asset,uint8[])void"
-    method "with_app(string,application,uint64,uint8[])void"
-    method "with_acc(string,account,uint8[])void"
-    method "complex_sig(((uint64,string),(uint64,string),uint128,uint128),txn,account,uint8[])((uint64,string),((uint64,string),(uint64,string),uint128,uint128))"
+    txn NumAppArgs
+    bz main_after_if_else@14
+    pushbytess 0x4c5c61ba 0xe18922d8 0x3b05cf17 0x0658dcc3 0x5b6447de 0x061f4e77 0xeaa89139 0x510e72a4 // method "create()void", method "sink(string,uint8[])void", method "alias(string,uint8[])void", method "with_txn(string,pay,uint8[])void", method "with_asset(string,asset,uint8[])void", method "with_app(string,application,uint64,uint8[])void", method "with_acc(string,account,uint8[])void", method "complex_sig(((uint64,string),(uint64,string),uint128,uint128),txn,account,uint8[])((uint64,string),((uint64,string),(uint64,string),uint128,uint128))"
     txna ApplicationArgs 0
-    match main_create_route@1 main_sink_route@2 main_alias_route@3 main_with_txn_route@4 main_with_asset_route@5 main_with_app_route@6 main_with_acc_route@7 main_complex_sig_route@8
-    err // reject transaction
+    match main_create_route@3 main_sink_route@4 main_alias_route@5 main_with_txn_route@6 main_with_asset_route@7 main_with_app_route@8 main_with_acc_route@9 main_complex_sig_route@10
 
-main_create_route@1:
-    // tests/artifacts/Arc4ABIMethod/contract.py:26
-    // @arc4.abimethod(create="require")
-    txn OnCompletion
-    !
-    assert // OnCompletion is NoOp
-    txn ApplicationID
-    !
-    assert // is creating
-    callsub create
-    int 1
-    return
-
-main_sink_route@2:
-    // tests/artifacts/Arc4ABIMethod/contract.py:36
-    // @arc4.abimethod
-    txn OnCompletion
-    !
-    assert // OnCompletion is NoOp
-    txn ApplicationID
-    assert // is not creating
+main_after_if_else@14:
     // tests/artifacts/Arc4ABIMethod/contract.py:25
     // class SignaturesContract(ARC4Contract):
-    txna ApplicationArgs 1
-    txna ApplicationArgs 2
-    // tests/artifacts/Arc4ABIMethod/contract.py:36
-    // @arc4.abimethod
-    callsub sink
-    int 1
+    intc_1 // 0
     return
 
-main_alias_route@3:
-    // tests/artifacts/Arc4ABIMethod/contract.py:41
-    // @arc4.abimethod(name="alias")
-    txn OnCompletion
-    !
-    assert // OnCompletion is NoOp
-    txn ApplicationID
-    assert // is not creating
-    // tests/artifacts/Arc4ABIMethod/contract.py:25
-    // class SignaturesContract(ARC4Contract):
-    txna ApplicationArgs 1
-    txna ApplicationArgs 2
-    // tests/artifacts/Arc4ABIMethod/contract.py:41
-    // @arc4.abimethod(name="alias")
-    callsub sink2
-    int 1
-    return
-
-main_with_txn_route@4:
-    // tests/artifacts/Arc4ABIMethod/contract.py:46
+main_complex_sig_route@10:
+    // tests/artifacts/Arc4ABIMethod/contract.py:83
     // @arc4.abimethod
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // tests/artifacts/Arc4ABIMethod/contract.py:25
     // class SignaturesContract(ARC4Contract):
     txna ApplicationArgs 1
     txn GroupIndex
-    int 1
+    intc_0 // 1
     -
-    dup
-    gtxns TypeEnum
-    int pay
-    ==
-    assert // transaction type is pay
     txna ApplicationArgs 2
-    // tests/artifacts/Arc4ABIMethod/contract.py:46
+    btoi
+    txnas Accounts
+    txna ApplicationArgs 3
+    // tests/artifacts/Arc4ABIMethod/contract.py:83
     // @arc4.abimethod
-    callsub with_txn
-    int 1
+    callsub complex_sig
+    dig 1
+    len
+    intc_2 // 4
+    +
+    itob
+    extract 6 2
+    pushbytes 0x0004
+    swap
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    pushbytes 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
     return
 
-main_with_asset_route@5:
-    // tests/artifacts/Arc4ABIMethod/contract.py:54
+main_with_acc_route@9:
+    // tests/artifacts/Arc4ABIMethod/contract.py:75
     // @arc4.abimethod
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // tests/artifacts/Arc4ABIMethod/contract.py:25
     // class SignaturesContract(ARC4Contract):
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
-    txnas Assets
+    txnas Accounts
     txna ApplicationArgs 3
-    // tests/artifacts/Arc4ABIMethod/contract.py:54
+    // tests/artifacts/Arc4ABIMethod/contract.py:75
     // @arc4.abimethod
-    callsub with_asset
-    int 1
+    callsub with_acc
+    intc_0 // 1
     return
 
-main_with_app_route@6:
+main_with_app_route@8:
     // tests/artifacts/Arc4ABIMethod/contract.py:61
     // @arc4.abimethod
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // tests/artifacts/Arc4ABIMethod/contract.py:25
     // class SignaturesContract(ARC4Contract):
     txna ApplicationArgs 1
@@ -130,70 +100,103 @@ main_with_app_route@6:
     // tests/artifacts/Arc4ABIMethod/contract.py:61
     // @arc4.abimethod
     callsub with_app
-    int 1
+    intc_0 // 1
     return
 
-main_with_acc_route@7:
-    // tests/artifacts/Arc4ABIMethod/contract.py:75
+main_with_asset_route@7:
+    // tests/artifacts/Arc4ABIMethod/contract.py:54
     // @arc4.abimethod
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // tests/artifacts/Arc4ABIMethod/contract.py:25
     // class SignaturesContract(ARC4Contract):
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
-    txnas Accounts
+    txnas Assets
     txna ApplicationArgs 3
-    // tests/artifacts/Arc4ABIMethod/contract.py:75
+    // tests/artifacts/Arc4ABIMethod/contract.py:54
     // @arc4.abimethod
-    callsub with_acc
-    int 1
+    callsub with_asset
+    intc_0 // 1
     return
 
-main_complex_sig_route@8:
-    // tests/artifacts/Arc4ABIMethod/contract.py:83
+main_with_txn_route@6:
+    // tests/artifacts/Arc4ABIMethod/contract.py:46
     // @arc4.abimethod
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // tests/artifacts/Arc4ABIMethod/contract.py:25
     // class SignaturesContract(ARC4Contract):
     txna ApplicationArgs 1
     txn GroupIndex
-    int 1
+    intc_0 // 1
     -
-    txna ApplicationArgs 2
-    btoi
-    txnas Accounts
-    txna ApplicationArgs 3
-    // tests/artifacts/Arc4ABIMethod/contract.py:83
-    // @arc4.abimethod
-    callsub complex_sig
-    swap
     dup
-    len
-    int 4
-    +
-    itob
-    extract 6 2
-    byte 0x0004
-    swap
-    concat
-    swap
-    concat
-    swap
-    concat
-    byte 0x151f7c75
-    swap
-    concat
-    log
-    int 1
+    gtxns TypeEnum
+    intc_0 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 2
+    // tests/artifacts/Arc4ABIMethod/contract.py:46
+    // @arc4.abimethod
+    callsub with_txn
+    intc_0 // 1
+    return
+
+main_alias_route@5:
+    // tests/artifacts/Arc4ABIMethod/contract.py:41
+    // @arc4.abimethod(name="alias")
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // tests/artifacts/Arc4ABIMethod/contract.py:25
+    // class SignaturesContract(ARC4Contract):
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    // tests/artifacts/Arc4ABIMethod/contract.py:41
+    // @arc4.abimethod(name="alias")
+    callsub sink2
+    intc_0 // 1
+    return
+
+main_sink_route@4:
+    // tests/artifacts/Arc4ABIMethod/contract.py:36
+    // @arc4.abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // tests/artifacts/Arc4ABIMethod/contract.py:25
+    // class SignaturesContract(ARC4Contract):
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    // tests/artifacts/Arc4ABIMethod/contract.py:36
+    // @arc4.abimethod
+    callsub sink
+    intc_0 // 1
+    return
+
+main_create_route@3:
+    // tests/artifacts/Arc4ABIMethod/contract.py:26
+    // @arc4.abimethod(create="require")
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    callsub create
+    intc_0 // 1
     return
 
 
@@ -205,9 +208,9 @@ create:
     proto 0 0
     // tests/artifacts/Arc4ABIMethod/contract.py:28
     // app_txn = gtxn.ApplicationCallTransaction(0)
-    int 0
+    intc_1 // 0
     gtxns TypeEnum
-    int appl
+    intc_3 // appl
     ==
     assert // transaction type is appl
     // tests/artifacts/Arc4ABIMethod/contract.py:29
@@ -226,7 +229,7 @@ create:
     assert // expected global to have app address
     // tests/artifacts/Arc4ABIMethod/contract.py:28
     // app_txn = gtxn.ApplicationCallTransaction(0)
-    int 0
+    intc_1 // 0
     // tests/artifacts/Arc4ABIMethod/contract.py:33
     // assert app_txn.app_id == 0, "expected txn to have 0"
     gtxns ApplicationID
@@ -249,13 +252,13 @@ sink:
     // tests/artifacts/Arc4ABIMethod/contract.py:38
     // assert value
     frame_dig -2
-    byte 0x0000
+    bytec_0 // 0x0000
     !=
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:39
     // assert arr
     frame_dig -1
-    byte 0x0000
+    bytec_0 // 0x0000
     !=
     assert
     retsub
@@ -270,13 +273,13 @@ sink2:
     // tests/artifacts/Arc4ABIMethod/contract.py:43
     // assert value
     frame_dig -2
-    byte 0x0000
+    bytec_0 // 0x0000
     !=
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:44
     // assert arr
     frame_dig -1
-    byte 0x0000
+    bytec_0 // 0x0000
     !=
     assert
     retsub
@@ -291,13 +294,13 @@ with_txn:
     // tests/artifacts/Arc4ABIMethod/contract.py:48
     // assert value
     frame_dig -3
-    byte 0x0000
+    bytec_0 // 0x0000
     !=
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:49
     // assert arr
     frame_dig -1
-    byte 0x0000
+    bytec_0 // 0x0000
     !=
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:50
@@ -309,14 +312,14 @@ with_txn:
     // tests/artifacts/Arc4ABIMethod/contract.py:51
     // assert Txn.group_index == 1
     txn GroupIndex
-    int 1
+    intc_0 // 1
     ==
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:52
     // assert pay.amount == 123
     frame_dig -2
     gtxns Amount
-    int 123
+    pushint 123 // 123
     ==
     assert
     retsub
@@ -331,13 +334,13 @@ with_asset:
     // tests/artifacts/Arc4ABIMethod/contract.py:56
     // assert value
     frame_dig -3
-    byte 0x0000
+    bytec_0 // 0x0000
     !=
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:57
     // assert arr
     frame_dig -1
-    byte 0x0000
+    bytec_0 // 0x0000
     !=
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:58
@@ -345,7 +348,7 @@ with_asset:
     frame_dig -2
     asset_params_get AssetTotal
     assert // asset exists
-    int 123
+    pushint 123 // 123
     ==
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:59
@@ -368,13 +371,13 @@ with_app:
     // tests/artifacts/Arc4ABIMethod/contract.py:65
     // assert value
     frame_dig -4
-    byte 0x0000
+    bytec_0 // 0x0000
     !=
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:66
     // assert arr
     frame_dig -1
-    byte 0x0000
+    bytec_0 // 0x0000
     !=
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:67
@@ -394,12 +397,12 @@ with_app:
     assert // expected other app to have same creator
     // tests/artifacts/Arc4ABIMethod/contract.py:69
     // app_txn = gtxn.ApplicationCallTransaction(0)
-    int 0
+    intc_1 // 0
     gtxns TypeEnum
-    int appl
+    intc_3 // appl
     ==
     assert // transaction type is appl
-    int 0
+    intc_1 // 0
     // tests/artifacts/Arc4ABIMethod/contract.py:70
     // assert app_txn.apps(0) == op.Global.current_application_id
     dup
@@ -415,10 +418,10 @@ with_app:
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:69
     // app_txn = gtxn.ApplicationCallTransaction(0)
-    int 0
+    intc_1 // 0
     // tests/artifacts/Arc4ABIMethod/contract.py:72
     // assert app_txn.apps(1) == app
-    int 1
+    intc_0 // 1
     gtxnsas Applications
     frame_dig -3
     ==
@@ -441,13 +444,13 @@ with_acc:
     // tests/artifacts/Arc4ABIMethod/contract.py:77
     // assert value
     frame_dig -3
-    byte 0x0000
+    bytec_0 // 0x0000
     !=
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:78
     // assert arr
     frame_dig -1
-    byte 0x0000
+    bytec_0 // 0x0000
     !=
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:79
@@ -458,7 +461,7 @@ with_acc:
     frame_dig -2
     acct_params_get AcctMinBalance
     assert // account funded
-    int 1234
+    pushint 1234 // 1234
     +
     ==
     assert
@@ -488,17 +491,17 @@ complex_sig:
     // tests/artifacts/Arc4ABIMethod/contract.py:87
     // assert Txn.num_app_args == 4
     txn NumAppArgs
-    int 4
+    intc_2 // 4
     ==
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:88-89
     // # struct
     // assert struct1.another_struct.one == 1
     frame_dig -4
-    int 0
+    intc_1 // 0
     extract_uint16
     frame_dig -4
-    int 2
+    pushint 2 // 2
     extract_uint16
     frame_dig -4
     uncover 2
@@ -506,23 +509,20 @@ complex_sig:
     substring3
     dup
     extract 0 8 // on error: Index access is out of bounds
-    byte 0x0000000000000001
+    bytec_1 // 0x0000000000000001
     b==
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:90
     // assert struct1.another_struct.two == "2"
     dup
-    int 8
+    pushint 8 // 8
     extract_uint16
-    swap
-    dup
+    dig 1
     len
-    swap
-    dup
-    uncover 3
-    uncover 3
+    dig 2
+    cover 2
     substring3
-    byte 0x000132
+    bytec_2 // 0x000132
     ==
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:91
@@ -535,35 +535,32 @@ complex_sig:
     substring3
     dup
     extract 0 8 // on error: Index access is out of bounds
-    byte 0x0000000000000001
+    bytec_1 // 0x0000000000000001
     b==
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:92
     // assert struct1.another_struct_alias.two == "2"
     dup
-    int 8
+    pushint 8 // 8
     extract_uint16
-    swap
-    dup
+    dig 1
     len
-    swap
-    cover 2
     substring3
-    byte 0x000132
+    bytec_2 // 0x000132
     ==
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:93
     // assert struct1.three == 3
     frame_dig -4
     extract 4 16 // on error: Index access is out of bounds
-    byte 0x00000000000000000000000000000003
+    pushbytes 0x00000000000000000000000000000003
     b==
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:94
     // assert struct1.four == 4
     frame_dig -4
     extract 20 16 // on error: Index access is out of bounds
-    byte 0x00000000000000000000000000000004
+    pushbytes 0x00000000000000000000000000000004
     b==
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:96-97
@@ -572,7 +569,7 @@ complex_sig:
     frame_dig -3
     gtxns GroupIndex
     txn GroupIndex
-    int 1
+    intc_0 // 1
     -
     ==
     assert
@@ -580,7 +577,7 @@ complex_sig:
     // # acc
     // assert Txn.application_args(2) == arc4.UInt8(1).bytes  # acc array ref
     txna ApplicationArgs 2
-    byte 0x01
+    pushbytes 0x01
     ==
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:101
@@ -591,7 +588,7 @@ complex_sig:
     frame_dig -2
     acct_params_get AcctMinBalance
     assert // account funded
-    int 1234
+    pushint 1234 // 1234
     +
     ==
     assert
@@ -600,7 +597,7 @@ complex_sig:
     frame_dig -1
     extract 2 0
     extract 0 1 // on error: Index access is out of bounds
-    byte 0x05
+    pushbytes 0x05
     b==
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:104

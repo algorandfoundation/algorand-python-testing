@@ -1,0 +1,3295 @@
+{
+  "version": 3,
+  "sources": [
+    "../contract.py"
+  ],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;AAwBA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;AAAA;;AA0DK;;AAAA;AAAA;AAAA;;AAAA;AA1DL;;;AAAA;;AAAA;AAAA;AAAA;;;AAAA;AAAA;;AAAA;;;AA0DK;;;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;;;;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAlDL;;;AAAA;;;AAAA;AAAA;;AAAA;;;AAkDK;;;AAAA;;AAdA;;AAAA;AAAA;AAAA;;AAAA;AApCL;;;AAAA;;;AAAA;AAAA;;AAAA;;;AAAA;;;AAoCK;;;AAAA;;AAPA;;AAAA;AAAA;AAAA;;AAAA;AA7BL;;;AAAA;;;AAAA;AAAA;;AAAA;;;AA6BK;;;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AArBL;;;AAAA;;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAqBK;;;AAAA;;AALA;;AAAA;AAAA;AAAA;;AAAA;AAhBL;;;AAAA;;;AAgBK;;;AAAA;;AALA;;AAAA;AAAA;AAAA;;AAAA;AAXL;;;AAAA;;;AAWK;;;AAAA;;AAVA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;;;AAAA;;AAAL;;;AAEkB;AAAA;;AAAA;AAAA;AAAA;AACH;;AAAP;AAEI;;AAAyC;;AAAzC;AADJ;AAFU;AAKH;;AAAA;AAAP;AACO;;AAAA;AAAP;;AAER;;;AAEe;;AAAA;AAAA;AAAP;AACO;;AAAA;AAAA;AAAP;;AAER;;;AAEe;;AAAA;AAAA;AAAP;AACO;;AAAA;AAAA;AAAP;;AAER;;;AAEe;;AAAA;AAAA;AAAP;AACO;;AAAA;AAAA;AAAP;AACO;;AAAA;;AAAA;AAAP;AACO;;AAAmB;AAAnB;AAAP;AACO;;AAAA;;AAAc;;AAAd;AAAP;;AAER;;;AAEe;;AAAA;AAAA;AAAP;AACO;;AAAA;AAAA;AAAP;AACO;;AAAA;;AAAA;AAAe;;AAAf;AAAP;AACO;;;AAAA;;AAAA;AAAP;;AAER;;;AAIe;;AAAA;AAAA;AAAP;AACO;;AAAA;AAAA;AAAP;AACO;;AAAA;AAAA;;AAAA;AAAP;AACO;;AAAA;;AAAA;AAAe;;AAAf;AAAP;AACU;AAAA;;AAAA;AAAA;AAAA;AAAA;AACU;AAAb;;AAAmB;;AAAnB;AAAP;AACO;;;AAAuB;;AAAvB;AAAP;AAFU;AAGU;AAAb;;AAAA;;AAAA;AAAP;AACO;;;AAAA;;AAAA;AAAP;;AAER;;;AAEe;;AAAA;AAAA;AAAP;AACO;;AAAA;AAAA;AAAP;AACO;;AAAA;;AAAA;AAAe;;AAAA;;AAAA;AAAkB;;;AAAlB;AAAf;AAAP;AACO;;;AAAmB;;AAAnB;AAAP;AACO;;;AAAA;;AAAA;AAAP;;AAER;;;AAIe;;AAAoB;AAApB;AAAP;AAEO;;AAAA;AAAA;AAAA;;AAAA;;AAAA;AAAA;;AAAA;;AAAA;;AAAA;AAAA;AAAA;;;AAA8B;AAA9B;AAAP;AACO;AAAA;;AAAA;AAAA;;AAAA;AAAA;;AAAA;;AAAA;AAA8B;AAA9B;AAAP;AACO;;AAAA;AAAA;;AAAA;;AAAA;;AAAA;AAAA;AAAA;;;AAAoC;AAApC;AAAP;AACO;AAAA;;AAAA;AAAA;;AAAA;AAAA;AAAoC;AAApC;AAAP;AACO;;AAAA;;;AAAiB;;;;;;;;;;;;;;;;;;AAAjB;AAAP;AACO;;AAAA;;;AAAgB;;;;;;;;;;;;;;;;;;AAAhB;AAAP;AAGO;;AAAA;;AAAmB;;AAAkB;AAAlB;AAAnB;AAAP;AAGO;;;AAA2B;;;AAA3B;AAAP;AACO;;AAAA;;AAAA;AAAe;;AAAA;;AAAA;AAAkB;;;AAAlB;AAAf;AAAP;AACO;;AAAA;;;AAAA;;;AAAW;;;AAAX;AAAP;AAEA;;AAAA",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "algopy.arc4.ARC4Contract.approval_program",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 1 0 4 6"
+    },
+    "7": {
+      "op": "bytecblock 0x0000 0x0000000000000001 0x000132"
+    },
+    "25": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "27": {
+      "op": "bz main_after_if_else@14",
+      "stack_out": []
+    },
+    "30": {
+      "op": "pushbytess 0x4c5c61ba 0xe18922d8 0x3b05cf17 0x0658dcc3 0x5b6447de 0x061f4e77 0xeaa89139 0x510e72a4 // method \"create()void\", method \"sink(string,uint8[])void\", method \"alias(string,uint8[])void\", method \"with_txn(string,pay,uint8[])void\", method \"with_asset(string,asset,uint8[])void\", method \"with_app(string,application,uint64,uint8[])void\", method \"with_acc(string,account,uint8[])void\", method \"complex_sig(((uint64,string),(uint64,string),uint128,uint128),txn,account,uint8[])((uint64,string),((uint64,string),(uint64,string),uint128,uint128))\""
+    },
+    "72": {
+      "op": "txna ApplicationArgs 0"
+    },
+    "75": {
+      "op": "match main_create_route@3 main_sink_route@4 main_alias_route@5 main_with_txn_route@6 main_with_asset_route@7 main_with_app_route@8 main_with_acc_route@9 main_complex_sig_route@10"
+    },
+    "93": {
+      "block": "main_after_if_else@14",
+      "stack_in": [],
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "94": {
+      "op": "return"
+    },
+    "95": {
+      "block": "main_complex_sig_route@10",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%54#0"
+      ],
+      "stack_out": [
+        "tmp%54#0"
+      ]
+    },
+    "97": {
+      "op": "!",
+      "defined_out": [
+        "tmp%55#0"
+      ],
+      "stack_out": [
+        "tmp%55#0"
+      ]
+    },
+    "98": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "99": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%56#0"
+      ],
+      "stack_out": [
+        "tmp%56#0"
+      ]
+    },
+    "101": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "102": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%58#0"
+      ],
+      "stack_out": [
+        "tmp%58#0"
+      ]
+    },
+    "105": {
+      "op": "txn GroupIndex",
+      "defined_out": [
+        "tmp%58#0",
+        "tmp%59#0"
+      ],
+      "stack_out": [
+        "tmp%58#0",
+        "tmp%59#0"
+      ]
+    },
+    "107": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1",
+        "tmp%58#0",
+        "tmp%59#0"
+      ],
+      "stack_out": [
+        "tmp%58#0",
+        "tmp%59#0",
+        "1"
+      ]
+    },
+    "108": {
+      "op": "-",
+      "defined_out": [
+        "gtxn_idx%1#0",
+        "tmp%58#0"
+      ],
+      "stack_out": [
+        "tmp%58#0",
+        "gtxn_idx%1#0"
+      ]
+    },
+    "109": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "gtxn_idx%1#0",
+        "tmp%58#0",
+        "tmp%60#0"
+      ],
+      "stack_out": [
+        "tmp%58#0",
+        "gtxn_idx%1#0",
+        "tmp%60#0"
+      ]
+    },
+    "112": {
+      "op": "btoi",
+      "defined_out": [
+        "gtxn_idx%1#0",
+        "tmp%58#0",
+        "tmp%61#0"
+      ],
+      "stack_out": [
+        "tmp%58#0",
+        "gtxn_idx%1#0",
+        "tmp%61#0"
+      ]
+    },
+    "113": {
+      "op": "txnas Accounts",
+      "defined_out": [
+        "gtxn_idx%1#0",
+        "tmp%58#0",
+        "tmp%62#0"
+      ],
+      "stack_out": [
+        "tmp%58#0",
+        "gtxn_idx%1#0",
+        "tmp%62#0"
+      ]
+    },
+    "115": {
+      "op": "txna ApplicationArgs 3",
+      "defined_out": [
+        "gtxn_idx%1#0",
+        "tmp%58#0",
+        "tmp%62#0",
+        "tmp%63#0"
+      ],
+      "stack_out": [
+        "tmp%58#0",
+        "gtxn_idx%1#0",
+        "tmp%62#0",
+        "tmp%63#0"
+      ]
+    },
+    "118": {
+      "callsub": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.complex_sig",
+      "op": "callsub complex_sig",
+      "defined_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0"
+      ]
+    },
+    "121": {
+      "op": "dig 1",
+      "defined_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%0#0 (copy)",
+        "elements_to_encode%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "elements_to_encode%0#0 (copy)"
+      ]
+    },
+    "123": {
+      "op": "len",
+      "defined_out": [
+        "data_length%0#0",
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "data_length%0#0"
+      ]
+    },
+    "124": {
+      "op": "intc_2 // 4",
+      "defined_out": [
+        "4",
+        "data_length%0#0",
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "data_length%0#0",
+        "4"
+      ]
+    },
+    "125": {
+      "op": "+",
+      "defined_out": [
+        "current_tail_offset%1#0",
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "current_tail_offset%1#0"
+      ]
+    },
+    "126": {
+      "op": "itob",
+      "defined_out": [
+        "as_bytes%1#0",
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "as_bytes%1#0"
+      ]
+    },
+    "127": {
+      "op": "extract 6 2",
+      "defined_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "offset_as_uint16%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "offset_as_uint16%1#0"
+      ]
+    },
+    "130": {
+      "op": "pushbytes 0x0004",
+      "defined_out": [
+        "0x0004",
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "offset_as_uint16%1#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "offset_as_uint16%1#0",
+        "0x0004"
+      ]
+    },
+    "134": {
+      "op": "swap",
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "0x0004",
+        "offset_as_uint16%1#0"
+      ]
+    },
+    "135": {
+      "op": "concat",
+      "defined_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "encoded_tuple_buffer%2#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%0#0",
+        "elements_to_encode%1#0",
+        "encoded_tuple_buffer%2#0"
+      ]
+    },
+    "136": {
+      "op": "uncover 2",
+      "stack_out": [
+        "elements_to_encode%1#0",
+        "encoded_tuple_buffer%2#0",
+        "elements_to_encode%0#0"
+      ]
+    },
+    "138": {
+      "op": "concat",
+      "defined_out": [
+        "elements_to_encode%1#0",
+        "encoded_tuple_buffer%3#0"
+      ],
+      "stack_out": [
+        "elements_to_encode%1#0",
+        "encoded_tuple_buffer%3#0"
+      ]
+    },
+    "139": {
+      "op": "swap",
+      "stack_out": [
+        "encoded_tuple_buffer%3#0",
+        "elements_to_encode%1#0"
+      ]
+    },
+    "140": {
+      "op": "concat",
+      "defined_out": [
+        "encoded_tuple_buffer%4#0"
+      ],
+      "stack_out": [
+        "encoded_tuple_buffer%4#0"
+      ]
+    },
+    "141": {
+      "op": "pushbytes 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "encoded_tuple_buffer%4#0"
+      ],
+      "stack_out": [
+        "encoded_tuple_buffer%4#0",
+        "0x151f7c75"
+      ]
+    },
+    "147": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "encoded_tuple_buffer%4#0"
+      ]
+    },
+    "148": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%64#0"
+      ],
+      "stack_out": [
+        "tmp%64#0"
+      ]
+    },
+    "149": {
+      "op": "log",
+      "stack_out": []
+    },
+    "150": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "151": {
+      "op": "return"
+    },
+    "152": {
+      "block": "main_with_acc_route@9",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%45#0"
+      ],
+      "stack_out": [
+        "tmp%45#0"
+      ]
+    },
+    "154": {
+      "op": "!",
+      "defined_out": [
+        "tmp%46#0"
+      ],
+      "stack_out": [
+        "tmp%46#0"
+      ]
+    },
+    "155": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "156": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%47#0"
+      ],
+      "stack_out": [
+        "tmp%47#0"
+      ]
+    },
+    "158": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "159": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%49#0"
+      ],
+      "stack_out": [
+        "tmp%49#0"
+      ]
+    },
+    "162": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "tmp%49#0",
+        "tmp%50#0"
+      ],
+      "stack_out": [
+        "tmp%49#0",
+        "tmp%50#0"
+      ]
+    },
+    "165": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%49#0",
+        "tmp%51#0"
+      ],
+      "stack_out": [
+        "tmp%49#0",
+        "tmp%51#0"
+      ]
+    },
+    "166": {
+      "op": "txnas Accounts",
+      "defined_out": [
+        "tmp%49#0",
+        "tmp%52#0"
+      ],
+      "stack_out": [
+        "tmp%49#0",
+        "tmp%52#0"
+      ]
+    },
+    "168": {
+      "op": "txna ApplicationArgs 3",
+      "defined_out": [
+        "tmp%49#0",
+        "tmp%52#0",
+        "tmp%53#0"
+      ],
+      "stack_out": [
+        "tmp%49#0",
+        "tmp%52#0",
+        "tmp%53#0"
+      ]
+    },
+    "171": {
+      "callsub": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.with_acc",
+      "op": "callsub with_acc",
+      "stack_out": []
+    },
+    "174": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "175": {
+      "op": "return"
+    },
+    "176": {
+      "block": "main_with_app_route@8",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%35#0"
+      ],
+      "stack_out": [
+        "tmp%35#0"
+      ]
+    },
+    "178": {
+      "op": "!",
+      "defined_out": [
+        "tmp%36#0"
+      ],
+      "stack_out": [
+        "tmp%36#0"
+      ]
+    },
+    "179": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "180": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%37#0"
+      ],
+      "stack_out": [
+        "tmp%37#0"
+      ]
+    },
+    "182": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "183": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%39#0"
+      ],
+      "stack_out": [
+        "tmp%39#0"
+      ]
+    },
+    "186": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "tmp%39#0",
+        "tmp%40#0"
+      ],
+      "stack_out": [
+        "tmp%39#0",
+        "tmp%40#0"
+      ]
+    },
+    "189": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%39#0",
+        "tmp%41#0"
+      ],
+      "stack_out": [
+        "tmp%39#0",
+        "tmp%41#0"
+      ]
+    },
+    "190": {
+      "op": "txnas Applications",
+      "defined_out": [
+        "tmp%39#0",
+        "tmp%42#0"
+      ],
+      "stack_out": [
+        "tmp%39#0",
+        "tmp%42#0"
+      ]
+    },
+    "192": {
+      "op": "txna ApplicationArgs 3",
+      "defined_out": [
+        "tmp%39#0",
+        "tmp%42#0",
+        "tmp%43#0"
+      ],
+      "stack_out": [
+        "tmp%39#0",
+        "tmp%42#0",
+        "tmp%43#0"
+      ]
+    },
+    "195": {
+      "op": "txna ApplicationArgs 4",
+      "defined_out": [
+        "tmp%39#0",
+        "tmp%42#0",
+        "tmp%43#0",
+        "tmp%44#0"
+      ],
+      "stack_out": [
+        "tmp%39#0",
+        "tmp%42#0",
+        "tmp%43#0",
+        "tmp%44#0"
+      ]
+    },
+    "198": {
+      "callsub": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.with_app",
+      "op": "callsub with_app",
+      "stack_out": []
+    },
+    "201": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "202": {
+      "op": "return"
+    },
+    "203": {
+      "block": "main_with_asset_route@7",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%26#0"
+      ],
+      "stack_out": [
+        "tmp%26#0"
+      ]
+    },
+    "205": {
+      "op": "!",
+      "defined_out": [
+        "tmp%27#0"
+      ],
+      "stack_out": [
+        "tmp%27#0"
+      ]
+    },
+    "206": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "207": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%28#0"
+      ],
+      "stack_out": [
+        "tmp%28#0"
+      ]
+    },
+    "209": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "210": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%30#0"
+      ],
+      "stack_out": [
+        "tmp%30#0"
+      ]
+    },
+    "213": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "tmp%30#0",
+        "tmp%31#0"
+      ],
+      "stack_out": [
+        "tmp%30#0",
+        "tmp%31#0"
+      ]
+    },
+    "216": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%30#0",
+        "tmp%32#0"
+      ],
+      "stack_out": [
+        "tmp%30#0",
+        "tmp%32#0"
+      ]
+    },
+    "217": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%30#0",
+        "tmp%33#0"
+      ],
+      "stack_out": [
+        "tmp%30#0",
+        "tmp%33#0"
+      ]
+    },
+    "219": {
+      "op": "txna ApplicationArgs 3",
+      "defined_out": [
+        "tmp%30#0",
+        "tmp%33#0",
+        "tmp%34#0"
+      ],
+      "stack_out": [
+        "tmp%30#0",
+        "tmp%33#0",
+        "tmp%34#0"
+      ]
+    },
+    "222": {
+      "callsub": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.with_asset",
+      "op": "callsub with_asset",
+      "stack_out": []
+    },
+    "225": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "226": {
+      "op": "return"
+    },
+    "227": {
+      "block": "main_with_txn_route@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%19#0"
+      ],
+      "stack_out": [
+        "tmp%19#0"
+      ]
+    },
+    "229": {
+      "op": "!",
+      "defined_out": [
+        "tmp%20#0"
+      ],
+      "stack_out": [
+        "tmp%20#0"
+      ]
+    },
+    "230": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "231": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%21#0"
+      ],
+      "stack_out": [
+        "tmp%21#0"
+      ]
+    },
+    "233": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "234": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%23#0"
+      ],
+      "stack_out": [
+        "tmp%23#0"
+      ]
+    },
+    "237": {
+      "op": "txn GroupIndex",
+      "defined_out": [
+        "tmp%23#0",
+        "tmp%24#0"
+      ],
+      "stack_out": [
+        "tmp%23#0",
+        "tmp%24#0"
+      ]
+    },
+    "239": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1",
+        "tmp%23#0",
+        "tmp%24#0"
+      ],
+      "stack_out": [
+        "tmp%23#0",
+        "tmp%24#0",
+        "1"
+      ]
+    },
+    "240": {
+      "op": "-",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "tmp%23#0"
+      ],
+      "stack_out": [
+        "tmp%23#0",
+        "gtxn_idx%0#0"
+      ]
+    },
+    "241": {
+      "op": "dup",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_idx%0#0 (copy)",
+        "tmp%23#0"
+      ],
+      "stack_out": [
+        "tmp%23#0",
+        "gtxn_idx%0#0",
+        "gtxn_idx%0#0 (copy)"
+      ]
+    },
+    "242": {
+      "op": "gtxns TypeEnum",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "tmp%23#0"
+      ],
+      "stack_out": [
+        "tmp%23#0",
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0"
+      ]
+    },
+    "244": {
+      "op": "intc_0 // pay",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "pay",
+        "tmp%23#0"
+      ],
+      "stack_out": [
+        "tmp%23#0",
+        "gtxn_idx%0#0",
+        "gtxn_type%0#0",
+        "pay"
+      ]
+    },
+    "245": {
+      "op": "==",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "gtxn_type_matches%0#0",
+        "tmp%23#0"
+      ],
+      "stack_out": [
+        "tmp%23#0",
+        "gtxn_idx%0#0",
+        "gtxn_type_matches%0#0"
+      ]
+    },
+    "246": {
+      "error": "transaction type is pay",
+      "op": "assert // transaction type is pay",
+      "stack_out": [
+        "tmp%23#0",
+        "gtxn_idx%0#0"
+      ]
+    },
+    "247": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "gtxn_idx%0#0",
+        "tmp%23#0",
+        "tmp%25#0"
+      ],
+      "stack_out": [
+        "tmp%23#0",
+        "gtxn_idx%0#0",
+        "tmp%25#0"
+      ]
+    },
+    "250": {
+      "callsub": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.with_txn",
+      "op": "callsub with_txn",
+      "stack_out": []
+    },
+    "253": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "254": {
+      "op": "return"
+    },
+    "255": {
+      "block": "main_alias_route@5",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%13#0"
+      ]
+    },
+    "257": {
+      "op": "!",
+      "defined_out": [
+        "tmp%14#0"
+      ],
+      "stack_out": [
+        "tmp%14#0"
+      ]
+    },
+    "258": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "259": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%15#0"
+      ]
+    },
+    "261": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "262": {
+      "op": "txna ApplicationArgs 1"
+    },
+    "265": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "tmp%17#0",
+        "tmp%18#0"
+      ],
+      "stack_out": [
+        "tmp%17#0",
+        "tmp%18#0"
+      ]
+    },
+    "268": {
+      "callsub": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.sink2",
+      "op": "callsub sink2",
+      "stack_out": []
+    },
+    "271": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "272": {
+      "op": "return"
+    },
+    "273": {
+      "block": "main_sink_route@4",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "275": {
+      "op": "!",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "276": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "277": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "279": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "280": {
+      "op": "txna ApplicationArgs 1"
+    },
+    "283": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "tmp%11#0",
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%11#0",
+        "tmp%12#0"
+      ]
+    },
+    "286": {
+      "callsub": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.sink",
+      "op": "callsub sink",
+      "stack_out": []
+    },
+    "289": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "290": {
+      "op": "return"
+    },
+    "291": {
+      "block": "main_create_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "293": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "294": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "295": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "297": {
+      "op": "!",
+      "defined_out": [
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%6#0"
+      ]
+    },
+    "298": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating",
+      "stack_out": []
+    },
+    "299": {
+      "callsub": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.create",
+      "op": "callsub create"
+    },
+    "302": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "303": {
+      "op": "return"
+    },
+    "304": {
+      "subroutine": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.create",
+      "params": {},
+      "block": "create",
+      "stack_in": [],
+      "op": "proto 0 0"
+    },
+    "307": {
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "308": {
+      "op": "gtxns TypeEnum",
+      "defined_out": [
+        "gtxn_type%0#0"
+      ],
+      "stack_out": [
+        "gtxn_type%0#0"
+      ]
+    },
+    "310": {
+      "op": "intc_3 // appl",
+      "defined_out": [
+        "appl",
+        "gtxn_type%0#0"
+      ],
+      "stack_out": [
+        "gtxn_type%0#0",
+        "appl"
+      ]
+    },
+    "311": {
+      "op": "==",
+      "defined_out": [
+        "gtxn_type_matches%0#0"
+      ],
+      "stack_out": [
+        "gtxn_type_matches%0#0"
+      ]
+    },
+    "312": {
+      "error": "transaction type is appl",
+      "op": "assert // transaction type is appl",
+      "stack_out": []
+    },
+    "313": {
+      "op": "global CurrentApplicationID",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "315": {
+      "error": "expected global to have app id",
+      "op": "assert // expected global to have app id",
+      "stack_out": []
+    },
+    "316": {
+      "op": "global CurrentApplicationAddress"
+    },
+    "318": {
+      "op": "global ZeroAddress",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%3#0"
+      ]
+    },
+    "320": {
+      "op": "!=",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "321": {
+      "error": "expected global to have app address",
+      "op": "assert // expected global to have app address",
+      "stack_out": []
+    },
+    "322": {
+      "op": "intc_1 // 0",
+      "stack_out": [
+        "0"
+      ]
+    },
+    "323": {
+      "op": "gtxns ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "325": {
+      "op": "!",
+      "defined_out": [
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%6#0"
+      ]
+    },
+    "326": {
+      "error": "expected txn to have 0",
+      "op": "assert // expected txn to have 0",
+      "stack_out": []
+    },
+    "327": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "329": {
+      "op": "!",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "330": {
+      "error": "expected txn to have 0",
+      "op": "assert // expected txn to have 0",
+      "stack_out": []
+    },
+    "331": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "332": {
+      "subroutine": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.sink",
+      "params": {
+        "value#0": "bytes",
+        "arr#0": "bytes"
+      },
+      "block": "sink",
+      "stack_in": [],
+      "op": "proto 2 0"
+    },
+    "335": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "value#0 (copy)"
+      ],
+      "stack_out": [
+        "value#0 (copy)"
+      ]
+    },
+    "337": {
+      "op": "bytec_0 // 0x0000",
+      "defined_out": [
+        "0x0000",
+        "value#0 (copy)"
+      ],
+      "stack_out": [
+        "value#0 (copy)",
+        "0x0000"
+      ]
+    },
+    "338": {
+      "op": "!=",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "339": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "340": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "arr#0 (copy)"
+      ],
+      "stack_out": [
+        "arr#0 (copy)"
+      ]
+    },
+    "342": {
+      "op": "bytec_0 // 0x0000",
+      "stack_out": [
+        "arr#0 (copy)",
+        "0x0000"
+      ]
+    },
+    "343": {
+      "op": "!=",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "344": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "345": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "346": {
+      "subroutine": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.sink2",
+      "params": {
+        "value#0": "bytes",
+        "arr#0": "bytes"
+      },
+      "block": "sink2",
+      "stack_in": [],
+      "op": "proto 2 0"
+    },
+    "349": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "value#0 (copy)"
+      ],
+      "stack_out": [
+        "value#0 (copy)"
+      ]
+    },
+    "351": {
+      "op": "bytec_0 // 0x0000",
+      "defined_out": [
+        "0x0000",
+        "value#0 (copy)"
+      ],
+      "stack_out": [
+        "value#0 (copy)",
+        "0x0000"
+      ]
+    },
+    "352": {
+      "op": "!=",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "353": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "354": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "arr#0 (copy)"
+      ],
+      "stack_out": [
+        "arr#0 (copy)"
+      ]
+    },
+    "356": {
+      "op": "bytec_0 // 0x0000",
+      "stack_out": [
+        "arr#0 (copy)",
+        "0x0000"
+      ]
+    },
+    "357": {
+      "op": "!=",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "358": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "359": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "360": {
+      "subroutine": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.with_txn",
+      "params": {
+        "value#0": "bytes",
+        "pay#0": "uint64",
+        "arr#0": "bytes"
+      },
+      "block": "with_txn",
+      "stack_in": [],
+      "op": "proto 3 0"
+    },
+    "363": {
+      "op": "frame_dig -3",
+      "defined_out": [
+        "value#0 (copy)"
+      ],
+      "stack_out": [
+        "value#0 (copy)"
+      ]
+    },
+    "365": {
+      "op": "bytec_0 // 0x0000",
+      "defined_out": [
+        "0x0000",
+        "value#0 (copy)"
+      ],
+      "stack_out": [
+        "value#0 (copy)",
+        "0x0000"
+      ]
+    },
+    "366": {
+      "op": "!=",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "367": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "368": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "arr#0 (copy)"
+      ],
+      "stack_out": [
+        "arr#0 (copy)"
+      ]
+    },
+    "370": {
+      "op": "bytec_0 // 0x0000",
+      "stack_out": [
+        "arr#0 (copy)",
+        "0x0000"
+      ]
+    },
+    "371": {
+      "op": "!=",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "372": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "373": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "pay#0 (copy)"
+      ],
+      "stack_out": [
+        "pay#0 (copy)"
+      ]
+    },
+    "375": {
+      "op": "gtxns GroupIndex",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "377": {
+      "op": "!",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "378": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "379": {
+      "op": "txn GroupIndex",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "381": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0",
+        "1"
+      ]
+    },
+    "382": {
+      "op": "==",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "383": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "384": {
+      "op": "frame_dig -2",
+      "stack_out": [
+        "pay#0 (copy)"
+      ]
+    },
+    "386": {
+      "op": "gtxns Amount",
+      "defined_out": [
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%6#0"
+      ]
+    },
+    "388": {
+      "op": "pushint 123 // 123",
+      "defined_out": [
+        "123",
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%6#0",
+        "123"
+      ]
+    },
+    "390": {
+      "op": "==",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "391": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "392": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "393": {
+      "subroutine": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.with_asset",
+      "params": {
+        "value#0": "bytes",
+        "asset#0": "uint64",
+        "arr#0": "bytes"
+      },
+      "block": "with_asset",
+      "stack_in": [],
+      "op": "proto 3 0"
+    },
+    "396": {
+      "op": "frame_dig -3",
+      "defined_out": [
+        "value#0 (copy)"
+      ],
+      "stack_out": [
+        "value#0 (copy)"
+      ]
+    },
+    "398": {
+      "op": "bytec_0 // 0x0000",
+      "defined_out": [
+        "0x0000",
+        "value#0 (copy)"
+      ],
+      "stack_out": [
+        "value#0 (copy)",
+        "0x0000"
+      ]
+    },
+    "399": {
+      "op": "!=",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "400": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "401": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "arr#0 (copy)"
+      ],
+      "stack_out": [
+        "arr#0 (copy)"
+      ]
+    },
+    "403": {
+      "op": "bytec_0 // 0x0000",
+      "stack_out": [
+        "arr#0 (copy)",
+        "0x0000"
+      ]
+    },
+    "404": {
+      "op": "!=",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "405": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "406": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "asset#0 (copy)"
+      ],
+      "stack_out": [
+        "asset#0 (copy)"
+      ]
+    },
+    "408": {
+      "op": "asset_params_get AssetTotal",
+      "defined_out": [
+        "check%0#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "410": {
+      "error": "asset exists",
+      "op": "assert // asset exists",
+      "stack_out": [
+        "value%0#0"
+      ]
+    },
+    "411": {
+      "op": "pushint 123 // 123",
+      "defined_out": [
+        "123",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "value%0#0",
+        "123"
+      ]
+    },
+    "413": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "414": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "415": {
+      "op": "txna Assets 0",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "418": {
+      "op": "frame_dig -2",
+      "stack_out": [
+        "tmp%3#0",
+        "asset#0 (copy)"
+      ]
+    },
+    "420": {
+      "op": "==",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "421": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "422": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "423": {
+      "subroutine": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.with_app",
+      "params": {
+        "value#0": "bytes",
+        "app#0": "uint64",
+        "app_id#0": "bytes",
+        "arr#0": "bytes"
+      },
+      "block": "with_app",
+      "stack_in": [],
+      "op": "proto 4 0"
+    },
+    "426": {
+      "op": "frame_dig -4",
+      "defined_out": [
+        "value#0 (copy)"
+      ],
+      "stack_out": [
+        "value#0 (copy)"
+      ]
+    },
+    "428": {
+      "op": "bytec_0 // 0x0000",
+      "defined_out": [
+        "0x0000",
+        "value#0 (copy)"
+      ],
+      "stack_out": [
+        "value#0 (copy)",
+        "0x0000"
+      ]
+    },
+    "429": {
+      "op": "!=",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "430": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "431": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "arr#0 (copy)"
+      ],
+      "stack_out": [
+        "arr#0 (copy)"
+      ]
+    },
+    "433": {
+      "op": "bytec_0 // 0x0000",
+      "stack_out": [
+        "arr#0 (copy)",
+        "0x0000"
+      ]
+    },
+    "434": {
+      "op": "!=",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "435": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "436": {
+      "op": "frame_dig -3",
+      "defined_out": [
+        "app#0 (copy)"
+      ],
+      "stack_out": [
+        "app#0 (copy)"
+      ]
+    },
+    "438": {
+      "op": "itob",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "439": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "app_id#0 (copy)",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "app_id#0 (copy)"
+      ]
+    },
+    "441": {
+      "op": "b==",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "442": {
+      "error": "expected app id to match provided app id",
+      "op": "assert // expected app id to match provided app id",
+      "stack_out": []
+    },
+    "443": {
+      "op": "frame_dig -3",
+      "stack_out": [
+        "app#0 (copy)"
+      ]
+    },
+    "445": {
+      "op": "app_params_get AppCreator",
+      "defined_out": [
+        "check%0#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "447": {
+      "error": "application exists",
+      "op": "assert // application exists",
+      "stack_out": [
+        "value%0#0"
+      ]
+    },
+    "448": {
+      "op": "global CreatorAddress",
+      "defined_out": [
+        "tmp%4#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "value%0#0",
+        "tmp%4#0"
+      ]
+    },
+    "450": {
+      "op": "==",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "451": {
+      "error": "expected other app to have same creator",
+      "op": "assert // expected other app to have same creator",
+      "stack_out": []
+    },
+    "452": {
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "453": {
+      "op": "gtxns TypeEnum",
+      "defined_out": [
+        "gtxn_type%0#0"
+      ],
+      "stack_out": [
+        "gtxn_type%0#0"
+      ]
+    },
+    "455": {
+      "op": "intc_3 // appl",
+      "defined_out": [
+        "appl",
+        "gtxn_type%0#0"
+      ],
+      "stack_out": [
+        "gtxn_type%0#0",
+        "appl"
+      ]
+    },
+    "456": {
+      "op": "==",
+      "defined_out": [
+        "gtxn_type_matches%0#0"
+      ],
+      "stack_out": [
+        "gtxn_type_matches%0#0"
+      ]
+    },
+    "457": {
+      "error": "transaction type is appl",
+      "op": "assert // transaction type is appl",
+      "stack_out": []
+    },
+    "458": {
+      "op": "intc_1 // 0",
+      "stack_out": [
+        "0"
+      ]
+    },
+    "459": {
+      "op": "dup",
+      "stack_out": [
+        "0",
+        "0"
+      ]
+    },
+    "460": {
+      "op": "gtxnsas Applications",
+      "defined_out": [
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%6#0"
+      ]
+    },
+    "462": {
+      "op": "global CurrentApplicationID",
+      "defined_out": [
+        "tmp%6#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%6#0",
+        "tmp%7#0"
+      ]
+    },
+    "464": {
+      "op": "==",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "465": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "466": {
+      "op": "txna Applications 0"
+    },
+    "469": {
+      "op": "global CurrentApplicationID",
+      "defined_out": [
+        "tmp%10#0",
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0",
+        "tmp%10#0"
+      ]
+    },
+    "471": {
+      "op": "==",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "472": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "473": {
+      "op": "intc_1 // 0",
+      "stack_out": [
+        "0"
+      ]
+    },
+    "474": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "0",
+        "1"
+      ],
+      "stack_out": [
+        "0",
+        "1"
+      ]
+    },
+    "475": {
+      "op": "gtxnsas Applications",
+      "defined_out": [
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%12#0"
+      ]
+    },
+    "477": {
+      "op": "frame_dig -3",
+      "stack_out": [
+        "tmp%12#0",
+        "app#0 (copy)"
+      ]
+    },
+    "479": {
+      "op": "==",
+      "defined_out": [
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%13#0"
+      ]
+    },
+    "480": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "481": {
+      "op": "txna Applications 1",
+      "defined_out": [
+        "tmp%14#0"
+      ],
+      "stack_out": [
+        "tmp%14#0"
+      ]
+    },
+    "484": {
+      "op": "frame_dig -3",
+      "stack_out": [
+        "tmp%14#0",
+        "app#0 (copy)"
+      ]
+    },
+    "486": {
+      "op": "==",
+      "defined_out": [
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%15#0"
+      ]
+    },
+    "487": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "488": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "489": {
+      "subroutine": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.with_acc",
+      "params": {
+        "value#0": "bytes",
+        "acc#0": "bytes",
+        "arr#0": "bytes"
+      },
+      "block": "with_acc",
+      "stack_in": [],
+      "op": "proto 3 0"
+    },
+    "492": {
+      "op": "frame_dig -3",
+      "defined_out": [
+        "value#0 (copy)"
+      ],
+      "stack_out": [
+        "value#0 (copy)"
+      ]
+    },
+    "494": {
+      "op": "bytec_0 // 0x0000",
+      "defined_out": [
+        "0x0000",
+        "value#0 (copy)"
+      ],
+      "stack_out": [
+        "value#0 (copy)",
+        "0x0000"
+      ]
+    },
+    "495": {
+      "op": "!=",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "496": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "497": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "arr#0 (copy)"
+      ],
+      "stack_out": [
+        "arr#0 (copy)"
+      ]
+    },
+    "499": {
+      "op": "bytec_0 // 0x0000",
+      "stack_out": [
+        "arr#0 (copy)",
+        "0x0000"
+      ]
+    },
+    "500": {
+      "op": "!=",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "501": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "502": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "acc#0 (copy)"
+      ],
+      "stack_out": [
+        "acc#0 (copy)"
+      ]
+    },
+    "504": {
+      "op": "acct_params_get AcctBalance",
+      "defined_out": [
+        "check%0#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "506": {
+      "error": "account funded",
+      "op": "assert // account funded",
+      "stack_out": [
+        "value%0#0"
+      ]
+    },
+    "507": {
+      "op": "frame_dig -2",
+      "stack_out": [
+        "value%0#0",
+        "acc#0 (copy)"
+      ]
+    },
+    "509": {
+      "op": "acct_params_get AcctMinBalance",
+      "defined_out": [
+        "check%1#0",
+        "value%0#0",
+        "value%1#0"
+      ],
+      "stack_out": [
+        "value%0#0",
+        "value%1#0",
+        "check%1#0"
+      ]
+    },
+    "511": {
+      "error": "account funded",
+      "op": "assert // account funded",
+      "stack_out": [
+        "value%0#0",
+        "value%1#0"
+      ]
+    },
+    "512": {
+      "op": "pushint 1234 // 1234",
+      "defined_out": [
+        "1234",
+        "value%0#0",
+        "value%1#0"
+      ],
+      "stack_out": [
+        "value%0#0",
+        "value%1#0",
+        "1234"
+      ]
+    },
+    "515": {
+      "op": "+",
+      "defined_out": [
+        "tmp%2#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "value%0#0",
+        "tmp%2#0"
+      ]
+    },
+    "516": {
+      "op": "==",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "517": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "518": {
+      "op": "txna Accounts 0"
+    },
+    "521": {
+      "op": "txn Sender",
+      "defined_out": [
+        "tmp%4#0",
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%4#0",
+        "tmp%5#0"
+      ]
+    },
+    "523": {
+      "op": "==",
+      "defined_out": [
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%6#0"
+      ]
+    },
+    "524": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "525": {
+      "op": "txna Accounts 1",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "528": {
+      "op": "frame_dig -2",
+      "stack_out": [
+        "tmp%7#0",
+        "acc#0 (copy)"
+      ]
+    },
+    "530": {
+      "op": "==",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "531": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "532": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "533": {
+      "subroutine": "tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.complex_sig",
+      "params": {
+        "struct1#0": "bytes",
+        "txn#0": "uint64",
+        "acc#0": "bytes",
+        "five#0": "bytes"
+      },
+      "block": "complex_sig",
+      "stack_in": [],
+      "op": "proto 4 2"
+    },
+    "536": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "538": {
+      "op": "intc_2 // 4",
+      "defined_out": [
+        "4",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "4"
+      ]
+    },
+    "539": {
+      "op": "==",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "540": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "541": {
+      "op": "frame_dig -4",
+      "defined_out": [
+        "struct1#0 (copy)"
+      ],
+      "stack_out": [
+        "struct1#0 (copy)"
+      ]
+    },
+    "543": {
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0",
+        "struct1#0 (copy)"
+      ],
+      "stack_out": [
+        "struct1#0 (copy)",
+        "0"
+      ]
+    },
+    "544": {
+      "op": "extract_uint16",
+      "defined_out": [
+        "item_start_offset%0#0"
+      ],
+      "stack_out": [
+        "item_start_offset%0#0"
+      ]
+    },
+    "545": {
+      "op": "frame_dig -4",
+      "stack_out": [
+        "item_start_offset%0#0",
+        "struct1#0 (copy)"
+      ]
+    },
+    "547": {
+      "op": "pushint 2 // 2",
+      "defined_out": [
+        "2",
+        "item_start_offset%0#0",
+        "struct1#0 (copy)"
+      ],
+      "stack_out": [
+        "item_start_offset%0#0",
+        "struct1#0 (copy)",
+        "2"
+      ]
+    },
+    "549": {
+      "op": "extract_uint16",
+      "defined_out": [
+        "item_end_offset%0#0",
+        "item_start_offset%0#0"
+      ],
+      "stack_out": [
+        "item_start_offset%0#0",
+        "item_end_offset%0#0"
+      ]
+    },
+    "550": {
+      "op": "frame_dig -4",
+      "stack_out": [
+        "item_start_offset%0#0",
+        "item_end_offset%0#0",
+        "struct1#0 (copy)"
+      ]
+    },
+    "552": {
+      "op": "uncover 2",
+      "stack_out": [
+        "item_end_offset%0#0",
+        "struct1#0 (copy)",
+        "item_start_offset%0#0"
+      ]
+    },
+    "554": {
+      "op": "dig 2",
+      "defined_out": [
+        "item_end_offset%0#0",
+        "item_end_offset%0#0 (copy)",
+        "item_start_offset%0#0",
+        "struct1#0 (copy)"
+      ],
+      "stack_out": [
+        "item_end_offset%0#0",
+        "struct1#0 (copy)",
+        "item_start_offset%0#0",
+        "item_end_offset%0#0 (copy)"
+      ]
+    },
+    "556": {
+      "op": "substring3",
+      "defined_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0"
+      ]
+    },
+    "557": {
+      "op": "dup",
+      "defined_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ],
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ]
+    },
+    "558": {
+      "error": "Index access is out of bounds",
+      "op": "extract 0 8 // on error: Index access is out of bounds",
+      "defined_out": [
+        "item_end_offset%0#0",
+        "reinterpret_biguint%0#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "reinterpret_biguint%0#0"
+      ]
+    },
+    "561": {
+      "op": "bytec_1 // 0x0000000000000001",
+      "defined_out": [
+        "0x0000000000000001",
+        "item_end_offset%0#0",
+        "reinterpret_biguint%0#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "reinterpret_biguint%0#0",
+        "0x0000000000000001"
+      ]
+    },
+    "562": {
+      "op": "b==",
+      "defined_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "tmp%3#0"
+      ]
+    },
+    "563": {
+      "op": "assert",
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0"
+      ]
+    },
+    "564": {
+      "op": "dup",
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ]
+    },
+    "565": {
+      "op": "pushint 8 // 8",
+      "defined_out": [
+        "8",
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ],
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)",
+        "8"
+      ]
+    },
+    "567": {
+      "op": "extract_uint16",
+      "defined_out": [
+        "item_end_offset%0#0",
+        "item_start_offset%2#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "item_start_offset%2#0"
+      ]
+    },
+    "568": {
+      "op": "dig 1",
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "item_start_offset%2#0",
+        "tmp%2#0 (copy)"
+      ]
+    },
+    "570": {
+      "op": "len",
+      "defined_out": [
+        "item_end_offset%0#0",
+        "item_end_offset%2#0",
+        "item_start_offset%2#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "item_start_offset%2#0",
+        "item_end_offset%2#0"
+      ]
+    },
+    "571": {
+      "op": "dig 2",
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "item_start_offset%2#0",
+        "item_end_offset%2#0",
+        "tmp%2#0 (copy)"
+      ]
+    },
+    "573": {
+      "op": "cover 2",
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)",
+        "item_start_offset%2#0",
+        "item_end_offset%2#0"
+      ]
+    },
+    "575": {
+      "op": "substring3",
+      "defined_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "tmp%5#0"
+      ]
+    },
+    "576": {
+      "op": "bytec_2 // 0x000132",
+      "defined_out": [
+        "0x000132",
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "tmp%5#0",
+        "0x000132"
+      ]
+    },
+    "577": {
+      "op": "==",
+      "defined_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "tmp%6#0"
+      ]
+    },
+    "578": {
+      "op": "assert",
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0"
+      ]
+    },
+    "579": {
+      "op": "frame_dig -4",
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "struct1#0 (copy)"
+      ]
+    },
+    "581": {
+      "op": "len",
+      "defined_out": [
+        "item_end_offset%0#0",
+        "item_end_offset%3#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "item_end_offset%3#0"
+      ]
+    },
+    "582": {
+      "op": "frame_dig -4",
+      "stack_out": [
+        "item_end_offset%0#0",
+        "tmp%2#0",
+        "item_end_offset%3#0",
+        "struct1#0 (copy)"
+      ]
+    },
+    "584": {
+      "op": "uncover 3",
+      "stack_out": [
+        "tmp%2#0",
+        "item_end_offset%3#0",
+        "struct1#0 (copy)",
+        "item_end_offset%0#0"
+      ]
+    },
+    "586": {
+      "op": "uncover 2",
+      "stack_out": [
+        "tmp%2#0",
+        "struct1#0 (copy)",
+        "item_end_offset%0#0",
+        "item_end_offset%3#0"
+      ]
+    },
+    "588": {
+      "op": "substring3",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%7#0"
+      ]
+    },
+    "589": {
+      "op": "dup",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%7#0",
+        "tmp%7#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%7#0",
+        "tmp%7#0 (copy)"
+      ]
+    },
+    "590": {
+      "error": "Index access is out of bounds",
+      "op": "extract 0 8 // on error: Index access is out of bounds",
+      "defined_out": [
+        "reinterpret_biguint%2#0",
+        "tmp%2#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%7#0",
+        "reinterpret_biguint%2#0"
+      ]
+    },
+    "593": {
+      "op": "bytec_1 // 0x0000000000000001",
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%7#0",
+        "reinterpret_biguint%2#0",
+        "0x0000000000000001"
+      ]
+    },
+    "594": {
+      "op": "b==",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%7#0",
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%7#0",
+        "tmp%8#0"
+      ]
+    },
+    "595": {
+      "op": "assert",
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%7#0"
+      ]
+    },
+    "596": {
+      "op": "dup",
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%7#0",
+        "tmp%7#0 (copy)"
+      ]
+    },
+    "597": {
+      "op": "pushint 8 // 8",
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%7#0",
+        "tmp%7#0 (copy)",
+        "8"
+      ]
+    },
+    "599": {
+      "op": "extract_uint16",
+      "defined_out": [
+        "item_start_offset%5#0",
+        "tmp%2#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%7#0",
+        "item_start_offset%5#0"
+      ]
+    },
+    "600": {
+      "op": "dig 1",
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%7#0",
+        "item_start_offset%5#0",
+        "tmp%7#0 (copy)"
+      ]
+    },
+    "602": {
+      "op": "len",
+      "defined_out": [
+        "item_end_offset%5#0",
+        "item_start_offset%5#0",
+        "tmp%2#0",
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%7#0",
+        "item_start_offset%5#0",
+        "item_end_offset%5#0"
+      ]
+    },
+    "603": {
+      "op": "substring3",
+      "defined_out": [
+        "tmp%10#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%10#0"
+      ]
+    },
+    "604": {
+      "op": "bytec_2 // 0x000132",
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%10#0",
+        "0x000132"
+      ]
+    },
+    "605": {
+      "op": "==",
+      "defined_out": [
+        "tmp%11#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%11#0"
+      ]
+    },
+    "606": {
+      "op": "assert",
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "607": {
+      "op": "frame_dig -4",
+      "stack_out": [
+        "tmp%2#0",
+        "struct1#0 (copy)"
+      ]
+    },
+    "609": {
+      "error": "Index access is out of bounds",
+      "op": "extract 4 16 // on error: Index access is out of bounds",
+      "defined_out": [
+        "reinterpret_biguint%4#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "reinterpret_biguint%4#0"
+      ]
+    },
+    "612": {
+      "op": "pushbytes 0x00000000000000000000000000000003",
+      "defined_out": [
+        "0x00000000000000000000000000000003",
+        "reinterpret_biguint%4#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "reinterpret_biguint%4#0",
+        "0x00000000000000000000000000000003"
+      ]
+    },
+    "630": {
+      "op": "b==",
+      "defined_out": [
+        "tmp%12#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%12#0"
+      ]
+    },
+    "631": {
+      "op": "assert",
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "632": {
+      "op": "frame_dig -4",
+      "stack_out": [
+        "tmp%2#0",
+        "struct1#0 (copy)"
+      ]
+    },
+    "634": {
+      "error": "Index access is out of bounds",
+      "op": "extract 20 16 // on error: Index access is out of bounds",
+      "defined_out": [
+        "reinterpret_biguint%6#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "reinterpret_biguint%6#0"
+      ]
+    },
+    "637": {
+      "op": "pushbytes 0x00000000000000000000000000000004",
+      "defined_out": [
+        "0x00000000000000000000000000000004",
+        "reinterpret_biguint%6#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "reinterpret_biguint%6#0",
+        "0x00000000000000000000000000000004"
+      ]
+    },
+    "655": {
+      "op": "b==",
+      "defined_out": [
+        "tmp%13#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%13#0"
+      ]
+    },
+    "656": {
+      "op": "assert",
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "657": {
+      "op": "frame_dig -3",
+      "defined_out": [
+        "tmp%2#0",
+        "txn#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "txn#0 (copy)"
+      ]
+    },
+    "659": {
+      "op": "gtxns GroupIndex",
+      "defined_out": [
+        "tmp%14#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%14#0"
+      ]
+    },
+    "661": {
+      "op": "txn GroupIndex",
+      "defined_out": [
+        "tmp%14#0",
+        "tmp%15#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%14#0",
+        "tmp%15#0"
+      ]
+    },
+    "663": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1",
+        "tmp%14#0",
+        "tmp%15#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%14#0",
+        "tmp%15#0",
+        "1"
+      ]
+    },
+    "664": {
+      "op": "-",
+      "defined_out": [
+        "tmp%14#0",
+        "tmp%16#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%14#0",
+        "tmp%16#0"
+      ]
+    },
+    "665": {
+      "op": "==",
+      "defined_out": [
+        "tmp%17#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%17#0"
+      ]
+    },
+    "666": {
+      "op": "assert",
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "667": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "tmp%18#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%18#0"
+      ]
+    },
+    "670": {
+      "op": "pushbytes 0x01",
+      "defined_out": [
+        "0x01",
+        "tmp%18#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%18#0",
+        "0x01"
+      ]
+    },
+    "673": {
+      "op": "==",
+      "defined_out": [
+        "tmp%19#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%19#0"
+      ]
+    },
+    "674": {
+      "op": "assert",
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "675": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "acc#0 (copy)",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "acc#0 (copy)"
+      ]
+    },
+    "677": {
+      "op": "acct_params_get AcctBalance",
+      "defined_out": [
+        "check%0#0",
+        "tmp%2#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "679": {
+      "error": "account funded",
+      "op": "assert // account funded",
+      "stack_out": [
+        "tmp%2#0",
+        "value%0#0"
+      ]
+    },
+    "680": {
+      "op": "frame_dig -2",
+      "stack_out": [
+        "tmp%2#0",
+        "value%0#0",
+        "acc#0 (copy)"
+      ]
+    },
+    "682": {
+      "op": "acct_params_get AcctMinBalance",
+      "defined_out": [
+        "check%1#0",
+        "tmp%2#0",
+        "value%0#0",
+        "value%1#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "value%0#0",
+        "value%1#0",
+        "check%1#0"
+      ]
+    },
+    "684": {
+      "error": "account funded",
+      "op": "assert // account funded",
+      "stack_out": [
+        "tmp%2#0",
+        "value%0#0",
+        "value%1#0"
+      ]
+    },
+    "685": {
+      "op": "pushint 1234 // 1234",
+      "defined_out": [
+        "1234",
+        "tmp%2#0",
+        "value%0#0",
+        "value%1#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "value%0#0",
+        "value%1#0",
+        "1234"
+      ]
+    },
+    "688": {
+      "op": "+",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%20#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "value%0#0",
+        "tmp%20#0"
+      ]
+    },
+    "689": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%21#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%21#0"
+      ]
+    },
+    "690": {
+      "op": "assert",
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "691": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "five#0 (copy)",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "five#0 (copy)"
+      ]
+    },
+    "693": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "array_head_and_tail%0#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "array_head_and_tail%0#0"
+      ]
+    },
+    "696": {
+      "error": "Index access is out of bounds",
+      "op": "extract 0 1 // on error: Index access is out of bounds",
+      "defined_out": [
+        "reinterpret_biguint%8#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "reinterpret_biguint%8#0"
+      ]
+    },
+    "699": {
+      "op": "pushbytes 0x05",
+      "defined_out": [
+        "0x05",
+        "reinterpret_biguint%8#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "reinterpret_biguint%8#0",
+        "0x05"
+      ]
+    },
+    "702": {
+      "op": "b==",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%22#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%22#0"
+      ]
+    },
+    "703": {
+      "op": "assert",
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "704": {
+      "op": "frame_dig -4",
+      "stack_out": [
+        "tmp%2#0",
+        "struct1#0 (copy)"
+      ]
+    },
+    "706": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}

@@ -1,0 +1,242 @@
+{
+  "version": 3,
+  "sources": [
+    "../contract.py"
+  ],
+  "mappings": ";;;;;AAGA;;AAAA;;;AAAA;;;;;;AAAA;;;AAAA;;;;AAAA;;AACK;;AAAA;AAAA;AAAA;;AAAA;AADL;;;AAAA;AAAA;;AACK;;;AAAA;;AADL;;AAAA;;;;;;;;;AACA;;;AAGQ;AACmB;;;;;;;;AADnB;;;;AAAA;;;AAAA;",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "algopy.arc4.ARC4Contract.approval_program",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 0 1"
+    },
+    "5": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "7": {
+      "op": "bz main_bare_routing@6",
+      "stack_out": []
+    },
+    "10": {
+      "op": "pushbytes 0xe2353124 // method \"opt_in_dummy_asset(asset)void\""
+    },
+    "16": {
+      "op": "txna ApplicationArgs 0"
+    },
+    "19": {
+      "op": "match main_opt_in_dummy_asset_route@3"
+    },
+    "23": {
+      "block": "main_after_if_else@10",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "24": {
+      "op": "return"
+    },
+    "25": {
+      "block": "main_opt_in_dummy_asset_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "27": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "28": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "29": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "31": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "32": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "35": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "36": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "38": {
+      "callsub": "tests.artifacts.Arc4InnerTxns.contract.Arc4InnerTxnsContract.opt_in_dummy_asset",
+      "op": "callsub opt_in_dummy_asset",
+      "stack_out": []
+    },
+    "41": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "42": {
+      "op": "return"
+    },
+    "43": {
+      "block": "main_bare_routing@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0"
+      ]
+    },
+    "45": {
+      "op": "bnz main_after_if_else@10",
+      "stack_out": []
+    },
+    "48": {
+      "op": "txn ApplicationID"
+    },
+    "50": {
+      "op": "!"
+    },
+    "51": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating"
+    },
+    "52": {
+      "op": "intc_1 // 1"
+    },
+    "53": {
+      "op": "return"
+    },
+    "54": {
+      "subroutine": "tests.artifacts.Arc4InnerTxns.contract.Arc4InnerTxnsContract.opt_in_dummy_asset",
+      "params": {
+        "asset#0": "uint64"
+      },
+      "block": "opt_in_dummy_asset",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "57": {
+      "op": "itxn_begin"
+    },
+    "58": {
+      "op": "global CurrentApplicationAddress",
+      "defined_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ]
+    },
+    "60": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "asset#0 (copy)",
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0",
+        "asset#0 (copy)"
+      ]
+    },
+    "62": {
+      "op": "itxn_field XferAsset",
+      "stack_out": [
+        "inner_txn_params%0%%param_AssetReceiver_idx_0#0"
+      ]
+    },
+    "64": {
+      "op": "itxn_field AssetReceiver",
+      "stack_out": []
+    },
+    "66": {
+      "op": "pushint 4 // axfer",
+      "defined_out": [
+        "axfer"
+      ],
+      "stack_out": [
+        "axfer"
+      ]
+    },
+    "68": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": []
+    },
+    "70": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "71": {
+      "op": "itxn_field Fee",
+      "stack_out": []
+    },
+    "73": {
+      "op": "itxn_submit"
+    },
+    "74": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}

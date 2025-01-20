@@ -1,0 +1,2610 @@
+{
+  "version": 3,
+  "sources": [
+    "../contract.py"
+  ],
+  "mappings": ";;;;;;;;;;;AAuPA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;AAAA;;;AAkEK;;AAAA;AAAA;AAAA;;AAAA;AAlEL;;;AAAA;AAAA;;AAkEK;;;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AA1DL;;;AAAA;AAAA;;AA0DK;;;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAlDL;;;AAAA;AAAA;;AAkDK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AA1CL;;;AAAA;AAAA;;AA0CK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAlCL;;;AAAA;AAAA;;AAkCK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AA1BL;;;AAAA;AAAA;;AA0BK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAlBL;;;AAAA;AAAA;;AAkBK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAVL;;;AAAA;AAAA;;AAUK;;;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAFL;;;AAAA;AAAA;;AAEK;;;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAFL;;AAAA;;;;;;;;;AAEA;;;AAEwB;;AAAA;;AAvOL;;;AAAR;AAwOyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AA/OL;;;AAAR;AAgPyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AAvPL;;;AAAR;AAwPyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AA/PL;;;AAAR;AAgQyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AAvQL;;;AAAR;AAwQyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AA/QL;;;AAAR;AAgRyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AAvRL;;;AAAR;AAwRyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AA/RL;;;AAAR;AAgSyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AAvSL;;;AAAR;AAwSyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "algopy.arc4.ARC4Contract.approval_program",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 1"
+    },
+    "4": {
+      "op": "bytecblock 0x151f7c75"
+    },
+    "11": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "13": {
+      "op": "bz main_bare_routing@14",
+      "stack_out": []
+    },
+    "16": {
+      "op": "pushbytess 0x5e7b7d52 0xe29e30ee 0x58819099 0xca77b59b 0x53c0dd9b 0x5f000703 0xd77bd21f 0xa941a746 0xbd3e9eec // method \"verify_app_params_get_approval_program(application)byte[]\", method \"verify_app_params_get_clear_state_program(application)byte[]\", method \"verify_app_params_get_global_num_uint(application)uint64\", method \"verify_app_params_get_global_num_byte_slice(application)uint64\", method \"verify_app_params_get_local_num_uint(application)uint64\", method \"verify_app_params_get_local_num_byte_slice(application)uint64\", method \"verify_app_params_get_extra_program_pages(application)uint64\", method \"verify_app_params_get_creator(application)address\", method \"verify_app_params_get_address(application)address\""
+    },
+    "63": {
+      "op": "txna ApplicationArgs 0"
+    },
+    "66": {
+      "op": "match main_verify_app_params_get_approval_program_route@3 main_verify_app_params_get_clear_state_program_route@4 main_verify_app_params_get_global_num_uint_route@5 main_verify_app_params_get_global_num_byte_slice_route@6 main_verify_app_params_get_local_num_uint_route@7 main_verify_app_params_get_local_num_byte_slice_route@8 main_verify_app_params_get_extra_program_pages_route@9 main_verify_app_params_get_creator_route@10 main_verify_app_params_get_address_route@11"
+    },
+    "86": {
+      "block": "main_after_if_else@18",
+      "stack_in": [],
+      "op": "pushint 0 // 0",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "88": {
+      "op": "return"
+    },
+    "89": {
+      "block": "main_verify_app_params_get_address_route@11",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%68#0"
+      ],
+      "stack_out": [
+        "tmp%68#0"
+      ]
+    },
+    "91": {
+      "op": "!",
+      "defined_out": [
+        "tmp%69#0"
+      ],
+      "stack_out": [
+        "tmp%69#0"
+      ]
+    },
+    "92": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "93": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%70#0"
+      ],
+      "stack_out": [
+        "tmp%70#0"
+      ]
+    },
+    "95": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "96": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%72#0"
+      ],
+      "stack_out": [
+        "tmp%72#0"
+      ]
+    },
+    "99": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%73#0"
+      ],
+      "stack_out": [
+        "tmp%73#0"
+      ]
+    },
+    "100": {
+      "op": "txnas Applications",
+      "defined_out": [
+        "tmp%74#0"
+      ],
+      "stack_out": [
+        "tmp%74#0"
+      ]
+    },
+    "102": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_address",
+      "op": "callsub verify_app_params_get_address",
+      "defined_out": [
+        "tmp%75#0"
+      ],
+      "stack_out": [
+        "tmp%75#0"
+      ]
+    },
+    "105": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "tmp%75#0"
+      ],
+      "stack_out": [
+        "tmp%75#0",
+        "0x151f7c75"
+      ]
+    },
+    "106": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "tmp%75#0"
+      ]
+    },
+    "107": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%76#0"
+      ],
+      "stack_out": [
+        "tmp%76#0"
+      ]
+    },
+    "108": {
+      "op": "log",
+      "stack_out": []
+    },
+    "109": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "110": {
+      "op": "return"
+    },
+    "111": {
+      "block": "main_verify_app_params_get_creator_route@10",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%59#0"
+      ],
+      "stack_out": [
+        "tmp%59#0"
+      ]
+    },
+    "113": {
+      "op": "!",
+      "defined_out": [
+        "tmp%60#0"
+      ],
+      "stack_out": [
+        "tmp%60#0"
+      ]
+    },
+    "114": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "115": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%61#0"
+      ],
+      "stack_out": [
+        "tmp%61#0"
+      ]
+    },
+    "117": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "118": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%63#0"
+      ],
+      "stack_out": [
+        "tmp%63#0"
+      ]
+    },
+    "121": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%64#0"
+      ],
+      "stack_out": [
+        "tmp%64#0"
+      ]
+    },
+    "122": {
+      "op": "txnas Applications",
+      "defined_out": [
+        "tmp%65#0"
+      ],
+      "stack_out": [
+        "tmp%65#0"
+      ]
+    },
+    "124": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_creator",
+      "op": "callsub verify_app_params_get_creator",
+      "defined_out": [
+        "tmp%66#0"
+      ],
+      "stack_out": [
+        "tmp%66#0"
+      ]
+    },
+    "127": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "tmp%66#0"
+      ],
+      "stack_out": [
+        "tmp%66#0",
+        "0x151f7c75"
+      ]
+    },
+    "128": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "tmp%66#0"
+      ]
+    },
+    "129": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%67#0"
+      ],
+      "stack_out": [
+        "tmp%67#0"
+      ]
+    },
+    "130": {
+      "op": "log",
+      "stack_out": []
+    },
+    "131": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "132": {
+      "op": "return"
+    },
+    "133": {
+      "block": "main_verify_app_params_get_extra_program_pages_route@9",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%51#0"
+      ],
+      "stack_out": [
+        "tmp%51#0"
+      ]
+    },
+    "135": {
+      "op": "!",
+      "defined_out": [
+        "tmp%52#0"
+      ],
+      "stack_out": [
+        "tmp%52#0"
+      ]
+    },
+    "136": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "137": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%53#0"
+      ],
+      "stack_out": [
+        "tmp%53#0"
+      ]
+    },
+    "139": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "140": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%55#0"
+      ],
+      "stack_out": [
+        "tmp%55#0"
+      ]
+    },
+    "143": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%56#0"
+      ],
+      "stack_out": [
+        "tmp%56#0"
+      ]
+    },
+    "144": {
+      "op": "txnas Applications",
+      "defined_out": [
+        "tmp%57#0"
+      ],
+      "stack_out": [
+        "tmp%57#0"
+      ]
+    },
+    "146": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_extra_program_pages",
+      "op": "callsub verify_app_params_get_extra_program_pages",
+      "defined_out": [
+        "to_encode%6#0"
+      ],
+      "stack_out": [
+        "to_encode%6#0"
+      ]
+    },
+    "149": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%4#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%4#0"
+      ]
+    },
+    "150": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%4#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%4#0",
+        "0x151f7c75"
+      ]
+    },
+    "151": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%4#0"
+      ]
+    },
+    "152": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%58#0"
+      ],
+      "stack_out": [
+        "tmp%58#0"
+      ]
+    },
+    "153": {
+      "op": "log",
+      "stack_out": []
+    },
+    "154": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "155": {
+      "op": "return"
+    },
+    "156": {
+      "block": "main_verify_app_params_get_local_num_byte_slice_route@8",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%43#0"
+      ],
+      "stack_out": [
+        "tmp%43#0"
+      ]
+    },
+    "158": {
+      "op": "!",
+      "defined_out": [
+        "tmp%44#0"
+      ],
+      "stack_out": [
+        "tmp%44#0"
+      ]
+    },
+    "159": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "160": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%45#0"
+      ],
+      "stack_out": [
+        "tmp%45#0"
+      ]
+    },
+    "162": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "163": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%47#0"
+      ],
+      "stack_out": [
+        "tmp%47#0"
+      ]
+    },
+    "166": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%48#0"
+      ],
+      "stack_out": [
+        "tmp%48#0"
+      ]
+    },
+    "167": {
+      "op": "txnas Applications",
+      "defined_out": [
+        "tmp%49#0"
+      ],
+      "stack_out": [
+        "tmp%49#0"
+      ]
+    },
+    "169": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_local_num_byte_slice",
+      "op": "callsub verify_app_params_get_local_num_byte_slice",
+      "defined_out": [
+        "to_encode%5#0"
+      ],
+      "stack_out": [
+        "to_encode%5#0"
+      ]
+    },
+    "172": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%3#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%3#0"
+      ]
+    },
+    "173": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%3#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%3#0",
+        "0x151f7c75"
+      ]
+    },
+    "174": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%3#0"
+      ]
+    },
+    "175": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%50#0"
+      ],
+      "stack_out": [
+        "tmp%50#0"
+      ]
+    },
+    "176": {
+      "op": "log",
+      "stack_out": []
+    },
+    "177": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "178": {
+      "op": "return"
+    },
+    "179": {
+      "block": "main_verify_app_params_get_local_num_uint_route@7",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%35#0"
+      ],
+      "stack_out": [
+        "tmp%35#0"
+      ]
+    },
+    "181": {
+      "op": "!",
+      "defined_out": [
+        "tmp%36#0"
+      ],
+      "stack_out": [
+        "tmp%36#0"
+      ]
+    },
+    "182": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "183": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%37#0"
+      ],
+      "stack_out": [
+        "tmp%37#0"
+      ]
+    },
+    "185": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "186": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%39#0"
+      ],
+      "stack_out": [
+        "tmp%39#0"
+      ]
+    },
+    "189": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%40#0"
+      ],
+      "stack_out": [
+        "tmp%40#0"
+      ]
+    },
+    "190": {
+      "op": "txnas Applications",
+      "defined_out": [
+        "tmp%41#0"
+      ],
+      "stack_out": [
+        "tmp%41#0"
+      ]
+    },
+    "192": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_local_num_uint",
+      "op": "callsub verify_app_params_get_local_num_uint",
+      "defined_out": [
+        "to_encode%4#0"
+      ],
+      "stack_out": [
+        "to_encode%4#0"
+      ]
+    },
+    "195": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%2#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%2#0"
+      ]
+    },
+    "196": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%2#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%2#0",
+        "0x151f7c75"
+      ]
+    },
+    "197": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%2#0"
+      ]
+    },
+    "198": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%42#0"
+      ],
+      "stack_out": [
+        "tmp%42#0"
+      ]
+    },
+    "199": {
+      "op": "log",
+      "stack_out": []
+    },
+    "200": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "201": {
+      "op": "return"
+    },
+    "202": {
+      "block": "main_verify_app_params_get_global_num_byte_slice_route@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%27#0"
+      ],
+      "stack_out": [
+        "tmp%27#0"
+      ]
+    },
+    "204": {
+      "op": "!",
+      "defined_out": [
+        "tmp%28#0"
+      ],
+      "stack_out": [
+        "tmp%28#0"
+      ]
+    },
+    "205": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "206": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%29#0"
+      ],
+      "stack_out": [
+        "tmp%29#0"
+      ]
+    },
+    "208": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "209": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%31#0"
+      ],
+      "stack_out": [
+        "tmp%31#0"
+      ]
+    },
+    "212": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%32#0"
+      ],
+      "stack_out": [
+        "tmp%32#0"
+      ]
+    },
+    "213": {
+      "op": "txnas Applications",
+      "defined_out": [
+        "tmp%33#0"
+      ],
+      "stack_out": [
+        "tmp%33#0"
+      ]
+    },
+    "215": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_global_num_byte_slice",
+      "op": "callsub verify_app_params_get_global_num_byte_slice",
+      "defined_out": [
+        "to_encode%3#0"
+      ],
+      "stack_out": [
+        "to_encode%3#0"
+      ]
+    },
+    "218": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%1#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%1#0"
+      ]
+    },
+    "219": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%1#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%1#0",
+        "0x151f7c75"
+      ]
+    },
+    "220": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%1#0"
+      ]
+    },
+    "221": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%34#0"
+      ],
+      "stack_out": [
+        "tmp%34#0"
+      ]
+    },
+    "222": {
+      "op": "log",
+      "stack_out": []
+    },
+    "223": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "224": {
+      "op": "return"
+    },
+    "225": {
+      "block": "main_verify_app_params_get_global_num_uint_route@5",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%19#0"
+      ],
+      "stack_out": [
+        "tmp%19#0"
+      ]
+    },
+    "227": {
+      "op": "!",
+      "defined_out": [
+        "tmp%20#0"
+      ],
+      "stack_out": [
+        "tmp%20#0"
+      ]
+    },
+    "228": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "229": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%21#0"
+      ],
+      "stack_out": [
+        "tmp%21#0"
+      ]
+    },
+    "231": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "232": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%23#0"
+      ],
+      "stack_out": [
+        "tmp%23#0"
+      ]
+    },
+    "235": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%24#0"
+      ],
+      "stack_out": [
+        "tmp%24#0"
+      ]
+    },
+    "236": {
+      "op": "txnas Applications",
+      "defined_out": [
+        "tmp%25#0"
+      ],
+      "stack_out": [
+        "tmp%25#0"
+      ]
+    },
+    "238": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_global_num_uint",
+      "op": "callsub verify_app_params_get_global_num_uint",
+      "defined_out": [
+        "to_encode%2#0"
+      ],
+      "stack_out": [
+        "to_encode%2#0"
+      ]
+    },
+    "241": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%0#0"
+      ]
+    },
+    "242": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "243": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%0#0"
+      ]
+    },
+    "244": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%26#0"
+      ],
+      "stack_out": [
+        "tmp%26#0"
+      ]
+    },
+    "245": {
+      "op": "log",
+      "stack_out": []
+    },
+    "246": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "247": {
+      "op": "return"
+    },
+    "248": {
+      "block": "main_verify_app_params_get_clear_state_program_route@4",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "250": {
+      "op": "!",
+      "defined_out": [
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%12#0"
+      ]
+    },
+    "251": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "252": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%13#0"
+      ]
+    },
+    "254": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "255": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%15#0"
+      ]
+    },
+    "258": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%16#0"
+      ],
+      "stack_out": [
+        "tmp%16#0"
+      ]
+    },
+    "259": {
+      "op": "txnas Applications",
+      "defined_out": [
+        "tmp%17#0"
+      ],
+      "stack_out": [
+        "tmp%17#0"
+      ]
+    },
+    "261": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_clear_state_program",
+      "op": "callsub verify_app_params_get_clear_state_program",
+      "defined_out": [
+        "to_encode%1#0"
+      ],
+      "stack_out": [
+        "to_encode%1#0"
+      ]
+    },
+    "264": {
+      "op": "dup",
+      "defined_out": [
+        "to_encode%1#0",
+        "to_encode%1#0 (copy)"
+      ],
+      "stack_out": [
+        "to_encode%1#0",
+        "to_encode%1#0 (copy)"
+      ]
+    },
+    "265": {
+      "op": "len",
+      "defined_out": [
+        "length%1#0",
+        "to_encode%1#0"
+      ],
+      "stack_out": [
+        "to_encode%1#0",
+        "length%1#0"
+      ]
+    },
+    "266": {
+      "op": "itob",
+      "defined_out": [
+        "as_bytes%1#0",
+        "to_encode%1#0"
+      ],
+      "stack_out": [
+        "to_encode%1#0",
+        "as_bytes%1#0"
+      ]
+    },
+    "267": {
+      "op": "extract 6 2",
+      "defined_out": [
+        "length_uint16%1#0",
+        "to_encode%1#0"
+      ],
+      "stack_out": [
+        "to_encode%1#0",
+        "length_uint16%1#0"
+      ]
+    },
+    "270": {
+      "op": "swap",
+      "stack_out": [
+        "length_uint16%1#0",
+        "to_encode%1#0"
+      ]
+    },
+    "271": {
+      "op": "concat",
+      "defined_out": [
+        "encoded_value%1#0"
+      ],
+      "stack_out": [
+        "encoded_value%1#0"
+      ]
+    },
+    "272": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "encoded_value%1#0"
+      ],
+      "stack_out": [
+        "encoded_value%1#0",
+        "0x151f7c75"
+      ]
+    },
+    "273": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "encoded_value%1#0"
+      ]
+    },
+    "274": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%18#0"
+      ],
+      "stack_out": [
+        "tmp%18#0"
+      ]
+    },
+    "275": {
+      "op": "log",
+      "stack_out": []
+    },
+    "276": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "277": {
+      "op": "return"
+    },
+    "278": {
+      "block": "main_verify_app_params_get_approval_program_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "280": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "281": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "282": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "284": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "285": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "288": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "289": {
+      "op": "txnas Applications",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "291": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_approval_program",
+      "op": "callsub verify_app_params_get_approval_program",
+      "defined_out": [
+        "to_encode%0#0"
+      ],
+      "stack_out": [
+        "to_encode%0#0"
+      ]
+    },
+    "294": {
+      "op": "dup",
+      "defined_out": [
+        "to_encode%0#0",
+        "to_encode%0#0 (copy)"
+      ],
+      "stack_out": [
+        "to_encode%0#0",
+        "to_encode%0#0 (copy)"
+      ]
+    },
+    "295": {
+      "op": "len",
+      "defined_out": [
+        "length%0#0",
+        "to_encode%0#0"
+      ],
+      "stack_out": [
+        "to_encode%0#0",
+        "length%0#0"
+      ]
+    },
+    "296": {
+      "op": "itob",
+      "defined_out": [
+        "as_bytes%0#0",
+        "to_encode%0#0"
+      ],
+      "stack_out": [
+        "to_encode%0#0",
+        "as_bytes%0#0"
+      ]
+    },
+    "297": {
+      "op": "extract 6 2",
+      "defined_out": [
+        "length_uint16%0#0",
+        "to_encode%0#0"
+      ],
+      "stack_out": [
+        "to_encode%0#0",
+        "length_uint16%0#0"
+      ]
+    },
+    "300": {
+      "op": "swap",
+      "stack_out": [
+        "length_uint16%0#0",
+        "to_encode%0#0"
+      ]
+    },
+    "301": {
+      "op": "concat",
+      "defined_out": [
+        "encoded_value%0#0"
+      ],
+      "stack_out": [
+        "encoded_value%0#0"
+      ]
+    },
+    "302": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "encoded_value%0#0"
+      ],
+      "stack_out": [
+        "encoded_value%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "303": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "encoded_value%0#0"
+      ]
+    },
+    "304": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0"
+      ]
+    },
+    "305": {
+      "op": "log",
+      "stack_out": []
+    },
+    "306": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "307": {
+      "op": "return"
+    },
+    "308": {
+      "block": "main_bare_routing@14",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%77#0"
+      ],
+      "stack_out": [
+        "tmp%77#0"
+      ]
+    },
+    "310": {
+      "op": "bnz main_after_if_else@18",
+      "stack_out": []
+    },
+    "313": {
+      "op": "txn ApplicationID"
+    },
+    "315": {
+      "op": "!"
+    },
+    "316": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating"
+    },
+    "317": {
+      "op": "intc_0 // 1"
+    },
+    "318": {
+      "op": "return"
+    },
+    "319": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_approval_program",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_app_params_get_approval_program",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "322": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "324": {
+      "op": "app_params_get AppApprovalProgram",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "326": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "329": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "330": {
+      "op": "app_params_get AppApprovalProgram",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "332": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "334": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "336": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "337": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "338": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "339": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "340": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "341": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_clear_state_program",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_app_params_get_clear_state_program",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "344": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "346": {
+      "op": "app_params_get AppClearStateProgram",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "348": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "351": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "352": {
+      "op": "app_params_get AppClearStateProgram",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "354": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "356": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "358": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "359": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "360": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "361": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "362": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "363": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_global_num_uint",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_app_params_get_global_num_uint",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "366": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "368": {
+      "op": "app_params_get AppGlobalNumUint",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "370": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "373": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "374": {
+      "op": "app_params_get AppGlobalNumUint",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "376": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "378": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "380": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "381": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "382": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "383": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "384": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "385": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_global_num_byte_slice",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_app_params_get_global_num_byte_slice",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "388": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "390": {
+      "op": "app_params_get AppGlobalNumByteSlice",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "392": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "395": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "396": {
+      "op": "app_params_get AppGlobalNumByteSlice",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "398": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "400": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "402": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "403": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "404": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "405": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "406": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "407": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_local_num_uint",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_app_params_get_local_num_uint",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "410": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "412": {
+      "op": "app_params_get AppLocalNumUint",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "414": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "417": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "418": {
+      "op": "app_params_get AppLocalNumUint",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "420": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "422": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "424": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "425": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "426": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "427": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "428": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "429": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_local_num_byte_slice",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_app_params_get_local_num_byte_slice",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "432": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "434": {
+      "op": "app_params_get AppLocalNumByteSlice",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "436": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "439": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "440": {
+      "op": "app_params_get AppLocalNumByteSlice",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "442": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "444": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "446": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "447": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "448": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "449": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "450": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "451": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_extra_program_pages",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_app_params_get_extra_program_pages",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "454": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "456": {
+      "op": "app_params_get AppExtraProgramPages",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "458": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "461": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "462": {
+      "op": "app_params_get AppExtraProgramPages",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "464": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "466": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "468": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "469": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "470": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "471": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "472": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "473": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_creator",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_app_params_get_creator",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "476": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "478": {
+      "op": "app_params_get AppCreator",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "480": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "483": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "484": {
+      "op": "app_params_get AppCreator",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "486": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "488": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "490": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "491": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "492": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "493": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "494": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "495": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_address",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_app_params_get_address",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "498": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "500": {
+      "op": "app_params_get AppAddress",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "502": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "505": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "506": {
+      "op": "app_params_get AppAddress",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "508": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "510": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "512": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "513": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "514": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "515": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "516": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}

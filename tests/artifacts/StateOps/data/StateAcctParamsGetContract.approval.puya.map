@@ -1,0 +1,3628 @@
+{
+  "version": 3,
+  "sources": [
+    "../contract.py"
+  ],
+  "mappings": ";;;;;;;;;;;AAuBA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAyGK;;AAAA;AAAA;AAAA;;AAAA;AAzGL;;;AAAA;AAAA;;AAyGK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAjGL;;;AAAA;AAAA;;AAiGK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAzFL;;;AAAA;AAAA;;AAyFK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAVA;;AAAA;AAAA;AAAA;;AAAA;AA/EL;;;AAAA;AAAA;;AA+EK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAvEL;;;AAAA;AAAA;;AAuEK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AA/DL;;;AAAA;AAAA;;AA+DK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAVA;;AAAA;AAAA;AAAA;;AAAA;AArDL;;;AAAA;AAAA;;AAqDK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAVA;;AAAA;AAAA;AAAA;;AAAA;AA3CL;;;AAAA;AAAA;;AA2CK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAnCL;;;AAAA;AAAA;;AAmCK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AA3BL;;;AAAA;AAAA;;AA2BK;;;AAAA;AAAA;AAAA;AAAA;AAAA;;AAbA;;AAAA;AAAA;AAAA;;AAAA;AAdL;;;AAAA;AAAA;;AAcK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAbA;;AAAA;AAAA;AAAA;;AAAA;AADL;;;AAAA;AAAA;;AACK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AADL;;AAAA;;;;;;;;;AACA;;;AAEwB;;AAAA;;AANL;;;AAAR;AAOyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACgB;;AAAA;;AAAA;AAAT;;AAAA;AAAP;AACgB;;AAAA;AAAT;;AAAA;AAAP;AAXW;;;AAAR;AAYa;AAAT;;AAAA;AAAP;AAGA;AAER;;;AAEwB;;AAAA;;AAnBL;;;AAAR;AAoByB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACgB;;AAAA;;AAAA;AAAT;;AAAA;AAAP;AACgB;;AAAA;AAAT;;AAAA;AAAP;AAxBW;;;AAAR;AAyBa;AAAT;;AAAA;AAAP;AAGA;AAER;;;AAEwB;;AAAA;;AAhCL;;;AAAR;AAiCyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AAxCL;;;AAAR;AAyCyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AAhDL;;;AAAR;AAiDyB;;AAGrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AA1DL;;;AAAR;AA2DyB;;AAGrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AApEL;;;AAAR;AAqEyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AA5EL;;;AAAR;AA6EyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AApFL;;;AAAR;AAqFyB;;AAGrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AA9FL;;;AAAR;AA+FyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AAtGL;;;AAAR;AAuGyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AA9GL;;;AAAR;AA+GyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "algopy.arc4.ARC4Contract.approval_program",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 1"
+    },
+    "4": {
+      "op": "bytecblock 0x151f7c75"
+    },
+    "11": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "13": {
+      "op": "bz main_bare_routing@17",
+      "stack_out": []
+    },
+    "16": {
+      "op": "pushbytess 0x5f5b43e4 0x73dc93c7 0x5626dfeb 0xdc8a25bf 0x198ebd8c 0x2301ab26 0x9f68fca6 0xa975c2d1 0xd1e04801 0xb6966be5 0x195d5418 0x6adae3f1 // method \"verify_acct_balance(account)uint64\", method \"verify_acct_min_balance(account)uint64\", method \"verify_acct_auth_addr(account)address\", method \"verify_acct_total_num_uint(account)uint64\", method \"verify_acct_total_num_byte_slice(account)uint64\", method \"verify_acct_total_extra_app_pages(account)uint64\", method \"verify_acct_total_apps_created(account)uint64\", method \"verify_acct_total_apps_opted_in(account)uint64\", method \"verify_acct_total_assets_created(account)uint64\", method \"verify_acct_total_assets(account)uint64\", method \"verify_acct_total_boxes(account)uint64\", method \"verify_acct_total_box_bytes(account)uint64\""
+    },
+    "78": {
+      "op": "txna ApplicationArgs 0"
+    },
+    "81": {
+      "op": "match main_verify_acct_balance_route@3 main_verify_acct_min_balance_route@4 main_verify_acct_auth_addr_route@5 main_verify_acct_total_num_uint_route@6 main_verify_acct_total_num_byte_slice_route@7 main_verify_acct_total_extra_app_pages_route@8 main_verify_acct_total_apps_created_route@9 main_verify_acct_total_apps_opted_in_route@10 main_verify_acct_total_assets_created_route@11 main_verify_acct_total_assets_route@12 main_verify_acct_total_boxes_route@13 main_verify_acct_total_box_bytes_route@14"
+    },
+    "107": {
+      "block": "main_after_if_else@21",
+      "stack_in": [],
+      "op": "pushint 0 // 0",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "109": {
+      "op": "return"
+    },
+    "110": {
+      "block": "main_verify_acct_total_box_bytes_route@14",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%92#0"
+      ],
+      "stack_out": [
+        "tmp%92#0"
+      ]
+    },
+    "112": {
+      "op": "!",
+      "defined_out": [
+        "tmp%93#0"
+      ],
+      "stack_out": [
+        "tmp%93#0"
+      ]
+    },
+    "113": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "114": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%94#0"
+      ],
+      "stack_out": [
+        "tmp%94#0"
+      ]
+    },
+    "116": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "117": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%96#0"
+      ],
+      "stack_out": [
+        "tmp%96#0"
+      ]
+    },
+    "120": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%97#0"
+      ],
+      "stack_out": [
+        "tmp%97#0"
+      ]
+    },
+    "121": {
+      "op": "txnas Accounts",
+      "defined_out": [
+        "tmp%98#0"
+      ],
+      "stack_out": [
+        "tmp%98#0"
+      ]
+    },
+    "123": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_box_bytes",
+      "op": "callsub verify_acct_total_box_bytes",
+      "defined_out": [
+        "to_encode%10#0"
+      ],
+      "stack_out": [
+        "to_encode%10#0"
+      ]
+    },
+    "126": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%10#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%10#0"
+      ]
+    },
+    "127": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%10#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%10#0",
+        "0x151f7c75"
+      ]
+    },
+    "128": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%10#0"
+      ]
+    },
+    "129": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%99#0"
+      ],
+      "stack_out": [
+        "tmp%99#0"
+      ]
+    },
+    "130": {
+      "op": "log",
+      "stack_out": []
+    },
+    "131": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "132": {
+      "op": "return"
+    },
+    "133": {
+      "block": "main_verify_acct_total_boxes_route@13",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%84#0"
+      ],
+      "stack_out": [
+        "tmp%84#0"
+      ]
+    },
+    "135": {
+      "op": "!",
+      "defined_out": [
+        "tmp%85#0"
+      ],
+      "stack_out": [
+        "tmp%85#0"
+      ]
+    },
+    "136": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "137": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%86#0"
+      ],
+      "stack_out": [
+        "tmp%86#0"
+      ]
+    },
+    "139": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "140": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%88#0"
+      ],
+      "stack_out": [
+        "tmp%88#0"
+      ]
+    },
+    "143": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%89#0"
+      ],
+      "stack_out": [
+        "tmp%89#0"
+      ]
+    },
+    "144": {
+      "op": "txnas Accounts",
+      "defined_out": [
+        "tmp%90#0"
+      ],
+      "stack_out": [
+        "tmp%90#0"
+      ]
+    },
+    "146": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_boxes",
+      "op": "callsub verify_acct_total_boxes",
+      "defined_out": [
+        "to_encode%9#0"
+      ],
+      "stack_out": [
+        "to_encode%9#0"
+      ]
+    },
+    "149": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%9#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%9#0"
+      ]
+    },
+    "150": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%9#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%9#0",
+        "0x151f7c75"
+      ]
+    },
+    "151": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%9#0"
+      ]
+    },
+    "152": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%91#0"
+      ],
+      "stack_out": [
+        "tmp%91#0"
+      ]
+    },
+    "153": {
+      "op": "log",
+      "stack_out": []
+    },
+    "154": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "155": {
+      "op": "return"
+    },
+    "156": {
+      "block": "main_verify_acct_total_assets_route@12",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%76#0"
+      ],
+      "stack_out": [
+        "tmp%76#0"
+      ]
+    },
+    "158": {
+      "op": "!",
+      "defined_out": [
+        "tmp%77#0"
+      ],
+      "stack_out": [
+        "tmp%77#0"
+      ]
+    },
+    "159": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "160": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%78#0"
+      ],
+      "stack_out": [
+        "tmp%78#0"
+      ]
+    },
+    "162": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "163": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%80#0"
+      ],
+      "stack_out": [
+        "tmp%80#0"
+      ]
+    },
+    "166": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%81#0"
+      ],
+      "stack_out": [
+        "tmp%81#0"
+      ]
+    },
+    "167": {
+      "op": "txnas Accounts",
+      "defined_out": [
+        "tmp%82#0"
+      ],
+      "stack_out": [
+        "tmp%82#0"
+      ]
+    },
+    "169": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_assets",
+      "op": "callsub verify_acct_total_assets",
+      "defined_out": [
+        "to_encode%8#0"
+      ],
+      "stack_out": [
+        "to_encode%8#0"
+      ]
+    },
+    "172": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%8#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%8#0"
+      ]
+    },
+    "173": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%8#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%8#0",
+        "0x151f7c75"
+      ]
+    },
+    "174": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%8#0"
+      ]
+    },
+    "175": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%83#0"
+      ],
+      "stack_out": [
+        "tmp%83#0"
+      ]
+    },
+    "176": {
+      "op": "log",
+      "stack_out": []
+    },
+    "177": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "178": {
+      "op": "return"
+    },
+    "179": {
+      "block": "main_verify_acct_total_assets_created_route@11",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%68#0"
+      ],
+      "stack_out": [
+        "tmp%68#0"
+      ]
+    },
+    "181": {
+      "op": "!",
+      "defined_out": [
+        "tmp%69#0"
+      ],
+      "stack_out": [
+        "tmp%69#0"
+      ]
+    },
+    "182": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "183": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%70#0"
+      ],
+      "stack_out": [
+        "tmp%70#0"
+      ]
+    },
+    "185": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "186": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%72#0"
+      ],
+      "stack_out": [
+        "tmp%72#0"
+      ]
+    },
+    "189": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%73#0"
+      ],
+      "stack_out": [
+        "tmp%73#0"
+      ]
+    },
+    "190": {
+      "op": "txnas Accounts",
+      "defined_out": [
+        "tmp%74#0"
+      ],
+      "stack_out": [
+        "tmp%74#0"
+      ]
+    },
+    "192": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_assets_created",
+      "op": "callsub verify_acct_total_assets_created",
+      "defined_out": [
+        "to_encode%7#0"
+      ],
+      "stack_out": [
+        "to_encode%7#0"
+      ]
+    },
+    "195": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%7#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%7#0"
+      ]
+    },
+    "196": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%7#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%7#0",
+        "0x151f7c75"
+      ]
+    },
+    "197": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%7#0"
+      ]
+    },
+    "198": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%75#0"
+      ],
+      "stack_out": [
+        "tmp%75#0"
+      ]
+    },
+    "199": {
+      "op": "log",
+      "stack_out": []
+    },
+    "200": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "201": {
+      "op": "return"
+    },
+    "202": {
+      "block": "main_verify_acct_total_apps_opted_in_route@10",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%60#0"
+      ],
+      "stack_out": [
+        "tmp%60#0"
+      ]
+    },
+    "204": {
+      "op": "!",
+      "defined_out": [
+        "tmp%61#0"
+      ],
+      "stack_out": [
+        "tmp%61#0"
+      ]
+    },
+    "205": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "206": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%62#0"
+      ],
+      "stack_out": [
+        "tmp%62#0"
+      ]
+    },
+    "208": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "209": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%64#0"
+      ],
+      "stack_out": [
+        "tmp%64#0"
+      ]
+    },
+    "212": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%65#0"
+      ],
+      "stack_out": [
+        "tmp%65#0"
+      ]
+    },
+    "213": {
+      "op": "txnas Accounts",
+      "defined_out": [
+        "tmp%66#0"
+      ],
+      "stack_out": [
+        "tmp%66#0"
+      ]
+    },
+    "215": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_apps_opted_in",
+      "op": "callsub verify_acct_total_apps_opted_in",
+      "defined_out": [
+        "to_encode%6#0"
+      ],
+      "stack_out": [
+        "to_encode%6#0"
+      ]
+    },
+    "218": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%6#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%6#0"
+      ]
+    },
+    "219": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%6#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%6#0",
+        "0x151f7c75"
+      ]
+    },
+    "220": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%6#0"
+      ]
+    },
+    "221": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%67#0"
+      ],
+      "stack_out": [
+        "tmp%67#0"
+      ]
+    },
+    "222": {
+      "op": "log",
+      "stack_out": []
+    },
+    "223": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "224": {
+      "op": "return"
+    },
+    "225": {
+      "block": "main_verify_acct_total_apps_created_route@9",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%52#0"
+      ],
+      "stack_out": [
+        "tmp%52#0"
+      ]
+    },
+    "227": {
+      "op": "!",
+      "defined_out": [
+        "tmp%53#0"
+      ],
+      "stack_out": [
+        "tmp%53#0"
+      ]
+    },
+    "228": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "229": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%54#0"
+      ],
+      "stack_out": [
+        "tmp%54#0"
+      ]
+    },
+    "231": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "232": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%56#0"
+      ],
+      "stack_out": [
+        "tmp%56#0"
+      ]
+    },
+    "235": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%57#0"
+      ],
+      "stack_out": [
+        "tmp%57#0"
+      ]
+    },
+    "236": {
+      "op": "txnas Accounts",
+      "defined_out": [
+        "tmp%58#0"
+      ],
+      "stack_out": [
+        "tmp%58#0"
+      ]
+    },
+    "238": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_apps_created",
+      "op": "callsub verify_acct_total_apps_created",
+      "defined_out": [
+        "to_encode%5#0"
+      ],
+      "stack_out": [
+        "to_encode%5#0"
+      ]
+    },
+    "241": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%5#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%5#0"
+      ]
+    },
+    "242": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%5#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%5#0",
+        "0x151f7c75"
+      ]
+    },
+    "243": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%5#0"
+      ]
+    },
+    "244": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%59#0"
+      ],
+      "stack_out": [
+        "tmp%59#0"
+      ]
+    },
+    "245": {
+      "op": "log",
+      "stack_out": []
+    },
+    "246": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "247": {
+      "op": "return"
+    },
+    "248": {
+      "block": "main_verify_acct_total_extra_app_pages_route@8",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%44#0"
+      ],
+      "stack_out": [
+        "tmp%44#0"
+      ]
+    },
+    "250": {
+      "op": "!",
+      "defined_out": [
+        "tmp%45#0"
+      ],
+      "stack_out": [
+        "tmp%45#0"
+      ]
+    },
+    "251": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "252": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%46#0"
+      ],
+      "stack_out": [
+        "tmp%46#0"
+      ]
+    },
+    "254": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "255": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%48#0"
+      ],
+      "stack_out": [
+        "tmp%48#0"
+      ]
+    },
+    "258": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%49#0"
+      ],
+      "stack_out": [
+        "tmp%49#0"
+      ]
+    },
+    "259": {
+      "op": "txnas Accounts",
+      "defined_out": [
+        "tmp%50#0"
+      ],
+      "stack_out": [
+        "tmp%50#0"
+      ]
+    },
+    "261": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_extra_app_pages",
+      "op": "callsub verify_acct_total_extra_app_pages",
+      "defined_out": [
+        "to_encode%4#0"
+      ],
+      "stack_out": [
+        "to_encode%4#0"
+      ]
+    },
+    "264": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%4#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%4#0"
+      ]
+    },
+    "265": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%4#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%4#0",
+        "0x151f7c75"
+      ]
+    },
+    "266": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%4#0"
+      ]
+    },
+    "267": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%51#0"
+      ],
+      "stack_out": [
+        "tmp%51#0"
+      ]
+    },
+    "268": {
+      "op": "log",
+      "stack_out": []
+    },
+    "269": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "270": {
+      "op": "return"
+    },
+    "271": {
+      "block": "main_verify_acct_total_num_byte_slice_route@7",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%36#0"
+      ],
+      "stack_out": [
+        "tmp%36#0"
+      ]
+    },
+    "273": {
+      "op": "!",
+      "defined_out": [
+        "tmp%37#0"
+      ],
+      "stack_out": [
+        "tmp%37#0"
+      ]
+    },
+    "274": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "275": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%38#0"
+      ],
+      "stack_out": [
+        "tmp%38#0"
+      ]
+    },
+    "277": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "278": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%40#0"
+      ],
+      "stack_out": [
+        "tmp%40#0"
+      ]
+    },
+    "281": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%41#0"
+      ],
+      "stack_out": [
+        "tmp%41#0"
+      ]
+    },
+    "282": {
+      "op": "txnas Accounts",
+      "defined_out": [
+        "tmp%42#0"
+      ],
+      "stack_out": [
+        "tmp%42#0"
+      ]
+    },
+    "284": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_num_byte_slice",
+      "op": "callsub verify_acct_total_num_byte_slice",
+      "defined_out": [
+        "to_encode%3#0"
+      ],
+      "stack_out": [
+        "to_encode%3#0"
+      ]
+    },
+    "287": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%3#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%3#0"
+      ]
+    },
+    "288": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%3#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%3#0",
+        "0x151f7c75"
+      ]
+    },
+    "289": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%3#0"
+      ]
+    },
+    "290": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%43#0"
+      ],
+      "stack_out": [
+        "tmp%43#0"
+      ]
+    },
+    "291": {
+      "op": "log",
+      "stack_out": []
+    },
+    "292": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "293": {
+      "op": "return"
+    },
+    "294": {
+      "block": "main_verify_acct_total_num_uint_route@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%28#0"
+      ],
+      "stack_out": [
+        "tmp%28#0"
+      ]
+    },
+    "296": {
+      "op": "!",
+      "defined_out": [
+        "tmp%29#0"
+      ],
+      "stack_out": [
+        "tmp%29#0"
+      ]
+    },
+    "297": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "298": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%30#0"
+      ],
+      "stack_out": [
+        "tmp%30#0"
+      ]
+    },
+    "300": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "301": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%32#0"
+      ],
+      "stack_out": [
+        "tmp%32#0"
+      ]
+    },
+    "304": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%33#0"
+      ],
+      "stack_out": [
+        "tmp%33#0"
+      ]
+    },
+    "305": {
+      "op": "txnas Accounts",
+      "defined_out": [
+        "tmp%34#0"
+      ],
+      "stack_out": [
+        "tmp%34#0"
+      ]
+    },
+    "307": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_num_uint",
+      "op": "callsub verify_acct_total_num_uint",
+      "defined_out": [
+        "to_encode%2#0"
+      ],
+      "stack_out": [
+        "to_encode%2#0"
+      ]
+    },
+    "310": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%2#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%2#0"
+      ]
+    },
+    "311": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%2#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%2#0",
+        "0x151f7c75"
+      ]
+    },
+    "312": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%2#0"
+      ]
+    },
+    "313": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%35#0"
+      ],
+      "stack_out": [
+        "tmp%35#0"
+      ]
+    },
+    "314": {
+      "op": "log",
+      "stack_out": []
+    },
+    "315": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "316": {
+      "op": "return"
+    },
+    "317": {
+      "block": "main_verify_acct_auth_addr_route@5",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%19#0"
+      ],
+      "stack_out": [
+        "tmp%19#0"
+      ]
+    },
+    "319": {
+      "op": "!",
+      "defined_out": [
+        "tmp%20#0"
+      ],
+      "stack_out": [
+        "tmp%20#0"
+      ]
+    },
+    "320": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "321": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%21#0"
+      ],
+      "stack_out": [
+        "tmp%21#0"
+      ]
+    },
+    "323": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "324": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%23#0"
+      ],
+      "stack_out": [
+        "tmp%23#0"
+      ]
+    },
+    "327": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%24#0"
+      ],
+      "stack_out": [
+        "tmp%24#0"
+      ]
+    },
+    "328": {
+      "op": "txnas Accounts",
+      "defined_out": [
+        "tmp%25#0"
+      ],
+      "stack_out": [
+        "tmp%25#0"
+      ]
+    },
+    "330": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_auth_addr",
+      "op": "callsub verify_acct_auth_addr",
+      "defined_out": [
+        "tmp%26#0"
+      ],
+      "stack_out": [
+        "tmp%26#0"
+      ]
+    },
+    "333": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "tmp%26#0"
+      ],
+      "stack_out": [
+        "tmp%26#0",
+        "0x151f7c75"
+      ]
+    },
+    "334": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "tmp%26#0"
+      ]
+    },
+    "335": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%27#0"
+      ],
+      "stack_out": [
+        "tmp%27#0"
+      ]
+    },
+    "336": {
+      "op": "log",
+      "stack_out": []
+    },
+    "337": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "338": {
+      "op": "return"
+    },
+    "339": {
+      "block": "main_verify_acct_min_balance_route@4",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "341": {
+      "op": "!",
+      "defined_out": [
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%12#0"
+      ]
+    },
+    "342": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "343": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%13#0"
+      ]
+    },
+    "345": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "346": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%15#0"
+      ]
+    },
+    "349": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%16#0"
+      ],
+      "stack_out": [
+        "tmp%16#0"
+      ]
+    },
+    "350": {
+      "op": "txnas Accounts",
+      "defined_out": [
+        "tmp%17#0"
+      ],
+      "stack_out": [
+        "tmp%17#0"
+      ]
+    },
+    "352": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_min_balance",
+      "op": "callsub verify_acct_min_balance",
+      "defined_out": [
+        "to_encode%1#0"
+      ],
+      "stack_out": [
+        "to_encode%1#0"
+      ]
+    },
+    "355": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%1#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%1#0"
+      ]
+    },
+    "356": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%1#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%1#0",
+        "0x151f7c75"
+      ]
+    },
+    "357": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%1#0"
+      ]
+    },
+    "358": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%18#0"
+      ],
+      "stack_out": [
+        "tmp%18#0"
+      ]
+    },
+    "359": {
+      "op": "log",
+      "stack_out": []
+    },
+    "360": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "361": {
+      "op": "return"
+    },
+    "362": {
+      "block": "main_verify_acct_balance_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "364": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "365": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "366": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "368": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "369": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "372": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "373": {
+      "op": "txnas Accounts",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "375": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_balance",
+      "op": "callsub verify_acct_balance",
+      "defined_out": [
+        "to_encode%0#0"
+      ],
+      "stack_out": [
+        "to_encode%0#0"
+      ]
+    },
+    "378": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%0#0"
+      ]
+    },
+    "379": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "380": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%0#0"
+      ]
+    },
+    "381": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0"
+      ]
+    },
+    "382": {
+      "op": "log",
+      "stack_out": []
+    },
+    "383": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "384": {
+      "op": "return"
+    },
+    "385": {
+      "block": "main_bare_routing@17",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%100#0"
+      ],
+      "stack_out": [
+        "tmp%100#0"
+      ]
+    },
+    "387": {
+      "op": "bnz main_after_if_else@21",
+      "stack_out": []
+    },
+    "390": {
+      "op": "txn ApplicationID"
+    },
+    "392": {
+      "op": "!"
+    },
+    "393": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating"
+    },
+    "394": {
+      "op": "intc_0 // 1"
+    },
+    "395": {
+      "op": "return"
+    },
+    "396": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_balance",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_acct_balance",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "399": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "401": {
+      "op": "acct_params_get AcctBalance",
+      "defined_out": [
+        "funded#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0"
+      ]
+    },
+    "403": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "funded#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%0#1"
+      ]
+    },
+    "406": {
+      "op": "btoi",
+      "defined_out": [
+        "funded#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%1#1"
+      ]
+    },
+    "407": {
+      "op": "acct_params_get AcctBalance",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0"
+      ]
+    },
+    "409": {
+      "op": "dig 3",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "411": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "413": {
+      "op": "==",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "414": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0"
+      ]
+    },
+    "415": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "416": {
+      "error": "expected funded by index to match",
+      "op": "assert // expected funded by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "417": {
+      "op": "frame_dig -1",
+      "stack_out": [
+        "value#0",
+        "a#0 (copy)"
+      ]
+    },
+    "419": {
+      "op": "acct_params_get AcctBalance",
+      "defined_out": [
+        "check%0#0",
+        "value#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "421": {
+      "error": "account funded",
+      "op": "assert // account funded",
+      "stack_out": [
+        "value#0",
+        "value%0#0"
+      ]
+    },
+    "422": {
+      "op": "dig 1",
+      "stack_out": [
+        "value#0",
+        "value%0#0",
+        "value#0 (copy)"
+      ]
+    },
+    "424": {
+      "op": "==",
+      "defined_out": [
+        "tmp%3#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%3#0"
+      ]
+    },
+    "425": {
+      "error": "expected Account balance to match",
+      "op": "assert // expected Account balance to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "426": {
+      "op": "frame_dig -1",
+      "stack_out": [
+        "value#0",
+        "a#0 (copy)"
+      ]
+    },
+    "428": {
+      "op": "balance",
+      "defined_out": [
+        "tmp%4#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%4#0"
+      ]
+    },
+    "429": {
+      "op": "dig 1",
+      "stack_out": [
+        "value#0",
+        "tmp%4#0",
+        "value#0 (copy)"
+      ]
+    },
+    "431": {
+      "op": "==",
+      "defined_out": [
+        "tmp%5#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%5#0"
+      ]
+    },
+    "432": {
+      "error": "expected op.balance to match",
+      "op": "assert // expected op.balance to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "433": {
+      "op": "txna ApplicationArgs 1",
+      "stack_out": [
+        "value#0",
+        "tmp%0#1"
+      ]
+    },
+    "436": {
+      "op": "btoi",
+      "stack_out": [
+        "value#0",
+        "tmp%1#1"
+      ]
+    },
+    "437": {
+      "op": "balance",
+      "defined_out": [
+        "tmp%7#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%7#0"
+      ]
+    },
+    "438": {
+      "op": "dig 1",
+      "stack_out": [
+        "value#0",
+        "tmp%7#0",
+        "value#0 (copy)"
+      ]
+    },
+    "440": {
+      "op": "==",
+      "defined_out": [
+        "tmp%8#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%8#0"
+      ]
+    },
+    "441": {
+      "error": "expected op.balance by index to match",
+      "op": "assert // expected op.balance by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "442": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "443": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_min_balance",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_acct_min_balance",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "446": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "448": {
+      "op": "acct_params_get AcctMinBalance",
+      "defined_out": [
+        "funded#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0"
+      ]
+    },
+    "450": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "funded#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%0#1"
+      ]
+    },
+    "453": {
+      "op": "btoi",
+      "defined_out": [
+        "funded#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%1#1"
+      ]
+    },
+    "454": {
+      "op": "acct_params_get AcctMinBalance",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0"
+      ]
+    },
+    "456": {
+      "op": "dig 3",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "458": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "460": {
+      "op": "==",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "461": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0"
+      ]
+    },
+    "462": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "463": {
+      "error": "expected funded by index to match",
+      "op": "assert // expected funded by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "464": {
+      "op": "frame_dig -1",
+      "stack_out": [
+        "value#0",
+        "a#0 (copy)"
+      ]
+    },
+    "466": {
+      "op": "acct_params_get AcctMinBalance",
+      "defined_out": [
+        "check%0#0",
+        "value#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "468": {
+      "error": "account funded",
+      "op": "assert // account funded",
+      "stack_out": [
+        "value#0",
+        "value%0#0"
+      ]
+    },
+    "469": {
+      "op": "dig 1",
+      "stack_out": [
+        "value#0",
+        "value%0#0",
+        "value#0 (copy)"
+      ]
+    },
+    "471": {
+      "op": "==",
+      "defined_out": [
+        "tmp%3#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%3#0"
+      ]
+    },
+    "472": {
+      "error": "expected Account min_balance to match",
+      "op": "assert // expected Account min_balance to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "473": {
+      "op": "frame_dig -1",
+      "stack_out": [
+        "value#0",
+        "a#0 (copy)"
+      ]
+    },
+    "475": {
+      "op": "min_balance",
+      "defined_out": [
+        "tmp%4#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%4#0"
+      ]
+    },
+    "476": {
+      "op": "dig 1",
+      "stack_out": [
+        "value#0",
+        "tmp%4#0",
+        "value#0 (copy)"
+      ]
+    },
+    "478": {
+      "op": "==",
+      "defined_out": [
+        "tmp%5#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%5#0"
+      ]
+    },
+    "479": {
+      "error": "expected op.min_balance to match",
+      "op": "assert // expected op.min_balance to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "480": {
+      "op": "txna ApplicationArgs 1",
+      "stack_out": [
+        "value#0",
+        "tmp%0#1"
+      ]
+    },
+    "483": {
+      "op": "btoi",
+      "stack_out": [
+        "value#0",
+        "tmp%1#1"
+      ]
+    },
+    "484": {
+      "op": "min_balance",
+      "defined_out": [
+        "tmp%7#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%7#0"
+      ]
+    },
+    "485": {
+      "op": "dig 1",
+      "stack_out": [
+        "value#0",
+        "tmp%7#0",
+        "value#0 (copy)"
+      ]
+    },
+    "487": {
+      "op": "==",
+      "defined_out": [
+        "tmp%8#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%8#0"
+      ]
+    },
+    "488": {
+      "error": "expected op.min_balance by index to match",
+      "op": "assert // expected op.min_balance by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "489": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "490": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_auth_addr",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_acct_auth_addr",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "493": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "495": {
+      "op": "acct_params_get AcctAuthAddr",
+      "defined_out": [
+        "funded#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0"
+      ]
+    },
+    "497": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "funded#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%0#1"
+      ]
+    },
+    "500": {
+      "op": "btoi",
+      "defined_out": [
+        "funded#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%1#1"
+      ]
+    },
+    "501": {
+      "op": "acct_params_get AcctAuthAddr",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0"
+      ]
+    },
+    "503": {
+      "op": "dig 3",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "505": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "507": {
+      "op": "==",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "508": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0"
+      ]
+    },
+    "509": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "510": {
+      "error": "expected funded by index to match",
+      "op": "assert // expected funded by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "511": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "512": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_num_uint",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_acct_total_num_uint",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "515": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "517": {
+      "op": "acct_params_get AcctTotalNumUint",
+      "defined_out": [
+        "funded#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0"
+      ]
+    },
+    "519": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "funded#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%0#1"
+      ]
+    },
+    "522": {
+      "op": "btoi",
+      "defined_out": [
+        "funded#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%1#1"
+      ]
+    },
+    "523": {
+      "op": "acct_params_get AcctTotalNumUint",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0"
+      ]
+    },
+    "525": {
+      "op": "dig 3",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "527": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "529": {
+      "op": "==",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "530": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0"
+      ]
+    },
+    "531": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "532": {
+      "error": "expected funded by index to match",
+      "op": "assert // expected funded by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "533": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "534": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_num_byte_slice",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_acct_total_num_byte_slice",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "537": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "539": {
+      "op": "acct_params_get AcctTotalNumByteSlice",
+      "defined_out": [
+        "funded#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0"
+      ]
+    },
+    "541": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "funded#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%0#1"
+      ]
+    },
+    "544": {
+      "op": "btoi",
+      "defined_out": [
+        "funded#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%1#1"
+      ]
+    },
+    "545": {
+      "op": "acct_params_get AcctTotalNumByteSlice",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0"
+      ]
+    },
+    "547": {
+      "op": "dig 3",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "549": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "551": {
+      "op": "==",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "552": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0"
+      ]
+    },
+    "553": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "554": {
+      "error": "expected funded by index to match",
+      "op": "assert // expected funded by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "555": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "556": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_extra_app_pages",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_acct_total_extra_app_pages",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "559": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "561": {
+      "op": "acct_params_get AcctTotalExtraAppPages",
+      "defined_out": [
+        "funded#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0"
+      ]
+    },
+    "563": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "funded#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%0#1"
+      ]
+    },
+    "566": {
+      "op": "btoi",
+      "defined_out": [
+        "funded#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%1#1"
+      ]
+    },
+    "567": {
+      "op": "acct_params_get AcctTotalExtraAppPages",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0"
+      ]
+    },
+    "569": {
+      "op": "dig 3",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "571": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "573": {
+      "op": "==",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "574": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0"
+      ]
+    },
+    "575": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "576": {
+      "error": "expected funded by index to match",
+      "op": "assert // expected funded by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "577": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "578": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_apps_created",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_acct_total_apps_created",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "581": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "583": {
+      "op": "acct_params_get AcctTotalAppsCreated",
+      "defined_out": [
+        "funded#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0"
+      ]
+    },
+    "585": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "funded#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%0#1"
+      ]
+    },
+    "588": {
+      "op": "btoi",
+      "defined_out": [
+        "funded#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%1#1"
+      ]
+    },
+    "589": {
+      "op": "acct_params_get AcctTotalAppsCreated",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0"
+      ]
+    },
+    "591": {
+      "op": "dig 3",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "593": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "595": {
+      "op": "==",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "596": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0"
+      ]
+    },
+    "597": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "598": {
+      "error": "expected funded by index to match",
+      "op": "assert // expected funded by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "599": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "600": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_apps_opted_in",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_acct_total_apps_opted_in",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "603": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "605": {
+      "op": "acct_params_get AcctTotalAppsOptedIn",
+      "defined_out": [
+        "funded#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0"
+      ]
+    },
+    "607": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "funded#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%0#1"
+      ]
+    },
+    "610": {
+      "op": "btoi",
+      "defined_out": [
+        "funded#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%1#1"
+      ]
+    },
+    "611": {
+      "op": "acct_params_get AcctTotalAppsOptedIn",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0"
+      ]
+    },
+    "613": {
+      "op": "dig 3",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "615": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "617": {
+      "op": "==",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "618": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0"
+      ]
+    },
+    "619": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "620": {
+      "error": "expected funded by index to match",
+      "op": "assert // expected funded by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "621": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "622": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_assets_created",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_acct_total_assets_created",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "625": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "627": {
+      "op": "acct_params_get AcctTotalAssetsCreated",
+      "defined_out": [
+        "funded#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0"
+      ]
+    },
+    "629": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "funded#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%0#1"
+      ]
+    },
+    "632": {
+      "op": "btoi",
+      "defined_out": [
+        "funded#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%1#1"
+      ]
+    },
+    "633": {
+      "op": "acct_params_get AcctTotalAssetsCreated",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0"
+      ]
+    },
+    "635": {
+      "op": "dig 3",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "637": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "639": {
+      "op": "==",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "640": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0"
+      ]
+    },
+    "641": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "642": {
+      "error": "expected funded by index to match",
+      "op": "assert // expected funded by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "643": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "644": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_assets",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_acct_total_assets",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "647": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "649": {
+      "op": "acct_params_get AcctTotalAssets",
+      "defined_out": [
+        "funded#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0"
+      ]
+    },
+    "651": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "funded#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%0#1"
+      ]
+    },
+    "654": {
+      "op": "btoi",
+      "defined_out": [
+        "funded#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%1#1"
+      ]
+    },
+    "655": {
+      "op": "acct_params_get AcctTotalAssets",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0"
+      ]
+    },
+    "657": {
+      "op": "dig 3",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "659": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "661": {
+      "op": "==",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "662": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0"
+      ]
+    },
+    "663": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "664": {
+      "error": "expected funded by index to match",
+      "op": "assert // expected funded by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "665": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "666": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_boxes",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_acct_total_boxes",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "669": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "671": {
+      "op": "acct_params_get AcctTotalBoxes",
+      "defined_out": [
+        "funded#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0"
+      ]
+    },
+    "673": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "funded#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%0#1"
+      ]
+    },
+    "676": {
+      "op": "btoi",
+      "defined_out": [
+        "funded#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%1#1"
+      ]
+    },
+    "677": {
+      "op": "acct_params_get AcctTotalBoxes",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0"
+      ]
+    },
+    "679": {
+      "op": "dig 3",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "681": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "683": {
+      "op": "==",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "684": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0"
+      ]
+    },
+    "685": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "686": {
+      "error": "expected funded by index to match",
+      "op": "assert // expected funded by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "687": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "688": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_box_bytes",
+      "params": {
+        "a#0": "bytes"
+      },
+      "block": "verify_acct_total_box_bytes",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "691": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "693": {
+      "op": "acct_params_get AcctTotalBoxBytes",
+      "defined_out": [
+        "funded#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0"
+      ]
+    },
+    "695": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "funded#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%0#1"
+      ]
+    },
+    "698": {
+      "op": "btoi",
+      "defined_out": [
+        "funded#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "tmp%1#1"
+      ]
+    },
+    "699": {
+      "op": "acct_params_get AcctTotalBoxBytes",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0"
+      ]
+    },
+    "701": {
+      "op": "dig 3",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "value_index#0",
+        "funded_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "703": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "705": {
+      "op": "==",
+      "defined_out": [
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "706": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "funded#0",
+        "funded_index#0"
+      ]
+    },
+    "707": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "708": {
+      "error": "expected funded by index to match",
+      "op": "assert // expected funded by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "709": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}
