@@ -1,0 +1,416 @@
+{
+  "version": 3,
+  "sources": [
+    "../contract.py"
+  ],
+  "mappings": ";;;;;;;;;;;;;AAgdA;;AAAA;;;AAAA;;;;;;AAAA;;;AAAA;;;;AAAA;;;AACK;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;AAAA;;AADL;;AAAA;;;;;;;;;AACA;;;AAEQ;AACmC;AAAnC;;AACuC;;AAAvC;;AAC0C;AAA1C;;AAEgD;AAAhD;;AAC6C;AAA7C;;AAC6B;;AAA7B;;AACA;AACmC;AAAnC;;AACkC;;AAAlC;;AACgC;AAAhC;;AACA;AAEO;;AAA6B;;AAA7B;AAAP;AACO;;AAA2B;AAA3B;AAAP;AACO;;AAA8B;AAA9B;AAAP;AAEO;;;AAAgC;AAAhC;AAAP;AACO;;;AAAgC;AAAhC;AAAP;",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "algopy.arc4.ARC4Contract.approval_program",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 1 6 1000"
+    },
+    "7": {
+      "op": "bytecblock 0x068101"
+    },
+    "13": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "15": {
+      "op": "bz main_bare_routing@6",
+      "stack_out": []
+    },
+    "18": {
+      "op": "pushbytes 0x4e7cd9cb // method \"verify_itxn_ops()void\""
+    },
+    "24": {
+      "op": "txna ApplicationArgs 0"
+    },
+    "27": {
+      "op": "match main_verify_itxn_ops_route@3"
+    },
+    "31": {
+      "block": "main_after_if_else@10",
+      "stack_in": [],
+      "op": "pushint 0 // 0",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "33": {
+      "op": "return"
+    },
+    "34": {
+      "block": "main_verify_itxn_ops_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "36": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "37": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "38": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "40": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "41": {
+      "callsub": "tests.artifacts.StateOps.contract.ITxnOpsContract.verify_itxn_ops",
+      "op": "callsub verify_itxn_ops"
+    },
+    "44": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "45": {
+      "op": "return"
+    },
+    "46": {
+      "block": "main_bare_routing@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "48": {
+      "op": "bnz main_after_if_else@10",
+      "stack_out": []
+    },
+    "51": {
+      "op": "txn ApplicationID"
+    },
+    "53": {
+      "op": "!"
+    },
+    "54": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating"
+    },
+    "55": {
+      "op": "intc_0 // 1"
+    },
+    "56": {
+      "op": "return"
+    },
+    "57": {
+      "subroutine": "tests.artifacts.StateOps.contract.ITxnOpsContract.verify_itxn_ops",
+      "params": {},
+      "block": "verify_itxn_ops",
+      "stack_in": [],
+      "op": "proto 0 0"
+    },
+    "60": {
+      "op": "itxn_begin"
+    },
+    "61": {
+      "op": "intc_1 // appl",
+      "defined_out": [
+        "appl"
+      ],
+      "stack_out": [
+        "appl"
+      ]
+    },
+    "62": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": []
+    },
+    "64": {
+      "op": "pushint 5 // DeleteApplication",
+      "defined_out": [
+        "DeleteApplication"
+      ],
+      "stack_out": [
+        "DeleteApplication"
+      ]
+    },
+    "66": {
+      "op": "itxn_field OnCompletion",
+      "stack_out": []
+    },
+    "68": {
+      "op": "bytec_0 // 0x068101",
+      "defined_out": [
+        "0x068101"
+      ],
+      "stack_out": [
+        "0x068101"
+      ]
+    },
+    "69": {
+      "op": "itxn_field ApprovalProgram",
+      "stack_out": []
+    },
+    "71": {
+      "op": "bytec_0 // 0x068101",
+      "stack_out": [
+        "0x068101"
+      ]
+    },
+    "72": {
+      "op": "itxn_field ApprovalProgramPages",
+      "stack_out": []
+    },
+    "74": {
+      "op": "bytec_0 // 0x068101",
+      "stack_out": [
+        "0x068101"
+      ]
+    },
+    "75": {
+      "op": "itxn_field ClearStateProgram",
+      "stack_out": []
+    },
+    "77": {
+      "op": "global MinTxnFee",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "79": {
+      "op": "itxn_field Fee",
+      "stack_out": []
+    },
+    "81": {
+      "op": "itxn_next"
+    },
+    "82": {
+      "op": "intc_0 // pay",
+      "defined_out": [
+        "pay"
+      ],
+      "stack_out": [
+        "pay"
+      ]
+    },
+    "83": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": []
+    },
+    "85": {
+      "op": "global CreatorAddress",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "87": {
+      "op": "itxn_field Receiver",
+      "stack_out": []
+    },
+    "89": {
+      "op": "intc_2 // 1000",
+      "defined_out": [
+        "1000"
+      ],
+      "stack_out": [
+        "1000"
+      ]
+    },
+    "90": {
+      "op": "itxn_field Amount",
+      "stack_out": []
+    },
+    "92": {
+      "op": "itxn_submit"
+    },
+    "93": {
+      "op": "itxn Receiver"
+    },
+    "95": {
+      "op": "global CreatorAddress",
+      "defined_out": [
+        "tmp%2#0",
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "tmp%3#0"
+      ]
+    },
+    "97": {
+      "op": "==",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "98": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "99": {
+      "op": "itxn Amount",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "101": {
+      "op": "intc_2 // 1000",
+      "stack_out": [
+        "tmp%5#0",
+        "1000"
+      ]
+    },
+    "102": {
+      "op": "==",
+      "defined_out": [
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%6#0"
+      ]
+    },
+    "103": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "104": {
+      "op": "itxn TypeEnum",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "106": {
+      "op": "intc_0 // pay",
+      "stack_out": [
+        "tmp%7#0",
+        "pay"
+      ]
+    },
+    "107": {
+      "op": "==",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "108": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "109": {
+      "op": "gitxn 0 TypeEnum",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "112": {
+      "op": "intc_1 // appl",
+      "stack_out": [
+        "tmp%9#0",
+        "appl"
+      ]
+    },
+    "113": {
+      "op": "==",
+      "defined_out": [
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0"
+      ]
+    },
+    "114": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "115": {
+      "op": "gitxn 1 TypeEnum",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "118": {
+      "op": "intc_0 // pay",
+      "stack_out": [
+        "tmp%11#0",
+        "pay"
+      ]
+    },
+    "119": {
+      "op": "==",
+      "defined_out": [
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%12#0"
+      ]
+    },
+    "120": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "121": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}

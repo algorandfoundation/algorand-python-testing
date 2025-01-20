@@ -1,0 +1,247 @@
+{
+  "version": 3,
+  "sources": [
+    "../contract.py"
+  ],
+  "mappings": ";AAkUA;;AAAA;;;AAAA;;;;;;AAAA;;;AAAA;;;;AAAA;;;AAiBK;;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;AAAA;;;AAjBL;;AAAA;;;;;;;;;;AAiBA;;;AAEyB;;AAAjB;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;AACkB;;AAAlB;;;;;;;;;;;;;;AAA4C;;AAA5C;AACsB;;AAAtB;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppLocalExContract.__algopy_entrypoint_with_init",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#2"
+      ],
+      "stack_out": [
+        "tmp%0#2"
+      ]
+    },
+    "3": {
+      "op": "bz main_bare_routing@6",
+      "stack_out": []
+    },
+    "6": {
+      "op": "pushbytes 0x30c6d58a // method \"opt_in()void\""
+    },
+    "12": {
+      "op": "txna ApplicationArgs 0"
+    },
+    "15": {
+      "op": "match main_opt_in_route@5"
+    },
+    "19": {
+      "block": "main_after_if_else@8",
+      "stack_in": [],
+      "op": "pushint 0 // 0",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "21": {
+      "op": "return"
+    },
+    "22": {
+      "block": "main_opt_in_route@5",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "24": {
+      "op": "pushint 1 // OptIn",
+      "defined_out": [
+        "OptIn",
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0",
+        "OptIn"
+      ]
+    },
+    "26": {
+      "op": "==",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "27": {
+      "error": "OnCompletion is not OptIn",
+      "op": "assert // OnCompletion is not OptIn",
+      "stack_out": []
+    },
+    "28": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "30": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "31": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAppLocalExContract.opt_in",
+      "op": "callsub opt_in"
+    },
+    "34": {
+      "op": "pushint 1 // 1",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "36": {
+      "op": "return"
+    },
+    "37": {
+      "block": "main_bare_routing@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "39": {
+      "op": "bnz main_after_if_else@8",
+      "stack_out": []
+    },
+    "42": {
+      "op": "txn ApplicationID"
+    },
+    "44": {
+      "op": "!"
+    },
+    "45": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating"
+    },
+    "46": {
+      "op": "pushint 1 // 1"
+    },
+    "48": {
+      "op": "return"
+    },
+    "49": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAppLocalExContract.opt_in",
+      "params": {},
+      "block": "opt_in",
+      "stack_in": [],
+      "op": "proto 0 0"
+    },
+    "52": {
+      "op": "global CreatorAddress",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "54": {
+      "op": "pushbytess \"local_bytes\" 0x64756d6d795f62797465735f66726f6d5f65787465726e616c5f636f6e7472616374 // \"local_bytes\", 0x64756d6d795f62797465735f66726f6d5f65787465726e616c5f636f6e7472616374",
+      "defined_out": [
+        "\"local_bytes\"",
+        "0x64756d6d795f62797465735f66726f6d5f65787465726e616c5f636f6e7472616374",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "\"local_bytes\"",
+        "0x64756d6d795f62797465735f66726f6d5f65787465726e616c5f636f6e7472616374"
+      ]
+    },
+    "103": {
+      "op": "app_local_put",
+      "stack_out": []
+    },
+    "104": {
+      "op": "global CreatorAddress",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "106": {
+      "op": "pushbytes \"local_uint64\"",
+      "defined_out": [
+        "\"local_uint64\"",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0",
+        "\"local_uint64\""
+      ]
+    },
+    "120": {
+      "op": "pushint 99 // 99",
+      "defined_out": [
+        "\"local_uint64\"",
+        "99",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0",
+        "\"local_uint64\"",
+        "99"
+      ]
+    },
+    "122": {
+      "op": "app_local_put",
+      "stack_out": []
+    },
+    "123": {
+      "op": "global CreatorAddress",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "125": {
+      "op": "pushbytess \"local_arc4_bytes\" 0x001064756d6d795f617263345f6279746573 // \"local_arc4_bytes\", 0x001064756d6d795f617263345f6279746573",
+      "defined_out": [
+        "\"local_arc4_bytes\"",
+        "0x001064756d6d795f617263345f6279746573",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "\"local_arc4_bytes\"",
+        "0x001064756d6d795f617263345f6279746573"
+      ]
+    },
+    "163": {
+      "op": "app_local_put",
+      "stack_out": []
+    },
+    "164": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}

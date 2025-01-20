@@ -1,0 +1,3530 @@
+{
+  "version": 3,
+  "sources": [
+    "../contract.py"
+  ],
+  "mappings": ";;;;;;;;;;;;AAqJA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;AAyFK;;AAAA;AAAA;AAAA;;AAAA;AAzFL;;;AAAA;AAAA;;AAyFK;;;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAjFL;;;AAAA;AAAA;;AAiFK;;;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAzEL;;;AAAA;AAAA;;AAyEK;;;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAjEL;;;AAAA;AAAA;;AAiEK;;;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAzDL;;;AAAA;AAAA;;AAyDK;;;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAjDL;;;AAAA;AAAA;;AAiDK;;;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAzCL;;;AAAA;AAAA;;AAyCK;;;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAjCL;;;AAAA;AAAA;;AAiCK;;;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAzBL;;;AAAA;AAAA;;AAyBK;;;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAjBL;;;AAAA;AAAA;;AAiBK;;;AAAA;;;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AATL;;;AAAA;AAAA;;AASK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AADL;;;AAAA;AAAA;;AACK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AADL;;AAAA;;;;;;;;;AACA;;;AAEwB;;AAAA;;AApIL;;;AAAR;AAqIyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AA5IL;;;AAAR;AA6IyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AApJL;;;AAAR;AAqJyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AA5JL;;;AAAR;AA6JyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AApKL;;;AAAR;AAqKyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AA5KL;;;AAAR;AA6KyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AApLL;;;AAAR;AAqLyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AA5LL;;;AAAR;AA6LyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AApML;;;AAAR;AAqMyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AA5ML;;;AAAR;AA6MyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AApNL;;;AAAR;AAqNyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA;AAER;;;AAEwB;;AAAA;;AA5NL;;;AAAR;AA6NyB;;AACrB;;AAAA;;AAAA;AAAP;AACO;AAAP;AACA",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "algopy.arc4.ARC4Contract.approval_program",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 1 0"
+    },
+    "5": {
+      "op": "bytecblock 0x151f7c75"
+    },
+    "12": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "14": {
+      "op": "bz main_bare_routing@17",
+      "stack_out": []
+    },
+    "17": {
+      "op": "pushbytess 0xad719a6f 0x1d603013 0x9fb731cd 0x0f5a4911 0xf5b370c6 0xc7d6af74 0x6b71a263 0x3040ebc8 0x1d07e844 0x3e40cb50 0x340c786b 0xe38a9815 // method \"verify_asset_params_get_total(asset)uint64\", method \"verify_asset_params_get_decimals(asset)uint64\", method \"verify_asset_params_get_default_frozen(asset)bool\", method \"verify_asset_params_get_unit_name(asset)byte[]\", method \"verify_asset_params_get_name(asset)byte[]\", method \"verify_asset_params_get_url(asset)byte[]\", method \"verify_asset_params_get_metadata_hash(asset)byte[]\", method \"verify_asset_params_get_manager(asset)address\", method \"verify_asset_params_get_reserve(asset)address\", method \"verify_asset_params_get_freeze(asset)address\", method \"verify_asset_params_get_clawback(asset)address\", method \"verify_asset_params_get_creator(asset)address\""
+    },
+    "79": {
+      "op": "txna ApplicationArgs 0"
+    },
+    "82": {
+      "op": "match main_verify_asset_params_get_total_route@3 main_verify_asset_params_get_decimals_route@4 main_verify_asset_params_get_default_frozen_route@5 main_verify_asset_params_get_unit_name_route@6 main_verify_asset_params_get_name_route@7 main_verify_asset_params_get_url_route@8 main_verify_asset_params_get_metadata_hash_route@9 main_verify_asset_params_get_manager_route@10 main_verify_asset_params_get_reserve_route@11 main_verify_asset_params_get_freeze_route@12 main_verify_asset_params_get_clawback_route@13 main_verify_asset_params_get_creator_route@14"
+    },
+    "108": {
+      "block": "main_after_if_else@21",
+      "stack_in": [],
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "109": {
+      "op": "return"
+    },
+    "110": {
+      "block": "main_verify_asset_params_get_creator_route@14",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%95#0"
+      ],
+      "stack_out": [
+        "tmp%95#0"
+      ]
+    },
+    "112": {
+      "op": "!",
+      "defined_out": [
+        "tmp%96#0"
+      ],
+      "stack_out": [
+        "tmp%96#0"
+      ]
+    },
+    "113": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "114": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%97#0"
+      ],
+      "stack_out": [
+        "tmp%97#0"
+      ]
+    },
+    "116": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "117": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%99#0"
+      ],
+      "stack_out": [
+        "tmp%99#0"
+      ]
+    },
+    "120": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%100#0"
+      ],
+      "stack_out": [
+        "tmp%100#0"
+      ]
+    },
+    "121": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%101#0"
+      ],
+      "stack_out": [
+        "tmp%101#0"
+      ]
+    },
+    "123": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_creator",
+      "op": "callsub verify_asset_params_get_creator",
+      "defined_out": [
+        "tmp%102#0"
+      ],
+      "stack_out": [
+        "tmp%102#0"
+      ]
+    },
+    "126": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "tmp%102#0"
+      ],
+      "stack_out": [
+        "tmp%102#0",
+        "0x151f7c75"
+      ]
+    },
+    "127": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "tmp%102#0"
+      ]
+    },
+    "128": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%103#0"
+      ],
+      "stack_out": [
+        "tmp%103#0"
+      ]
+    },
+    "129": {
+      "op": "log",
+      "stack_out": []
+    },
+    "130": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "131": {
+      "op": "return"
+    },
+    "132": {
+      "block": "main_verify_asset_params_get_clawback_route@13",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%86#0"
+      ],
+      "stack_out": [
+        "tmp%86#0"
+      ]
+    },
+    "134": {
+      "op": "!",
+      "defined_out": [
+        "tmp%87#0"
+      ],
+      "stack_out": [
+        "tmp%87#0"
+      ]
+    },
+    "135": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "136": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%88#0"
+      ],
+      "stack_out": [
+        "tmp%88#0"
+      ]
+    },
+    "138": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "139": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%90#0"
+      ],
+      "stack_out": [
+        "tmp%90#0"
+      ]
+    },
+    "142": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%91#0"
+      ],
+      "stack_out": [
+        "tmp%91#0"
+      ]
+    },
+    "143": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%92#0"
+      ],
+      "stack_out": [
+        "tmp%92#0"
+      ]
+    },
+    "145": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_clawback",
+      "op": "callsub verify_asset_params_get_clawback",
+      "defined_out": [
+        "tmp%93#0"
+      ],
+      "stack_out": [
+        "tmp%93#0"
+      ]
+    },
+    "148": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "tmp%93#0"
+      ],
+      "stack_out": [
+        "tmp%93#0",
+        "0x151f7c75"
+      ]
+    },
+    "149": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "tmp%93#0"
+      ]
+    },
+    "150": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%94#0"
+      ],
+      "stack_out": [
+        "tmp%94#0"
+      ]
+    },
+    "151": {
+      "op": "log",
+      "stack_out": []
+    },
+    "152": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "153": {
+      "op": "return"
+    },
+    "154": {
+      "block": "main_verify_asset_params_get_freeze_route@12",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%77#0"
+      ],
+      "stack_out": [
+        "tmp%77#0"
+      ]
+    },
+    "156": {
+      "op": "!",
+      "defined_out": [
+        "tmp%78#0"
+      ],
+      "stack_out": [
+        "tmp%78#0"
+      ]
+    },
+    "157": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "158": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%79#0"
+      ],
+      "stack_out": [
+        "tmp%79#0"
+      ]
+    },
+    "160": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "161": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%81#0"
+      ],
+      "stack_out": [
+        "tmp%81#0"
+      ]
+    },
+    "164": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%82#0"
+      ],
+      "stack_out": [
+        "tmp%82#0"
+      ]
+    },
+    "165": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%83#0"
+      ],
+      "stack_out": [
+        "tmp%83#0"
+      ]
+    },
+    "167": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_freeze",
+      "op": "callsub verify_asset_params_get_freeze",
+      "defined_out": [
+        "tmp%84#0"
+      ],
+      "stack_out": [
+        "tmp%84#0"
+      ]
+    },
+    "170": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "tmp%84#0"
+      ],
+      "stack_out": [
+        "tmp%84#0",
+        "0x151f7c75"
+      ]
+    },
+    "171": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "tmp%84#0"
+      ]
+    },
+    "172": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%85#0"
+      ],
+      "stack_out": [
+        "tmp%85#0"
+      ]
+    },
+    "173": {
+      "op": "log",
+      "stack_out": []
+    },
+    "174": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "175": {
+      "op": "return"
+    },
+    "176": {
+      "block": "main_verify_asset_params_get_reserve_route@11",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%68#0"
+      ],
+      "stack_out": [
+        "tmp%68#0"
+      ]
+    },
+    "178": {
+      "op": "!",
+      "defined_out": [
+        "tmp%69#0"
+      ],
+      "stack_out": [
+        "tmp%69#0"
+      ]
+    },
+    "179": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "180": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%70#0"
+      ],
+      "stack_out": [
+        "tmp%70#0"
+      ]
+    },
+    "182": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "183": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%72#0"
+      ],
+      "stack_out": [
+        "tmp%72#0"
+      ]
+    },
+    "186": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%73#0"
+      ],
+      "stack_out": [
+        "tmp%73#0"
+      ]
+    },
+    "187": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%74#0"
+      ],
+      "stack_out": [
+        "tmp%74#0"
+      ]
+    },
+    "189": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_reserve",
+      "op": "callsub verify_asset_params_get_reserve",
+      "defined_out": [
+        "tmp%75#0"
+      ],
+      "stack_out": [
+        "tmp%75#0"
+      ]
+    },
+    "192": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "tmp%75#0"
+      ],
+      "stack_out": [
+        "tmp%75#0",
+        "0x151f7c75"
+      ]
+    },
+    "193": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "tmp%75#0"
+      ]
+    },
+    "194": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%76#0"
+      ],
+      "stack_out": [
+        "tmp%76#0"
+      ]
+    },
+    "195": {
+      "op": "log",
+      "stack_out": []
+    },
+    "196": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "197": {
+      "op": "return"
+    },
+    "198": {
+      "block": "main_verify_asset_params_get_manager_route@10",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%59#0"
+      ],
+      "stack_out": [
+        "tmp%59#0"
+      ]
+    },
+    "200": {
+      "op": "!",
+      "defined_out": [
+        "tmp%60#0"
+      ],
+      "stack_out": [
+        "tmp%60#0"
+      ]
+    },
+    "201": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "202": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%61#0"
+      ],
+      "stack_out": [
+        "tmp%61#0"
+      ]
+    },
+    "204": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "205": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%63#0"
+      ],
+      "stack_out": [
+        "tmp%63#0"
+      ]
+    },
+    "208": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%64#0"
+      ],
+      "stack_out": [
+        "tmp%64#0"
+      ]
+    },
+    "209": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%65#0"
+      ],
+      "stack_out": [
+        "tmp%65#0"
+      ]
+    },
+    "211": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_manager",
+      "op": "callsub verify_asset_params_get_manager",
+      "defined_out": [
+        "tmp%66#0"
+      ],
+      "stack_out": [
+        "tmp%66#0"
+      ]
+    },
+    "214": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "tmp%66#0"
+      ],
+      "stack_out": [
+        "tmp%66#0",
+        "0x151f7c75"
+      ]
+    },
+    "215": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "tmp%66#0"
+      ]
+    },
+    "216": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%67#0"
+      ],
+      "stack_out": [
+        "tmp%67#0"
+      ]
+    },
+    "217": {
+      "op": "log",
+      "stack_out": []
+    },
+    "218": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "219": {
+      "op": "return"
+    },
+    "220": {
+      "block": "main_verify_asset_params_get_metadata_hash_route@9",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%51#0"
+      ],
+      "stack_out": [
+        "tmp%51#0"
+      ]
+    },
+    "222": {
+      "op": "!",
+      "defined_out": [
+        "tmp%52#0"
+      ],
+      "stack_out": [
+        "tmp%52#0"
+      ]
+    },
+    "223": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "224": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%53#0"
+      ],
+      "stack_out": [
+        "tmp%53#0"
+      ]
+    },
+    "226": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "227": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%55#0"
+      ],
+      "stack_out": [
+        "tmp%55#0"
+      ]
+    },
+    "230": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%56#0"
+      ],
+      "stack_out": [
+        "tmp%56#0"
+      ]
+    },
+    "231": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%57#0"
+      ],
+      "stack_out": [
+        "tmp%57#0"
+      ]
+    },
+    "233": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_metadata_hash",
+      "op": "callsub verify_asset_params_get_metadata_hash",
+      "defined_out": [
+        "to_encode%6#0"
+      ],
+      "stack_out": [
+        "to_encode%6#0"
+      ]
+    },
+    "236": {
+      "op": "dup",
+      "defined_out": [
+        "to_encode%6#0",
+        "to_encode%6#0 (copy)"
+      ],
+      "stack_out": [
+        "to_encode%6#0",
+        "to_encode%6#0 (copy)"
+      ]
+    },
+    "237": {
+      "op": "len",
+      "defined_out": [
+        "length%3#0",
+        "to_encode%6#0"
+      ],
+      "stack_out": [
+        "to_encode%6#0",
+        "length%3#0"
+      ]
+    },
+    "238": {
+      "op": "itob",
+      "defined_out": [
+        "as_bytes%3#0",
+        "to_encode%6#0"
+      ],
+      "stack_out": [
+        "to_encode%6#0",
+        "as_bytes%3#0"
+      ]
+    },
+    "239": {
+      "op": "extract 6 2",
+      "defined_out": [
+        "length_uint16%3#0",
+        "to_encode%6#0"
+      ],
+      "stack_out": [
+        "to_encode%6#0",
+        "length_uint16%3#0"
+      ]
+    },
+    "242": {
+      "op": "swap",
+      "stack_out": [
+        "length_uint16%3#0",
+        "to_encode%6#0"
+      ]
+    },
+    "243": {
+      "op": "concat",
+      "defined_out": [
+        "encoded_value%3#0"
+      ],
+      "stack_out": [
+        "encoded_value%3#0"
+      ]
+    },
+    "244": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "encoded_value%3#0"
+      ],
+      "stack_out": [
+        "encoded_value%3#0",
+        "0x151f7c75"
+      ]
+    },
+    "245": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "encoded_value%3#0"
+      ]
+    },
+    "246": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%58#0"
+      ],
+      "stack_out": [
+        "tmp%58#0"
+      ]
+    },
+    "247": {
+      "op": "log",
+      "stack_out": []
+    },
+    "248": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "249": {
+      "op": "return"
+    },
+    "250": {
+      "block": "main_verify_asset_params_get_url_route@8",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%43#0"
+      ],
+      "stack_out": [
+        "tmp%43#0"
+      ]
+    },
+    "252": {
+      "op": "!",
+      "defined_out": [
+        "tmp%44#0"
+      ],
+      "stack_out": [
+        "tmp%44#0"
+      ]
+    },
+    "253": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "254": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%45#0"
+      ],
+      "stack_out": [
+        "tmp%45#0"
+      ]
+    },
+    "256": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "257": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%47#0"
+      ],
+      "stack_out": [
+        "tmp%47#0"
+      ]
+    },
+    "260": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%48#0"
+      ],
+      "stack_out": [
+        "tmp%48#0"
+      ]
+    },
+    "261": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%49#0"
+      ],
+      "stack_out": [
+        "tmp%49#0"
+      ]
+    },
+    "263": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_url",
+      "op": "callsub verify_asset_params_get_url",
+      "defined_out": [
+        "to_encode%5#0"
+      ],
+      "stack_out": [
+        "to_encode%5#0"
+      ]
+    },
+    "266": {
+      "op": "dup",
+      "defined_out": [
+        "to_encode%5#0",
+        "to_encode%5#0 (copy)"
+      ],
+      "stack_out": [
+        "to_encode%5#0",
+        "to_encode%5#0 (copy)"
+      ]
+    },
+    "267": {
+      "op": "len",
+      "defined_out": [
+        "length%2#0",
+        "to_encode%5#0"
+      ],
+      "stack_out": [
+        "to_encode%5#0",
+        "length%2#0"
+      ]
+    },
+    "268": {
+      "op": "itob",
+      "defined_out": [
+        "as_bytes%2#0",
+        "to_encode%5#0"
+      ],
+      "stack_out": [
+        "to_encode%5#0",
+        "as_bytes%2#0"
+      ]
+    },
+    "269": {
+      "op": "extract 6 2",
+      "defined_out": [
+        "length_uint16%2#0",
+        "to_encode%5#0"
+      ],
+      "stack_out": [
+        "to_encode%5#0",
+        "length_uint16%2#0"
+      ]
+    },
+    "272": {
+      "op": "swap",
+      "stack_out": [
+        "length_uint16%2#0",
+        "to_encode%5#0"
+      ]
+    },
+    "273": {
+      "op": "concat",
+      "defined_out": [
+        "encoded_value%2#0"
+      ],
+      "stack_out": [
+        "encoded_value%2#0"
+      ]
+    },
+    "274": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "encoded_value%2#0"
+      ],
+      "stack_out": [
+        "encoded_value%2#0",
+        "0x151f7c75"
+      ]
+    },
+    "275": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "encoded_value%2#0"
+      ]
+    },
+    "276": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%50#0"
+      ],
+      "stack_out": [
+        "tmp%50#0"
+      ]
+    },
+    "277": {
+      "op": "log",
+      "stack_out": []
+    },
+    "278": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "279": {
+      "op": "return"
+    },
+    "280": {
+      "block": "main_verify_asset_params_get_name_route@7",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%35#0"
+      ],
+      "stack_out": [
+        "tmp%35#0"
+      ]
+    },
+    "282": {
+      "op": "!",
+      "defined_out": [
+        "tmp%36#0"
+      ],
+      "stack_out": [
+        "tmp%36#0"
+      ]
+    },
+    "283": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "284": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%37#0"
+      ],
+      "stack_out": [
+        "tmp%37#0"
+      ]
+    },
+    "286": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "287": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%39#0"
+      ],
+      "stack_out": [
+        "tmp%39#0"
+      ]
+    },
+    "290": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%40#0"
+      ],
+      "stack_out": [
+        "tmp%40#0"
+      ]
+    },
+    "291": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%41#0"
+      ],
+      "stack_out": [
+        "tmp%41#0"
+      ]
+    },
+    "293": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_name",
+      "op": "callsub verify_asset_params_get_name",
+      "defined_out": [
+        "to_encode%4#0"
+      ],
+      "stack_out": [
+        "to_encode%4#0"
+      ]
+    },
+    "296": {
+      "op": "dup",
+      "defined_out": [
+        "to_encode%4#0",
+        "to_encode%4#0 (copy)"
+      ],
+      "stack_out": [
+        "to_encode%4#0",
+        "to_encode%4#0 (copy)"
+      ]
+    },
+    "297": {
+      "op": "len",
+      "defined_out": [
+        "length%1#0",
+        "to_encode%4#0"
+      ],
+      "stack_out": [
+        "to_encode%4#0",
+        "length%1#0"
+      ]
+    },
+    "298": {
+      "op": "itob",
+      "defined_out": [
+        "as_bytes%1#0",
+        "to_encode%4#0"
+      ],
+      "stack_out": [
+        "to_encode%4#0",
+        "as_bytes%1#0"
+      ]
+    },
+    "299": {
+      "op": "extract 6 2",
+      "defined_out": [
+        "length_uint16%1#0",
+        "to_encode%4#0"
+      ],
+      "stack_out": [
+        "to_encode%4#0",
+        "length_uint16%1#0"
+      ]
+    },
+    "302": {
+      "op": "swap",
+      "stack_out": [
+        "length_uint16%1#0",
+        "to_encode%4#0"
+      ]
+    },
+    "303": {
+      "op": "concat",
+      "defined_out": [
+        "encoded_value%1#0"
+      ],
+      "stack_out": [
+        "encoded_value%1#0"
+      ]
+    },
+    "304": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "encoded_value%1#0"
+      ],
+      "stack_out": [
+        "encoded_value%1#0",
+        "0x151f7c75"
+      ]
+    },
+    "305": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "encoded_value%1#0"
+      ]
+    },
+    "306": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%42#0"
+      ],
+      "stack_out": [
+        "tmp%42#0"
+      ]
+    },
+    "307": {
+      "op": "log",
+      "stack_out": []
+    },
+    "308": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "309": {
+      "op": "return"
+    },
+    "310": {
+      "block": "main_verify_asset_params_get_unit_name_route@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%27#0"
+      ],
+      "stack_out": [
+        "tmp%27#0"
+      ]
+    },
+    "312": {
+      "op": "!",
+      "defined_out": [
+        "tmp%28#0"
+      ],
+      "stack_out": [
+        "tmp%28#0"
+      ]
+    },
+    "313": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "314": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%29#0"
+      ],
+      "stack_out": [
+        "tmp%29#0"
+      ]
+    },
+    "316": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "317": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%31#0"
+      ],
+      "stack_out": [
+        "tmp%31#0"
+      ]
+    },
+    "320": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%32#0"
+      ],
+      "stack_out": [
+        "tmp%32#0"
+      ]
+    },
+    "321": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%33#0"
+      ],
+      "stack_out": [
+        "tmp%33#0"
+      ]
+    },
+    "323": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_unit_name",
+      "op": "callsub verify_asset_params_get_unit_name",
+      "defined_out": [
+        "to_encode%3#0"
+      ],
+      "stack_out": [
+        "to_encode%3#0"
+      ]
+    },
+    "326": {
+      "op": "dup",
+      "defined_out": [
+        "to_encode%3#0",
+        "to_encode%3#0 (copy)"
+      ],
+      "stack_out": [
+        "to_encode%3#0",
+        "to_encode%3#0 (copy)"
+      ]
+    },
+    "327": {
+      "op": "len",
+      "defined_out": [
+        "length%0#0",
+        "to_encode%3#0"
+      ],
+      "stack_out": [
+        "to_encode%3#0",
+        "length%0#0"
+      ]
+    },
+    "328": {
+      "op": "itob",
+      "defined_out": [
+        "as_bytes%0#0",
+        "to_encode%3#0"
+      ],
+      "stack_out": [
+        "to_encode%3#0",
+        "as_bytes%0#0"
+      ]
+    },
+    "329": {
+      "op": "extract 6 2",
+      "defined_out": [
+        "length_uint16%0#0",
+        "to_encode%3#0"
+      ],
+      "stack_out": [
+        "to_encode%3#0",
+        "length_uint16%0#0"
+      ]
+    },
+    "332": {
+      "op": "swap",
+      "stack_out": [
+        "length_uint16%0#0",
+        "to_encode%3#0"
+      ]
+    },
+    "333": {
+      "op": "concat",
+      "defined_out": [
+        "encoded_value%0#0"
+      ],
+      "stack_out": [
+        "encoded_value%0#0"
+      ]
+    },
+    "334": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "encoded_value%0#0"
+      ],
+      "stack_out": [
+        "encoded_value%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "335": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "encoded_value%0#0"
+      ]
+    },
+    "336": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%34#0"
+      ],
+      "stack_out": [
+        "tmp%34#0"
+      ]
+    },
+    "337": {
+      "op": "log",
+      "stack_out": []
+    },
+    "338": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "339": {
+      "op": "return"
+    },
+    "340": {
+      "block": "main_verify_asset_params_get_default_frozen_route@5",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%19#0"
+      ],
+      "stack_out": [
+        "tmp%19#0"
+      ]
+    },
+    "342": {
+      "op": "!",
+      "defined_out": [
+        "tmp%20#0"
+      ],
+      "stack_out": [
+        "tmp%20#0"
+      ]
+    },
+    "343": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "344": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%21#0"
+      ],
+      "stack_out": [
+        "tmp%21#0"
+      ]
+    },
+    "346": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "347": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%23#0"
+      ],
+      "stack_out": [
+        "tmp%23#0"
+      ]
+    },
+    "350": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%24#0"
+      ],
+      "stack_out": [
+        "tmp%24#0"
+      ]
+    },
+    "351": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%25#0"
+      ],
+      "stack_out": [
+        "tmp%25#0"
+      ]
+    },
+    "353": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_default_frozen",
+      "op": "callsub verify_asset_params_get_default_frozen",
+      "defined_out": [
+        "to_encode%2#0"
+      ],
+      "stack_out": [
+        "to_encode%2#0"
+      ]
+    },
+    "356": {
+      "op": "pushbytes 0x00",
+      "defined_out": [
+        "0x00",
+        "to_encode%2#0"
+      ],
+      "stack_out": [
+        "to_encode%2#0",
+        "0x00"
+      ]
+    },
+    "359": {
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0",
+        "0x00",
+        "to_encode%2#0"
+      ],
+      "stack_out": [
+        "to_encode%2#0",
+        "0x00",
+        "0"
+      ]
+    },
+    "360": {
+      "op": "uncover 2",
+      "stack_out": [
+        "0x00",
+        "0",
+        "to_encode%2#0"
+      ]
+    },
+    "362": {
+      "op": "setbit",
+      "defined_out": [
+        "encoded_bool%0#0"
+      ],
+      "stack_out": [
+        "encoded_bool%0#0"
+      ]
+    },
+    "363": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "encoded_bool%0#0"
+      ],
+      "stack_out": [
+        "encoded_bool%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "364": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "encoded_bool%0#0"
+      ]
+    },
+    "365": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%26#0"
+      ],
+      "stack_out": [
+        "tmp%26#0"
+      ]
+    },
+    "366": {
+      "op": "log",
+      "stack_out": []
+    },
+    "367": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "368": {
+      "op": "return"
+    },
+    "369": {
+      "block": "main_verify_asset_params_get_decimals_route@4",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "371": {
+      "op": "!",
+      "defined_out": [
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%12#0"
+      ]
+    },
+    "372": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "373": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%13#0"
+      ]
+    },
+    "375": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "376": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%15#0"
+      ]
+    },
+    "379": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%16#0"
+      ],
+      "stack_out": [
+        "tmp%16#0"
+      ]
+    },
+    "380": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%17#0"
+      ],
+      "stack_out": [
+        "tmp%17#0"
+      ]
+    },
+    "382": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_decimals",
+      "op": "callsub verify_asset_params_get_decimals",
+      "defined_out": [
+        "to_encode%1#0"
+      ],
+      "stack_out": [
+        "to_encode%1#0"
+      ]
+    },
+    "385": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%1#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%1#0"
+      ]
+    },
+    "386": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%1#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%1#0",
+        "0x151f7c75"
+      ]
+    },
+    "387": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%1#0"
+      ]
+    },
+    "388": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%18#0"
+      ],
+      "stack_out": [
+        "tmp%18#0"
+      ]
+    },
+    "389": {
+      "op": "log",
+      "stack_out": []
+    },
+    "390": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "391": {
+      "op": "return"
+    },
+    "392": {
+      "block": "main_verify_asset_params_get_total_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "394": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "395": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "396": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "398": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "399": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "402": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "403": {
+      "op": "txnas Assets",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "405": {
+      "callsub": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_total",
+      "op": "callsub verify_asset_params_get_total",
+      "defined_out": [
+        "to_encode%0#0"
+      ],
+      "stack_out": [
+        "to_encode%0#0"
+      ]
+    },
+    "408": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%0#0"
+      ]
+    },
+    "409": {
+      "op": "bytec_0 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "410": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%0#0"
+      ]
+    },
+    "411": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0"
+      ]
+    },
+    "412": {
+      "op": "log",
+      "stack_out": []
+    },
+    "413": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "414": {
+      "op": "return"
+    },
+    "415": {
+      "block": "main_bare_routing@17",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%104#0"
+      ],
+      "stack_out": [
+        "tmp%104#0"
+      ]
+    },
+    "417": {
+      "op": "bnz main_after_if_else@21",
+      "stack_out": []
+    },
+    "420": {
+      "op": "txn ApplicationID"
+    },
+    "422": {
+      "op": "!"
+    },
+    "423": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating"
+    },
+    "424": {
+      "op": "intc_0 // 1"
+    },
+    "425": {
+      "op": "return"
+    },
+    "426": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_total",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_asset_params_get_total",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "429": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "431": {
+      "op": "asset_params_get AssetTotal",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "433": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "436": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "437": {
+      "op": "asset_params_get AssetTotal",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "439": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "441": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "443": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "444": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "445": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "446": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "447": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "448": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_decimals",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_asset_params_get_decimals",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "451": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "453": {
+      "op": "asset_params_get AssetDecimals",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "455": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "458": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "459": {
+      "op": "asset_params_get AssetDecimals",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "461": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "463": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "465": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "466": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "467": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "468": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "469": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "470": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_default_frozen",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_asset_params_get_default_frozen",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "473": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "475": {
+      "op": "asset_params_get AssetDefaultFrozen",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "477": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "480": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "481": {
+      "op": "asset_params_get AssetDefaultFrozen",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "483": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "485": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "487": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "488": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "489": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "490": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "491": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "492": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_unit_name",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_asset_params_get_unit_name",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "495": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "497": {
+      "op": "asset_params_get AssetUnitName",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "499": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "502": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "503": {
+      "op": "asset_params_get AssetUnitName",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "505": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "507": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "509": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "510": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "511": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "512": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "513": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "514": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_name",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_asset_params_get_name",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "517": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "519": {
+      "op": "asset_params_get AssetName",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "521": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "524": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "525": {
+      "op": "asset_params_get AssetName",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "527": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "529": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "531": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "532": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "533": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "534": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "535": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "536": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_url",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_asset_params_get_url",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "539": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "541": {
+      "op": "asset_params_get AssetURL",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "543": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "546": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "547": {
+      "op": "asset_params_get AssetURL",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "549": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "551": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "553": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "554": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "555": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "556": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "557": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "558": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_metadata_hash",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_asset_params_get_metadata_hash",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "561": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "563": {
+      "op": "asset_params_get AssetMetadataHash",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "565": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "568": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "569": {
+      "op": "asset_params_get AssetMetadataHash",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "571": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "573": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "575": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "576": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "577": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "578": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "579": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "580": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_manager",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_asset_params_get_manager",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "583": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "585": {
+      "op": "asset_params_get AssetManager",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "587": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "590": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "591": {
+      "op": "asset_params_get AssetManager",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "593": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "595": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "597": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "598": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "599": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "600": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "601": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "602": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_reserve",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_asset_params_get_reserve",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "605": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "607": {
+      "op": "asset_params_get AssetReserve",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "609": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "612": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "613": {
+      "op": "asset_params_get AssetReserve",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "615": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "617": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "619": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "620": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "621": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "622": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "623": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "624": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_freeze",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_asset_params_get_freeze",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "627": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "629": {
+      "op": "asset_params_get AssetFreeze",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "631": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "634": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "635": {
+      "op": "asset_params_get AssetFreeze",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "637": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "639": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "641": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "642": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "643": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "644": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "645": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "646": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_clawback",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_asset_params_get_clawback",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "649": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "651": {
+      "op": "asset_params_get AssetClawback",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "653": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "656": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "657": {
+      "op": "asset_params_get AssetClawback",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "659": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "661": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "663": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "664": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "665": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "666": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "667": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "668": {
+      "subroutine": "tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_creator",
+      "params": {
+        "a#0": "uint64"
+      },
+      "block": "verify_asset_params_get_creator",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "671": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "a#0 (copy)"
+      ],
+      "stack_out": [
+        "a#0 (copy)"
+      ]
+    },
+    "673": {
+      "op": "asset_params_get AssetCreator",
+      "defined_out": [
+        "exists#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0"
+      ]
+    },
+    "675": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "exists#0",
+        "tmp%0#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%0#1"
+      ]
+    },
+    "678": {
+      "op": "btoi",
+      "defined_out": [
+        "exists#0",
+        "tmp%1#1",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "tmp%1#1"
+      ]
+    },
+    "679": {
+      "op": "asset_params_get AssetCreator",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0"
+      ]
+    },
+    "681": {
+      "op": "dig 3",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "value#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "value_index#0",
+        "exists_index#0",
+        "value#0 (copy)"
+      ]
+    },
+    "683": {
+      "op": "uncover 2",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "value#0 (copy)",
+        "value_index#0"
+      ]
+    },
+    "685": {
+      "op": "==",
+      "defined_out": [
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0",
+        "tmp%1#0"
+      ]
+    },
+    "686": {
+      "error": "expected value by index to match",
+      "op": "assert // expected value by index to match",
+      "stack_out": [
+        "value#0",
+        "exists#0",
+        "exists_index#0"
+      ]
+    },
+    "687": {
+      "op": "==",
+      "defined_out": [
+        "tmp%2#0",
+        "value#0"
+      ],
+      "stack_out": [
+        "value#0",
+        "tmp%2#0"
+      ]
+    },
+    "688": {
+      "error": "expected exists by index to match",
+      "op": "assert // expected exists by index to match",
+      "stack_out": [
+        "value#0"
+      ]
+    },
+    "689": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}
