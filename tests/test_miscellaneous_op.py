@@ -7,7 +7,6 @@ import algokit_utils
 import pytest
 from _algopy_testing.constants import MAX_BYTES_SIZE, MAX_UINT64, MAX_UINT512
 from algopy import BigUInt, UInt64, op
-from algosdk.v2client.algod import AlgodClient
 
 from tests.common import AVMInvoker, create_avm_invoker
 from tests.util import get_sha256_hash, int_to_bytes
@@ -30,8 +29,8 @@ _extract_out_of_bound_error = re.compile("extraction (start|end) \\d+ is beyond 
 
 
 @pytest.fixture(scope="module")
-def get_ops_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    return create_avm_invoker(APP_SPEC, algod_client)
+def get_ops_avm_result(algorand: algokit_utils.AlgorandClient) -> AVMInvoker:
+    return create_avm_invoker(APP_SPEC, algorand)
 
 
 @pytest.mark.parametrize(

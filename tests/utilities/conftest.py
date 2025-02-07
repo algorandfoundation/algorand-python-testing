@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from algosdk.v2client.algod import AlgodClient
+from algokit_utils import AlgorandClient
 
 from tests.common import AVMInvoker, create_avm_invoker
 
@@ -10,5 +10,5 @@ APP_SPEC = ARTIFACTS_DIR / "PrimitiveOps" / "data" / "PrimitiveOpsContract.arc32
 
 
 @pytest.fixture(scope="module")
-def get_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    return create_avm_invoker(APP_SPEC, algod_client)
+def get_avm_result(algorand: AlgorandClient) -> AVMInvoker:
+    return create_avm_invoker(APP_SPEC, algorand)

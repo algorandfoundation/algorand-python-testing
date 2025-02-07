@@ -1,7 +1,8 @@
+import secrets
 from pathlib import Path
 
 import pytest
-from algosdk.v2client.algod import AlgodClient
+from algokit_utils import AlgorandClient, AppClientMethodCallParams
 
 from tests.common import AVMInvoker, create_avm_invoker
 
@@ -11,13 +12,15 @@ LOCAL_STATE_APP_SPEC = ARTIFACTS_DIR / "StateOps" / "data" / "LocalStateContract
 
 
 @pytest.fixture(scope="module")
-def get_global_state_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    return create_avm_invoker(GLOBAL_STATE_APP_SPEC, algod_client)
+def get_global_state_avm_result(algorand: AlgorandClient) -> AVMInvoker:
+    return create_avm_invoker(GLOBAL_STATE_APP_SPEC, algorand)
 
 
 @pytest.fixture(scope="module")
-def get_local_state_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    invoker = create_avm_invoker(LOCAL_STATE_APP_SPEC, algod_client)
-    invoker.client.opt_in()
+def get_local_state_avm_result(algorand: AlgorandClient) -> AVMInvoker:
+    invoker = create_avm_invoker(LOCAL_STATE_APP_SPEC, algorand)
+    invoker.client.send.opt_in(
+        AppClientMethodCallParams(method="opt_in", note=secrets.token_bytes(8))
+    )
 
     return invoker

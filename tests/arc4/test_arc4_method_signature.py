@@ -6,10 +6,9 @@ import algokit_utils
 import algopy
 import algosdk
 import pytest
-from algokit_utils.beta.algorand_client import AlgorandClient, AssetCreateParams, PayParams
+from algokit_utils import AlgoAmount, AlgorandClient, AssetCreateParams, PaymentParams
 from algopy import arc4
 from algosdk.atomic_transaction_composer import TransactionWithSigner
-from algosdk.v2client.algod import AlgodClient
 
 from tests.artifacts.Arc4ABIMethod.contract import (
     AnotherStruct,
@@ -25,8 +24,8 @@ _FUNDED_ACCOUNT_SPENDING = 1234
 
 
 @pytest.fixture()
-def get_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    return create_avm_invoker(APP_SPEC, algod_client)
+def get_avm_result(algorand: AlgorandClient) -> AVMInvoker:
+    return create_avm_invoker(APP_SPEC, algorand)
 
 
 @pytest.fixture()
@@ -36,25 +35,22 @@ def context() -> Generator[_algopy_testing.AlgopyTestContext, None, None]:
 
 
 @pytest.fixture()
-def funded_account(algod_client: AlgodClient, context: _algopy_testing.AlgopyTestContext) -> str:
-    pk, address = algosdk.account.generate_account()
-    assert isinstance(address, str)
-    algokit_utils.ensure_funded(
-        algod_client,
-        algokit_utils.EnsureBalanceParameters(
-            account_to_fund=address,
-            min_spending_balance_micro_algos=_FUNDED_ACCOUNT_SPENDING,
-        ),
+def funded_account(algorand: AlgorandClient, context: _algopy_testing.AlgopyTestContext) -> str:
+    account = algorand.account.random()
+    algorand.account.ensure_funded_from_environment(
+        account_to_fund=account,
+        min_spending_balance=algokit_utils.AlgoAmount(micro_algo=_FUNDED_ACCOUNT_SPENDING),
     )
-
     # ensure context has the same account with matching balance
-    context.any.account(address, balance=algopy.Global.min_balance + _FUNDED_ACCOUNT_SPENDING)
-    return address
+    context.any.account(
+        account.address, balance=algopy.Global.min_balance + _FUNDED_ACCOUNT_SPENDING
+    )
+    return account.address
 
 
 @pytest.fixture()
-def other_app_id(algod_client: AlgodClient, context: _algopy_testing.AlgopyTestContext) -> int:
-    second_invoker = create_avm_invoker(APP_SPEC, algod_client)
+def other_app_id(algorand: AlgorandClient, context: _algopy_testing.AlgopyTestContext) -> int:
+    second_invoker = create_avm_invoker(APP_SPEC, algorand)
     client = second_invoker.client
     app_id = client.app_id
 
@@ -127,14 +123,14 @@ def test_app_args_is_correct_with_txn(
         "with_txn",
         value="hello",
         pay=TransactionWithSigner(
-            txn=algorand.transactions.payment(
-                PayParams(
+            txn=algorand.create_transaction.payment(
+                PaymentParams(
                     sender=localnet_creator_address,
                     receiver=localnet_creator_address,
-                    amount=123,
+                    amount=AlgoAmount(micro_algo=123),
                 )
             ),
-            signer=algorand.account.get_signer("default"),
+            signer=algorand.account.get_signer(localnet_creator_address),
         ),
         arr=[1, 2],
     )
@@ -169,7 +165,9 @@ def test_app_args_is_correct_with_asset(
             sender=localnet_creator_address,
             total=123,
         )
-    )["confirmation"]["asset-index"]
+    ).confirmation[
+        "asset-index"
+    ]  # type: ignore[call-overload]
 
     # act
     get_avm_result("with_asset", value="hello", asset=asa_id, arr=[1, 2])
@@ -333,14 +331,14 @@ def test_prepare_txns_with_complex(
         "complex_sig",
         struct1=((1, "2"), (1, "2"), 3, 4),
         txn=TransactionWithSigner(
-            txn=algorand.transactions.payment(
-                PayParams(
+            txn=algorand.create_transaction.payment(
+                PaymentParams(
                     sender=localnet_creator_address,
                     receiver=localnet_creator_address,
-                    amount=123,
+                    amount=AlgoAmount(micro_algo=123),
                 )
             ),
-            signer=algorand.account.get_signer("default"),
+            signer=algorand.account.get_signer(localnet_creator_address),
         ),
         acc=funded_account,
         five=[5],
