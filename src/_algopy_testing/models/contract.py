@@ -36,6 +36,7 @@ class _ContractMeta(type):
     _name: str
     _scratch_slots: typing.Any
     _state_totals: StateTotals | None
+    _avm_version: int
 
     def __init__(cls, *args: typing.Any, **kwargs: typing.Any) -> None:
         super().__init__(*args, **kwargs)
@@ -93,10 +94,12 @@ class Contract(metaclass=_ContractMeta):
             algopy.urange | tuple[int | algopy.urange, ...] | list[int | algopy.urange] | None
         ) = None,
         state_totals: StateTotals | None = None,
+        avm_version: int = 10,
     ):
         cls._name = name or cls.__name__
         cls._scratch_slots = scratch_slots
         cls._state_totals = state_totals
+        cls._avm_version = avm_version
 
     def approval_program(self) -> algopy.UInt64 | bool:
         raise NotImplementedError("`approval_program` is not implemented.")
