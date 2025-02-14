@@ -110,50 +110,181 @@ def app_opted_in(
     return account.is_opted_in(app)
 
 
-class _AcctParamsGet:
-    def __getattr__(
-        self, name: str
-    ) -> typing.Callable[
-        [algopy.Account | algopy.UInt64 | int], tuple[algopy.UInt64 | algopy.Account, bool]
-    ]:
-        def get_account_param(
-            a: algopy.Account | algopy.UInt64 | int,
-        ) -> tuple[algopy.UInt64 | algopy.Account, bool]:
-            account = _get_account(a)
-            field = name.removeprefix("acct_")
-            if field == "auth_addr":
-                field = "auth_address"
+class AcctParamsGet:
+    @staticmethod
+    def acct_auth_addr(a: algopy.Account | algopy.UInt64 | int) -> tuple[algopy.Account, bool]:
+        account = _get_account(a)
+        return account.auth_address, account.balance != 0
 
-            return getattr(account, field), account.balance != 0
+    @staticmethod
+    def acct_balance(a: algopy.Account | algopy.UInt64 | int) -> tuple[algopy.UInt64, bool]:
+        account = _get_account(a)
+        return account.balance, account.balance != 0
 
-        return get_account_param
+    @staticmethod
+    def acct_min_balance(a: algopy.Account | algopy.UInt64 | int) -> tuple[algopy.UInt64, bool]:
+        account = _get_account(a)
+        return account.min_balance, account.balance != 0
+
+    @staticmethod
+    def acct_auth_address(a: algopy.Account | algopy.UInt64 | int) -> tuple[algopy.UInt64, bool]:
+        account = _get_account(a)
+        return account.auth_address, account.balance != 0
+
+    @staticmethod
+    def acct_total_num_uint(a: algopy.Account | algopy.UInt64 | int) -> tuple[algopy.UInt64, bool]:
+        account = _get_account(a)
+        return account.total_num_uint, account.balance != 0
+
+    @staticmethod
+    def acct_total_num_byte_slice(
+        a: algopy.Account | algopy.UInt64 | int,
+    ) -> tuple[algopy.UInt64, bool]:
+        account = _get_account(a)
+        return account.total_num_byte_slice, account.balance != 0
+
+    @staticmethod
+    def acct_total_extra_app_pages(
+        a: algopy.Account | algopy.UInt64 | int,
+    ) -> tuple[algopy.UInt64, bool]:
+        account = _get_account(a)
+        return account.total_extra_app_pages, account.balance != 0
+
+    @staticmethod
+    def acct_total_apps_created(
+        a: algopy.Account | algopy.UInt64 | int,
+    ) -> tuple[algopy.UInt64, bool]:
+        account = _get_account(a)
+        return account.total_apps_created, account.balance != 0
+
+    @staticmethod
+    def acct_total_apps_opted_in(
+        a: algopy.Account | algopy.UInt64 | int,
+    ) -> tuple[algopy.UInt64, bool]:
+        account = _get_account(a)
+        return account.total_apps_opted_in, account.balance != 0
+
+    @staticmethod
+    def acct_total_assets_created(
+        a: algopy.Account | algopy.UInt64 | int,
+    ) -> tuple[algopy.UInt64, bool]:
+        account = _get_account(a)
+        return account.total_assets_created, account.balance != 0
+
+    @staticmethod
+    def acct_total_assets(a: algopy.Account | algopy.UInt64 | int) -> tuple[algopy.UInt64, bool]:
+        account = _get_account(a)
+        return account.total_assets, account.balance != 0
+
+    @staticmethod
+    def acct_total_boxes(a: algopy.Account | algopy.UInt64 | int) -> tuple[algopy.UInt64, bool]:
+        account = _get_account(a)
+        return account.total_boxes, account.balance != 0
+
+    @staticmethod
+    def acct_total_box_bytes(
+        a: algopy.Account | algopy.UInt64 | int,
+    ) -> tuple[algopy.UInt64, bool]:
+        account = _get_account(a)
+        return account.total_box_bytes, account.balance != 0
 
 
-AcctParamsGet = _AcctParamsGet()
+class AssetParamsGet:
+    @staticmethod
+    def asset_clawback(a: algopy.Asset | algopy.UInt64 | int) -> tuple[algopy.Account, bool]:
+        try:
+            asset = _get_asset(a)
+        except ValueError:
+            return UInt64(0), False  # type: ignore[return-value]
+        return asset.clawback, True
 
+    @staticmethod
+    def asset_creator(a: algopy.Asset | algopy.UInt64 | int) -> tuple[algopy.Account, bool]:
+        try:
+            asset = _get_asset(a)
+        except ValueError:
+            return UInt64(0), False  # type: ignore[return-value]
+        return asset.creator, True
 
-class _AssetParamsGet:
-    def __getattr__(
-        self, name: str
-    ) -> typing.Callable[[algopy.Asset | algopy.UInt64 | int], tuple[typing.Any, bool]]:
-        def get_asset_param(a: algopy.Asset | algopy.UInt64 | int) -> tuple[typing.Any, bool]:
-            try:
-                asset = _get_asset(a)
-            except ValueError:
-                return UInt64(0), False
+    @staticmethod
+    def asset_freeze(a: algopy.Asset | algopy.UInt64 | int) -> tuple[algopy.Account, bool]:
+        try:
+            asset = _get_asset(a)
+        except ValueError:
+            return UInt64(0), False  # type: ignore[return-value]
+        return asset.freeze, True
 
-            short_name = name.removeprefix("asset_")
-            try:
-                return getattr(asset, short_name), True
-            except AttributeError:
-                raise AttributeError(
-                    f"'{self.__class__.__name__}' object has no attribute '{name}'"
-                ) from None
+    @staticmethod
+    def asset_manager(a: algopy.Asset | algopy.UInt64 | int) -> tuple[algopy.Account, bool]:
+        try:
+            asset = _get_asset(a)
+        except ValueError:
+            return UInt64(0), False  # type: ignore[return-value]
+        return asset.manager, True
 
-        return get_asset_param
+    @staticmethod
+    def asset_reserve(a: algopy.Asset | algopy.UInt64 | int) -> tuple[algopy.Account, bool]:
+        try:
+            asset = _get_asset(a)
+        except ValueError:
+            return UInt64(0), False  # type: ignore[return-value]
+        return asset.reserve, True
 
+    @staticmethod
+    def asset_total(a: algopy.Asset | algopy.UInt64 | int) -> tuple[algopy.UInt64, bool]:
+        try:
+            asset = _get_asset(a)
+        except ValueError:
+            return UInt64(0), False
+        return asset.total, True
 
-AssetParamsGet = _AssetParamsGet()
+    @staticmethod
+    def asset_decimals(a: algopy.Asset | algopy.UInt64 | int) -> tuple[algopy.UInt64, bool]:
+        try:
+            asset = _get_asset(a)
+        except ValueError:
+            return UInt64(0), False
+        return asset.decimals, True
+
+    @staticmethod
+    def asset_default_frozen(a: algopy.Asset | algopy.UInt64 | int) -> tuple[bool, bool]:
+        try:
+            asset = _get_asset(a)
+        except ValueError:
+            return UInt64(0), False  # type: ignore[return-value]
+        return asset.default_frozen, True
+
+    @staticmethod
+    def asset_unit_name(a: algopy.Asset | algopy.UInt64 | int) -> tuple[algopy.Bytes, bool]:
+        try:
+            asset = _get_asset(a)
+        except ValueError:
+            return UInt64(0), False  # type: ignore[return-value]
+        return asset.unit_name, True
+
+    @staticmethod
+    def asset_name(a: algopy.Asset | algopy.UInt64 | int) -> tuple[algopy.Bytes, bool]:
+        try:
+            asset = _get_asset(a)
+        except ValueError:
+            return UInt64(0), False  # type: ignore[return-value]
+        return asset.name, True
+
+    @staticmethod
+    def asset_url(a: algopy.Asset | algopy.UInt64 | int) -> tuple[algopy.Bytes, bool]:
+        try:
+            asset = _get_asset(a)
+        except ValueError:
+            return UInt64(0), False  # type: ignore[return-value]
+        return asset.url, True
+
+    @staticmethod
+    def asset_metadata_hash(a: algopy.Asset | algopy.UInt64 | int) -> tuple[algopy.Bytes, bool]:
+        try:
+            asset = _get_asset(a)
+        except ValueError:
+            return UInt64(0), False  # type: ignore[return-value]
+        return asset.metadata_hash, True
 
 
 class _AssetHoldingGet:
