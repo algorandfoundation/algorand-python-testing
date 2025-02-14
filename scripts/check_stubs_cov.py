@@ -127,9 +127,6 @@ def collect_stubs(stubs_dir: Path, relative_module: str) -> dict[str, ASTNodeDef
 def collect_coverage(stubs: dict[str, ASTNodeDefinition]) -> list[CoverageResult]:
     result = []
     for full_name, stub in stubs.items():
-        if "GTxn" in full_name:
-            print("stop")
-
         coverage = _get_impl_coverage(full_name, stub)
         if coverage:
             try:
@@ -287,6 +284,8 @@ def _compare_stub_impl(stub: ast.AST, impl: object, impl_path: Path) -> ImplCove
             "ne",
         )
     }
+    # excluding special fields used in typing hints
+    default_impls.update(("__match_args__", "__match_value__"))
     missing = sorted(stub_members.difference({*impl_members, *default_impls}))
     return ImplCoverage(impl_path, sorted(stub_members), missing)
 
