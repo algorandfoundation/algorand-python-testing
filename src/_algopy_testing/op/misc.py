@@ -188,6 +188,27 @@ class AcctParamsGet:
         account = _get_account(a)
         return account.total_box_bytes, account.balance != 0
 
+    @staticmethod
+    def acct_incentive_eligible(
+        a: algopy.Account | algopy.UInt64 | int,
+    ) -> tuple[bool, bool]:
+        account = _get_account(a)
+        return account.incentive_eligible, account.balance != 0
+
+    @staticmethod
+    def acct_last_heartbeat(
+        a: algopy.Account | algopy.UInt64 | int,
+    ) -> tuple[algopy.UInt64, bool]:
+        account = _get_account(a)
+        return account.last_heartbeat, account.balance != 0
+
+    @staticmethod
+    def acct_last_proposed(
+        a: algopy.Account | algopy.UInt64 | int,
+    ) -> tuple[algopy.UInt64, bool]:
+        account = _get_account(a)
+        return account.last_proposed, account.balance != 0
+
 
 class AssetParamsGet:
     @staticmethod

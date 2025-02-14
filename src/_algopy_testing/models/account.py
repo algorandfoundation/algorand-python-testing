@@ -30,6 +30,9 @@ class AccountFields(typing.TypedDict, total=False):
     total_assets: algopy.UInt64
     total_boxes: algopy.UInt64
     total_box_bytes: algopy.UInt64
+    incentive_eligible: bool
+    last_heartbeat: algopy.UInt64
+    last_proposed: algopy.UInt64
 
 
 def get_empty_account() -> AccountContextData:
@@ -47,6 +50,9 @@ def get_empty_account() -> AccountContextData:
             "total_assets": UInt64(),
             "total_boxes": UInt64(),
             "total_box_bytes": UInt64(),
+            "incentive_eligible": False,
+            "last_heartbeat": UInt64(),
+            "last_proposed": UInt64(),
         },
     )
 
