@@ -745,7 +745,7 @@ class _DynamicArrayTypeInfo(_TypeInfo):
         return True
 
 
-class _DynamicArrayMeta(type(_ABIEncoded), typing.Generic[_TArrayItem, _TArrayLength]):  # type: ignore  # noqa: PGH003
+class _DynamicArrayMeta(type(_ABIEncoded), typing.Generic[_TArrayItem]):  # type: ignore[misc]
     __concrete__: typing.ClassVar[dict[type, type]] = {}
 
     def __getitem__(cls, key_t: type[_TArrayItem]) -> type:
@@ -1015,17 +1015,18 @@ class Tuple(
 
 
 class _StructTypeInfo(_TypeInfo):
-    def __init__(self, struct_type: type[Struct]) -> None:
+    def __init__(self, struct_type: type[Struct], *, frozen: bool) -> None:
         self.struct_type = struct_type
         self.fields = dataclasses.fields(struct_type)
         self.field_names = [field.name for field in self.fields]
+        self.frozen = frozen
 
     @property
     def typ(self) -> type:
         return self.struct_type
 
     @property
-    def child_types(self) -> Iterable[_TypeInfo]:
+    def child_types(self) -> list[_TypeInfo]:
         return _tuple_type_from_struct(self.struct_type)._type_info.child_types
 
     @property
@@ -1056,8 +1057,11 @@ class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):  # type: ignore[
     _type_info: typing.ClassVar[_StructTypeInfo]  # type: ignore[misc]
 
     def __init_subclass__(cls, *args: typing.Any, **kwargs: dict[str, typing.Any]) -> None:
-        dataclasses.dataclass(cls, *args, **kwargs)
-        cls._type_info = _StructTypeInfo(cls)
+        # make implementation not frozen, so we can conditionally control behaviour
+        dataclasses.dataclass(cls, *args, **{**kwargs, "frozen": False})
+        frozen = kwargs.get("frozen", False)
+        assert isinstance(frozen, bool)
+        cls._type_info = _StructTypeInfo(cls, frozen=frozen)
 
     def __post_init__(self) -> None:
         # calling base class here to init Mutable
@@ -1073,6 +1077,10 @@ class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):  # type: ignore[
         super().__setattr__(key, value)
         # don't update backing value until base class has been init'd
         if hasattr(self, "_on_mutate") and key in self._type_info.field_names:
+            if self._type_info.frozen:
+                raise dataclasses.FrozenInstanceError(
+                    f"{type(self)} is frozen and cannot be modified"
+                )
             self._update_backing_value()
 
     def _update_backing_value(self) -> None:
@@ -1154,34 +1162,16 @@ def emit(event: str | Struct, /, *args: object) -> None:
     log(event_hash[:4] + event_data.value)
 
 
-def native_value_to_arc4(value: object) -> _ABIEncoded:  # noqa: PLR0911
-    import algopy
-
-    if isinstance(value, _ABIEncoded):
-        return value
-    if isinstance(value, bool):
-        return Bool(value)
-    if isinstance(value, algopy.UInt64):
-        return UInt64(value)
-    if isinstance(value, algopy.BigUInt):
-        return UInt512(value)
-    if isinstance(value, algopy.Bytes):
-        return DynamicBytes(value)
-    if isinstance(value, algopy.String):
-        return String(value)
-    if isinstance(value, tuple):
-        return Tuple(tuple(map(native_value_to_arc4, value)))
-    raise TypeError(f"Unsupported type: {type(value).__name__}")
-
-
 def _cast_arg_as_arc4(arg: object) -> _ABIEncoded:
+    from _algopy_testing.serialize import native_to_arc4
+
     if isinstance(arg, int) and not isinstance(arg, bool):
         return UInt64(arg) if arg <= MAX_UINT64 else UInt512(arg)
     if isinstance(arg, bytes):
         return DynamicBytes(arg)
     if isinstance(arg, str):
         return String(arg)
-    return native_value_to_arc4(arg)
+    return native_to_arc4(arg)
 
 
 def _find_bool(
@@ -1245,13 +1235,13 @@ def _get_max_bytes_len(type_info: _TypeInfo) -> int:
     size = 0
     if isinstance(type_info, _DynamicArrayTypeInfo):
         size += _ABI_LENGTH_SIZE
-    elif isinstance(type_info, _TupleTypeInfo | _StaticArrayTypeInfo):
+    elif isinstance(type_info, _TupleTypeInfo | _StructTypeInfo | _StaticArrayTypeInfo):
         i = 0
-        child_types = (
-            type_info.child_types
-            if isinstance(type_info, _TupleTypeInfo)
-            else [type_info.item_type] * type_info.size
-        )
+        if isinstance(type_info, _TupleTypeInfo | _StructTypeInfo):
+            child_types = type_info.child_types
+        else:
+            typing.assert_type(type_info, _StaticArrayTypeInfo)
+            child_types = [type_info.item_type] * type_info.size
         while i < len(child_types):
             if isinstance(child_types[i], _BoolTypeInfo):
                 after = _find_bool_types(child_types, i, 1)

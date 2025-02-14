@@ -79,14 +79,18 @@ def get_ordered_args(
     params = list(sig.parameters.values())[1:]  # Skip 'self'
     app_args_iter = iter(app_args)
 
-    ordered_args = [
-        (
-            kwargs.get(p.name, next(app_args_iter, p.default))
-            if p.default is not p.empty
-            else kwargs.get(p.name) or next(app_args_iter)
-        )
-        for p in params
-    ]
+    ordered_args = []
+    for p in params:
+        try:
+            arg = kwargs[p.name]
+        except KeyError:
+            try:
+                arg = next(app_args_iter)
+            except StopIteration:
+                if p.default is p.empty:
+                    raise TypeError(f"missing required argument {p.name}") from None
+                arg = p.default
+        ordered_args.append(arg)
 
     if list(app_args_iter):
         raise TypeError("Too many positional arguments")
@@ -168,6 +172,8 @@ def abimethod(  # noqa: PLR0913
 
     @functools.wraps(fn)
     def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _R:
+        from _algopy_testing.serialize import native_to_arc4
+
         contract, *app_args = args
         assert isinstance(contract, _algopy_testing.ARC4Contract), "expected ARC4 contract"
         assert fn is not None, "expected function"
@@ -186,7 +192,8 @@ def abimethod(  # noqa: PLR0913
             check_routing_conditions(app_id, metadata)
             result = fn(*args, **kwargs)
             if result is not None:
-                abi_result = _algopy_testing.arc4.native_value_to_arc4(result)
+
+                abi_result = native_to_arc4(result)
                 log(ARC4_RETURN_PREFIX, abi_result)
             return result
 
@@ -273,6 +280,8 @@ def _extract_arrays_from_args(
     app: algopy.Application,
     sender: algopy.Account,
 ) -> _TxnArrays:
+    from _algopy_testing.serialize import native_to_arc4
+
     txns = list[_algopy_testing.gtxn.TransactionBase]()
     apps = [app]
     assets = list[_algopy_testing.Asset]()
@@ -292,7 +301,7 @@ def _extract_arrays_from_args(
                 app_args.append(_algopy_testing.arc4.UInt8(len(apps)))
                 apps.append(arg_app)
             case _ as maybe_native:
-                app_args.append(_algopy_testing.arc4.native_value_to_arc4(maybe_native))
+                app_args.append(native_to_arc4(maybe_native))
     if len(app_args) > 15:
         packed = _algopy_testing.arc4.Tuple(tuple(app_args[14:]))
         app_args[14:] = [packed]
@@ -320,6 +329,7 @@ def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa:
     from _algopy_testing.arc4 import _ABIEncoded
     from _algopy_testing.gtxn import Transaction, TransactionBase
     from _algopy_testing.models import Account, Application, Asset
+    from _algopy_testing.primitives import ImmutableArray
 
     if annotation is None:
         return "void"
@@ -331,6 +341,13 @@ def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa:
     if not isinstance(annotation, type):
         raise TypeError(f"expected type: {annotation!r}")
 
+    if typing.NamedTuple in getattr(annotation, "__orig_bases__", []):
+        tuple_fields = list(inspect.get_annotations(annotation).values())
+        tuple_args = [_type_to_arc4(a) for a in tuple_fields]
+        return f"({','.join(tuple_args)})"
+
+    if issubclass(annotation, ImmutableArray):
+        return f"{_type_to_arc4(annotation._element_type)}[]"
     # arc4 types
     if issubclass(annotation, _ABIEncoded):
         return annotation._type_info.arc4_name
