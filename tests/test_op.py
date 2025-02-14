@@ -1061,3 +1061,8 @@ def test_txn_op_mappings(context: AlgopyTestContext) -> None:
         assert algopy.Txn.selection_pk == algopy.Bytes()
         assert algopy.Txn.state_proof_pk == algopy.Bytes()
         assert algopy.Txn.vote_pk == algopy.Bytes()
+
+
+def test_elliptic_curve_mocked() -> None:
+    with pytest.raises(NotImplementedError, match="EllipticCurve.add"):
+        op.EllipticCurve.add()
