@@ -186,12 +186,19 @@ class EC(enum.StrEnum):
     BLS12_381g2 = "BLS12_381g2"
 
 
-class _EllipticCurve:
-    def __getattr__(self, name: str) -> typing.Any:
-        def mock(*_args: typing.Any, **_kwargs: typing.Any) -> None:
-            raise_mocked_function_error(f"{EllipticCurve}.{name}")
+class _MockedMember:
 
-        return mock
+    def __set_name__(self, owner: type, name: str) -> None:
+        self.name = f"{owner.__name__}.{name}"
+
+    def __call__(self, *_args: typing.Any, **_kwargs: typing.Any) -> None:
+        raise_mocked_function_error(self.name)
 
 
-EllipticCurve = _EllipticCurve()
+class EllipticCurve:
+    add = _MockedMember()
+    map_to = _MockedMember()
+    pairing_check = _MockedMember()
+    scalar_mul = _MockedMember()
+    scalar_mul_multi = _MockedMember()
+    subgroup_check = _MockedMember()
