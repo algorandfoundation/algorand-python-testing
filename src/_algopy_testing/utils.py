@@ -171,6 +171,11 @@ def get_default_global_fields() -> GlobalFields:
         "asset_create_min_balance": algopy.UInt64(DEFAULT_ASSET_CREATE_MIN_BALANCE),
         "asset_opt_in_min_balance": algopy.UInt64(DEFAULT_ASSET_OPT_IN_MIN_BALANCE),
         "genesis_hash": algopy.Bytes(DEFAULT_GLOBAL_GENESIS_HASH),
+        "payouts_enabled": False,
+        "payouts_go_online_fee": algopy.UInt64(),
+        "payouts_max_balance": algopy.UInt64(),
+        "payouts_min_balance": algopy.UInt64(),
+        "payouts_percent": algopy.UInt64(),
     }
 
 
