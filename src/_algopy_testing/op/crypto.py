@@ -42,6 +42,10 @@ def sha3_256(a: Bytes | bytes, /) -> Bytes:
     return Bytes(hashlib.sha3_256(input_value).digest())
 
 
+def sumhash512(_a: Bytes | bytes, /) -> Bytes:
+    raise_mocked_function_error("sumhash512")
+
+
 def keccak256(a: Bytes | bytes, /) -> Bytes:
     input_value = as_bytes(a)
     hashed_value = keccak.new(data=input_value, digest_bits=256)
@@ -167,6 +171,10 @@ def ecdsa_pk_decompress(v: ECDSA, a: Bytes | bytes, /) -> tuple[Bytes, Bytes]:
         )
 
 
+def falcon_verify(_a: Bytes | bytes, _b: Bytes | bytes, _c: Bytes | bytes, /) -> bool:
+    raise_mocked_function_error("falcon_verify")
+
+
 def vrf_verify(
     _s: VrfVerify,
     _a: Bytes | bytes,
@@ -202,3 +210,12 @@ class EllipticCurve:
     scalar_mul = _MockedMember()
     scalar_mul_multi = _MockedMember()
     subgroup_check = _MockedMember()
+
+
+class MiMCConfigurations(enum.StrEnum):
+    BN254Mp110 = enum.auto()
+    BLS12_381Mp111 = enum.auto()
+
+
+def mimc(_c: MiMCConfigurations, _a: Bytes | bytes, /) -> Bytes:
+    raise_mocked_function_error("mimc")

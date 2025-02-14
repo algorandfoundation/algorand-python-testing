@@ -638,3 +638,17 @@ class Box:
 
         # Update the box with the new content
         lazy_context.ledger.set_box(app_id, key, new_content)
+
+
+def online_stake() -> UInt64:
+    raise_mocked_function_error("online_stake")
+
+
+class VoterParamsGet:
+    @staticmethod
+    def voter_balance(_a: Account | UInt64 | int, /) -> tuple[UInt64, bool]:
+        raise_mocked_function_error("VoterParamsGet.voter_balance")
+
+    @staticmethod
+    def voter_incentive_eligible(_a: Account | UInt64 | int, /) -> tuple[bool, bool]:
+        raise_mocked_function_error("VoterParamsGet.voter_balance")
