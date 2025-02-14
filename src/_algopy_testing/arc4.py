@@ -17,6 +17,7 @@ from _algopy_testing.constants import (
     UINT512_SIZE,
 )
 from _algopy_testing.models.account import Account
+from _algopy_testing.models.contract import ARC4Contract
 from _algopy_testing.mutable import (
     MutableBytes,
     add_mutable_callback,
@@ -42,6 +43,7 @@ if typing.TYPE_CHECKING:
 
 __all__ = [
     "ARC4Client",
+    "ARC4Contract",
     "Address",
     "BigUFixedNxM",
     "BigUIntN",
