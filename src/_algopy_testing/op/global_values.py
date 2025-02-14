@@ -31,6 +31,11 @@ class GlobalFields(TypedDict, total=False):
     asset_opt_in_min_balance: algopy.UInt64
     genesis_hash: algopy.Bytes
     opcode_budget: Callable[[], int]
+    payouts_enabled: bool
+    payouts_go_online_fee: algopy.UInt64
+    payouts_max_balance: algopy.UInt64
+    payouts_min_balance: algopy.UInt64
+    payouts_percent: algopy.UInt64
 
 
 class _Global:

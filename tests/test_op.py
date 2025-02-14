@@ -1017,6 +1017,7 @@ def test_globals(context: AlgopyTestContext) -> None:
         assert algopy.Global.creator_address == creator
         assert algopy.Global.current_application_id == app
         assert algopy.Global.current_application_address == app.address
+        assert not algopy.Global.payouts_enabled
 
     txn2 = context.any.txn.payment()
     txn3 = context.any.txn.application_call()
