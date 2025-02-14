@@ -1,7 +1,9 @@
 import ast
+import importlib
 import inspect
 import site
 import sys
+import typing
 from collections.abc import Iterable
 from pathlib import Path
 from typing import NamedTuple
@@ -13,6 +15,35 @@ SITE_PACKAGES = Path(site.getsitepackages()[0])
 STUBS_ROOT = SITE_PACKAGES / "algopy-stubs"
 IMPL = PROJECT_ROOT / "src"
 ROOT_MODULE = "algopy"
+_ADDITIONAL_GLOBAL_IMPLS = [
+    "_algopy_testing.op.global_values._Global",
+    "_algopy_testing.op.global_values.GlobalFields",
+]
+_ADDITIONAL_TXN_IMPLS = [
+    "_algopy_testing.models.txn_fields.TransactionFields",
+    "_algopy_testing.models.txn_fields.TransactionFieldsGetter",
+    "_algopy_testing.op.constants.OP_MEMBER_TO_TXN_MEMBER",
+]
+_ADDITIONAL_TYPE_IMPLS = {
+    "algopy.Asset": ["_algopy_testing.models.asset.AssetFields"],
+    "algopy.Account": ["_algopy_testing.models.account.AccountFields"],
+    "algopy.Application": ["_algopy_testing.models.application.ApplicationFields"],
+    "algopy.Global": _ADDITIONAL_GLOBAL_IMPLS,
+    "algopy.Txn": _ADDITIONAL_TXN_IMPLS,
+    "algopy.op.Global": _ADDITIONAL_GLOBAL_IMPLS,
+    "algopy.op.GTxn": _ADDITIONAL_TXN_IMPLS,
+    "algopy.op.GITxn": _ADDITIONAL_TXN_IMPLS,
+    "algopy.op.Txn": _ADDITIONAL_TXN_IMPLS,
+    "algopy.op.ITxn": _ADDITIONAL_TXN_IMPLS,
+    "algopy.op.ITxnCreate": _ADDITIONAL_TXN_IMPLS,
+    "algopy.op.AcctParamsGet": ["_algopy_testing.op.misc._AcctParamsGet"],
+    "algopy.op.AppParamsGet": ["_algopy_testing.op.misc._AppParamsGet"],
+    "algopy.op.AssetParamsGet": ["_algopy_testing.op.misc._AssetParamsGet"],
+    "algopy.op.AssetHoldingGet": ["_algopy_testing.op.misc._AssetHoldingGet"],
+    "algopy.op.AppGlobal": ["_algopy_testing.op.misc._AppGlobal"],
+    "algopy.op.AppLocal": ["_algopy_testing.op.misc._AppLocal"],
+    "algopy.op.Scratch": ["_algopy_testing.op.misc._Scratch"],
+}
 
 
 class ASTNodeDefinition(NamedTuple):
@@ -213,20 +244,6 @@ def _get_impl_coverage(symbol: str, stub: ASTNodeDefinition) -> ImplCoverage | N
         if hasattr(impl, "__class__"):
             try:
                 impl_path = Path(inspect.getfile(impl.__class__))
-                # For special cases like GTxn and GITxn, assume full implementation
-                if name in [
-                    "GTxn",
-                    "GITxn",
-                    "Txn",
-                    "ITxn",
-                    "Global",
-                    "AssetConfigInnerTransaction",
-                    "Contract",
-                    "ApplicationCallInnerTransaction",
-                    "UFixedNxM",
-                    "BigUFixedNxM",
-                ]:
-                    return ImplCoverage(impl_path)
             except TypeError:
                 print(f"Warning: Could not determine file for {symbol}")
                 return None
@@ -234,18 +251,56 @@ def _get_impl_coverage(symbol: str, stub: ASTNodeDefinition) -> ImplCoverage | N
             print(f"Warning: Could not determine file for {symbol}")
             return None
 
-    return _compare_stub_impl(stub.node, impl, impl_path)
+    return _compare_stub_impl(stub.node, symbol, impl, impl_path)
 
 
-def _compare_stub_impl(stub: ast.AST, impl: object, impl_path: Path) -> ImplCoverage:
+def _get_impl_members(impl_name: str, impl: object) -> set[str]:
+    if isinstance(impl, type):
+        impl_mros: list[object] = [
+            typ for typ in impl.mro() if typ.__module__.startswith("_algopy_testing")
+        ]
+    else:
+        impl_mros = []
+    for additional_type in _ADDITIONAL_TYPE_IMPLS.get(impl_name, []):
+        impl_mros.append(_resolve_fullname(additional_type))
+
+    impl_members = set[str]()
+    for impl_typ in impl_mros:
+        if typing.is_typeddict(impl_typ) and isinstance(impl_typ, type):
+            for typed_dict_mro in impl_typ.mro():
+                ann = getattr(typed_dict_mro, "__annotations__", None)
+                if isinstance(ann, dict):
+                    impl_members.update(ann.keys())
+        elif isinstance(impl_typ, dict):
+            impl_members.update(impl_typ.keys())
+        elif isinstance(impl_typ, type):
+            members = list(vars(impl_typ).keys())
+            impl_members.update(members)
+        else:
+            raise ValueError(f"unexpected implementation type, {impl_typ}")
+    # special case for ITxnCreate
+    if impl_name == "algopy.op.ITxnCreate":
+        impl_members = {f"set_{member}" for member in impl_members}
+        impl_members.update(("begin", "next", "submit"))
+    return impl_members
+
+
+def _resolve_fullname(fullname: str) -> object:
+    # note this assumes no nested classes
+    module_name, type_name = fullname.rsplit(".", maxsplit=1)
+    module = importlib.import_module(module_name)
+    return getattr(module, type_name)
+
+
+def _compare_stub_impl(
+    stub: ast.AST, impl_name: str, impl: object, impl_path: Path
+) -> ImplCoverage:
     # classes are really the only types that can be "partially implemented"
     # from a typing perspective
-    if not isinstance(stub, ast.ClassDef):
+    # algopy.uenumerate is typed as a class, but is really just a function
+    if not isinstance(stub, ast.ClassDef) or impl_name == "algopy.uenumerate":
         return ImplCoverage(impl_path)
-
-    # using vars to only get explicitly implemented members
-    # need more sophisticated approach if implementations start using inheritance
-    impl_members = set(vars(impl))
+    impl_members = _get_impl_members(impl_name, impl)
     stub_members = set()
     for stmt in stub.body:
         if isinstance(stmt, ast.FunctionDef):
