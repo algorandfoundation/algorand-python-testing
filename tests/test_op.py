@@ -1033,3 +1033,31 @@ def test_globals(context: AlgopyTestContext) -> None:
 
     assert first_group_id != second_group_id, "expected unique group ids"
     assert first_timestamp <= second_timestamp, "expected unique group ids"
+
+
+def test_txn_op_mappings(context: AlgopyTestContext) -> None:
+    txn1 = context.any.txn.transaction()
+    with context.txn.create_group(gtxns=[txn1]):
+        assert algopy.Txn.config_asset_clawback == algopy.Account()
+        assert algopy.Txn.config_asset_decimals == algopy.UInt64()
+        assert not algopy.Txn.config_asset_default_frozen
+        assert algopy.Txn.config_asset_freeze == algopy.Account()
+        assert algopy.Txn.config_asset_manager == algopy.Account()
+        assert algopy.Txn.config_asset_metadata_hash == algopy.Bytes()
+        assert algopy.Txn.config_asset_name == algopy.Bytes()
+        assert algopy.Txn.config_asset_reserve == algopy.Account()
+        assert algopy.Txn.config_asset_total == algopy.UInt64()
+        assert algopy.Txn.config_asset_unit_name == algopy.Bytes()
+        assert algopy.Txn.config_asset_url == algopy.Bytes()
+        assert algopy.Txn.created_application_id == algopy.Application()
+        assert algopy.Txn.created_asset_id == algopy.Asset()
+        assert algopy.Txn.freeze_asset_account == algopy.Account()
+        assert not algopy.Txn.freeze_asset_frozen
+        assert algopy.Txn.global_num_byte_slice == algopy.UInt64()
+        assert algopy.Txn.local_num_byte_slice == algopy.UInt64()
+        assert not algopy.Txn.nonparticipation
+        assert algopy.Txn.num_applications == algopy.UInt64()
+        assert isinstance(algopy.Txn.tx_id, algopy.Bytes)
+        assert algopy.Txn.selection_pk == algopy.Bytes()
+        assert algopy.Txn.state_proof_pk == algopy.Bytes()
+        assert algopy.Txn.vote_pk == algopy.Bytes()

@@ -123,6 +123,7 @@ _FIELD_TYPES = {
     "app_id": Application,
     "xfer_asset": Asset,
     "freeze_asset": Asset,
+    "freeze_account": Account,
     "config_asset": Asset,
     "frozen": bool,
     "default_frozen": bool,
