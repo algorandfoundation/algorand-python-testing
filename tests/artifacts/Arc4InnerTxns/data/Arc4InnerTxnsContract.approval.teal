@@ -1,23 +1,31 @@
 #pragma version 10
+#pragma typetrack false
 
-tests.artifacts.Arc4InnerTxns.contract.Arc4InnerTxnsContract.approval_program:
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 0 1
     // tests/artifacts/Arc4InnerTxns/contract.py:4
     // class Arc4InnerTxnsContract(ARC4Contract):
     txn NumAppArgs
-    bz main_bare_routing@5
-    method "opt_in_dummy_asset(asset)void"
+    bz main_bare_routing@6
+    pushbytes 0xe2353124 // method "opt_in_dummy_asset(asset)void"
     txna ApplicationArgs 0
-    match main_opt_in_dummy_asset_route@2
-    err // reject transaction
+    match main_opt_in_dummy_asset_route@3
 
-main_opt_in_dummy_asset_route@2:
+main_after_if_else@10:
+    // tests/artifacts/Arc4InnerTxns/contract.py:4
+    // class Arc4InnerTxnsContract(ARC4Contract):
+    intc_0 // 0
+    return
+
+main_opt_in_dummy_asset_route@3:
     // tests/artifacts/Arc4InnerTxns/contract.py:5
     // @arc4.abimethod
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // tests/artifacts/Arc4InnerTxns/contract.py:4
     // class Arc4InnerTxnsContract(ARC4Contract):
     txna ApplicationArgs 1
@@ -26,19 +34,18 @@ main_opt_in_dummy_asset_route@2:
     // tests/artifacts/Arc4InnerTxns/contract.py:5
     // @arc4.abimethod
     callsub opt_in_dummy_asset
-    int 1
+    intc_1 // 1
     return
 
-main_bare_routing@5:
+main_bare_routing@6:
     // tests/artifacts/Arc4InnerTxns/contract.py:4
     // class Arc4InnerTxnsContract(ARC4Contract):
     txn OnCompletion
-    !
-    assert // reject transaction
+    bnz main_after_if_else@10
     txn ApplicationID
     !
-    assert // is creating
-    int 1
+    assert // can only call when creating
+    intc_1 // 1
     return
 
 
@@ -64,9 +71,9 @@ opt_in_dummy_asset:
     // tests/artifacts/Arc4InnerTxns/contract.py:7-8
     // # Submit opt-in transaction: 0 asset transfer to self
     // itxn.AssetTransfer(
-    int axfer
+    pushint 4 // axfer
     itxn_field TypeEnum
-    int 0
+    intc_0 // 0
     itxn_field Fee
     // tests/artifacts/Arc4InnerTxns/contract.py:7-11
     // # Submit opt-in transaction: 0 asset transfer to self

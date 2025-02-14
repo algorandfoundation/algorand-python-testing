@@ -1,7 +1,7 @@
 #pragma version 10
+#pragma typetrack false
 
-tests.artifacts.MiscellaneousOps.contract.MiscellaneousOpsContract.clear_state_program:
-    // tests/artifacts/MiscellaneousOps/contract.py:4
-    // class MiscellaneousOpsContract(ARC4Contract):
-    int 1
+// algopy.arc4.ARC4Contract.clear_state_program() -> uint64:
+main:
+    pushint 1 // 1
     return

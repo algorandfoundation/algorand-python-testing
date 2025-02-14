@@ -1,83 +1,78 @@
 #pragma version 10
+#pragma typetrack false
 
-tests.artifacts.BoxContract.contract.BoxContract.approval_program:
+// tests.artifacts.BoxContract.contract.BoxContract.__algopy_entrypoint_with_init() -> uint64:
+main:
+    intcblock 1
+    bytecblock 0x6f6361 0x74786e
     // tests/artifacts/BoxContract/contract.py:4
     // class BoxContract(ARC4Contract):
     txn NumAppArgs
-    bz main_bare_routing@6
-    method "store_enums()void"
-    method "read_enums()(uint64,uint64)"
+    bz main_bare_routing@7
+    pushbytess 0xf26c6d42 0xef186cf7 // method "store_enums()void", method "read_enums()(uint64,uint64)"
     txna ApplicationArgs 0
-    match main_store_enums_route@2 main_read_enums_route@3
-    err // reject transaction
+    match main_store_enums_route@5 main_read_enums_route@6
 
-main_store_enums_route@2:
-    // tests/artifacts/BoxContract/contract.py:9
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is NoOp
-    txn ApplicationID
-    assert // is not creating
-    callsub store_enums
-    int 1
+main_after_if_else@9:
+    // tests/artifacts/BoxContract/contract.py:4
+    // class BoxContract(ARC4Contract):
+    pushint 0 // 0
     return
 
-main_read_enums_route@3:
+main_read_enums_route@6:
     // tests/artifacts/BoxContract/contract.py:14
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     callsub read_enums
-    byte 0x151f7c75
+    pushbytes 0x151f7c75
     swap
     concat
     log
-    int 1
+    intc_0 // 1
     return
 
-main_bare_routing@6:
+main_store_enums_route@5:
+    // tests/artifacts/BoxContract/contract.py:9
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    callsub store_enums
+    intc_0 // 1
+    return
+
+main_bare_routing@7:
     // tests/artifacts/BoxContract/contract.py:4
     // class BoxContract(ARC4Contract):
     txn OnCompletion
-    !
-    assert // reject transaction
+    bnz main_after_if_else@9
     txn ApplicationID
     !
-    assert // is creating
-    int 1
+    assert // can only call when creating
+    intc_0 // 1
     return
 
 
 // tests.artifacts.BoxContract.contract.BoxContract.store_enums() -> void:
 store_enums:
-    // tests/artifacts/BoxContract/contract.py:9-10
-    // @arc4.abimethod()
-    // def store_enums(self) -> None:
-    proto 0 0
     // tests/artifacts/BoxContract/contract.py:11
     // self.oca.value = OnCompleteAction.OptIn
-    int OptIn
+    intc_0 // OptIn
     itob
-    // tests/artifacts/BoxContract/contract.py:6
-    // self.oca = Box(OnCompleteAction)
-    byte "oca"
-    // tests/artifacts/BoxContract/contract.py:11
-    // self.oca.value = OnCompleteAction.OptIn
+    bytec_0 // "oca"
     swap
     box_put
     // tests/artifacts/BoxContract/contract.py:12
     // self.txn.value = TransactionType.ApplicationCall
-    int appl
+    pushint 6 // appl
     itob
-    // tests/artifacts/BoxContract/contract.py:7
-    // self.txn = Box(TransactionType)
-    byte "txn"
-    // tests/artifacts/BoxContract/contract.py:12
-    // self.txn.value = TransactionType.ApplicationCall
+    bytec_1 // "txn"
     swap
     box_put
     retsub
@@ -85,20 +80,12 @@ store_enums:
 
 // tests.artifacts.BoxContract.contract.BoxContract.read_enums() -> bytes:
 read_enums:
-    // tests/artifacts/BoxContract/contract.py:14-15
-    // @arc4.abimethod()
-    // def read_enums(self) -> arc4.Tuple[arc4.UInt64, arc4.UInt64]:
-    proto 0 1
     // tests/artifacts/BoxContract/contract.py:16
     // assert op.Box.get(b"oca")[0] == op.itob(self.oca.value)
-    byte 0x6f6361
+    bytec_0 // 0x6f6361
     box_get
     pop
-    // tests/artifacts/BoxContract/contract.py:6
-    // self.oca = Box(OnCompleteAction)
-    byte "oca"
-    // tests/artifacts/BoxContract/contract.py:16
-    // assert op.Box.get(b"oca")[0] == op.itob(self.oca.value)
+    bytec_0 // "oca"
     box_get
     swap
     btoi
@@ -109,14 +96,10 @@ read_enums:
     assert
     // tests/artifacts/BoxContract/contract.py:17
     // assert op.Box.get(b"txn")[0] == op.itob(self.txn.value)
-    byte 0x74786e
+    bytec_1 // 0x74786e
     box_get
     pop
-    // tests/artifacts/BoxContract/contract.py:7
-    // self.txn = Box(TransactionType)
-    byte "txn"
-    // tests/artifacts/BoxContract/contract.py:17
-    // assert op.Box.get(b"txn")[0] == op.itob(self.txn.value)
+    bytec_1 // "txn"
     box_get
     swap
     btoi
@@ -125,22 +108,16 @@ read_enums:
     itob
     ==
     assert
-    // tests/artifacts/BoxContract/contract.py:6
-    // self.oca = Box(OnCompleteAction)
-    byte "oca"
     // tests/artifacts/BoxContract/contract.py:19
     // return arc4.Tuple((arc4.UInt64(self.oca.value), arc4.UInt64(self.txn.value)))
+    bytec_0 // "oca"
     box_get
     swap
     btoi
     swap
     assert // check self.oca exists
     itob
-    // tests/artifacts/BoxContract/contract.py:7
-    // self.txn = Box(TransactionType)
-    byte "txn"
-    // tests/artifacts/BoxContract/contract.py:19
-    // return arc4.Tuple((arc4.UInt64(self.oca.value), arc4.UInt64(self.txn.value)))
+    bytec_1 // "txn"
     box_get
     swap
     btoi

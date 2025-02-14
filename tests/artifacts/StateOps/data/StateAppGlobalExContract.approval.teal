@@ -1,77 +1,75 @@
 #pragma version 10
+#pragma typetrack false
 
-tests.artifacts.StateOps.contract.StateAppGlobalExContract.approval_program:
+// tests.artifacts.StateOps.contract.StateAppGlobalExContract.__algopy_entrypoint_with_init() -> uint64:
+main:
+    bytecblock 0x64756d6d795f6279746573 0x001064756d6d795f617263345f6279746573
     txn ApplicationID
-    bnz main_entrypoint@2
-    callsub __init__
-
-main_entrypoint@2:
-    // tests/artifacts/StateOps/contract.py:404
-    // class StateAppGlobalExContract(ARC4Contract):
-    txn NumAppArgs
-    !
-    assert // reject transaction
-    txn OnCompletion
-    !
-    assert // reject transaction
-    txn ApplicationID
-    !
-    assert // is creating
-    int 1
-    return
-
-
-// tests.artifacts.StateOps.contract.StateAppGlobalExContract.__init__() -> void:
-__init__:
-    // tests/artifacts/StateOps/contract.py:405
-    // def __init__(self) -> None:
-    proto 0 0
-    // tests/artifacts/StateOps/contract.py:408
+    bnz main_after_if_else@2
+    // tests/artifacts/StateOps/contract.py:432
     // key="global_uint64",
-    byte "global_uint64"
-    // tests/artifacts/StateOps/contract.py:407
+    pushbytes "global_uint64"
+    // tests/artifacts/StateOps/contract.py:431
     // UInt64(2),
-    int 2
-    // tests/artifacts/StateOps/contract.py:406-409
+    pushint 2 // 2
+    // tests/artifacts/StateOps/contract.py:430-433
     // self.global_uint64 = GlobalState(
     //     UInt64(2),
     //     key="global_uint64",
     // )
     app_global_put
-    // tests/artifacts/StateOps/contract.py:412
+    // tests/artifacts/StateOps/contract.py:436
     // key="global_bytes",
-    byte "global_bytes"
-    // tests/artifacts/StateOps/contract.py:411
+    pushbytes "global_bytes"
+    // tests/artifacts/StateOps/contract.py:435
     // Bytes(b"dummy_bytes"),
-    byte 0x64756d6d795f6279746573
-    // tests/artifacts/StateOps/contract.py:410-413
+    bytec_0 // 0x64756d6d795f6279746573
+    // tests/artifacts/StateOps/contract.py:434-437
     // self.global_bytes = GlobalState(
     //     Bytes(b"dummy_bytes"),
     //     key="global_bytes",
     // )
     app_global_put
-    // tests/artifacts/StateOps/contract.py:414
+    // tests/artifacts/StateOps/contract.py:438
     // self.global_uint64_explicit = algopy.UInt64(2)
-    byte "global_uint64_explicit"
-    int 2
+    pushbytes "global_uint64_explicit"
+    pushint 2 // 2
     app_global_put
-    // tests/artifacts/StateOps/contract.py:415
+    // tests/artifacts/StateOps/contract.py:439
     // self.global_bytes_explicit = algopy.Bytes(b"dummy_bytes")
-    byte "global_bytes_explicit"
-    byte 0x64756d6d795f6279746573
+    pushbytes "global_bytes_explicit"
+    bytec_0 // 0x64756d6d795f6279746573
     app_global_put
-    // tests/artifacts/StateOps/contract.py:417
+    // tests/artifacts/StateOps/contract.py:441
     // algopy.arc4.DynamicBytes(b"dummy_arc4_bytes"), key="global_arc4_bytes"
-    byte "global_arc4_bytes"
-    byte 0x001064756d6d795f617263345f6279746573
-    // tests/artifacts/StateOps/contract.py:416-418
+    pushbytes "global_arc4_bytes"
+    bytec_1 // 0x001064756d6d795f617263345f6279746573
+    // tests/artifacts/StateOps/contract.py:440-442
     // self.global_arc4_bytes = GlobalState(
     //     algopy.arc4.DynamicBytes(b"dummy_arc4_bytes"), key="global_arc4_bytes"
     // )
     app_global_put
-    // tests/artifacts/StateOps/contract.py:419
+    // tests/artifacts/StateOps/contract.py:443
     // self.global_arc4_bytes_explicit = algopy.arc4.DynamicBytes(b"dummy_arc4_bytes")
-    byte "global_arc4_bytes_explicit"
-    byte 0x001064756d6d795f617263345f6279746573
+    pushbytes "global_arc4_bytes_explicit"
+    bytec_1 // 0x001064756d6d795f617263345f6279746573
     app_global_put
-    retsub
+
+main_after_if_else@2:
+    // tests/artifacts/StateOps/contract.py:428
+    // class StateAppGlobalExContract(ARC4Contract):
+    txn NumAppArgs
+    bnz main_after_if_else@6
+    txn OnCompletion
+    bnz main_after_if_else@6
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    pushint 1 // 1
+    return
+
+main_after_if_else@6:
+    // tests/artifacts/StateOps/contract.py:428
+    // class StateAppGlobalExContract(ARC4Contract):
+    pushint 0 // 0
+    return
