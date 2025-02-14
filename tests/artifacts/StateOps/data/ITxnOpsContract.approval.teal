@@ -1,120 +1,124 @@
 #pragma version 10
+#pragma typetrack false
 
-tests.artifacts.StateOps.contract.ITxnOpsContract.approval_program:
-    // tests/artifacts/StateOps/contract.py:465
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 1 6 1000
+    bytecblock 0x068101
+    // tests/artifacts/StateOps/contract.py:489
     // class ITxnOpsContract(ARC4Contract):
     txn NumAppArgs
-    bz main_bare_routing@5
-    method "verify_itxn_ops()void"
+    bz main_bare_routing@6
+    pushbytes 0x4e7cd9cb // method "verify_itxn_ops()void"
     txna ApplicationArgs 0
-    match main_verify_itxn_ops_route@2
-    err // reject transaction
+    match main_verify_itxn_ops_route@3
 
-main_verify_itxn_ops_route@2:
-    // tests/artifacts/StateOps/contract.py:466
+main_after_if_else@10:
+    // tests/artifacts/StateOps/contract.py:489
+    // class ITxnOpsContract(ARC4Contract):
+    pushint 0 // 0
+    return
+
+main_verify_itxn_ops_route@3:
+    // tests/artifacts/StateOps/contract.py:490
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     callsub verify_itxn_ops
-    int 1
+    intc_0 // 1
     return
 
-main_bare_routing@5:
-    // tests/artifacts/StateOps/contract.py:465
+main_bare_routing@6:
+    // tests/artifacts/StateOps/contract.py:489
     // class ITxnOpsContract(ARC4Contract):
     txn OnCompletion
-    !
-    assert // reject transaction
+    bnz main_after_if_else@10
     txn ApplicationID
     !
-    assert // is creating
-    int 1
+    assert // can only call when creating
+    intc_0 // 1
     return
 
 
 // tests.artifacts.StateOps.contract.ITxnOpsContract.verify_itxn_ops() -> void:
 verify_itxn_ops:
-    // tests/artifacts/StateOps/contract.py:466-467
-    // @arc4.abimethod()
-    // def verify_itxn_ops(self) -> None:
-    proto 0 0
-    // tests/artifacts/StateOps/contract.py:468
+    // tests/artifacts/StateOps/contract.py:492
     // algopy.op.ITxnCreate.begin()
     itxn_begin
-    // tests/artifacts/StateOps/contract.py:469
+    // tests/artifacts/StateOps/contract.py:493
     // algopy.op.ITxnCreate.set_type_enum(algopy.TransactionType.ApplicationCall)
-    int appl
+    intc_1 // appl
     itxn_field TypeEnum
-    // tests/artifacts/StateOps/contract.py:470
+    // tests/artifacts/StateOps/contract.py:494
     // algopy.op.ITxnCreate.set_on_completion(algopy.OnCompleteAction.DeleteApplication)
-    int DeleteApplication
+    pushint 5 // DeleteApplication
     itxn_field OnCompletion
-    // tests/artifacts/StateOps/contract.py:471
+    // tests/artifacts/StateOps/contract.py:495
     // algopy.op.ITxnCreate.set_approval_program(Bytes.from_hex("068101"))
-    byte 0x068101
+    bytec_0 // 0x068101
     itxn_field ApprovalProgram
-    // tests/artifacts/StateOps/contract.py:472-473
+    // tests/artifacts/StateOps/contract.py:496-497
     // # pages essentially appends
     // algopy.op.ITxnCreate.set_approval_program_pages(Bytes.from_hex("068101"))
-    byte 0x068101
+    bytec_0 // 0x068101
     itxn_field ApprovalProgramPages
-    // tests/artifacts/StateOps/contract.py:474
+    // tests/artifacts/StateOps/contract.py:498
     // algopy.op.ITxnCreate.set_clear_state_program(Bytes.from_hex("068101"))
-    byte 0x068101
+    bytec_0 // 0x068101
     itxn_field ClearStateProgram
-    // tests/artifacts/StateOps/contract.py:475
+    // tests/artifacts/StateOps/contract.py:499
     // algopy.op.ITxnCreate.set_fee(algopy.op.Global.min_txn_fee)
     global MinTxnFee
     itxn_field Fee
-    // tests/artifacts/StateOps/contract.py:476
+    // tests/artifacts/StateOps/contract.py:500
     // algopy.op.ITxnCreate.next()
     itxn_next
-    // tests/artifacts/StateOps/contract.py:477
+    // tests/artifacts/StateOps/contract.py:501
     // algopy.op.ITxnCreate.set_type_enum(algopy.TransactionType.Payment)
-    int pay
+    intc_0 // pay
     itxn_field TypeEnum
-    // tests/artifacts/StateOps/contract.py:478
+    // tests/artifacts/StateOps/contract.py:502
     // algopy.op.ITxnCreate.set_receiver(algopy.op.Global.creator_address)
     global CreatorAddress
     itxn_field Receiver
-    // tests/artifacts/StateOps/contract.py:479
+    // tests/artifacts/StateOps/contract.py:503
     // algopy.op.ITxnCreate.set_amount(algopy.UInt64(1000))
-    int 1000
+    intc_2 // 1000
     itxn_field Amount
-    // tests/artifacts/StateOps/contract.py:480
+    // tests/artifacts/StateOps/contract.py:504
     // algopy.op.ITxnCreate.submit()
     itxn_submit
-    // tests/artifacts/StateOps/contract.py:482
+    // tests/artifacts/StateOps/contract.py:506
     // assert algopy.op.ITxn.receiver() == algopy.op.Global.creator_address
     itxn Receiver
     global CreatorAddress
     ==
     assert
-    // tests/artifacts/StateOps/contract.py:483
+    // tests/artifacts/StateOps/contract.py:507
     // assert algopy.op.ITxn.amount() == algopy.UInt64(1000)
     itxn Amount
-    int 1000
+    intc_2 // 1000
     ==
     assert
-    // tests/artifacts/StateOps/contract.py:484
+    // tests/artifacts/StateOps/contract.py:508
     // assert algopy.op.ITxn.type_enum() == algopy.TransactionType.Payment
     itxn TypeEnum
-    int pay
+    intc_0 // pay
     ==
     assert
-    // tests/artifacts/StateOps/contract.py:486
+    // tests/artifacts/StateOps/contract.py:510
     // assert algopy.op.GITxn.type_enum(0) == algopy.TransactionType.ApplicationCall
     gitxn 0 TypeEnum
-    int appl
+    intc_1 // appl
     ==
     assert
-    // tests/artifacts/StateOps/contract.py:487
+    // tests/artifacts/StateOps/contract.py:511
     // assert algopy.op.GITxn.type_enum(1) == algopy.TransactionType.Payment
     gitxn 1 TypeEnum
-    int pay
+    intc_0 // pay
     ==
     assert
     retsub
