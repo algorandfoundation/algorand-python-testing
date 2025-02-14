@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 # ruff: noqa: ARG001, PLR0913
-import dataclasses
 import typing
 
 from _algopy_testing.utils import raise_mocked_function_error
@@ -12,8 +11,7 @@ if typing.TYPE_CHECKING:
     import algopy
 
 
-@dataclasses.dataclass
-class CompiledContract:
+class CompiledContract(typing.NamedTuple):
     approval_program: tuple[algopy.Bytes, algopy.Bytes]
     clear_state_program: tuple[algopy.Bytes, algopy.Bytes]
     extra_program_pages: algopy.UInt64
@@ -23,8 +21,7 @@ class CompiledContract:
     local_bytes: algopy.UInt64
 
 
-@dataclasses.dataclass
-class CompiledLogicSig:
+class CompiledLogicSig(typing.NamedTuple):
     account: algopy.Account
 
 
