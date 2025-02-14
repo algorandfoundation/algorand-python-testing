@@ -349,6 +349,16 @@ def test_struct_kw_only() -> None:
         StructWithKwOnly(arc4.UInt64(1), arc4.UInt64(2), arc4.Bool(True), arc4.String("hello"))  # type: ignore[misc]
 
 
+def test_replace() -> None:
+    x = StructWithKwOnly(
+        a=arc4.UInt64(1), b=arc4.UInt64(2), c=arc4.Bool(True), d=arc4.String("hello")
+    )
+    y = x._replace(a=arc4.UInt64(2))
+    assert x.a == arc4.UInt64(1)
+    assert y.a == arc4.UInt64(2)
+    assert x != y
+
+
 def _compare_abi_and_arc4_values(
     arc4_value: typing.Any,
     abi_value: typing.Any,
