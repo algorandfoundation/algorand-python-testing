@@ -27,6 +27,10 @@ class Bytes:
         check_type(value, bytes)
         self.value = as_bytes(value)
 
+    def __contains__(self, item: Bytes | bytes) -> bool:
+        item_bytes = as_bytes(item)
+        return item_bytes in self.value
+
     def __repr__(self) -> str:
         return repr(self.value)
 
