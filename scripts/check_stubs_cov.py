@@ -24,6 +24,8 @@ _ADDITIONAL_TXN_IMPLS = [
     "_algopy_testing.models.txn_fields.TransactionFieldsGetter",
     "_algopy_testing.op.constants.OP_MEMBER_TO_TXN_MEMBER",
 ]
+
+# mapping of stub types to additional implementation types to scan for members
 _ADDITIONAL_TYPE_IMPLS = {
     "algopy.Asset": ["_algopy_testing.models.asset.AssetFields"],
     "algopy.Account": ["_algopy_testing.models.account.AccountFields"],
@@ -36,13 +38,16 @@ _ADDITIONAL_TYPE_IMPLS = {
     "algopy.op.Txn": _ADDITIONAL_TXN_IMPLS,
     "algopy.op.ITxn": _ADDITIONAL_TXN_IMPLS,
     "algopy.op.ITxnCreate": _ADDITIONAL_TXN_IMPLS,
-    "algopy.op.AcctParamsGet": ["_algopy_testing.op.misc._AcctParamsGet"],
     "algopy.op.AppParamsGet": ["_algopy_testing.op.misc._AppParamsGet"],
-    "algopy.op.AssetParamsGet": ["_algopy_testing.op.misc._AssetParamsGet"],
     "algopy.op.AssetHoldingGet": ["_algopy_testing.op.misc._AssetHoldingGet"],
     "algopy.op.AppGlobal": ["_algopy_testing.op.misc._AppGlobal"],
     "algopy.op.AppLocal": ["_algopy_testing.op.misc._AppLocal"],
     "algopy.op.Scratch": ["_algopy_testing.op.misc._Scratch"],
+}
+
+# mapping of stub types to members that may be present but not found when discovering members
+_ADDITIONAL_MEMBERS = {
+    "algopy.Asset": ["id"],
 }
 
 
@@ -264,7 +269,7 @@ def _get_impl_members(impl_name: str, impl: object) -> set[str]:
     for additional_type in _ADDITIONAL_TYPE_IMPLS.get(impl_name, []):
         impl_mros.append(_resolve_fullname(additional_type))
 
-    impl_members = set[str]()
+    impl_members = set[str](_ADDITIONAL_MEMBERS.get(impl_name, []))
     for impl_typ in impl_mros:
         if typing.is_typeddict(impl_typ) and isinstance(impl_typ, type):
             for typed_dict_mro in impl_typ.mro():
