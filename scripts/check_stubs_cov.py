@@ -142,7 +142,7 @@ def collect_coverage(stubs: dict[str, ASTNodeDefinition]) -> list[CoverageResult
             CoverageResult(
                 full_name=full_name,
                 stub_file=str(stub.path.relative_to(STUBS_ROOT)),
-                impl_file=impl_file,
+                impl_file=impl_file or "MISSING!",
                 coverage=coverage.coverage if coverage else 0,
                 missing=", ".join(coverage.missing if coverage else []),
             )
@@ -153,18 +153,16 @@ def collect_coverage(stubs: dict[str, ASTNodeDefinition]) -> list[CoverageResult
 def print_results(results: list[CoverageResult]) -> None:
     table = PrettyTable(
         field_names=["Name", "Implementation", "Source Stub", "Coverage", "Missing"],
-        sortby="Coverage",
         header=True,
         border=True,
         padding_width=2,
-        reversesort=True,
         left_padding_width=0,
         right_padding_width=1,
         align="l",
         max_width=100,
     )
 
-    for result in results:
+    for result in sorted(results, key=lambda c: c.coverage):
         table.add_row(
             [
                 result.full_name,
@@ -206,7 +204,6 @@ def _get_impl_coverage(symbol: str, stub: ASTNodeDefinition) -> ImplCoverage | N
     try:
         impl = getattr(mod, name)
     except AttributeError:
-        print(f"Attribute {name} not found in module {module}")
         return None
 
     try:
