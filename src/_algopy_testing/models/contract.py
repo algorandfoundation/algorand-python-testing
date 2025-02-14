@@ -9,7 +9,7 @@ from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.decorators.arc4 import get_active_txn_fields, maybe_arc4_metadata
 from _algopy_testing.mutable import set_attr_on_mutate
 from _algopy_testing.primitives import Bytes, UInt64
-from _algopy_testing.protocols import BytesBacked, UInt64Backed
+from _algopy_testing.protocols import BytesBacked, Serializable, UInt64Backed
 from _algopy_testing.state.utils import deserialize, serialize
 
 if typing.TYPE_CHECKING:
@@ -165,7 +165,7 @@ class Contract(metaclass=_ContractMeta):
                     state._key = name_bytes
             case _algopy_testing.BoxMap() as box_map if box_map._key_prefix is None:
                 box_map._key_prefix = name_bytes
-            case Bytes() | UInt64() | BytesBacked() | UInt64Backed() | bool():
+            case Bytes() | UInt64() | BytesBacked() | Serializable() | UInt64Backed() | bool():
                 app_id = _get_self_or_active_app_id(self)
                 lazy_context.ledger.set_global_state(app_id, name_bytes, serialize(value))
                 cls = type(self)

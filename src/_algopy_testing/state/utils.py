@@ -4,7 +4,7 @@ import typing
 
 from _algopy_testing.primitives.bytes import Bytes
 from _algopy_testing.primitives.uint64 import UInt64
-from _algopy_testing.protocols import BytesBacked, UInt64Backed
+from _algopy_testing.protocols import BytesBacked, Serializable, UInt64Backed
 
 _TValue = typing.TypeVar("_TValue")
 SerializableValue = int | bytes
@@ -19,6 +19,8 @@ def serialize(value: _TValue) -> SerializableValue:
         return value.int_
     elif isinstance(value, BytesBacked):
         return value.bytes.value
+    elif isinstance(value, Serializable):
+        return value.serialize()
     else:
         raise TypeError(f"Unsupported type: {type(value)}")
 
@@ -36,6 +38,10 @@ def deserialize(typ: type[_TValue], value: SerializableValue) -> _TValue:
         if isinstance(value, int):
             raise TypeError("expected bytes, received int")
         return typ.from_bytes(Bytes(value))  # type: ignore[return-value]
+    elif issubclass(typ, Serializable):
+        if isinstance(value, int):
+            raise TypeError("expected bytes, received int")
+        return typ.from_bytes(value)  # type: ignore[return-value]
     else:
         raise TypeError(f"Unsupported type: {typ}")
 

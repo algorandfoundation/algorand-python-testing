@@ -6,6 +6,18 @@ if typing.TYPE_CHECKING:
     import algopy
 
 
+class Serializable:
+    """For algopy testing only, allows serializing to/from bytes for types that aren't
+    BytesBacked."""
+
+    @classmethod
+    def from_bytes(cls, value: bytes, /) -> typing.Self:
+        raise NotImplementedError
+
+    def serialize(self) -> bytes:
+        raise NotImplementedError
+
+
 class BytesBacked:
     """Represents a type that is a single bytes value."""
 

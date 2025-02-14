@@ -14,7 +14,7 @@ from _algopy_testing.models.logicsig import LogicSig, logicsig
 from _algopy_testing.models.template_variable import TemplateVar
 from _algopy_testing.models.unsigned_builtins import uenumerate, urange
 from _algopy_testing.op import Global, Txn
-from _algopy_testing.primitives import BigUInt, Bytes, String, UInt64
+from _algopy_testing.primitives import Array, BigUInt, Bytes, ImmutableArray, String, UInt64
 from _algopy_testing.protocols import BytesBacked
 from _algopy_testing.state import Box, BoxMap, BoxRef, GlobalState, LocalState
 from _algopy_testing.utilities import OpUpFeeSource, ensure_budget, log
@@ -25,6 +25,7 @@ __all__ = [
     "ARC4Contract",
     "Account",
     "Application",
+    "Array",
     "Asset",
     "BigUInt",
     "Box",
@@ -37,6 +38,7 @@ __all__ = [
     "Contract",
     "Global",
     "GlobalState",
+    "ImmutableArray",
     "LocalState",
     "LogicSig",
     "OnCompleteAction",
