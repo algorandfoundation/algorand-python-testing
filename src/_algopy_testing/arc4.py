@@ -1096,6 +1096,12 @@ class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):  # type: ignore[
         tuple_items = tuple(getattr(self, field.name) for field in dataclasses.fields(self))
         return Tuple(tuple_items)
 
+    def _replace(self, **kwargs: typing.Any) -> typing.Self:
+        copy = self.copy()
+        for field, value in kwargs.items():
+            setattr(copy, field, value)
+        return copy
+
 
 class ARC4Client:
     pass
