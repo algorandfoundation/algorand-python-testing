@@ -21,7 +21,7 @@ def _get_1st_ref_index() -> UInt64:
     return op.btoi(Txn.application_args(1))
 
 
-class StateAcctParamsGetContract(ARC4Contract):
+class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
     @arc4.abimethod()
     def verify_acct_balance(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_balance(a)
@@ -130,6 +130,30 @@ class StateAcctParamsGetContract(ARC4Contract):
     def verify_acct_total_box_bytes(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_box_bytes(a)
         value_index, funded_index = op.AcctParamsGet.acct_total_box_bytes(_get_1st_ref_index())
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return value
+
+    @arc4.abimethod()
+    def verify_acct_incentive_eligible(self, a: algopy.Account) -> bool:
+        value, funded = op.AcctParamsGet.acct_incentive_eligible(a)
+        value_index, funded_index = op.AcctParamsGet.acct_incentive_eligible(_get_1st_ref_index())
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return value
+
+    @arc4.abimethod()
+    def verify_acct_last_heartbeat(self, a: algopy.Account) -> algopy.UInt64:
+        value, funded = op.AcctParamsGet.acct_last_heartbeat(a)
+        value_index, funded_index = op.AcctParamsGet.acct_last_heartbeat(_get_1st_ref_index())
+        assert value == value_index, "expected value by index to match"
+        assert funded == funded_index, "expected funded by index to match"
+        return value
+
+    @arc4.abimethod()
+    def verify_acct_last_proposed(self, a: algopy.Account) -> algopy.UInt64:
+        value, funded = op.AcctParamsGet.acct_last_proposed(a)
+        value_index, funded_index = op.AcctParamsGet.acct_last_proposed(_get_1st_ref_index())
         assert value == value_index, "expected value by index to match"
         assert funded == funded_index, "expected funded by index to match"
         return value

@@ -563,6 +563,9 @@ def test_app_params_get(
         ("verify_acct_total_assets", 0),
         ("verify_acct_total_boxes", 0),
         ("verify_acct_total_box_bytes", 0),
+        ("verify_acct_incentive_eligible", False),
+        ("verify_acct_last_heartbeat", 0),
+        ("verify_acct_last_proposed", 0),
     ],
 )
 def test_acct_params_get(
