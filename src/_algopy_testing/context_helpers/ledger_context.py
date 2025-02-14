@@ -3,6 +3,8 @@ from __future__ import annotations
 import typing
 from collections import defaultdict
 
+import algosdk.constants
+
 from _algopy_testing.constants import MAX_BOX_SIZE
 from _algopy_testing.models.account import Account
 from _algopy_testing.primitives.uint64 import UInt64
@@ -31,7 +33,7 @@ class LedgerContext:
         self._account_data = defaultdict[str, AccountContextData](get_empty_account)
         self._app_data: dict[int, ApplicationContextData] = {}
         self._asset_data: dict[int, AssetFields] = {}
-        self._blocks: dict[int, dict[str, int]] = {}
+        self._blocks: dict[int, dict[str, int | bytes | str]] = {}
         self._global_fields: GlobalFields = get_default_global_fields()
 
         self._asset_id = iter(range(1001, 2**64))
@@ -365,8 +367,19 @@ class LedgerContext:
         boxes = self._get_app_data(app).boxes
         return _as_box_key(key) in boxes
 
-    def set_block(
-        self, index: int, seed: algopy.UInt64 | int, timestamp: algopy.UInt64 | int
+    def set_block(  # noqa: PLR0913
+        self,
+        index: int,
+        seed: algopy.UInt64 | int,
+        timestamp: algopy.UInt64 | int,
+        bonus: algopy.UInt64 | int = 0,
+        branch: algopy.Bytes | bytes = b"",
+        fee_sink: algopy.Account | str = algosdk.constants.ZERO_ADDRESS,
+        fees_collected: algopy.UInt64 | int = 0,
+        proposer: algopy.Account | str = algosdk.constants.ZERO_ADDRESS,
+        proposer_payout: algopy.UInt64 | int = 0,
+        protocol: algopy.Bytes | bytes = b"",
+        txn_counter: algopy.UInt64 | int = 0,
     ) -> None:
         """Set block content.
 
@@ -374,10 +387,29 @@ class LedgerContext:
             index (int): The block index.
             seed (algopy.UInt64 | int): The block seed.
             timestamp (algopy.UInt64 | int): The block timestamp.
+            bonus (algopy.UInt64 | int): The block bonus.
+            branch (algopy.Bytes | bytes): The block branch.
+            fee_sink (algopy.Account | str): The block fee sink.
+            fees_collected (algopy.UInt64 | int): The fess collected.
+            proposer (algopy.Account | str): The block proposer.
+            proposer_payout (algopy.UInt64 | int): The block proposer payout.
+            protocol (algopy.Bytes | bytes): The block protocol.
+            txn_counter (algopy.UInt64 | int): The block transaction counter.
         """
-        self._blocks[index] = {"seed": int(seed), "timestamp": int(timestamp)}
+        self._blocks[index] = {
+            "seed": int(seed),
+            "timestamp": int(timestamp),
+            "bonus": int(bonus),
+            "branch": as_bytes(branch),
+            "fee_sink": str(fee_sink),
+            "fees_collected": int(fees_collected),
+            "proposer": str(proposer),
+            "proposer_payout": int(proposer_payout),
+            "protocol": as_bytes(protocol),
+            "txn_counter": int(txn_counter),
+        }
 
-    def get_block_content(self, index: int, key: str) -> int:
+    def get_block_content(self, index: int, key: str) -> int | bytes | str:
         """Get block content.
 
         Args:

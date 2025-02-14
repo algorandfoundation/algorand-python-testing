@@ -938,12 +938,41 @@ def test_itxn_ops(context: AlgopyTestContext) -> None:
     assert hasattr(appl_itxn, "created_app")
 
 
-def test_blk_seed_existing_block(context: AlgopyTestContext) -> None:
+def test_blk_existing_block(context: AlgopyTestContext) -> None:
     block_index = 42
     block_seed = 123
-    context.ledger.set_block(block_index, block_seed, 1234567890)
+    sink = context.any.account()
+    fees = context.any.uint64()
+    bonus = context.any.uint64()
+    proposer = context.any.account()
+    payout = context.any.uint64()
+    protocol = context.any.bytes()
+    branch = context.any.bytes()
+    counter = context.any.uint64()
+    context.ledger.set_block(
+        block_index,
+        seed=block_seed,
+        timestamp=1234567890,
+        fee_sink=sink,
+        fees_collected=fees,
+        proposer=proposer,
+        proposer_payout=payout,
+        protocol=protocol,
+        txn_counter=counter,
+        bonus=bonus,
+        branch=branch,
+    )
     result = op.Block.blk_seed(algopy.UInt64(block_index))
     assert op.btoi(result) == block_seed
+
+    assert op.Block.blk_fee_sink(block_index) == sink
+    assert op.Block.blk_fees_collected(block_index) == fees
+    assert op.Block.blk_proposer(block_index) == proposer
+    assert op.Block.blk_proposer_payout(block_index) == payout
+    assert op.Block.blk_protocol(block_index) == protocol
+    assert op.Block.blk_txn_counter(block_index) == counter
+    assert op.Block.blk_bonus(block_index) == bonus
+    assert op.Block.blk_branch(block_index) == branch
 
 
 @pytest.mark.usefixtures("context")
