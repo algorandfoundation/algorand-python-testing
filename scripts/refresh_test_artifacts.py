@@ -16,13 +16,13 @@ ENV_WITH_NO_COLOR = dict(os.environ) | {
 
 def get_artifact_folders(root_dir: str) -> Iterator[Path]:
     for folder in Path(root_dir).iterdir():
-        if folder.is_dir() and (folder / "contract.py").exists():
+        if folder.is_dir() and not str(folder.stem).startswith((".", "__")):
             yield folder
 
 
 def compile_contract(folder: Path) -> None:
     logger.info(f"Compiling: {folder}")
-    contract_path = folder / "contract.py"
+    contract_path = folder
     (folder / "data").mkdir(exist_ok=True)
     compile_cmd = [
         "hatch",
