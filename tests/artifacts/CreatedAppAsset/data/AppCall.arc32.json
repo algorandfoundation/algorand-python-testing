@@ -1,0 +1,50 @@
+{
+    "hints": {
+        "some_value()uint64": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        }
+    },
+    "source": {
+        "approval": "I3ByYWdtYSB2ZXJzaW9uIDEwCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBhbGdvcHkuYXJjNC5BUkM0Q29udHJhY3QuYXBwcm92YWxfcHJvZ3JhbSgpIC0+IHVpbnQ2NDoKbWFpbjoKICAgIC8vIHRlc3RzL2FydGlmYWN0cy9DcmVhdGVkQXBwQXNzZXQvb3RoZXIucHk6NAogICAgLy8gY2xhc3MgQXBwQ2FsbChBUkM0Q29udHJhY3QpOgogICAgdHhuIE51bUFwcEFyZ3MKICAgIGJ6IG1haW5fYmFyZV9yb3V0aW5nQDYKICAgIHB1c2hieXRlcyAweGQzNDc5ZTY1IC8vIG1ldGhvZCAic29tZV92YWx1ZSgpdWludDY0IgogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMAogICAgbWF0Y2ggbWFpbl9zb21lX3ZhbHVlX3JvdXRlQDMKCm1haW5fYWZ0ZXJfaWZfZWxzZUAxMDoKICAgIC8vIHRlc3RzL2FydGlmYWN0cy9DcmVhdGVkQXBwQXNzZXQvb3RoZXIucHk6NAogICAgLy8gY2xhc3MgQXBwQ2FsbChBUkM0Q29udHJhY3QpOgogICAgcHVzaGludCAwIC8vIDAKICAgIHJldHVybgoKbWFpbl9zb21lX3ZhbHVlX3JvdXRlQDM6CiAgICAvLyB0ZXN0cy9hcnRpZmFjdHMvQ3JlYXRlZEFwcEFzc2V0L290aGVyLnB5OjUKICAgIC8vIEBhcmM0LmFiaW1ldGhvZCgpCiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIGlzIG5vdCBOb09wCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgYXNzZXJ0IC8vIGNhbiBvbmx5IGNhbGwgd2hlbiBub3QgY3JlYXRpbmcKICAgIGNhbGxzdWIgc29tZV92YWx1ZQogICAgaXRvYgogICAgcHVzaGJ5dGVzIDB4MTUxZjdjNzUKICAgIHN3YXAKICAgIGNvbmNhdAogICAgbG9nCiAgICBwdXNoaW50IDEgLy8gMQogICAgcmV0dXJuCgptYWluX2JhcmVfcm91dGluZ0A2OgogICAgLy8gdGVzdHMvYXJ0aWZhY3RzL0NyZWF0ZWRBcHBBc3NldC9vdGhlci5weTo0CiAgICAvLyBjbGFzcyBBcHBDYWxsKEFSQzRDb250cmFjdCk6CiAgICB0eG4gT25Db21wbGV0aW9uCiAgICBibnogbWFpbl9hZnRlcl9pZl9lbHNlQDEwCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgIQogICAgYXNzZXJ0IC8vIGNhbiBvbmx5IGNhbGwgd2hlbiBjcmVhdGluZwogICAgcHVzaGludCAxIC8vIDEKICAgIHJldHVybgoKCi8vIHRlc3RzLmFydGlmYWN0cy5DcmVhdGVkQXBwQXNzZXQub3RoZXIuQXBwQ2FsbC5zb21lX3ZhbHVlKCkgLT4gdWludDY0Ogpzb21lX3ZhbHVlOgogICAgLy8gdGVzdHMvYXJ0aWZhY3RzL0NyZWF0ZWRBcHBBc3NldC9vdGhlci5weTo3CiAgICAvLyByZXR1cm4gR2xvYmFsLmdyb3VwX3NpemUgKiAoVHhuLmdyb3VwX2luZGV4ICsgMSkKICAgIGdsb2JhbCBHcm91cFNpemUKICAgIHR4biBHcm91cEluZGV4CiAgICBwdXNoaW50IDEgLy8gMQogICAgKwogICAgKgogICAgcmV0c3ViCg==",
+        "clear": "I3ByYWdtYSB2ZXJzaW9uIDEwCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBhbGdvcHkuYXJjNC5BUkM0Q29udHJhY3QuY2xlYXJfc3RhdGVfcHJvZ3JhbSgpIC0+IHVpbnQ2NDoKbWFpbjoKICAgIHB1c2hpbnQgMSAvLyAxCiAgICByZXR1cm4K"
+    },
+    "state": {
+        "global": {
+            "num_byte_slices": 0,
+            "num_uints": 0
+        },
+        "local": {
+            "num_byte_slices": 0,
+            "num_uints": 0
+        }
+    },
+    "schema": {
+        "global": {
+            "declared": {},
+            "reserved": {}
+        },
+        "local": {
+            "declared": {},
+            "reserved": {}
+        }
+    },
+    "contract": {
+        "name": "AppCall",
+        "methods": [
+            {
+                "name": "some_value",
+                "args": [],
+                "readonly": false,
+                "returns": {
+                    "type": "uint64"
+                }
+            }
+        ],
+        "networks": {}
+    },
+    "bare_call_config": {
+        "no_op": "CREATE"
+    }
+}
