@@ -405,20 +405,18 @@ def test_asset_holding_get(
         decimals=0,
         default_frozen=False,
     )
-    sp = algorand.client.algod.suggested_params()
-    sp.fee = 1000
 
     avm_asset_balance = get_state_asset_holding_avm_result(
         "verify_asset_holding_get",
         a=dummy_account_a.address,
         b=dummy_asset,
-        suggested_params=sp,
+        static_fee=AlgoAmount(micro_algo=1000),
     )
     avm_frozen_balance = get_state_asset_holding_avm_result(
         "verify_asset_frozen_get",
         a=dummy_account_a.address,
         b=dummy_asset,
-        suggested_params=sp,
+        static_fee=AlgoAmount(micro_algo=1000),
     )
 
     mock_asset = context.any.asset()
@@ -482,12 +480,11 @@ def test_asset_params_get(
         metadata_hash=metadata_hash,
     )
 
-    sp = algorand.client.algod.suggested_params()
-    sp.fee = 1000
-
     mock_contract = StateAssetParamsContract()
 
-    avm_result = get_state_asset_params_avm_result(method_name, a=dummy_asset, suggested_params=sp)
+    avm_result = get_state_asset_params_avm_result(
+        method_name, a=dummy_asset, static_fee=AlgoAmount(micro_algo=1000)
+    )
     mock_result = getattr(mock_contract, method_name)(mock_asset)
 
     if isinstance(expected_value, str):

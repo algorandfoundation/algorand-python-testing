@@ -6,6 +6,7 @@ from pathlib import Path
 import algokit_utils
 import pytest
 from _algopy_testing.constants import MAX_BYTES_SIZE, MAX_UINT64, MAX_UINT512
+from algokit_utils import AlgorandClient
 from algopy import BigUInt, UInt64, op
 
 from tests.common import AVMInvoker, create_avm_invoker
@@ -29,7 +30,7 @@ _extract_out_of_bound_error = re.compile("extraction (start|end) \\d+ is beyond 
 
 
 @pytest.fixture(scope="module")
-def get_ops_avm_result(algorand: algokit_utils.AlgorandClient) -> AVMInvoker:
+def get_ops_avm_result(algorand: AlgorandClient) -> AVMInvoker:
     return create_avm_invoker(APP_SPEC, algorand)
 
 

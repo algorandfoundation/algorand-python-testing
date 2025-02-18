@@ -42,8 +42,8 @@ class AVMInvoker:
                 app_references=kwargs.pop("foreign_apps", None),
                 asset_references=kwargs.pop("foreign_assets", None),
                 on_complete=on_complete,
-                args=[item[1] for item in kwargs.items()],
                 static_fee=kwargs.pop("static_fee", None),
+                args=[item[1] for item in kwargs.items()],
             ),
         )
         if response.returns and len(response.returns) > 0 and response.returns[0].decode_error:
