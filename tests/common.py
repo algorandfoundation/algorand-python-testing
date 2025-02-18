@@ -6,11 +6,14 @@ from pathlib import Path
 
 import algosdk
 from algokit_utils import (
-    Account,
-    ApplicationClient,
-    EnsureBalanceParameters,
-    ensure_funded,
-    get_localnet_default_account,
+    AlgorandClient,
+    AppClient,
+    AppClientMethodCallParams,
+    AppFactory,
+    AppFactoryCreateMethodCallParams,
+    AppFactoryCreateParams,
+    AppFactoryParams,
+    SigningAccount,
 )
 from algosdk.v2client.algod import AlgodClient
 
@@ -21,8 +24,9 @@ class AVMInvoker:
     """Protocol used in global test fixtures to simplify invocation of AVM methods via an Algokit
     typed client."""
 
-    def __init__(self, client: ApplicationClient):
+    def __init__(self, client: AppClient, factory: AppFactory):
         self.client = client
+        self.factory = factory
 
     def __call__(
         self,
@@ -30,28 +34,28 @@ class AVMInvoker:
         on_complete: algosdk.transaction.OnComplete = algosdk.transaction.OnComplete.NoOpOC,
         **kwargs: typing.Any,
     ) -> object:
-        response = self.client.call(
-            method,
-            transaction_parameters={
-                # random note avoids duplicate txn if tests are running concurrently
-                "note": _random_note(),
-                "accounts": kwargs.pop("accounts", None),
-                "foreign_apps": kwargs.pop("foreign_apps", None),
-                "foreign_assets": kwargs.pop("foreign_assets", None),
-                "suggested_params": kwargs.pop("suggested_params", None),
-                "on_complete": on_complete,
-            },
-            **kwargs,
+        response = self.client.send.call(
+            AppClientMethodCallParams(
+                method=method,
+                note=_random_note(),
+                account_references=kwargs.pop("accounts", None),
+                app_references=kwargs.pop("foreign_apps", None),
+                asset_references=kwargs.pop("foreign_assets", None),
+                on_complete=on_complete,
+                static_fee=kwargs.pop("static_fee", None),
+                args=[item[1] for item in kwargs.items()],
+            ),
         )
-        if response.decode_error:
-            raise ValueError(response.decode_error)
-        result = response.return_value
-        if result is None:
-            return response.tx_info.get("logs", None)
+        if response.returns and len(response.returns) > 0 and response.returns[0].decode_error:
+            raise ValueError(response.returns[0].decode_error)
+        result = response.abi_return
+        if result is None and response.returns and len(response.returns) > 0:
+            assert response.returns[0].tx_info
+            return response.returns[0].tx_info.get("logs", None)
         if isinstance(result, list) and all(
             isinstance(i, int) and i >= 0 and i <= 255 for i in result
         ):
-            return bytes(result)
+            return bytes(result)  # type: ignore[arg-type]
         return result
 
 
@@ -59,27 +63,31 @@ def _random_note() -> bytes:
     return secrets.token_bytes(8)
 
 
-def create_avm_invoker(app_spec: Path, algod_client: AlgodClient) -> AVMInvoker:
-    client = ApplicationClient(
-        algod_client,
-        app_spec,
-        signer=get_localnet_default_account(algod_client),
+def create_avm_invoker(app_spec: Path, algorand: AlgorandClient) -> AVMInvoker:
+    dispenser = algorand.account.localnet_dispenser()
+    factory = AppFactory(
+        AppFactoryParams(
+            algorand=algorand,
+            app_spec=app_spec.read_text(),
+            default_sender=dispenser.address,
+        ),
     )
+    try:
+        client, _ = factory.send.bare.create(
+            AppFactoryCreateParams(note=_random_note()),
+        )
+    except Exception as __:
+        client, _ = factory.send.create(
+            AppFactoryCreateMethodCallParams(method="create", note=_random_note()),
+        )
 
-    client.create(
-        transaction_parameters={
-            # random note avoids duplicate txn if tests are running concurrently
-            "note": _random_note(),
-        }
-    )
-
-    return AVMInvoker(client)
+    return AVMInvoker(client, factory)
 
 
 def generate_test_asset(  # noqa: PLR0913
     *,
     algod_client: AlgodClient,
-    sender: Account,
+    sender: SigningAccount,
     total: int | None = None,
     decimals: int = 0,
     default_frozen: bool = False,
@@ -134,18 +142,3 @@ def generate_test_asset(  # noqa: PLR0913
         return ptx["asset-index"]
     else:
         raise ValueError("Unexpected response from pending_transaction_info")
-
-
-def generate_test_account(algod_client: AlgodClient) -> Account:
-    raw_account = algosdk.account.generate_account()
-    account = Account(private_key=raw_account[0], address=raw_account[1])
-
-    ensure_funded(
-        algod_client,
-        EnsureBalanceParameters(
-            account_to_fund=account,
-            min_spending_balance_micro_algos=INITIAL_BALANCE_MICRO_ALGOS,
-        ),
-    )
-
-    return account

@@ -22,11 +22,14 @@ from _algopy_testing.utilities import OpUpFeeSource, ensure_budget, log
 from . import arc4, gtxn, itxn, op
 
 __all__ = [
+    "ARC4Contract",
     "Account",
     "Application",
-    "ARC4Contract",
     "Asset",
     "BigUInt",
+    "Box",
+    "BoxMap",
+    "BoxRef",
     "Bytes",
     "BytesBacked",
     "CompiledContract",
@@ -56,7 +59,4 @@ __all__ = [
     "subroutine",
     "uenumerate",
     "urange",
-    "Box",
-    "BoxRef",
-    "BoxMap",
 ]

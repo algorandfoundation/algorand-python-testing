@@ -1,4 +1,5 @@
 import contextlib
+import secrets
 import typing
 from pathlib import Path
 
@@ -10,10 +11,14 @@ import ecdsa  # type: ignore  # noqa: PGH003
 import ecdsa.util  # type: ignore  # noqa: PGH003
 import nacl.signing
 import pytest
-from algokit_utils import LogicError, get_localnet_default_account
+from algokit_utils import (
+    AlgoAmount,
+    AlgorandClient,
+    AppClientMethodCallParams,
+    LogicError,
+)
 from algopy import op
 from algopy_testing import AlgopyTestContext, algopy_testing_context, arc4_prefix
-from algosdk.v2client.algod import AlgodClient
 from Cryptodome.Hash import keccak
 from ecdsa import SECP256k1, SigningKey, curves
 from pytest_mock import MockerFixture
@@ -33,7 +38,6 @@ from tests.common import (
     INITIAL_BALANCE_MICRO_ALGOS,
     AVMInvoker,
     create_avm_invoker,
-    generate_test_account,
     generate_test_asset,
 )
 
@@ -80,55 +84,57 @@ def context() -> typing.Generator[AlgopyTestContext, None, None]:
 
 
 @pytest.fixture(scope="module")
-def get_crypto_ops_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    return create_avm_invoker(CRYPTO_OPS_APP_SPEC, algod_client)
+def get_crypto_ops_avm_result(algorand: AlgorandClient) -> AVMInvoker:
+    return create_avm_invoker(CRYPTO_OPS_APP_SPEC, algorand)
 
 
 @pytest.fixture(scope="module")
-def get_state_app_params_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    return create_avm_invoker(STATE_OPS_APP_PARAMS_SPEC, algod_client)
+def get_state_app_params_avm_result(algorand: AlgorandClient) -> AVMInvoker:
+    return create_avm_invoker(STATE_OPS_APP_PARAMS_SPEC, algorand)
 
 
 @pytest.fixture(scope="module")
-def get_state_app_local_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    return create_avm_invoker(STATE_OPS_APP_LOCAL_SPEC, algod_client)
+def get_state_app_local_avm_result(algorand: AlgorandClient) -> AVMInvoker:
+    return create_avm_invoker(STATE_OPS_APP_LOCAL_SPEC, algorand)
 
 
 @pytest.fixture(scope="module")
-def get_state_app_local_avm_opted_in(algod_client: AlgodClient) -> AVMInvoker:
-    invoker = create_avm_invoker(STATE_OPS_APP_LOCAL_SPEC, algod_client)
-    invoker.client.opt_in()
+def get_state_app_local_avm_opted_in(algorand: AlgorandClient) -> AVMInvoker:
+    invoker = create_avm_invoker(STATE_OPS_APP_LOCAL_SPEC, algorand)
+    invoker.client.send.opt_in(
+        AppClientMethodCallParams(method="opt_in", note=secrets.token_bytes(8))
+    )
     return invoker
 
 
 @pytest.fixture(scope="module")
-def get_state_app_global_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    return create_avm_invoker(STATE_OPS_APP_GLOBAL_SPEC, algod_client)
+def get_state_app_global_avm_result(algorand: AlgorandClient) -> AVMInvoker:
+    return create_avm_invoker(STATE_OPS_APP_GLOBAL_SPEC, algorand)
 
 
 @pytest.fixture(scope="module")
-def get_state_app_global_ex_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    return create_avm_invoker(STATE_OPS_APP_GLOBAL_EX_SPEC, algod_client)
+def get_state_app_global_ex_avm_result(algorand: AlgorandClient) -> AVMInvoker:
+    return create_avm_invoker(STATE_OPS_APP_GLOBAL_EX_SPEC, algorand)
 
 
 @pytest.fixture(scope="module")
-def get_state_app_local_ex_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    return create_avm_invoker(STATE_OPS_APP_LOCAL_EX_SPEC, algod_client)
+def get_state_app_local_ex_avm_result(algorand: AlgorandClient) -> AVMInvoker:
+    return create_avm_invoker(STATE_OPS_APP_LOCAL_EX_SPEC, algorand)
 
 
 @pytest.fixture(scope="module")
-def get_state_asset_holding_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    return create_avm_invoker(STATE_OPS_ASSET_HOLDING_SPEC, algod_client)
+def get_state_asset_holding_avm_result(algorand: AlgorandClient) -> AVMInvoker:
+    return create_avm_invoker(STATE_OPS_ASSET_HOLDING_SPEC, algorand)
 
 
 @pytest.fixture(scope="module")
-def get_state_asset_params_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    return create_avm_invoker(STATE_OPS_ASSET_PARAMS_SPEC, algod_client)
+def get_state_asset_params_avm_result(algorand: AlgorandClient) -> AVMInvoker:
+    return create_avm_invoker(STATE_OPS_ASSET_PARAMS_SPEC, algorand)
 
 
 @pytest.fixture(scope="module")
-def get_state_acct_params_avm_result(algod_client: AlgodClient) -> AVMInvoker:
-    return create_avm_invoker(STATE_OPS_ACCT_PARAMS_SPEC, algod_client)
+def get_state_acct_params_avm_result(algorand: AlgorandClient) -> AVMInvoker:
+    return create_avm_invoker(STATE_OPS_ACCT_PARAMS_SPEC, algorand)
 
 
 @pytest.mark.parametrize(
@@ -202,7 +208,6 @@ def test_sha512_256(
 
 
 def test_ed25519verify_bare(
-    algod_client: AlgodClient,
     get_crypto_ops_avm_result: AVMInvoker,
 ) -> None:
     signing_key = nacl.signing.SigningKey.generate()
@@ -210,10 +215,12 @@ def test_ed25519verify_bare(
     message = b"Test message for ed25519 verification"
     signature = signing_key.sign(message).signature
 
-    sp = algod_client.suggested_params()
-    sp.fee = 2000
     avm_result = get_crypto_ops_avm_result(
-        "verify_ed25519verify_bare", a=message, b=signature, c=public_key, suggested_params=sp
+        "verify_ed25519verify_bare",
+        a=message,
+        b=signature,
+        c=public_key,
+        static_fee=AlgoAmount(micro_algo=3000),
     )
     result = op.ed25519verify_bare(message, signature, public_key)
 
@@ -221,29 +228,29 @@ def test_ed25519verify_bare(
 
 
 def test_ed25519verify(
-    algod_client: AlgodClient,
     get_crypto_ops_avm_result: AVMInvoker,
 ) -> None:
-    approval = get_crypto_ops_avm_result.client.approval
+    compilation = get_crypto_ops_avm_result.factory.compile()
+    approval = compilation.approval_program
     assert approval
     with algopy_testing_context() as ctx:
-        app_call = ctx.any.txn.application_call(
-            approval_program=(algopy.Bytes(approval.raw_binary),)
-        )
+        app_call = ctx.any.txn.application_call(approval_program=(algopy.Bytes(value=approval),))
 
         # Prepare message and signing parameters
         message = b"Test message for ed25519 verification"
-        sp = algod_client.suggested_params()
-        sp.fee = 2000
 
         # Generate key pair and sign the message
         private_key, public_key = algosdk.account.generate_account()
         public_key = algosdk.encoding.decode_address(public_key)
-        signature = algosdk.logic.teal_sign_from_program(private_key, message, approval.raw_binary)
+        signature = algosdk.logic.teal_sign_from_program(private_key, message, approval)
 
         # Verify the signature using AVM and local op
         avm_result = get_crypto_ops_avm_result(
-            "verify_ed25519verify", a=message, b=signature, c=public_key, suggested_params=sp
+            "verify_ed25519verify",
+            a=message,
+            b=signature,
+            c=public_key,
+            static_fee=AlgoAmount(micro_algo=3000),
         )
         with ctx.txn.create_group([app_call], active_txn_index=0):
             result = op.ed25519verify(message, signature, public_key)
@@ -258,7 +265,6 @@ def test_ed25519verify_no_context() -> None:
 
 
 def test_ecdsa_verify_k1(
-    algod_client: AlgodClient,
     get_crypto_ops_avm_result: AVMInvoker,
 ) -> None:
     message_hash = bytes.fromhex(
@@ -269,9 +275,6 @@ def test_ecdsa_verify_k1(
     pubkey_x = bytes.fromhex("a710244d62747aa8db022ddd70617240adaf881b439e5f69993800e614214076")
     pubkey_y = bytes.fromhex("48d0d337704fe2c675909d2c93f7995e199156f302f63c74a8b96827b28d777b")
 
-    sp = algod_client.suggested_params()
-    sp.fee = 5000
-
     avm_result = get_crypto_ops_avm_result(
         "verify_ecdsa_verify_k1",
         a=message_hash,
@@ -279,14 +282,13 @@ def test_ecdsa_verify_k1(
         c=sig_s,
         d=pubkey_x,
         e=pubkey_y,
-        suggested_params=sp,
+        static_fee=AlgoAmount(micro_algo=5000),
     )
     result = op.ecdsa_verify(op.ECDSA.Secp256k1, message_hash, sig_r, sig_s, pubkey_x, pubkey_y)
     assert avm_result == result, "The AVM result should match the expected result"
 
 
 def test_ecdsa_verify_r1(
-    algod_client: AlgodClient,
     get_crypto_ops_avm_result: AVMInvoker,
 ) -> None:
     message_hash = bytes.fromhex(
@@ -297,9 +299,6 @@ def test_ecdsa_verify_r1(
     pubkey_x = bytes.fromhex("f8140e3b2b92f7cbdc8196bc6baa9ce86cf15c18e8ad0145d50824e6fa890264")
     pubkey_y = bytes.fromhex("bd437b75d6f1db67155a95a0da4b41f2b6b3dc5d42f7db56238449e404a6c0a3")
 
-    sp = algod_client.suggested_params()
-    sp.fee = 5000
-
     avm_result = get_crypto_ops_avm_result(
         "verify_ecdsa_verify_r1",
         a=message_hash,
@@ -307,14 +306,13 @@ def test_ecdsa_verify_r1(
         c=sig_s,
         d=pubkey_x,
         e=pubkey_y,
-        suggested_params=sp,
+        static_fee=AlgoAmount(micro_algo=5000),
     )
     result = op.ecdsa_verify(op.ECDSA.Secp256r1, message_hash, sig_r, sig_s, pubkey_x, pubkey_y)
     assert avm_result == result, "The AVM result should match the expected result"
 
 
 def test_verify_ecdsa_recover_k1(
-    algod_client: AlgodClient,
     get_crypto_ops_avm_result: AVMInvoker,
 ) -> None:
     test_data = _generate_ecdsa_test_data(SECP256k1)
@@ -325,15 +323,13 @@ def test_verify_ecdsa_recover_k1(
     d = test_data["s"].value
 
     expected_x, expected_y = op.ecdsa_pk_recover(op.ECDSA.Secp256k1, a, b, c, d)
-    sp = algod_client.suggested_params()
-    sp.fee = 3000
     result = get_crypto_ops_avm_result(
         "verify_ecdsa_recover_k1",
         a=a,
         b=b,
         c=c,
         d=d,
-        suggested_params=sp,
+        static_fee=AlgoAmount(micro_algo=5000),
     )
     assert isinstance(result, list)
     result_x, result_y = bytes(result[0]), bytes(result[1])
@@ -343,7 +339,6 @@ def test_verify_ecdsa_recover_k1(
 
 
 def test_verify_ecdsa_decompress_k1(
-    algod_client: AlgodClient,
     get_crypto_ops_avm_result: AVMInvoker,
 ) -> None:
     test_data = _generate_ecdsa_test_data(SECP256k1)
@@ -355,12 +350,10 @@ def test_verify_ecdsa_decompress_k1(
     signature_rs = c + d + bytes([b])
     pk = coincurve.PublicKey.from_signature_and_message(signature_rs, a, hasher=None)
 
-    sp = algod_client.suggested_params()
-    sp.fee = 3000
     result = get_crypto_ops_avm_result(
         "verify_ecdsa_decompress_k1",
         a=pk.format(compressed=True),
-        suggested_params=sp,
+        static_fee=AlgoAmount(micro_algo=3000),
     )
     assert isinstance(result, list)
     result_x, result_y = bytes(result[0]), bytes(result[1])
@@ -369,9 +362,7 @@ def test_verify_ecdsa_decompress_k1(
     assert result_y == pk.point()[1].to_bytes(32, byteorder="big"), "Y coordinate mismatch"
 
 
-def test_verify_vrf_verify(
-    algod_client: AlgodClient, get_crypto_ops_avm_result: AVMInvoker, mocker: MockerFixture
-) -> None:
+def test_verify_vrf_verify(get_crypto_ops_avm_result: AVMInvoker, mocker: MockerFixture) -> None:
     """
     'verify_vrf' is not implemented, the test aims to confirm that its possible to mock while
     comparing against the real vrf_verify execution.
@@ -384,10 +375,8 @@ def test_verify_vrf_verify(
     c = bytes.fromhex("3a2740da7a0788ebb12a52154acbcca1813c128ca0b249e93f8eb6563fee418d")
 
     def run_real_vrf_verify() -> tuple[algopy.Bytes, bool]:
-        sp = algod_client.suggested_params()
-        sp.fee = 6000
         result: tuple[list[int], bool] = get_crypto_ops_avm_result(  # type: ignore[assignment]
-            "verify_vrf_verify", a=a, b=b, c=c, suggested_params=sp
+            "verify_vrf_verify", a=a, b=b, c=c, static_fee=AlgoAmount(micro_algo=9000)
         )
 
         return (algopy.Bytes(bytes(result[0])), result[1])
@@ -403,33 +392,31 @@ def test_verify_vrf_verify(
 
 
 def test_asset_holding_get(
-    algod_client: AlgodClient,
+    algorand: AlgorandClient,
     get_state_asset_holding_avm_result: AVMInvoker,
     context: AlgopyTestContext,
 ) -> None:
-    dummy_account_a = get_localnet_default_account(algod_client)
+    dummy_account_a = algorand.account.localnet_dispenser()
     expected_balance = 100
     dummy_asset = generate_test_asset(
-        algod_client=algod_client,
+        algod_client=algorand.client.algod,
         total=expected_balance,
         sender=dummy_account_a,
         decimals=0,
         default_frozen=False,
     )
-    sp = algod_client.suggested_params()
-    sp.fee = 1000
 
     avm_asset_balance = get_state_asset_holding_avm_result(
         "verify_asset_holding_get",
         a=dummy_account_a.address,
         b=dummy_asset,
-        suggested_params=sp,
+        static_fee=AlgoAmount(micro_algo=1000),
     )
     avm_frozen_balance = get_state_asset_holding_avm_result(
         "verify_asset_frozen_get",
         a=dummy_account_a.address,
         b=dummy_asset,
-        suggested_params=sp,
+        static_fee=AlgoAmount(micro_algo=1000),
     )
 
     mock_asset = context.any.asset()
@@ -461,13 +448,13 @@ def test_asset_holding_get(
     ],
 )
 def test_asset_params_get(
-    algod_client: AlgodClient,
+    algorand: AlgorandClient,
     get_state_asset_params_avm_result: AVMInvoker,
     context: AlgopyTestContext,
     method_name: str,
     expected_value: object,
 ) -> None:
-    dummy_account = get_localnet_default_account(algod_client)
+    dummy_account = algorand.account.localnet_dispenser()
     creator = dummy_account.address
     metadata_hash = b"test" + b" " * 28
 
@@ -482,7 +469,7 @@ def test_asset_params_get(
     )
 
     dummy_asset = generate_test_asset(
-        algod_client=algod_client,
+        algod_client=algorand.client.algod,
         total=100,
         sender=dummy_account,
         decimals=0,
@@ -493,12 +480,11 @@ def test_asset_params_get(
         metadata_hash=metadata_hash,
     )
 
-    sp = algod_client.suggested_params()
-    sp.fee = 1000
-
     mock_contract = StateAssetParamsContract()
 
-    avm_result = get_state_asset_params_avm_result(method_name, a=dummy_asset, suggested_params=sp)
+    avm_result = get_state_asset_params_avm_result(
+        method_name, a=dummy_asset, static_fee=AlgoAmount(micro_algo=1000)
+    )
     mock_result = getattr(mock_contract, method_name)(mock_asset)
 
     if isinstance(expected_value, str):
@@ -521,36 +507,35 @@ def test_asset_params_get(
     ],
 )
 def test_app_params_get(
-    algod_client: AlgodClient,
+    algorand: AlgorandClient,
     get_state_app_params_avm_result: AVMInvoker,
     method_name: str,
     expected_value: object,
 ) -> None:
     client = get_state_app_params_avm_result.client
+    compilation = get_state_app_params_avm_result.factory.compile()
     with algopy_testing_context() as ctx:
         app_id = client.app_id
-        assert client.approval
-        assert client.clear
+        assert compilation.approval_program
+        assert compilation.clear_state_program
         assert client.app_address
         app = ctx.any.application(
             id=app_id,
-            approval_program=algopy.Bytes(client.approval.raw_binary),
-            clear_state_program=algopy.Bytes(client.clear.raw_binary),
+            approval_program=algopy.Bytes(compilation.approval_program),
+            clear_state_program=algopy.Bytes(compilation.clear_state_program),
             global_num_uint=algopy.UInt64(0),
             global_num_bytes=algopy.UInt64(0),
             local_num_uint=algopy.UInt64(0),
             local_num_bytes=algopy.UInt64(0),
             extra_program_pages=algopy.UInt64(0),
-            creator=algopy.Account(get_localnet_default_account(algod_client).address),
+            creator=algopy.Account(algorand.account.localnet_dispenser().address),
         )
 
         contract = StateAppParamsContract()
 
-        sp = algod_client.suggested_params()
-        sp.fee = 1000
-        sp.flat_fee = True
-
-        avm_result = get_state_app_params_avm_result(method_name, a=app_id, suggested_params=sp)
+        avm_result = get_state_app_params_avm_result(
+            method_name, a=app_id, static_fee=AlgoAmount(micro_algo=1000)
+        )
         contract_method = getattr(contract, method_name)
         result = contract_method(app)
 
@@ -581,13 +566,17 @@ def test_app_params_get(
     ],
 )
 def test_acct_params_get(
-    algod_client: AlgodClient,
+    algorand: AlgorandClient,
     get_state_acct_params_avm_result: AVMInvoker,
     context: AlgopyTestContext,
     method_name: str,
     expected_value: object,
 ) -> None:
-    dummy_account = generate_test_account(algod_client)
+    dummy_account = algorand.account.random()
+    algorand.account.ensure_funded_from_environment(
+        account_to_fund=dummy_account,
+        min_spending_balance=AlgoAmount(micro_algo=INITIAL_BALANCE_MICRO_ALGOS),
+    )
 
     mock_account = context.any.account(
         address=dummy_account.address,
@@ -605,14 +594,10 @@ def test_acct_params_get(
         total_box_bytes=algopy.UInt64(0),
     )
 
-    sp = algod_client.suggested_params()
-    sp.fee = 1000
-    sp.flat_fee = True
-
     mock_contract = StateAcctParamsGetContract()
 
     avm_result = get_state_acct_params_avm_result(
-        method_name, a=dummy_account.address, suggested_params=sp
+        method_name, a=dummy_account.address, static_fee=AlgoAmount(micro_algo=1000)
     )
     with context.txn.create_group(
         active_txn_overrides={"fee": algopy.UInt64(1000), "sender": mock_account}
@@ -694,8 +679,12 @@ def test_app_local_ex_get(
     assert mock_secondary_app.local_num_bytes == 2
 
     with contextlib.suppress(algosdk.error.AlgodHTTPError):
-        get_state_app_local_ex_avm_result.client.opt_in("opt_in")
-        get_state_app_local_avm_result.client.opt_in("opt_in")
+        get_state_app_local_ex_avm_result.client.send.opt_in(
+            AppClientMethodCallParams(method="opt_in", note=secrets.token_bytes(8))
+        )
+        get_state_app_local_avm_result.client.send.opt_in(
+            AppClientMethodCallParams(method="opt_in", note=secrets.token_bytes(8))
+        )
     avm_result = get_state_app_local_avm_result(
         "verify_get_ex_bytes",
         a=localnet_creator.public_key,
@@ -723,9 +712,13 @@ def test_app_local_ex_get_arc4(
     assert mock_secondary_app.local_num_uint == 1
     assert mock_secondary_app.local_num_bytes == 2
 
-    with contextlib.suppress(algosdk.error.AlgodHTTPError):
-        get_state_app_local_ex_avm_result.client.opt_in("opt_in")
-        get_state_app_local_avm_result.client.opt_in("opt_in")
+    with contextlib.suppress(algosdk.error.AlgodHTTPError, Exception):
+        get_state_app_local_ex_avm_result.client.send.opt_in(
+            AppClientMethodCallParams(method="opt_in", note=secrets.token_bytes(8))
+        )
+        get_state_app_local_avm_result.client.send.opt_in(
+            AppClientMethodCallParams(method="opt_in", note=secrets.token_bytes(8))
+        )
     avm_result = get_state_app_local_avm_result(
         "verify_get_ex_bytes",
         a=localnet_creator.public_key,

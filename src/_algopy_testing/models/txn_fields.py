@@ -508,10 +508,10 @@ __all__ = [
     "AssetConfigFields",
     "AssetFreezeFields",
     "AssetTransferFields",
-    "TransactionFieldsGetter",
     "KeyRegistrationFields",
     "PaymentFields",
     "TransactionFields",
+    "TransactionFieldsGetter",
     "get_txn_defaults",
     "narrow_field_type",
 ]
