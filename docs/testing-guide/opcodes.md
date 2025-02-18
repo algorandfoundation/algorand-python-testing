@@ -353,20 +353,22 @@ test_mock_vrf_verify()
 from unittest.mock import patch, MagicMock
 import algopy
 
-def test_mock_elliptic_curve_decompress():
-    mock_result = (algopy.Bytes(b'x_coord'), algopy.Bytes(b'y_coord'))
-    with patch('algopy.op.EllipticCurve.decompress', return_value=mock_result) as mock_decompress:
-        result = algopy.op.EllipticCurve.decompress(
+def test_mock_elliptic_curve_add():
+    mock_result = algopy.Bytes(b'result')
+    with patch('algopy.op.EllipticCurve.add', return_value=mock_result) as mock_add:
+        result = algopy.op.EllipticCurve.add(
             algopy.op.EC.BN254g1,
-            algopy.Bytes(b'compressed_point')
+            algopy.Bytes(b'a'),
+            algopy.Bytes(b'b')
         )
     assert result == mock_result
-    mock_decompress.assert_called_once_with(
+    mock_add.assert_called_once_with(
         algopy.op.EC.BN254g1,
-        algopy.Bytes(b'compressed_point')
+        algopy.Bytes(b'a'),
+        algopy.Bytes(b'b'),
     )
 
-test_mock_elliptic_curve_decompress()
+test_mock_elliptic_curve_add()
 ```
 
 These examples demonstrate how to mock key mockable opcodes in `algorand-python-testing`. Use similar techniques (in your preferred testing framework) for other mockable opcodes like `algopy.compile_logicsig`, `algopy.arc4.arc4_create`, and `algopy.arc4.arc4_update`.
