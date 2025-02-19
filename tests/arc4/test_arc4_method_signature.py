@@ -82,6 +82,7 @@ def test_app_args_is_correct_with_simple_args(
         b"\x00\x05hello",
         b"\x00\x02\x01\x02",
     ]
+    assert app_args[0] == arc4.arc4_signature(SignaturesContract.sink)
 
 
 def test_app_args_is_correct_with_alias(
@@ -106,6 +107,7 @@ def test_app_args_is_correct_with_alias(
         b"\x00\x05hello",
         b"\x00\x02\x01\x02",
     ]
+    assert app_args[0] == arc4.arc4_signature(SignaturesContract.sink2)
 
 
 def test_app_args_is_correct_with_txn(
@@ -148,6 +150,7 @@ def test_app_args_is_correct_with_txn(
         b"\x00\x05hello",
         b"\x00\x02\x01\x02",
     ]
+    assert app_args[0] == arc4.arc4_signature(SignaturesContract.with_txn)
 
 
 def test_app_args_is_correct_with_asset(
@@ -186,6 +189,7 @@ def test_app_args_is_correct_with_asset(
         b"\x00",
         b"\x00\x02\x01\x02",
     ]
+    assert app_args[0] == arc4.arc4_signature(SignaturesContract.with_asset)
 
 
 def test_app_args_is_correct_with_account(
@@ -219,6 +223,7 @@ def test_app_args_is_correct_with_account(
         b"\x01",
         b"\x00\x02\x01\x02",
     ]
+    assert app_args[0] == arc4.arc4_signature(SignaturesContract.with_acc)
 
 
 def test_app_args_is_correct_with_application(
@@ -260,6 +265,7 @@ def test_app_args_is_correct_with_application(
         other_app_id.to_bytes(length=8),  # app id as bytes
         b"\x00\x02\x01\x02",
     ]
+    assert app_args[0] == arc4.arc4_signature(SignaturesContract.with_app)
     assert app_foreign_apps == [
         self_app.id,
         other_app_id,
@@ -298,6 +304,7 @@ def test_app_args_is_correct_with_complex(
         b"\x01",  # 0th index is the sender
         b"\x00\x01\x05",
     ]
+    assert app_args[0] == arc4.arc4_signature(SignaturesContract.complex_sig)
     assert result[0].bytes == struct.another_struct.bytes
     assert result[1].bytes == struct.bytes
 
@@ -359,5 +366,6 @@ def test_prepare_txns_with_complex(
         b"\x01",  # 0th index is the sender
         b"\x00\x01\x05",
     ]
+    assert app_args[0] == arc4.arc4_signature(SignaturesContract.complex_sig)
     assert result[0].bytes == struct.another_struct.bytes
     assert result[1].bytes == struct.bytes

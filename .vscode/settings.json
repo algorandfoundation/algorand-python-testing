@@ -17,8 +17,7 @@
     "python.analysis.typeCheckingMode": "off",
 
     "ruff.enable": true,
-    "ruff.lint.run": "onSave",
-    "ruff.lint.args": ["--config=pyproject.toml"],
+    "ruff.configuration": "pyproject.toml",
     "ruff.importStrategy": "fromEnvironment",
     "ruff.fixAll": true, //lint and fix all files in workspace
     "ruff.organizeImports": true, //organize imports on save
