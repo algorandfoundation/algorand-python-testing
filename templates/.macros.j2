@@ -1,5 +1,5 @@
 {%- macro render_type_commits(type_commits) -%}
-{%- for type_ in ("breaking", "feature", "performance", "fix", "documentation") -%}
+{%- for type_ in ("breaking", "features", "performance improvements", "bug fixes", "documentation") -%}
 {%- if type_ in type_commits %}
 ### {{ type_ | capitalize }}
 {% for commit in type_commits[type_] %}
