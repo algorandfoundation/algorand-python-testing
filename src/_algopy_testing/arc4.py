@@ -37,7 +37,7 @@ from _algopy_testing.utils import (
 )
 
 if typing.TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator, Sequence
+    from collections.abc import Callable, Iterable, Iterator, Sequence
 
     import algopy
 
@@ -56,23 +56,26 @@ __all__ = [
     "Struct",
     "Tuple",
     "UFixedNxM",
-    "UInt128",
-    "UInt16",
-    "UInt256",
-    "UInt32",
-    "UInt512",
-    "UInt64",
     "UInt8",
+    "UInt16",
+    "UInt32",
+    "UInt64",
+    "UInt128",
+    "UInt256",
+    "UInt512",
     "UIntN",
     "abi_call",
     "arc4_create",
-    "arc4_update",
     "arc4_signature",
+    "arc4_update",
     "emit",
 ]
 
 _ABI_LENGTH_SIZE = 2
 _TBitSize = typing.TypeVar("_TBitSize", bound=int)
+
+_P = typing.ParamSpec("_P")
+_R = typing.TypeVar("_R")
 
 
 class _TypeInfo:
@@ -179,12 +182,22 @@ class _ABIEncoded(BytesBacked):
         return hash(self.bytes)
 
 
-def arc4_signature(signature: str, /) -> algopy.Bytes:
+def arc4_signature(signature: str | Callable[_P, _R], /) -> algopy.Bytes:
     """Convert a signature to ARC4 bytes."""
     import algopy
 
+    from _algopy_testing.decorators.arc4 import get_arc4_metadata
+
+    if isinstance(signature, str):
+        method_signature = signature
+    else:
+        arc4_signature = get_arc4_metadata(signature).arc4_signature
+        if arc4_signature is None:
+            raise ValueError("signature not found")
+        method_signature = arc4_signature
+
     hashed_signature = SHA512.new(truncate="256")
-    hashed_signature.update(signature.encode("utf-8"))
+    hashed_signature.update(method_signature.encode("utf-8"))
     return_value = hashed_signature.digest()[:4]
     return algopy.Bytes(return_value)
 
@@ -1187,11 +1200,17 @@ def _find_bool(
 ) -> int:
     """Helper function to find consecutive booleans from current index in a tuple."""
     until = 0
+    is_looking_forward = delta > 0
+    is_looking_backward = delta < 0
     values_length = len(values) if isinstance(values, tuple | list) else values.length.value
     while True:
         curr = index + delta * until
+        is_curr_at_end = curr == values_length - 1
+        is_curr_at_start = curr == 0
         if isinstance(values[curr], Bool):
-            if curr != values_length - 1 and delta > 0 or curr > 0 and delta < 0:
+            if (is_looking_forward and not is_curr_at_end) or (
+                is_looking_backward and not is_curr_at_start
+            ):
                 until += 1
             else:
                 break
@@ -1204,11 +1223,17 @@ def _find_bool(
 def _find_bool_types(values: typing.Sequence[_TypeInfo], index: int, delta: int) -> int:
     """Helper function to find consecutive booleans from current index in a tuple."""
     until = 0
+    is_looking_forward = delta > 0
+    is_looking_backward = delta < 0
     values_length = len(values)
     while True:
         curr = index + delta * until
+        is_curr_at_end = curr == values_length - 1
+        is_curr_at_start = curr == 0
         if isinstance(values[curr], _BoolTypeInfo):
-            if curr != values_length - 1 and delta > 0 or curr > 0 and delta < 0:
+            if (is_looking_forward and not is_curr_at_end) or (
+                is_looking_backward and not is_curr_at_start
+            ):
                 until += 1
             else:
                 break
