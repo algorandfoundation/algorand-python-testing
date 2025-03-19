@@ -6,11 +6,11 @@ A Test Context is a context manager that provides a simulated Algorand environme
 
 ## What is the Algorand Virtual Machine (AVM)?
 
-The Algorand Virtual Machine (AVM) is the runtime environment for Algorand smart contracts. It executes the compiled code of smart contracts on the Algorand blockchain. To learn more about the AVM, visit the [official Algorand documentation](https://developer.algorand.org/docs/get-details/dapps/avm/).
+The Algorand Virtual Machine (AVM) is the runtime environment for Algorand smart contracts. It executes the compiled code of smart contracts on the Algorand blockchain. To learn more about the AVM, visit the [official Algorand documentation](https://dev.algorand.co/concepts/smart-contracts/avm/).
 
 ## What are Operational Codes in Algorand?
 
-Operational Codes, or opcodes, are AVM instructions that are executed directly by the AVM. In the context of Algorand Python testing, these opcodes are provided by `algopy` stubs and are either emulated, implemented, or mocked by `algorand-python-testing`. For a comprehensive list of opcodes, refer to the [Algorand Developer Documentation](https://developer.algorand.org/docs/get-details/dapps/avm/teal/opcodes/?from_query=OPcodes#template-modal-overlay).
+Operational Codes, or opcodes, are AVM instructions that are executed directly by the AVM. In the context of Algorand Python testing, these opcodes are provided by `algopy` stubs and are either emulated, implemented, or mocked by `algorand-python-testing`. For a comprehensive list of opcodes, refer to the [Algorand Developer Documentation](https://dev.algorand.co/reference/algorand-teal/opcodes).
 
 ## What are Value Generators?
 

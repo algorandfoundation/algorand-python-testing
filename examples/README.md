@@ -50,7 +50,7 @@ If you have additional examples or improvements, feel free to contribute by subm
 
 ## Resources
 
--   [Algorand Developer Documentation](https://developer.algorand.org/)
+-   [Algorand Developer Documentation](https://dev.algorand.co/)
 -   [algorand-python](https://algorandfoundation.github.io/puya/)
 -   [algorand-python-testing](https://algorandfoundation.github.io/algorand-python-testing/)
--   ['arrange, act, assert' patern](https://automationpanda.com/2020/07/07/arrange-act-assert-a-pattern-for-writing-good-tests/)
+-   ['arrange, act, assert' pattern](https://automationpanda.com/2020/07/07/arrange-act-assert-a-pattern-for-writing-good-tests/)

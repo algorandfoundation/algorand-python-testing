@@ -4,9 +4,9 @@
 
 <p align="center">
     <a target="_blank" href="https://algorandfoundation.github.io/algorand-python-testing/"><img src="https://img.shields.io/badge/docs-repository-74dfdc?logo=github&style=flat.svg" /></a>
-    <a target="_blank" href="https://developer.algorand.org/algokit/"><img src="https://img.shields.io/badge/learn-AlgoKit-74dfdc?logo=algorand&mac=flat.svg" /></a>
+    <a target="_blank" href="https://algorand.co/algokit/"><img src="https://img.shields.io/badge/learn-AlgoKit-74dfdc?logo=algorand&mac=flat.svg" /></a>
     <a target="_blank" href="https://github.com/algorandfoundation/algorand-python-testing"><img src="https://img.shields.io/github/stars/algorandfoundation/algorand-python-testing?color=74dfdc&logo=star&style=flat" /></a>
-    <a target="_blank" href="https://developer.algorand.org/algokit/"><img  src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Falgorandfoundation%2Falgorand-python-testing&countColor=%2374dfdc&style=flat" /></a>
+    <a target="_blank" href="https://algorand.co/algokit/"><img  src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Falgorandfoundation%2Falgorand-python-testing&countColor=%2374dfdc&style=flat" /></a>
 </p>
 
 ---
@@ -32,16 +32,16 @@ Alternatively, if you want to start from scratch:
     ```python
     from algopy_testing import algopy_testing_context
     from your_contract import YourContract
-    
+
     def test_your_contract():
         with algopy_testing_context() as context:
             # Arrange
             contract = YourContract()
             expected_result = ... # Your expected result here
-    
+
             # Act
             result = contract.your_method(context.any.uint64())  # Your test code here
-    
+
             # Assert
             assert result == expected_result
     ```
