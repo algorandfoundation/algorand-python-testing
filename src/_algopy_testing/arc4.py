@@ -1256,10 +1256,20 @@ def _compress_multiple_bool(value_list: list[Bool]) -> int:
     return result
 
 
+def get_max_bytes_static_len(type_info: _TypeInfo) -> int | None:
+    return _get_max_bytes_len_impl(type_info, static_size_only=True)
+
+
 def _get_max_bytes_len(type_info: _TypeInfo) -> int:
+    return _get_max_bytes_len_impl(type_info) or 0
+
+
+def _get_max_bytes_len_impl(type_info: _TypeInfo, *, static_size_only: bool = False) -> int | None:
     size = 0
     if isinstance(type_info, _DynamicArrayTypeInfo):
         size += _ABI_LENGTH_SIZE
+        if static_size_only:
+            return None
     elif isinstance(type_info, _TupleTypeInfo | _StructTypeInfo | _StaticArrayTypeInfo):
         i = 0
         if isinstance(type_info, _TupleTypeInfo | _StructTypeInfo):
@@ -1276,12 +1286,18 @@ def _get_max_bytes_len(type_info: _TypeInfo) -> int:
                 if bool_num % 8 != 0:
                     size += 1
             else:
-                child_byte_size = _get_max_bytes_len(child_types[i])
+                child_byte_size = _get_max_bytes_len_impl(
+                    child_types[i], static_size_only=static_size_only
+                )
+                if child_byte_size is None:
+                    return None
                 size += child_byte_size
             i += 1
     elif isinstance(type_info, _UIntTypeInfo):
         size = type_info.max_bytes_len
 
+    elif static_size_only:
+        return None
     return size
 
 
