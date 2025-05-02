@@ -1,3 +1,4 @@
+import re
 import typing
 from collections.abc import Generator
 
@@ -5,17 +6,35 @@ import algopy
 import pytest
 from _algopy_testing import algopy_testing_context, arc4
 from _algopy_testing.context import AlgopyTestContext
+from _algopy_testing.models.account import Account
+from _algopy_testing.models.application import Application
+from _algopy_testing.models.asset import Asset
 from _algopy_testing.op.pure import itob
 from _algopy_testing.primitives.biguint import BigUInt
 from _algopy_testing.primitives.bytes import Bytes
 from _algopy_testing.primitives.string import String
 from _algopy_testing.primitives.uint64 import UInt64
 from _algopy_testing.state.box import Box
+from _algopy_testing.state.utils import cast_to_bytes
 from _algopy_testing.utils import as_bytes, as_string
 
 from tests.artifacts.BoxContract.contract import BoxContract
 
 BOX_NOT_CREATED_ERROR = "Box has not been created"
+
+
+class Swapped(arc4.Struct):
+    b: arc4.UInt64
+    c: arc4.Bool
+    d: arc4.Address
+
+
+# TODO: add tests for tuple and namedtuple once they are supported
+# class MyStruct(typing.NamedTuple):
+#     a: UInt64
+#     b: bool
+#     c: arc4.Bool
+#     d: arc4.UInt64
 
 
 class ATestContract(algopy.Contract):
@@ -66,6 +85,126 @@ def test_init_with_key(
 
     with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         _ = box.length
+
+
+@pytest.mark.parametrize(
+    ("value_type", "expected_size"),
+    [
+        (arc4.UInt64, 8),
+        (UInt64, 8),
+        (arc4.Address, 32),
+        (Account, 32),
+        (Application, 8),
+        (Asset, 8),
+        (bool, 8),
+        (arc4.StaticArray[arc4.Byte, typing.Literal[7]], 7),
+        (Swapped, 41),
+        # TODO: add tests for tuple and namedtuple once they are supported
+        # (tuple[arc4.UInt64, arc4.Bool, arc4.Address], 41),
+        # (MyStruct, 9),
+    ],
+)
+def test_create_for_static_value_type(
+    context: AlgopyTestContext,  # noqa: ARG001
+    value_type: type,
+    expected_size: int,
+) -> None:
+    key = b"test_key"
+    box = Box(value_type, key=key)  # type: ignore[var-annotated]
+    assert not box
+
+    box.create()
+    assert box
+
+    op_box_content, op_box_exists = algopy.op.Box.get(key)
+    assert op_box_exists
+    assert op_box_content == b"\x00" * expected_size
+
+    box_content, box_exists = box.maybe()
+    assert box_exists
+    assert cast_to_bytes(box_content) == b"\x00" * expected_size
+
+    assert box.length == expected_size
+
+
+@pytest.mark.parametrize(
+    ("value_type", "size", "expected_size"),
+    [
+        (arc4.UInt64, 7, 8),
+        (UInt64, 0, 8),
+        (arc4.Address, 16, 32),
+        (Account, 31, 32),
+        (Application, 1, 8),
+        (Asset, 0, 8),
+        (bool, 1, 8),
+        (arc4.StaticArray[arc4.Byte, typing.Literal[7]], 2, 7),
+    ],
+)
+def test_create_smaller_box_for_static_value_type(
+    context: AlgopyTestContext,  # noqa: ARG001
+    value_type: type,
+    size: int,
+    expected_size: int,
+) -> None:
+    key = b"test_key"
+    box = Box(value_type, key=key)  # type: ignore[var-annotated]
+    assert not box
+
+    with pytest.warns(UserWarning, match=f"Box size should not be less than {expected_size}"):
+        box.create(size=size)
+
+
+@pytest.mark.parametrize(
+    ("value_type", "size"),
+    [
+        (arc4.String, 7),
+        (arc4.DynamicArray[arc4.UInt64], 0),
+        (arc4.DynamicArray[arc4.Address], 16),
+        (Bytes, 31),
+        (arc4.StaticArray[arc4.String, typing.Literal[7]], 2),
+    ],
+)
+def test_create_box_for_dynamic_value_type(
+    context: AlgopyTestContext,  # noqa: ARG001
+    value_type: type,
+    size: int,
+) -> None:
+    key = b"test_key"
+    box = Box(value_type, key=key)  # type: ignore[var-annotated]
+    assert not box
+
+    box.create(size=size)
+
+    op_box_content, op_box_exists = algopy.op.Box.get(key)
+    assert op_box_exists
+    assert op_box_content == b"\x00" * size
+
+    assert box.length == size
+
+
+@pytest.mark.parametrize(
+    "value_type",
+    [
+        arc4.String,
+        arc4.DynamicArray[arc4.UInt64],
+        arc4.DynamicArray[arc4.Address],
+        Bytes,
+        arc4.StaticArray[arc4.String, typing.Literal[7]],
+    ],
+)
+def test_create_box_for_dynamic_value_type_with_no_size(
+    context: AlgopyTestContext,  # noqa: ARG001
+    value_type: type,
+) -> None:
+    key = b"test_key"
+    box = Box(value_type, key=key)  # type: ignore[var-annotated]
+    assert not box
+
+    with pytest.raises(
+        ValueError,
+        match=re.compile("does not have a fixed byte size. Please specify a size argument"),
+    ):
+        box.create()
 
 
 @pytest.mark.parametrize(

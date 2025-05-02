@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import typing
+import warnings
 
 import _algopy_testing
 from _algopy_testing.constants import MAX_BOX_SIZE
 from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.mutable import set_attr_on_mutate, set_item_on_mutate
 from _algopy_testing.state.utils import cast_from_bytes, cast_to_bytes
-from _algopy_testing.utils import as_bytes, as_string
+from _algopy_testing.utils import as_bytes, as_int64, as_string, get_static_size_of
 
 _TKey = typing.TypeVar("_TKey")
 _TValue = typing.TypeVar("_TValue")
@@ -37,6 +38,45 @@ class Box(typing.Generic[_TValue]):
 
     def __bool__(self) -> bool:
         return lazy_context.ledger.box_exists(self.app_id, self.key)
+
+    def create(self, *, size: algopy.UInt64 | int | None = None) -> bool:
+        missing_size_err_msg = (
+            f"{self._type} does not have a fixed byte size. Please specify a size argument"
+        )
+
+        size_arg = None if size is None else as_int64(size)
+        content_type_size = get_static_size_of(self._type)
+
+        if content_type_size is None and size_arg is None:
+            raise ValueError(missing_size_err_msg)
+        if content_type_size is not None and size_arg is not None:
+            if size_arg < content_type_size:
+                warnings.warn(
+                    f"Box size should not be less than {content_type_size}",
+                    stacklevel=2,
+                )
+
+            if size_arg > content_type_size:
+                warnings.warn(
+                    f"Size is set to {size_arg} but {self._type} has a fixed size of {content_type_size}",  # noqa: E501
+                    stacklevel=2,
+                )
+
+        size_int = size_arg if size_arg is not None else content_type_size
+        assert size_int is not None, missing_size_err_msg
+
+        if size_int > MAX_BOX_SIZE:
+            raise ValueError(f"Box size cannot exceed {MAX_BOX_SIZE}")
+
+        box_exists = lazy_context.ledger.box_exists(self.app_id, self.key)
+        if box_exists:
+            if self.length == size_int:
+                return False
+            else:
+                raise ValueError(f"Box already exists with a different size: {self.length}")
+
+        lazy_context.ledger.set_box(self.app_id, self.key, b"\x00" * size_int)
+        return True
 
     @property
     def key(self) -> algopy.Bytes:
