@@ -17,7 +17,7 @@ from _algopy_testing.op import Global, Txn
 from _algopy_testing.primitives import Array, BigUInt, Bytes, ImmutableArray, String, UInt64
 from _algopy_testing.protocols import BytesBacked
 from _algopy_testing.state import Box, BoxMap, BoxRef, GlobalState, LocalState
-from _algopy_testing.utilities import OpUpFeeSource, ensure_budget, log
+from _algopy_testing.utilities import OpUpFeeSource, ensure_budget, log, size_of
 
 from . import arc4, gtxn, itxn, op
 
@@ -59,6 +59,7 @@ __all__ = [
     "logicsig",
     "op",
     "subroutine",
+    "size_of",
     "uenumerate",
     "urange",
 ]

@@ -1,9 +1,7 @@
-import re
 import typing
 
 import pytest
-from _algopy_testing.utilities.size_of import size_of
-from algopy import Account, Application, Asset, Bytes, String, UInt64, arc4
+from algopy import Account, Application, Asset, Bytes, String, UInt64, arc4, size_of
 
 
 class Swapped(arc4.Struct):
@@ -52,14 +50,16 @@ def test_size_of() -> None:
     assert size_of(arc4.StaticArray(arc4.Byte(), arc4.Byte())) == 2
     assert size_of(Swapped) == 52
 
-    with pytest.raises(ValueError, match=re.compile("is dynamically sized")):
-        size_of(arc4.StaticArray[arc4.DynamicBytes, typing.Literal[7]])
 
-    with pytest.raises(ValueError, match=re.compile("is dynamically sized")):
-        size_of(tuple[arc4.DynamicBytes, Bytes])
-
-    with pytest.raises(ValueError, match=re.compile("is dynamically sized")):
-        size_of(arc4.Tuple[arc4.UInt64, arc4.String])
-
-    with pytest.raises(ValueError, match=re.compile("is dynamically sized")):
-        size_of(MyDynamicSizedTuple)
+@pytest.mark.parametrize(
+    "typ",
+    [
+        arc4.StaticArray[arc4.DynamicBytes, typing.Literal[7]],
+        tuple[arc4.DynamicBytes, Bytes],
+        arc4.Tuple[arc4.UInt64, arc4.String],
+        MyDynamicSizedTuple,
+    ],
+)
+def test_size_of_dynamic(typ: type) -> None:
+    with pytest.raises(ValueError, match="is dynamically sized"):
+        size_of(typ)
