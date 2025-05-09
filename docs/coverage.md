@@ -3,7 +3,7 @@
 See which `algorand-python` stubs are implemented by the `algorand-python-testing` library. See the [Concepts](testing-guide/concepts.md#types-of-algopy-stub-implementations) section for more details on the implementation categories. Refer to the [`algorand-python` stubs API](api.md) for the full list of the stubs for which the `algorand-python-testing` library provides implementations referenced in the table below.
 
 | Name                                        | Implementation type |
-| ------------------------------------------- | ------------------- |
+|---------------------------------------------|---------------------|
 | algopy.Account                              | Emulated            |
 | algopy.Application                          | Emulated            |
 | algopy.Asset                                | Emulated            |
@@ -33,6 +33,7 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | algopy.ensure_budget                        | Emulated            |
 | algopy.log                                  | Emulated            |
 | algopy.logicsig                             | Emulated            |
+| algopy.size_of                              | Emulated            |
 | algopy.subroutine                           | Native              |
 | algopy.uenumerate                           | Native              |
 | algopy.urange                               | Native              |
