@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import secrets
+import types
 import typing
 from typing import TYPE_CHECKING
 
@@ -22,8 +23,6 @@ from _algopy_testing.constants import (
 )
 
 if TYPE_CHECKING:
-    import types
-
     import algopy
 
     from _algopy_testing.op.global_values import GlobalFields
@@ -195,3 +194,22 @@ def raise_mocked_function_error(func_name: str) -> typing.Never:
         f"{func_name!r} is not available in test context. "
         "Mock using your preferred testing framework."
     )
+
+
+def get_static_size_of(typ: type | object, /) -> int | None:
+    from _algopy_testing import UInt64
+    from _algopy_testing.arc4 import get_max_bytes_static_len
+    from _algopy_testing.serialize import get_native_to_arc4_serializer
+
+    if isinstance(typ, types.GenericAlias):
+        pass
+    elif not isinstance(typ, type):
+        typ = type(typ)
+
+    if typ is bool:  # treat bool on its own as a uint64
+        typ = UInt64
+    serializer = get_native_to_arc4_serializer(typ)  # type: ignore[arg-type]
+    type_info = serializer.arc4_type._type_info
+    size = get_max_bytes_static_len(type_info)
+
+    return size
