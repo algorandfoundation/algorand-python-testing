@@ -1,4 +1,18 @@
 # CHANGELOG
+## v0.6.0-beta.1 (2025-05-09)
+
+### Features
+
+* add stub implementation of algopy.size_of function for calculating static storage size of types ([`98e6816`](https://github.com/algorandfoundation/algorand-python-testing/commit/98e6816a48f1cff206f2c99d1384af1855d352c2))
+
+### Bug fixes
+
+* ensure size_of is exported from algopy module ([`01c055a`](https://github.com/algorandfoundation/algorand-python-testing/commit/01c055a4d2bd1fe17324bd91f7a83810900baa4e))
+
+### Documentation
+
+* include size_of in coverage doc ([`2c73646`](https://github.com/algorandfoundation/algorand-python-testing/commit/2c7364626357844437fd80b6039c112a87b277bb))
+
 ## v0.5.0 (2025-02-20)
 
 ## v0.5.0-beta.1 (2025-02-19)
