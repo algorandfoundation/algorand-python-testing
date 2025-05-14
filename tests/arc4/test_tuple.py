@@ -2,8 +2,10 @@ import typing
 
 import pytest
 from _algopy_testing import arc4
+from algopy_testing import AlgopyTestContext, algopy_testing_context
 from algosdk import abi
 
+from tests.artifacts.Tuples.contract import TuplesContract
 from tests.util import int_to_bytes
 
 _abi_string = "hello"
@@ -14,6 +16,14 @@ _abi_bool = True
 _arc4_string = arc4.String("hello")
 _arc4_uint8 = arc4.UInt8(42)
 _arc4_bool = arc4.Bool(True)
+
+
+# New fixture
+@pytest.fixture()
+def context() -> typing.Generator[AlgopyTestContext, None, None]:
+    with algopy_testing_context() as ctx:
+        yield ctx
+
 
 _test_data = [
     (
@@ -279,3 +289,8 @@ def _compare_abi_and_arc4_values(
         assert arc4_value.native == abi_value
     else:
         assert arc4_value.bytes == int_to_bytes(abi_value, len(arc4_value.bytes))
+
+
+def test_tuple_return_with_primitive_type(context: AlgopyTestContext) -> None:  # noqa: ARG001
+    contract = TuplesContract()
+    contract.test_tuple_with_primitive_type()
