@@ -6,6 +6,7 @@ from typing import overload
 from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.mutable import set_attr_on_mutate
 from _algopy_testing.primitives import Bytes, String
+from _algopy_testing.serialize import type_of
 from _algopy_testing.state.utils import deserialize, serialize
 
 if typing.TYPE_CHECKING:
@@ -49,10 +50,10 @@ class GlobalState(typing.Generic[_T]):
         self._key: Bytes | None = None
         self._pending_value: _T | None = None
 
-        if isinstance(type_or_value, type):
-            self.type_: type[_T] = type_or_value
+        if isinstance(type_or_value, type) or isinstance(typing.get_origin(type_or_value), type):
+            self.type_: type[_T] = typing.cast(type[_T], type_or_value)
         else:
-            self.type_ = type(type_or_value)
+            self.type_ = type_of(type_or_value)
             self._pending_value = type_or_value
 
         self.set_key(key)
@@ -123,9 +124,7 @@ class GlobalState(typing.Generic[_T]):
         try:
             return self.value
         except ValueError:
-            if default is not None:
-                return default
-            return self.type_()
+            return typing.cast(_T, default)
 
     def maybe(self) -> tuple[_T | None, bool]:
         try:

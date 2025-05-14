@@ -29,12 +29,12 @@ class Swapped(arc4.Struct):
     d: arc4.Address
 
 
-# TODO: add tests for tuple and namedtuple once they are supported
-# class MyStruct(typing.NamedTuple):
-#     a: UInt64
-#     b: bool
-#     c: arc4.Bool
-#     d: arc4.UInt64
+class MyStruct(typing.NamedTuple):
+    a: UInt64
+    b: bool
+    c: arc4.Bool
+    d: arc4.UInt64
+    e: Swapped
 
 
 class ATestContract(algopy.Contract):
@@ -64,6 +64,16 @@ def test_init_without_key() -> None:
         (BigUInt, String("key")),
         (arc4.String, "Key"),
         (arc4.DynamicArray, b"Key"),
+        (Swapped, b"key"),
+        (
+            tuple[arc4.UInt64, arc4.Bool, bool, arc4.Address],
+            "key",
+        ),
+        (
+            arc4.Tuple[arc4.UInt64, arc4.Bool, arc4.Address],
+            "key",
+        ),
+        (MyStruct, b"key"),
     ],
 )
 def test_init_with_key(
@@ -99,9 +109,9 @@ def test_init_with_key(
         (bool, 8),
         (arc4.StaticArray[arc4.Byte, typing.Literal[7]], 7),
         (Swapped, 41),
-        # TODO: add tests for tuple and namedtuple once they are supported
-        # (tuple[arc4.UInt64, arc4.Bool, arc4.Address], 41),
-        # (MyStruct, 9),
+        (tuple[arc4.UInt64, arc4.Bool, bool, arc4.Address], 41),
+        (arc4.Tuple[arc4.UInt64, arc4.Bool, arc4.Address], 41),
+        (MyStruct, 58),
     ],
 )
 def test_create_for_static_value_type(
@@ -138,6 +148,10 @@ def test_create_for_static_value_type(
         (Asset, 0, 8),
         (bool, 1, 8),
         (arc4.StaticArray[arc4.Byte, typing.Literal[7]], 2, 7),
+        (Swapped, 40, 41),
+        (tuple[arc4.UInt64, arc4.Bool, bool, arc4.Address], 12, 41),
+        (arc4.Tuple[arc4.UInt64, arc4.Bool, arc4.Address], 12, 41),
+        (MyStruct, 1, 58),
     ],
 )
 def test_create_smaller_box_for_static_value_type(
@@ -207,8 +221,7 @@ def test_create_box_for_dynamic_value_type_with_no_size(
         box.create()
 
 
-@pytest.mark.parametrize(
-    ("value_type", "value"),
+test_data_array = (
     [
         (UInt64, UInt64(100)),
         (Bytes, Bytes(b"Test")),
@@ -216,8 +229,37 @@ def test_create_box_for_dynamic_value_type_with_no_size(
         (BigUInt, BigUInt(100)),
         (arc4.String, arc4.String("Test")),
         (arc4.DynamicArray[arc4.UInt64], arc4.DynamicArray(*[arc4.UInt64(100), arc4.UInt64(200)])),
+        (
+            Swapped,
+            Swapped(arc4.UInt64(100), arc4.Bool(True), arc4.Address(algopy.Bytes(b"\x00" * 32))),
+        ),
+        (
+            tuple[arc4.UInt64, arc4.Bool, bool, arc4.Address],
+            (arc4.UInt64(100), arc4.Bool(True), True, arc4.Address(algopy.Bytes(b"\x00" * 32))),
+        ),
+        (
+            arc4.Tuple[arc4.UInt64, arc4.Bool, arc4.Address],
+            arc4.Tuple(
+                (arc4.UInt64(100), arc4.Bool(True), arc4.Address(algopy.Bytes(b"\x00" * 32)))
+            ),
+        ),
+        (
+            MyStruct,
+            MyStruct(
+                UInt64(100),
+                True,
+                arc4.Bool(True),
+                arc4.UInt64(100),
+                Swapped(
+                    arc4.UInt64(100), arc4.Bool(True), arc4.Address(algopy.Bytes(b"\x00" * 32))
+                ),
+            ),
+        ),
     ],
 )
+
+
+@pytest.mark.parametrize(("value_type", "value"), *test_data_array)
 def test_value_setter(
     context: AlgopyTestContext,  # noqa: ARG001
     value_type: type,
@@ -235,17 +277,7 @@ def test_value_setter(
     _assert_box_content_equality(value, box.value, op_box_content)
 
 
-@pytest.mark.parametrize(
-    ("value_type", "value"),
-    [
-        (UInt64, UInt64(100)),
-        (Bytes, Bytes(b"Test")),
-        (String, String("Test")),
-        (BigUInt, BigUInt(100)),
-        (arc4.String, arc4.String("Test")),
-        (arc4.DynamicArray[arc4.UInt64], arc4.DynamicArray(*[arc4.UInt64(100), arc4.UInt64(200)])),
-    ],
-)
+@pytest.mark.parametrize(("value_type", "value"), *test_data_array)
 def test_value_deleter(
     context: AlgopyTestContext,  # noqa: ARG001
     value_type: type,
@@ -266,17 +298,7 @@ def test_value_deleter(
     assert not op_box_content
 
 
-@pytest.mark.parametrize(
-    ("value_type", "value"),
-    [
-        (UInt64, UInt64(100)),
-        (Bytes, Bytes(b"Test")),
-        (String, String("Test")),
-        (BigUInt, BigUInt(100)),
-        (arc4.String, arc4.String("Test")),
-        (arc4.DynamicArray[arc4.UInt64], arc4.DynamicArray(*[arc4.UInt64(100), arc4.UInt64(200)])),
-    ],
-)
+@pytest.mark.parametrize(("value_type", "value"), *test_data_array)
 def test_maybe(
     context: AlgopyTestContext,  # noqa: ARG001
     value_type: type,
@@ -295,17 +317,7 @@ def test_maybe(
     _assert_box_content_equality(value, box_content, op_box_content)
 
 
-@pytest.mark.parametrize(
-    ("value_type", "value"),
-    [
-        (UInt64, UInt64(100)),
-        (Bytes, Bytes(b"Test")),
-        (String, String("Test")),
-        (BigUInt, BigUInt(100)),
-        (arc4.String, arc4.String("Test")),
-        (arc4.DynamicArray[arc4.UInt64], arc4.DynamicArray(*[arc4.UInt64(100), arc4.UInt64(200)])),
-    ],
-)
+@pytest.mark.parametrize(("value_type", "value"), *test_data_array)
 def test_maybe_when_box_does_not_exist(
     context: AlgopyTestContext,  # noqa: ARG001
     value_type: type,
@@ -337,7 +349,7 @@ def _assert_box_content_equality(
         assert box_content == algopy.op.btoi(op_box_content)
     else:
         assert box_content == expected_value
-        assert box_content == op_box_content
+        assert cast_to_bytes(box_content) == op_box_content
 
 
 def test_enums_in_boxes() -> None:

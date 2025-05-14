@@ -270,7 +270,6 @@ class StateAssetParamsContract(ARC4Contract):
 
 
 class StateAppParamsContract(ARC4Contract):
-
     @arc4.abimethod()
     def verify_app_params_get_approval_program(self, a: Application) -> Bytes:
         value, exists = op.AppParamsGet.app_approval_program(a)
@@ -521,6 +520,7 @@ class GlobalStateContract(ARC4Contract):
         self.implicit_key_arc4_address = GlobalState(arc4.Address(Global.creator_address))
         self.implicit_key_arc4_uint128 = GlobalState(arc4.UInt128(2**100))
         self.implicit_key_arc4_dynamic_bytes = GlobalState(arc4.DynamicBytes(b"dynamic bytes"))
+        self.implicit_key_tuple = GlobalState((UInt64(10), Bytes(b"test"), False))
 
         # Explicit key state variables
         self.arc4_uint = GlobalState(arc4.UInt64(1337), key="explicit_key_arc4_uint")
@@ -563,6 +563,10 @@ class GlobalStateContract(ARC4Contract):
     @arc4.abimethod()
     def get_implicit_key_arc4_dynamic_bytes(self) -> arc4.DynamicBytes:
         return self.implicit_key_arc4_dynamic_bytes.value
+
+    @arc4.abimethod()
+    def get_implicit_key_tuple(self) -> tuple[UInt64, Bytes, bool]:
+        return self.implicit_key_tuple.value
 
     # Getter methods for explicit key state variables
     @arc4.abimethod()
@@ -622,6 +626,10 @@ class GlobalStateContract(ARC4Contract):
     def set_implicit_key_arc4_dynamic_bytes(self, value: arc4.DynamicBytes) -> None:
         self.implicit_key_arc4_dynamic_bytes.value = value.copy()
 
+    @arc4.abimethod()
+    def set_implicit_key_tuple(self, value: tuple[UInt64, Bytes, bool]) -> None:
+        self.implicit_key_tuple.value = value
+
     # Setter methods for explicit key state variables
     @arc4.abimethod()
     def set_arc4_uint(self, value: arc4.UInt64) -> None:
@@ -662,6 +670,7 @@ class LocalStateContract(ARC4Contract):
         self.implicit_key_arc4_address = LocalState(arc4.Address)
         self.implicit_key_arc4_uint128 = LocalState(arc4.UInt128)
         self.implicit_key_arc4_dynamic_bytes = LocalState(arc4.DynamicBytes)
+        self.implicit_key_tuple = LocalState(tuple[UInt64, Bytes, bool])
 
         # Explicit key state variables
         self.arc4_uint = LocalState(arc4.UInt64, key="explicit_key_arc4_uint")
@@ -687,6 +696,7 @@ class LocalStateContract(ARC4Contract):
         self.implicit_key_arc4_dynamic_bytes[Global.creator_address] = arc4.DynamicBytes(
             b"dynamic bytes"
         )
+        self.implicit_key_tuple[Global.creator_address] = (UInt64(10), Bytes(b"test"), False)
 
         self.arc4_uint[Global.creator_address] = arc4.UInt64(1337)
         self.arc4_string[Global.creator_address] = arc4.String("Hello")
@@ -724,6 +734,10 @@ class LocalStateContract(ARC4Contract):
     @arc4.abimethod()
     def get_implicit_key_arc4_dynamic_bytes(self, a: Account) -> arc4.DynamicBytes:
         return self.implicit_key_arc4_dynamic_bytes[a]
+
+    @arc4.abimethod()
+    def get_implicit_key_tuple(self, a: Account) -> tuple[UInt64, Bytes, bool]:
+        return self.implicit_key_tuple[a]
 
     # Getter methods for explicit key state variables
     @arc4.abimethod()
