@@ -25,66 +25,71 @@ def identity(i: _T) -> _T:
     return i
 
 
-def get_native_to_arc4_serializer(typ: type[_T]) -> _Serializer:  # type: ignore[type-arg] # noqa: PLR0911
+def get_native_to_arc4_serializer(typ: type[_T]) -> _Serializer:  # type: ignore[type-arg]  # noqa: PLR0911, PLR0912
     from _algopy_testing import arc4
     from _algopy_testing.models import Account
     from _algopy_testing.primitives import BigUInt, Bytes, ImmutableArray, String
     from _algopy_testing.protocols import UInt64Backed
 
-    if issubclass(typ, arc4._ABIEncoded):
+    origin_typ = typing.get_origin(typ)
+
+    if inspect.isclass(typ) and issubclass(typ, arc4._ABIEncoded):
         return _Serializer(
             native_type=typ, arc4_type=typ, native_to_arc4=identity, arc4_to_native=identity
         )
-    if issubclass(typ, bool):
-        return _Serializer(
-            native_type=typ,
-            arc4_type=arc4.Bool,
-            native_to_arc4=arc4.Bool,
-            arc4_to_native=lambda n: n.native,
-        )
-    if issubclass(typ, UInt64Backed):
-        return _Serializer(
-            native_type=typ,
-            arc4_type=arc4.UInt64,
-            native_to_arc4=lambda n: arc4.UInt64(n.int_),
-            arc4_to_native=lambda a: typ.from_int(a.native),
-        )
-    if issubclass(typ, BigUInt):
-        return _Serializer(
-            native_type=typ,
-            arc4_type=arc4.UInt512,
-            native_to_arc4=arc4.UInt512,
-            arc4_to_native=lambda a: a.native,
-        )
-    if issubclass(typ, Account):
-        return _Serializer(
-            native_type=typ,
-            arc4_type=arc4.Address,
-            native_to_arc4=arc4.Address,
-            arc4_to_native=lambda a: a.native,
-        )
-    if issubclass(typ, UInt64):
-        return _Serializer(
-            native_type=typ,
-            arc4_type=arc4.UInt64,
-            native_to_arc4=arc4.UInt64,
-            arc4_to_native=lambda a: a.native,
-        )
-    if issubclass(typ, Bytes):
-        return _Serializer(
-            native_type=typ,
-            arc4_type=arc4.DynamicBytes,
-            native_to_arc4=arc4.DynamicBytes,
-            arc4_to_native=lambda a: a.native,
-        )
-    if issubclass(typ, String):
-        return _Serializer(
-            native_type=typ,
-            arc4_type=arc4.String,
-            native_to_arc4=arc4.String,
-            arc4_to_native=lambda a: a.native,
-        )
-    if issubclass(typ, tuple) or typing.get_origin(typ) is tuple:
+    # For types that are expected to be simple classes for these specific checks
+    if inspect.isclass(typ):
+        if issubclass(typ, bool):
+            return _Serializer(
+                native_type=typ,
+                arc4_type=arc4.Bool,
+                native_to_arc4=arc4.Bool,
+                arc4_to_native=lambda n: n.native,
+            )
+        if issubclass(typ, UInt64Backed):
+            return _Serializer(
+                native_type=typ,
+                arc4_type=arc4.UInt64,
+                native_to_arc4=lambda n: arc4.UInt64(n.int_),
+                arc4_to_native=lambda a: typ.from_int(a.native),
+            )
+        if issubclass(typ, BigUInt):
+            return _Serializer(
+                native_type=typ,
+                arc4_type=arc4.UInt512,
+                native_to_arc4=arc4.UInt512,
+                arc4_to_native=lambda a: a.native,
+            )
+        if issubclass(typ, Account):
+            return _Serializer(
+                native_type=typ,
+                arc4_type=arc4.Address,
+                native_to_arc4=arc4.Address,
+                arc4_to_native=lambda a: a.native,
+            )
+        if issubclass(typ, UInt64):
+            return _Serializer(
+                native_type=typ,
+                arc4_type=arc4.UInt64,
+                native_to_arc4=arc4.UInt64,
+                arc4_to_native=lambda a: a.native,
+            )
+        if issubclass(typ, Bytes):
+            return _Serializer(
+                native_type=typ,
+                arc4_type=arc4.DynamicBytes,
+                native_to_arc4=arc4.DynamicBytes,
+                arc4_to_native=lambda a: a.native,
+            )
+        if issubclass(typ, String):
+            return _Serializer(
+                native_type=typ,
+                arc4_type=arc4.String,
+                native_to_arc4=arc4.String,
+                arc4_to_native=lambda a: a.native,
+            )
+
+    if origin_typ is tuple or (inspect.isclass(typ) and issubclass(typ, tuple)):
         if typing.NamedTuple in getattr(typ, "__orig_bases__", []):
             tuple_fields: Sequence[type] = list(inspect.get_annotations(typ).values())
         else:
