@@ -322,9 +322,9 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
     def maybe(self, key: _TKey) -> tuple[_TValue, bool]:
         key_bytes = self._full_key(key)
         box_exists = lazy_context.ledger.box_exists(self.app_id, key_bytes)
-        if not box_exists:
-            return self._value_type(), False
-        box_content_bytes = lazy_context.ledger.get_box(self.app_id, key_bytes)
+        box_content_bytes = (
+            b"" if not box_exists else lazy_context.ledger.get_box(self.app_id, key_bytes)
+        )
         box_content = cast_from_bytes(self._value_type, box_content_bytes)
         return box_content, box_exists
 

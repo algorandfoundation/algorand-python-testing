@@ -439,13 +439,15 @@ verify_acct_balance:
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:33-35
-    // assert value == algopy.op.balance(
-    //     _get_1st_ref_index()
-    // ), "expected op.balance by index to match"
+    // tests/artifacts/StateOps/contract.py:33
+    // assert value == algopy.op.balance(_get_1st_ref_index()), (
     balance
     dig 1
     ==
+    // tests/artifacts/StateOps/contract.py:33-35
+    // assert value == algopy.op.balance(_get_1st_ref_index()), (
+    //     "expected op.balance by index to match"
+    // )
     assert // expected op.balance by index to match
     // tests/artifacts/StateOps/contract.py:36
     // return value
@@ -498,13 +500,15 @@ verify_acct_min_balance:
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:46-48
-    // assert value == algopy.op.min_balance(
-    //     _get_1st_ref_index()
-    // ), "expected op.min_balance by index to match"
+    // tests/artifacts/StateOps/contract.py:46
+    // assert value == algopy.op.min_balance(_get_1st_ref_index()), (
     min_balance
     dig 1
     ==
+    // tests/artifacts/StateOps/contract.py:46-48
+    // assert value == algopy.op.min_balance(_get_1st_ref_index()), (
+    //     "expected op.min_balance by index to match"
+    // )
     assert // expected op.min_balance by index to match
     // tests/artifacts/StateOps/contract.py:49
     // return value

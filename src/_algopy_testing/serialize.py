@@ -136,9 +136,16 @@ def native_to_arc4(value: object) -> "_ABIEncoded":
     return arc4_value
 
 
+def compare_type(value_type: type, typ: type) -> bool:
+    if typing.NamedTuple in getattr(typ, "__orig_bases__", []):
+        tuple_fields: Sequence[type] = list(inspect.get_annotations(typ).values())
+        typ = tuple[*tuple_fields]  # type: ignore[valid-type]
+    return value_type == typ
+
+
 def deserialize_from_bytes(typ: type[_T], bites: bytes) -> _T:
     serializer = get_native_to_arc4_serializer(typ)
     arc4_value = serializer.arc4_type.from_bytes(bites)
     native_value = serializer.arc4_to_native(arc4_value)
-    assert isinstance(native_value, typ)
-    return native_value
+    assert compare_type(type_of(native_value), typ) or isinstance(native_value, typ)
+    return native_value  # type: ignore[no-any-return]

@@ -1,0 +1,107 @@
+{
+    "name": "Arc4InnerTxnsContract",
+    "structs": {},
+    "methods": [
+        {
+            "name": "opt_in_dummy_asset",
+            "args": [
+                {
+                    "type": "asset",
+                    "name": "asset"
+                }
+            ],
+            "returns": {
+                "type": "void"
+            },
+            "actions": {
+                "create": [],
+                "call": [
+                    "NoOp"
+                ]
+            },
+            "readonly": false,
+            "events": [],
+            "recommendations": {}
+        }
+    ],
+    "arcs": [
+        22,
+        28
+    ],
+    "networks": {},
+    "state": {
+        "schema": {
+            "global": {
+                "ints": 0,
+                "bytes": 0
+            },
+            "local": {
+                "ints": 0,
+                "bytes": 0
+            }
+        },
+        "keys": {
+            "global": {},
+            "local": {},
+            "box": {}
+        },
+        "maps": {
+            "global": {},
+            "local": {},
+            "box": {}
+        }
+    },
+    "bareActions": {
+        "create": [
+            "NoOp"
+        ],
+        "call": []
+    },
+    "sourceInfo": {
+        "approval": {
+            "sourceInfo": [
+                {
+                    "pc": [
+                        28
+                    ],
+                    "errorMessage": "OnCompletion is not NoOp"
+                },
+                {
+                    "pc": [
+                        51
+                    ],
+                    "errorMessage": "can only call when creating"
+                },
+                {
+                    "pc": [
+                        31
+                    ],
+                    "errorMessage": "can only call when not creating"
+                }
+            ],
+            "pcOffsetMethod": "none"
+        },
+        "clear": {
+            "sourceInfo": [],
+            "pcOffsetMethod": "none"
+        }
+    },
+    "source": {
+        "approval": "I3ByYWdtYSB2ZXJzaW9uIDEwCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBhbGdvcHkuYXJjNC5BUkM0Q29udHJhY3QuYXBwcm92YWxfcHJvZ3JhbSgpIC0+IHVpbnQ2NDoKbWFpbjoKICAgIGludGNibG9jayAwIDEKICAgIC8vIHRlc3RzL2FydGlmYWN0cy9BcmM0SW5uZXJUeG5zL2NvbnRyYWN0LnB5OjQKICAgIC8vIGNsYXNzIEFyYzRJbm5lclR4bnNDb250cmFjdChBUkM0Q29udHJhY3QpOgogICAgdHhuIE51bUFwcEFyZ3MKICAgIGJ6IG1haW5fYmFyZV9yb3V0aW5nQDYKICAgIHB1c2hieXRlcyAweGUyMzUzMTI0IC8vIG1ldGhvZCAib3B0X2luX2R1bW15X2Fzc2V0KGFzc2V0KXZvaWQiCiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAwCiAgICBtYXRjaCBtYWluX29wdF9pbl9kdW1teV9hc3NldF9yb3V0ZUAzCgptYWluX2FmdGVyX2lmX2Vsc2VAMTA6CiAgICAvLyB0ZXN0cy9hcnRpZmFjdHMvQXJjNElubmVyVHhucy9jb250cmFjdC5weTo0CiAgICAvLyBjbGFzcyBBcmM0SW5uZXJUeG5zQ29udHJhY3QoQVJDNENvbnRyYWN0KToKICAgIGludGNfMCAvLyAwCiAgICByZXR1cm4KCm1haW5fb3B0X2luX2R1bW15X2Fzc2V0X3JvdXRlQDM6CiAgICAvLyB0ZXN0cy9hcnRpZmFjdHMvQXJjNElubmVyVHhucy9jb250cmFjdC5weTo1CiAgICAvLyBAYXJjNC5hYmltZXRob2QKICAgIHR4biBPbkNvbXBsZXRpb24KICAgICEKICAgIGFzc2VydCAvLyBPbkNvbXBsZXRpb24gaXMgbm90IE5vT3AKICAgIHR4biBBcHBsaWNhdGlvbklECiAgICBhc3NlcnQgLy8gY2FuIG9ubHkgY2FsbCB3aGVuIG5vdCBjcmVhdGluZwogICAgLy8gdGVzdHMvYXJ0aWZhY3RzL0FyYzRJbm5lclR4bnMvY29udHJhY3QucHk6NAogICAgLy8gY2xhc3MgQXJjNElubmVyVHhuc0NvbnRyYWN0KEFSQzRDb250cmFjdCk6CiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAxCiAgICBidG9pCiAgICB0eG5hcyBBc3NldHMKICAgIC8vIHRlc3RzL2FydGlmYWN0cy9BcmM0SW5uZXJUeG5zL2NvbnRyYWN0LnB5OjUKICAgIC8vIEBhcmM0LmFiaW1ldGhvZAogICAgY2FsbHN1YiBvcHRfaW5fZHVtbXlfYXNzZXQKICAgIGludGNfMSAvLyAxCiAgICByZXR1cm4KCm1haW5fYmFyZV9yb3V0aW5nQDY6CiAgICAvLyB0ZXN0cy9hcnRpZmFjdHMvQXJjNElubmVyVHhucy9jb250cmFjdC5weTo0CiAgICAvLyBjbGFzcyBBcmM0SW5uZXJUeG5zQ29udHJhY3QoQVJDNENvbnRyYWN0KToKICAgIHR4biBPbkNvbXBsZXRpb24KICAgIGJueiBtYWluX2FmdGVyX2lmX2Vsc2VAMTAKICAgIHR4biBBcHBsaWNhdGlvbklECiAgICAhCiAgICBhc3NlcnQgLy8gY2FuIG9ubHkgY2FsbCB3aGVuIGNyZWF0aW5nCiAgICBpbnRjXzEgLy8gMQogICAgcmV0dXJuCgoKLy8gdGVzdHMuYXJ0aWZhY3RzLkFyYzRJbm5lclR4bnMuY29udHJhY3QuQXJjNElubmVyVHhuc0NvbnRyYWN0Lm9wdF9pbl9kdW1teV9hc3NldChhc3NldDogdWludDY0KSAtPiB2b2lkOgpvcHRfaW5fZHVtbXlfYXNzZXQ6CiAgICAvLyB0ZXN0cy9hcnRpZmFjdHMvQXJjNElubmVyVHhucy9jb250cmFjdC5weTo1LTYKICAgIC8vIEBhcmM0LmFiaW1ldGhvZAogICAgLy8gZGVmIG9wdF9pbl9kdW1teV9hc3NldChzZWxmLCBhc3NldDogQXNzZXQpIC0+IE5vbmU6CiAgICBwcm90byAxIDAKICAgIC8vIHRlc3RzL2FydGlmYWN0cy9BcmM0SW5uZXJUeG5zL2NvbnRyYWN0LnB5OjctMTEKICAgIC8vICMgU3VibWl0IG9wdC1pbiB0cmFuc2FjdGlvbjogMCBhc3NldCB0cmFuc2ZlciB0byBzZWxmCiAgICAvLyBpdHhuLkFzc2V0VHJhbnNmZXIoCiAgICAvLyAgICAgYXNzZXRfcmVjZWl2ZXI9R2xvYmFsLmN1cnJlbnRfYXBwbGljYXRpb25fYWRkcmVzcywKICAgIC8vICAgICB4ZmVyX2Fzc2V0PWFzc2V0LAogICAgLy8gKS5zdWJtaXQoKQogICAgaXR4bl9iZWdpbgogICAgLy8gdGVzdHMvYXJ0aWZhY3RzL0FyYzRJbm5lclR4bnMvY29udHJhY3QucHk6OQogICAgLy8gYXNzZXRfcmVjZWl2ZXI9R2xvYmFsLmN1cnJlbnRfYXBwbGljYXRpb25fYWRkcmVzcywKICAgIGdsb2JhbCBDdXJyZW50QXBwbGljYXRpb25BZGRyZXNzCiAgICBmcmFtZV9kaWcgLTEKICAgIGl0eG5fZmllbGQgWGZlckFzc2V0CiAgICBpdHhuX2ZpZWxkIEFzc2V0UmVjZWl2ZXIKICAgIC8vIHRlc3RzL2FydGlmYWN0cy9BcmM0SW5uZXJUeG5zL2NvbnRyYWN0LnB5OjctOAogICAgLy8gIyBTdWJtaXQgb3B0LWluIHRyYW5zYWN0aW9uOiAwIGFzc2V0IHRyYW5zZmVyIHRvIHNlbGYKICAgIC8vIGl0eG4uQXNzZXRUcmFuc2ZlcigKICAgIHB1c2hpbnQgNCAvLyBheGZlcgogICAgaXR4bl9maWVsZCBUeXBlRW51bQogICAgaW50Y18wIC8vIDAKICAgIGl0eG5fZmllbGQgRmVlCiAgICAvLyB0ZXN0cy9hcnRpZmFjdHMvQXJjNElubmVyVHhucy9jb250cmFjdC5weTo3LTExCiAgICAvLyAjIFN1Ym1pdCBvcHQtaW4gdHJhbnNhY3Rpb246IDAgYXNzZXQgdHJhbnNmZXIgdG8gc2VsZgogICAgLy8gaXR4bi5Bc3NldFRyYW5zZmVyKAogICAgLy8gICAgIGFzc2V0X3JlY2VpdmVyPUdsb2JhbC5jdXJyZW50X2FwcGxpY2F0aW9uX2FkZHJlc3MsCiAgICAvLyAgICAgeGZlcl9hc3NldD1hc3NldCwKICAgIC8vICkuc3VibWl0KCkKICAgIGl0eG5fc3VibWl0CiAgICByZXRzdWIK",
+        "clear": "I3ByYWdtYSB2ZXJzaW9uIDEwCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBhbGdvcHkuYXJjNC5BUkM0Q29udHJhY3QuY2xlYXJfc3RhdGVfcHJvZ3JhbSgpIC0+IHVpbnQ2NDoKbWFpbjoKICAgIHB1c2hpbnQgMSAvLyAxCiAgICByZXR1cm4K"
+    },
+    "byteCode": {
+        "approval": "CiACAAExG0EAIYAE4jUxJDYaAI4BAAIiQzEZFEQxGEQ2GgEXwDCIAA0jQzEZQP/nMRgURCNDigEAsTIKi/+yEbIUgQSyECKyAbOJ",
+        "clear": "CoEBQw=="
+    },
+    "compilerInfo": {
+        "compiler": "puya",
+        "compilerVersion": {
+            "major": 4,
+            "minor": 8,
+            "patch": 1
+        }
+    },
+    "events": [],
+    "templateVariables": {}
+}

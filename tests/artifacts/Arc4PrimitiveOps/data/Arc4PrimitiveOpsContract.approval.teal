@@ -118,16 +118,12 @@ main_verify_bool_bytes_route@45:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
+    pushbytes 0x0001
     // tests/artifacts/Arc4PrimitiveOps/contract.py:6
     // class Arc4PrimitiveOpsContract(ARC4Contract):
     txna ApplicationArgs 1
     // tests/artifacts/Arc4PrimitiveOps/contract.py:240
     // @arc4.abimethod()
-    dup
-    len
-    itob
-    extract 6 2
-    swap
     concat
     bytec_0 // 0x151f7c75
     swap
@@ -371,16 +367,12 @@ main_verify_bigufixednxm_bytes_route@34:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
+    pushbytes 0x0020
     // tests/artifacts/Arc4PrimitiveOps/contract.py:6
     // class Arc4PrimitiveOpsContract(ARC4Contract):
     txna ApplicationArgs 1
     // tests/artifacts/Arc4PrimitiveOps/contract.py:183
     // @arc4.abimethod()
-    dup
-    len
-    itob
-    extract 6 2
-    swap
     concat
     bytec_0 // 0x151f7c75
     swap
@@ -397,16 +389,12 @@ main_verify_ufixednxm_bytes_route@33:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
+    pushbytes 0x0004
     // tests/artifacts/Arc4PrimitiveOps/contract.py:6
     // class Arc4PrimitiveOpsContract(ARC4Contract):
     txna ApplicationArgs 1
     // tests/artifacts/Arc4PrimitiveOps/contract.py:177
     // @arc4.abimethod()
-    dup
-    len
-    itob
-    extract 6 2
-    swap
     concat
     bytec_0 // 0x151f7c75
     swap
@@ -2003,7 +1991,7 @@ verify_uintn_from_log:
     extract 0 4
     bytec_0 // 0x151f7c75
     ==
-    assert // ARC4 prefix is valid
+    assert // application log value is not the result of an ABI return
     retsub
 
 
@@ -2021,7 +2009,7 @@ verify_biguintn_from_log:
     extract 0 4
     bytec_0 // 0x151f7c75
     ==
-    assert // ARC4 prefix is valid
+    assert // application log value is not the result of an ABI return
     retsub
 
 
@@ -2041,7 +2029,7 @@ verify_ufixednxm_from_log:
     extract 0 4
     bytec_0 // 0x151f7c75
     ==
-    assert // ARC4 prefix is valid
+    assert // application log value is not the result of an ABI return
     retsub
 
 
@@ -2061,7 +2049,7 @@ verify_bigufixednxm_from_log:
     extract 0 4
     bytec_0 // 0x151f7c75
     ==
-    assert // ARC4 prefix is valid
+    assert // application log value is not the result of an ABI return
     retsub
 
 
@@ -2158,7 +2146,7 @@ verify_string_from_log:
     extract 0 4
     bytec_0 // 0x151f7c75
     ==
-    assert // ARC4 prefix is valid
+    assert // application log value is not the result of an ABI return
     retsub
 
 
@@ -2176,7 +2164,7 @@ verify_bool_from_log:
     extract 0 4
     bytec_0 // 0x151f7c75
     ==
-    assert // ARC4 prefix is valid
+    assert // application log value is not the result of an ABI return
     retsub
 
 

@@ -1163,27 +1163,24 @@ test_array_evaluation_order:
     /
     intc_2 // 1
     -
-    dig 2
+    intc_0 // 8
+    *
+    intc_0 // 8
+    extract3
+    intc_1 // 0
+    extract_uint64
+    dig 1
     callsub append_length_and_return
     loads
     extract 0 8
     intc_1 // 0
     extract_uint64
-    dig 3
+    dig 2
     loads
-    uncover 2
-    intc_0 // 8
-    *
-    uncover 3
     swap
     intc_0 // 8
-    extract3
-    intc_1 // 0
-    extract_uint64
-    uncover 2
-    intc_0 // 8
     *
-    swap
+    uncover 2
     itob
     replace3
     swap
@@ -1558,21 +1555,19 @@ test_quicksort:
     // tests/artifacts/Arrays/uint64.py:160
     // for b in Txn.sender.bytes:
     txn Sender
-    dup
-    len
     intc_1 // 0
 
 test_quicksort_for_header@1:
     // tests/artifacts/Arrays/uint64.py:160
     // for b in Txn.sender.bytes:
-    frame_dig 6
     frame_dig 5
+    pushint 32 // 32
     <
     bz test_quicksort_after_for@4
     // tests/artifacts/Arrays/uint64.py:161
     // rnd.append(op.btoi(b))
     frame_dig 4
-    frame_dig 6
+    frame_dig 5
     dup
     cover 2
     getbyte
@@ -1586,7 +1581,7 @@ test_quicksort_for_header@1:
     stores
     intc_2 // 1
     +
-    frame_bury 6
+    frame_bury 5
     b test_quicksort_for_header@1
 
 test_quicksort_after_for@4:

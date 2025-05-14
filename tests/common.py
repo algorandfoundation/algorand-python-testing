@@ -32,6 +32,8 @@ class AVMInvoker:
         self,
         method: str,
         on_complete: algosdk.transaction.OnComplete = algosdk.transaction.OnComplete.NoOpOC,
+        *,
+        return_raw: bool = False,
         **kwargs: typing.Any,
     ) -> object:
         response = self.client.send.call(
@@ -48,6 +50,8 @@ class AVMInvoker:
         )
         if response.returns and len(response.returns) > 0 and response.returns[0].decode_error:
             raise ValueError(response.returns[0].decode_error)
+        if return_raw and response.returns and len(response.returns) > 0:
+            return response.returns[0].raw_value
         result = response.abi_return
         if result is None and response.returns and len(response.returns) > 0:
             assert response.returns[0].tx_info
