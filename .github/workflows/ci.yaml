@@ -37,11 +37,32 @@ jobs:
       - name: Check wheels can be built
         run: hatch build
 
-      - name: Run tests (codebase)
-        run: hatch run tests
-
-      - name: Run tests (examples)
-        run: hatch run examples:tests
-
       - name: Check doctests
         run: hatch run docs:test
+
+  test-python-matrix:
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install hatch
+        run: pip install hatch
+
+      - name: Start LocalNet
+        run: pipx install algokit && algokit localnet start
+
+      - name: Run tests with Python ${{ matrix.python-version }}
+        run: hatch run test:ci
+
+      - name: Run examples tests with Python ${{ matrix.python-version }}
+        run: hatch run examples:tests

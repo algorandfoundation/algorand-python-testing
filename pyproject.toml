@@ -18,6 +18,7 @@ classifiers = [
     "Topic :: Software Development :: Testing",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
     # ==========================================================================
@@ -44,7 +45,7 @@ allow-direct-references = true
 packages = ["src/algopy", 'src/algopy_testing', 'src/_algopy_testing']
 
 [[tool.hatch.envs.all.matrix]]
-python = ["3.12"]
+python = ["3.12", "3.13"]
 
 # default dev environment
 [tool.hatch.envs.default]
@@ -123,6 +124,25 @@ dependencies = [
 ]
 [tool.hatch.envs.cicd.scripts]
 clean_dist = "rm -rf dist"
+
+# Testing environment with matrix
+[tool.hatch.envs.test]
+dependencies = [
+    "pytest>=7.4",
+    "pytest-mock>=3.10.0",
+    "pytest-xdist[psutil]>=3.3",
+    "pytest-cov>=4.1.0",
+    "py-algorand-sdk>=2.4.0",
+    "algokit-utils>=3.0.0",
+    "puyapy>=3.0",
+]
+
+[tool.hatch.envs.test.scripts]
+run = "pytest --cov=src --cov-report=xml {args}"
+ci = "pytest --cov=src --cov-report=xml --cov-report=term"
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.12", "3.13"]
 
 # docs environment
 [tool.hatch.envs.docs]
