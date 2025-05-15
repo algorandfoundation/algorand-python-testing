@@ -44,9 +44,6 @@ allow-direct-references = true
 [tool.hatch.build.targets.wheel]
 packages = ["src/algopy", 'src/algopy_testing', 'src/_algopy_testing']
 
-[[tool.hatch.envs.all.matrix]]
-python = ["3.12", "3.13"]
-
 # default dev environment
 [tool.hatch.envs.default]
 type = "virtual"
@@ -122,6 +119,7 @@ path = ".venv.cicd"
 dependencies = [
     "python-semantic-release>=9.8.5",
 ]
+
 [tool.hatch.envs.cicd.scripts]
 clean_dist = "rm -rf dist"
 
@@ -179,7 +177,6 @@ dev = "hatch run docs:test  && sphinx-autobuild docs docs/_build"
 [tool.hatch.envs.examples]
 type = "virtual"
 path = ".venv.examples"
-python = "3.12"
 dev-mode = true
 skip-install = false
 post-install-commands = [
@@ -207,6 +204,9 @@ check = [
     "hatch run lint:check_examples",
     "hatch run mypy examples",
 ]
+
+[[tool.hatch.envs.examples.matrix]]
+python = ["3.12", "3.13"]
 
 # tool configurations
 [tool.black]
