@@ -62,7 +62,16 @@ jobs:
         run: pipx install algokit && algokit localnet start
 
       - name: Run tests with Python ${{ matrix.python-version }}
-        run: hatch run test:ci
+        run: hatch run test.py${{ matrix.python-version }}:ci
 
       - name: Run examples tests with Python ${{ matrix.python-version }}
-        run: hatch run examples:tests
+        run: hatch run examples.py${{ matrix.python-version }}:tests
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ matrix.python-version == '3.13' }}
+        with:
+          name: coverage-reports
+          path: |
+            ./coverage.xml
+          retention-days: 14
