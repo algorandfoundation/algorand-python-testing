@@ -1,4 +1,10 @@
 # CHANGELOG
+## v0.6.0-beta.2 (2025-05-15)
+
+### Features
+
+* add stubs for box create function ([`1fe6fe5`](https://github.com/algorandfoundation/algorand-python-testing/commit/1fe6fe55358630a6abea2f69406821cb6031a4d5))
+
 ## v0.6.0-beta.1 (2025-05-09)
 
 ### Features
