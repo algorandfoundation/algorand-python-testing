@@ -6,57 +6,57 @@ main:
     bytecblock 0x64756d6d795f6279746573 0x001064756d6d795f617263345f6279746573
     txn ApplicationID
     bnz main_after_if_else@2
-    // tests/artifacts/StateOps/contract.py:432
+    // tests/artifacts/StateOps/contract.py:431
     // key="global_uint64",
     pushbytes "global_uint64"
-    // tests/artifacts/StateOps/contract.py:431
+    // tests/artifacts/StateOps/contract.py:430
     // UInt64(2),
     pushint 2 // 2
-    // tests/artifacts/StateOps/contract.py:430-433
+    // tests/artifacts/StateOps/contract.py:429-432
     // self.global_uint64 = GlobalState(
     //     UInt64(2),
     //     key="global_uint64",
     // )
     app_global_put
-    // tests/artifacts/StateOps/contract.py:436
+    // tests/artifacts/StateOps/contract.py:435
     // key="global_bytes",
     pushbytes "global_bytes"
-    // tests/artifacts/StateOps/contract.py:435
+    // tests/artifacts/StateOps/contract.py:434
     // Bytes(b"dummy_bytes"),
     bytec_0 // 0x64756d6d795f6279746573
-    // tests/artifacts/StateOps/contract.py:434-437
+    // tests/artifacts/StateOps/contract.py:433-436
     // self.global_bytes = GlobalState(
     //     Bytes(b"dummy_bytes"),
     //     key="global_bytes",
     // )
     app_global_put
-    // tests/artifacts/StateOps/contract.py:438
+    // tests/artifacts/StateOps/contract.py:437
     // self.global_uint64_explicit = algopy.UInt64(2)
     pushbytes "global_uint64_explicit"
     pushint 2 // 2
     app_global_put
-    // tests/artifacts/StateOps/contract.py:439
+    // tests/artifacts/StateOps/contract.py:438
     // self.global_bytes_explicit = algopy.Bytes(b"dummy_bytes")
     pushbytes "global_bytes_explicit"
     bytec_0 // 0x64756d6d795f6279746573
     app_global_put
-    // tests/artifacts/StateOps/contract.py:441
+    // tests/artifacts/StateOps/contract.py:440
     // algopy.arc4.DynamicBytes(b"dummy_arc4_bytes"), key="global_arc4_bytes"
     pushbytes "global_arc4_bytes"
     bytec_1 // 0x001064756d6d795f617263345f6279746573
-    // tests/artifacts/StateOps/contract.py:440-442
+    // tests/artifacts/StateOps/contract.py:439-441
     // self.global_arc4_bytes = GlobalState(
     //     algopy.arc4.DynamicBytes(b"dummy_arc4_bytes"), key="global_arc4_bytes"
     // )
     app_global_put
-    // tests/artifacts/StateOps/contract.py:443
+    // tests/artifacts/StateOps/contract.py:442
     // self.global_arc4_bytes_explicit = algopy.arc4.DynamicBytes(b"dummy_arc4_bytes")
     pushbytes "global_arc4_bytes_explicit"
     bytec_1 // 0x001064756d6d795f617263345f6279746573
     app_global_put
 
 main_after_if_else@2:
-    // tests/artifacts/StateOps/contract.py:428
+    // tests/artifacts/StateOps/contract.py:427
     // class StateAppGlobalExContract(ARC4Contract):
     txn NumAppArgs
     bnz main_after_if_else@6
@@ -69,7 +69,7 @@ main_after_if_else@2:
     return
 
 main_after_if_else@6:
-    // tests/artifacts/StateOps/contract.py:428
+    // tests/artifacts/StateOps/contract.py:427
     // class StateAppGlobalExContract(ARC4Contract):
     pushint 0 // 0
     return

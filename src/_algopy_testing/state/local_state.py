@@ -75,14 +75,14 @@ class LocalState(typing.Generic[_T]):
         try:
             return self[account]
         except KeyError:
-            return default if default is not None else self.type_()
+            return typing.cast(_T, default)
 
     def maybe(self, key: algopy.Account | algopy.UInt64 | int) -> tuple[_T, bool]:
         account = _get_account(key)
         try:
             return self[account], True
         except KeyError:
-            return self.type_(), False
+            return typing.cast(_T, None), False
 
 
 # TODO: make a util function along with one used by ops

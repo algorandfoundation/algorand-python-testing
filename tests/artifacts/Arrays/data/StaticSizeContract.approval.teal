@@ -3,8 +3,8 @@
 
 // tests.artifacts.Arrays.static_size.StaticSizeContract.__algopy_entrypoint_with_init() -> uint64:
 main:
-    intcblock 1 0 8 16
-    bytecblock "count" 0x151f7c75 "" "a"
+    intcblock 1 0 8 80
+    bytecblock "count" 0x151f7c75 0x "a"
     txn ApplicationID
     bnz main_after_if_else@2
     // tests/artifacts/Arrays/static_size.py:26
@@ -283,9 +283,9 @@ test_array_for_header@1:
     frame_dig 9
     dup
     cover 2
-    pushint 80 // 80
+    intc_3 // 80
     *
-    pushint 80 // 80
+    intc_3 // 80
     extract3
     dup
     pushint 24 // 24
@@ -327,7 +327,7 @@ test_array_after_for@4:
     // Box(ImmutableArray[Point], key="a").value = path.freeze()
     dup
     len
-    pushint 80 // 80
+    intc_3 // 80
     /
     dup
     frame_bury 4
@@ -372,9 +372,9 @@ test_array_for_header@6:
     // tests/artifacts/Arrays/static_size.py:125
     // point = path[point_idx]
     frame_dig 7
-    pushint 80 // 80
+    intc_3 // 80
     *
-    pushint 80 // 80
+    intc_3 // 80
     extract3
     dupn 2
     extract 0 8
@@ -490,16 +490,16 @@ test_extend_from_tuple:
     // last = arr[-1]
     dup
     len
-    intc_3 // 16
+    pushint 16 // 16
     /
     dup
     intc_0 // 1
     -
-    intc_3 // 16
+    pushint 16 // 16
     *
     dig 2
     swap
-    intc_3 // 16
+    pushint 16 // 16
     extract3
     extract 0 16
     // tests/artifacts/Arrays/static_size.py:49
@@ -525,9 +525,9 @@ test_extend_from_tuple:
     dig 1
     extract 2 0
     swap
-    intc_3 // 16
+    pushint 16 // 16
     *
-    intc_3 // 16
+    pushint 16 // 16
     extract3 // on error: Index access is out of bounds
     uncover 2
     ==
@@ -551,12 +551,7 @@ test_extend_from_arc4_tuple:
     pop
     // tests/artifacts/Arrays/static_size.py:60
     // return arr.freeze()
-    frame_dig -1
-    len
-    intc_3 // 16
-    /
-    itob
-    extract 6 2
+    pushbytes 0x0002
     frame_dig -1
     concat
     retsub
@@ -612,8 +607,6 @@ test_bool_array_after_for@4:
     // tests/artifacts/Arrays/static_size.py:69
     // assert arr.length == length, "expected correct length"
     len
-    intc_0 // 1
-    /
     dup
     frame_bury 0
     frame_dig -1
@@ -638,7 +631,7 @@ test_bool_array_for_header@5:
     intc_0 // 1
     extract3
     intc_1 // 0
-    getbyte
+    getbit
     frame_dig 1
     frame_bury 2
     // tests/artifacts/Arrays/static_size.py:72
@@ -743,8 +736,8 @@ test_arc4_conversion_for_header@5:
     extract 0 8
     // tests/artifacts/Arrays/static_size.py:86
     // if val:
-    pushbytes 0x0000000000000000
-    !=
+    bytec_2 // 0x
+    b!=
     frame_dig 1
     frame_bury 2
     bz test_arc4_conversion_after_if_else@8
