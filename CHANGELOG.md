@@ -1,4 +1,12 @@
 # CHANGELOG
+## v0.6.0-beta.3 (2025-05-16)
+
+### Bug fixes
+
+* fixes type checking of tuples with primitive types ([`e971ad6`](https://github.com/algorandfoundation/algorand-python-testing/commit/e971ad6b125f269cd0874c09d58d8962f7622f8d))
+
+  Adds checks to ensure that type validation applies to classes only.
+
 ## v0.6.0-beta.2 (2025-05-15)
 
 ### Features
