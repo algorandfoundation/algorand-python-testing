@@ -744,16 +744,12 @@ class Address(StaticArray[Byte, typing.Literal[32]]):
 class _DynamicArrayTypeInfo(_TypeInfo):
     _subclass_type: Callable[[], type] | None
 
-    def __init__(self, item_type: _TypeInfo, subclass_type: Callable[[], type] | None = None):
-        self._subclass_type = subclass_type
+    def __init__(self, item_type: _TypeInfo) -> None:
         self.item_type = item_type
 
     @property
     def typ(self) -> type:
-        if self._subclass_type is not None:
-            return self._subclass_type()
-        else:
-            return _parameterize_type(DynamicArray, self.item_type.typ)
+        return _parameterize_type(DynamicArray, self.item_type.typ)
 
     @property
     def arc4_name(self) -> str:
@@ -894,12 +890,19 @@ class DynamicArray(  # TODO: inherit from StaticArray?
         return f"{_arc4_type_repr(type(self))}({', '.join(items)})"
 
 
+class _DynamicBytesTypeInfo(_DynamicArrayTypeInfo):
+    def __init__(self) -> None:
+        super().__init__(Byte._type_info)
+
+    @property
+    def typ(self) -> type:
+        return DynamicBytes
+
+
 class DynamicBytes(DynamicArray[Byte]):
     """A variable sized array of bytes."""
 
-    _type_info: _DynamicArrayTypeInfo = _DynamicArrayTypeInfo(
-        Byte._type_info, lambda: DynamicBytes
-    )
+    _type_info: _DynamicBytesTypeInfo = _DynamicBytesTypeInfo()
 
     @typing.overload
     def __init__(self, *values: Byte | UInt8 | int): ...
