@@ -3,6 +3,8 @@ import typing
 
 import pytest
 from _algopy_testing import arc4
+from _algopy_testing.primitives import BigUInt, String, UInt64
+from _algopy_testing.primitives.array import Array, ImmutableArray
 from algosdk import abi
 
 from tests.util import int_to_bytes
@@ -1024,6 +1026,59 @@ def test_add(
     assert arc4.length == arc4_value.length * 2
     assert len(abi) == arc4.length
     assert abi_result == arc4_result
+
+
+def test_to_native() -> None:
+    arr1 = arc4.DynamicArray[arc4.Bool](
+        arc4.Bool(True),
+        arc4.Bool(False),
+        arc4.Bool(False),
+        arc4.Bool(True),
+        arc4.Bool(False),
+        arc4.Bool(True),
+        arc4.Bool(True),
+        arc4.Bool(False),
+        arc4.Bool(True),
+        arc4.Bool(False),
+    )
+    native_arr1 = arr1.to_native(bool)
+    assert native_arr1.length == 10
+    assert list(native_arr1) == [True, False, False, True, False, True, True, False, True, False]
+
+    arr2 = arc4.DynamicArray[arc4.UInt64](*[arc4.UInt64(i) for i in range(1, 11)])
+    native_arr2 = arr2.to_native(UInt64)
+    assert native_arr2.length == 10
+    assert list(native_arr2) == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    arr3 = arc4.DynamicArray[arc4.UInt512](*[arc4.UInt512(i) for i in range(1, 11)])
+    native_arr3 = arr3.to_native(BigUInt)
+    assert native_arr3.length == 10
+    assert list(native_arr3) == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    arr4 = arc4.DynamicArray[arc4.String](*[arc4.String(f"string_{i}") for i in range(1, 11)])
+    native_arr4 = arr4.to_native(String)
+    assert native_arr4.length == 10
+    assert list(native_arr4) == [f"string_{i}" for i in range(1, 11)]
+
+    arr5 = arc4.DynamicArray[arc4.DynamicArray[arc4.UInt64]](
+        *[
+            arc4.DynamicArray[arc4.UInt64](*[arc4.UInt64(i) for i in range(1, 11)]),
+            arc4.DynamicArray[arc4.UInt64](*[arc4.UInt64(i) for i in range(21, 31)]),
+        ]
+    )
+    native_arr5 = arr5.to_native(Array[UInt64])
+    assert native_arr5.length == 2
+    assert native_arr5[0].length == 10
+    assert native_arr5[1].length == 10
+    assert list(native_arr5[0]) == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    assert list(native_arr5[1]) == [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+
+    imm_native_arr5 = arr5.to_native(ImmutableArray[UInt64])
+    assert imm_native_arr5.length == 2
+    assert imm_native_arr5[0].length == 10
+    assert imm_native_arr5[1].length == 10
+    assert list(imm_native_arr5[0]) == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    assert list(imm_native_arr5[1]) == [21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
 
 
 def _compare_abi_and_arc4_values(

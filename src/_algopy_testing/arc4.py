@@ -25,6 +25,7 @@ from _algopy_testing.mutable import (
 )
 from _algopy_testing.primitives import Bytes
 from _algopy_testing.protocols import BytesBacked
+from _algopy_testing.serialize import get_native_to_arc4_serializer
 from _algopy_testing.utils import (
     as_bytes,
     as_int,
@@ -32,7 +33,10 @@ from _algopy_testing.utils import (
     as_int64,
     as_int512,
     as_string,
+    get_int_literal_from_type_generic,
+    get_type_generic_from_int_literal,
     int_to_bytes,
+    parameterize_type,
     raise_mocked_function_error,
 )
 
@@ -101,28 +105,9 @@ class _TypeInfo:
         return self.arc4_name
 
 
-def _get_int_literal(literal_type: type) -> int:
-    type_args = typing.get_args(literal_type)
-    try:
-        (int_arg,) = type_args
-    except ValueError:
-        int_arg = 0
-    return int(int_arg)
-
-
-def _create_int_literal(value: int) -> type:
-    return typing.cast(type, typing.Literal[value])
-
-
-def _parameterize_type(type_: type, *params: type) -> type:
-    if len(params) == 1:
-        return typing.cast(type, type_[params[0]])  # type: ignore[index]
-    return typing.cast(type, type_[params])  # type: ignore[index]
-
-
 def _get_type_param_name(typ: type) -> str:
     if typ.__name__ == "Literal":
-        int_arg = _get_int_literal(typ)
+        int_arg = get_int_literal_from_type_generic(typ)
         return str(int_arg)
     return typ.__name__
 
@@ -282,7 +267,7 @@ class _UIntTypeInfo(_TypeInfo):
 
     @property
     def typ(self) -> type:
-        return _parameterize_type(self._type, _create_int_literal(self.bit_size))
+        return parameterize_type(self._type, get_type_generic_from_int_literal(self.bit_size))
 
     @property
     def arc4_name(self) -> str:
@@ -297,7 +282,7 @@ class _UIntNMeta(type(_ABIEncoded), typing.Generic[_TBitSize]):  # type: ignore[
         cache = cls.__concrete__
         if c := cache.get(key_t, None):
             return c
-        size = _get_int_literal(key_t)
+        size = get_int_literal_from_type_generic(key_t)
         cache[key_t] = c = _new_parameterized_class(cls, [key_t], _UIntTypeInfo(size))
         return c
 
@@ -407,8 +392,10 @@ class _UFixedTypeInfo(_UIntTypeInfo):
 
     @property
     def typ(self) -> type:
-        return _parameterize_type(
-            _UFixedNxM, _create_int_literal(self.bit_size), _create_int_literal(self.precision)
+        return parameterize_type(
+            _UFixedNxM,
+            get_type_generic_from_int_literal(self.bit_size),
+            get_type_generic_from_int_literal(self.precision),
         )
 
     @property
@@ -425,8 +412,8 @@ class _UFixedNxMMeta(type(_ABIEncoded), typing.Generic[_TBitSize, _TDecimalPlace
             return c
 
         size_t, precision_t = key_t
-        size = _get_int_literal(size_t)
-        precision = _get_int_literal(precision_t)
+        size = get_int_literal_from_type_generic(size_t)
+        precision = get_int_literal_from_type_generic(precision_t)
         cache[key_t] = c = _new_parameterized_class(
             cls,
             key_t,
@@ -545,6 +532,13 @@ class Bool(_ABIEncoded):
     def __init__(self, value: bool = False, /) -> None:  # noqa: FBT001, FBT002
         self._value = int_to_bytes(self._true_int_value if value else self._false_int_value, 1)
 
+    def __eq__(self, other: object) -> bool:
+        try:
+            other_bool = bool(other)
+        except (TypeError, ValueError):
+            return NotImplemented
+        return self.native == other_bool
+
     def __bool__(self) -> bool:
         """Allow Bool to be used in boolean contexts."""
         return self.native
@@ -563,6 +557,7 @@ class Bool(_ABIEncoded):
 
 
 _TArrayItem = typing.TypeVar("_TArrayItem", bound=_ABIEncoded)
+_TNativeArrayItem = typing.TypeVar("_TNativeArrayItem")
 _TArrayLength = typing.TypeVar("_TArrayLength", bound=int)
 
 
@@ -573,7 +568,9 @@ class _StaticArrayTypeInfo(_TypeInfo):
 
     @property
     def typ(self) -> type:
-        return _parameterize_type(StaticArray, self.item_type.typ, _create_int_literal(self.size))
+        return parameterize_type(
+            StaticArray, self.item_type.typ, get_type_generic_from_int_literal(self.size)
+        )
 
     @property
     def arc4_name(self) -> str:
@@ -594,7 +591,7 @@ class _StaticArrayMeta(type(_ABIEncoded), typing.Generic[_TArrayItem, _TArrayLen
 
         item_t, size_t = key_t
         assert issubclass(item_t, _ABIEncoded)
-        size = _get_int_literal(size_t)
+        size = get_int_literal_from_type_generic(size_t)
         cache[key_t] = c = _new_parameterized_class(
             cls,
             key_t,
@@ -625,20 +622,23 @@ class StaticArray(
             except IndexError:
                 raise TypeError("array must have an item type") from None
             size = len(items)
-            cls = _parameterize_type(cls, type(item), _create_int_literal(size))
+            cls = parameterize_type(cls, type(item), get_type_generic_from_int_literal(size))
         instance = super().__new__(cls)
         return instance
 
     def __init__(self, *_items: _TArrayItem):
         super().__init__()
         items = _check_is_arc4(_items)
+
+        if len(items) != 0 and len(items) != self._type_info.size:
+            raise TypeError(f"expected {self._type_info.size} items, not {len(items)}")
+
         for item in items:
-            if len(items) != self._type_info.size:
-                raise TypeError(f"expected {self._type_info.size} items, not {len(items)}")
             if self._type_info.item_type != item._type_info:
                 raise TypeError(
                     f"item must be of type {self._type_info.item_type!r}, not {item._type_info!r}"
                 )
+
         self._value = _encode(items)
 
     def __iter__(self) -> Iterator[_TArrayItem]:
@@ -651,7 +651,7 @@ class StaticArray(
 
     @property
     def length(self) -> algopy.UInt64:
-        # """Returns the current length of the array"""
+        # """Returns the length of the array"""
         import algopy
 
         return algopy.UInt64(self._type_info.size)
@@ -680,6 +680,26 @@ class StaticArray(
     def __repr__(self) -> str:
         items = map(repr, self._list())
         return f"{_arc4_type_repr(type(self))}({', '.join(items)})"
+
+    def to_native(
+        self, element_type: type[_TNativeArrayItem], /
+    ) -> algopy.FixedArray[_TNativeArrayItem, _TArrayLength]:
+        """Convert to an `algopy.FixedArray` with the specified element type.
+
+        Only allowed if the element type is compatible with this arrays element type
+        e.g. arc4.UInt64 -> UInt64
+        """
+        import algopy
+
+        serializer = get_native_to_arc4_serializer(element_type)
+        type_info = serializer.arc4_type._type_info
+        if type_info != self._type_info.item_type:
+            raise TypeError(
+                f"cannot convert {self._type_info.item_type!r} to {type_info!r} "
+                f"for element type {element_type!r}"
+            )
+        items = [serializer.arc4_to_native(item) for item in self._list()]
+        return algopy.FixedArray(items)
 
 
 class _AddressTypeInfo(_StaticArrayTypeInfo):
@@ -749,7 +769,7 @@ class _DynamicArrayTypeInfo(_TypeInfo):
 
     @property
     def typ(self) -> type:
-        return _parameterize_type(DynamicArray, self.item_type.typ)
+        return parameterize_type(DynamicArray, self.item_type.typ)
 
     @property
     def arc4_name(self) -> str:
@@ -792,7 +812,7 @@ class DynamicArray(  # TODO: inherit from StaticArray?
                 item = items[0]
             except IndexError:
                 raise TypeError("array must have an item type") from None
-            cls = _parameterize_type(cls, type(item))
+            cls = parameterize_type(cls, type(item))
         instance = super().__new__(cls)
         return instance
 
@@ -889,6 +909,26 @@ class DynamicArray(  # TODO: inherit from StaticArray?
         items = map(repr, self._list())
         return f"{_arc4_type_repr(type(self))}({', '.join(items)})"
 
+    def to_native(
+        self, element_type: type[_TNativeArrayItem], /
+    ) -> algopy.Array[_TNativeArrayItem]:
+        """Convert to an `algopy.Array` with the specified element type.
+
+        Only allowed if the element type is compatible with this arrays element type
+        e.g. arc4.UInt64 -> UInt64
+        """
+        import algopy
+
+        serializer = get_native_to_arc4_serializer(element_type)
+        type_info = serializer.arc4_type._type_info
+        if type_info != self._type_info.item_type:
+            raise TypeError(
+                f"cannot convert {self._type_info.item_type!r} to {type_info!r} "
+                f"for element type {element_type!r}"
+            )
+        items = [serializer.arc4_to_native(item) for item in self._list()]
+        return algopy.Array(items)
+
 
 class _DynamicBytesTypeInfo(_DynamicArrayTypeInfo):
     def __init__(self) -> None:
@@ -946,7 +986,7 @@ class _TupleTypeInfo(_TypeInfo):
 
     @property
     def typ(self) -> type:
-        return _parameterize_type(Tuple, *(t.typ for t in self.child_types))
+        return parameterize_type(Tuple, *(t.typ for t in self.child_types))
 
     @property
     def arc4_name(self) -> str:
@@ -993,7 +1033,7 @@ class Tuple(
         except AttributeError:
             if not items:
                 raise TypeError("empty tuple not supported") from None
-            cls = _parameterize_type(cls, *map(type, items))
+            cls = parameterize_type(cls, *map(type, items))
         instance = super().__new__(cls)
         return instance
 
@@ -1035,7 +1075,7 @@ class Tuple(
     @property
     def native(self) -> tuple[typing.Unpack[_TTuple]]:
         return typing.cast(
-            tuple[typing.Unpack[_TTuple]],
+            "tuple[typing.Unpack[_TTuple]]",
             tuple(_decode_tuple_items(self._value, self._type_info.child_types)),
         )
 
@@ -1080,7 +1120,7 @@ class _StructMeta(type):
 
 def _tuple_type_from_struct(struct: type[Struct]) -> type[Tuple]:  # type: ignore[type-arg]
     field_types = [f.type for f in struct._type_info.fields]
-    return _parameterize_type(Tuple, *field_types)
+    return parameterize_type(Tuple, *field_types)
 
 
 class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):  # type: ignore[misc]
@@ -1123,7 +1163,7 @@ class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):  # type: ignore[
         tuple_type = _tuple_type_from_struct(cls)
         tuple_value = tuple_type.from_bytes(value)
         if not tuple_value:
-            return typing.cast(typing.Self, tuple_value)
+            return typing.cast("typing.Self", tuple_value)
         return cls(*tuple_value.native)
 
     @property

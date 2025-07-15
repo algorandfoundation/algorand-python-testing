@@ -1,10 +1,24 @@
 import typing
 
 import pytest
-from algopy import Account, Application, Asset, Bytes, String, UInt64, arc4, size_of
+from algopy import (
+    Account,
+    Application,
+    Array,
+    Asset,
+    Bytes,
+    FixedArray,
+    ImmutableArray,
+    ImmutableFixedArray,
+    String,
+    Struct,
+    UInt64,
+    arc4,
+    size_of,
+)
 
 
-class Swapped(arc4.Struct):
+class SwappedArc4(arc4.Struct):
     a: arc4.UInt64
     b: arc4.Bool
     c: arc4.Tuple[arc4.UInt64, arc4.Bool, arc4.Bool]
@@ -12,10 +26,19 @@ class Swapped(arc4.Struct):
     e: arc4.Tuple[arc4.UInt64, arc4.StaticArray[arc4.UInt64, typing.Literal[3]]]
 
 
+class Swapped(Struct):
+    a: UInt64
+    b: bool
+    c: tuple[UInt64, bool, bool]
+    d: FixedArray[bool, typing.Literal[10]]
+    e: tuple[UInt64, ImmutableFixedArray[UInt64, typing.Literal[3]]]
+
+
 class WhatsMySize(typing.NamedTuple):
     foo: UInt64
     bar: bool
-    baz: Swapped
+    bax: Swapped
+    baz: SwappedArc4
 
 
 class MyTuple(typing.NamedTuple):
@@ -45,10 +68,13 @@ def test_size_of() -> None:
     assert size_of(tuple[arc4.UInt64, UInt64, bool, arc4.Bool]) == 17
     assert size_of(arc4.Tuple[arc4.UInt64, arc4.Bool, arc4.Bool] == 9)
     assert size_of(MyTuple) == 9
-    assert size_of(WhatsMySize) == 61
+    assert size_of(SwappedArc4) == 52
+    assert size_of(Swapped) == 52
+    assert size_of(WhatsMySize) == 113
     assert size_of(arc4.StaticArray[arc4.Byte, typing.Literal[7]]) == 7
     assert size_of(arc4.StaticArray(arc4.Byte(), arc4.Byte())) == 2
-    assert size_of(Swapped) == 52
+    assert size_of(FixedArray[bool, typing.Literal[10]]) == 2
+    assert size_of(ImmutableFixedArray[bool, typing.Literal[10]]) == 2
 
 
 @pytest.mark.parametrize(
@@ -58,6 +84,8 @@ def test_size_of() -> None:
         tuple[arc4.DynamicBytes, Bytes],
         arc4.Tuple[arc4.UInt64, arc4.String],
         MyDynamicSizedTuple,
+        Array[UInt64],
+        ImmutableArray[UInt64],
     ],
 )
 def test_size_of_dynamic(typ: type) -> None:

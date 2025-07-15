@@ -57,7 +57,11 @@ main:
     // tests/artifacts/StateOps/contract.py:527
     // self.arc4_string = GlobalState(arc4.String("Hello"), key="explicit_key_arc4_string")
     bytec 11 // "explicit_key_arc4_string"
+    // tests/artifacts/StateOps/contract.py:517
+    // self.implicit_key_arc4_string = GlobalState(arc4.String("Hello"))
     bytec 18 // 0x000548656c6c6f
+    // tests/artifacts/StateOps/contract.py:527
+    // self.arc4_string = GlobalState(arc4.String("Hello"), key="explicit_key_arc4_string")
     app_global_put
     // tests/artifacts/StateOps/contract.py:528
     // self.arc4_byte = GlobalState(arc4.Byte(0), key="explicit_key_arc4_byte")
@@ -67,7 +71,11 @@ main:
     // tests/artifacts/StateOps/contract.py:529
     // self.arc4_bool = GlobalState(arc4.Bool(True), key="explicit_key_arc4_bool")
     bytec 13 // "explicit_key_arc4_bool"
+    // tests/artifacts/StateOps/contract.py:519
+    // self.implicit_key_arc4_bool = GlobalState(arc4.Bool(True))
     pushbytes 0x80
+    // tests/artifacts/StateOps/contract.py:529
+    // self.arc4_bool = GlobalState(arc4.Bool(True), key="explicit_key_arc4_bool")
     app_global_put
     // tests/artifacts/StateOps/contract.py:531
     // arc4.Address(Global.creator_address), key="explicit_key_arc4_address"
@@ -86,6 +94,8 @@ main:
     // tests/artifacts/StateOps/contract.py:535
     // arc4.DynamicBytes(b"dynamic bytes"), key="explicit_key_arc4_dynamic_bytes"
     bytec 16 // "explicit_key_arc4_dynamic_bytes"
+    // tests/artifacts/StateOps/contract.py:522
+    // self.implicit_key_arc4_dynamic_bytes = GlobalState(arc4.DynamicBytes(b"dynamic bytes"))
     bytec 20 // 0x000d64796e616d6963206279746573
     // tests/artifacts/StateOps/contract.py:534-536
     // self.arc4_dynamic_bytes = GlobalState(
@@ -254,12 +264,6 @@ main_set_implicit_key_tuple_route@27:
     extract 2 0
     uncover 2
     intc_3 // 80
-    getbit
-    bytec_1 // 0x00
-    intc_1 // 0
-    uncover 2
-    setbit
-    intc_1 // 0
     getbit
     // tests/artifacts/StateOps/contract.py:629
     // @arc4.abimethod()
@@ -518,14 +522,13 @@ main_get_implicit_key_tuple_route@12:
     extract 6 2
     uncover 3
     concat
+    swap
+    bytec 21 // 0x000b
+    concat
     bytec_1 // 0x00
     intc_1 // 0
     uncover 4
     setbit
-    uncover 2
-    bytec 21 // 0x000b
-    concat
-    swap
     concat
     swap
     concat
@@ -761,12 +764,6 @@ get_implicit_key_tuple:
     uncover 2
     intc_3 // 80
     getbit
-    bytec_1 // 0x00
-    intc_1 // 0
-    uncover 2
-    setbit
-    intc_1 // 0
-    getbit
     retsub
 
 
@@ -952,8 +949,8 @@ set_implicit_key_tuple:
     // @arc4.abimethod()
     // def set_implicit_key_tuple(self, value: tuple[UInt64, Bytes, bool]) -> None:
     proto 3 0
-    // tests/artifacts/StateOps/contract.py:630
-    // def set_implicit_key_tuple(self, value: tuple[UInt64, Bytes, bool]) -> None:
+    // tests/artifacts/StateOps/contract.py:631
+    // self.implicit_key_tuple.value = value
     frame_dig -3
     itob
     frame_dig -2
@@ -962,16 +959,13 @@ set_implicit_key_tuple:
     extract 6 2
     frame_dig -2
     concat
+    swap
+    bytec 21 // 0x000b
+    concat
     bytec_1 // 0x00
     intc_1 // 0
     frame_dig -1
     setbit
-    // tests/artifacts/StateOps/contract.py:631
-    // self.implicit_key_tuple.value = value
-    uncover 2
-    bytec 21 // 0x000b
-    concat
-    swap
     concat
     swap
     concat
