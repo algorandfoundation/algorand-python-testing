@@ -84,37 +84,27 @@ read_enums:
     // assert op.Box.get(b"oca")[0] == op.itob(self.oca.value)
     bytec_0 // 0x6f6361
     box_get
-    pop
-    bytec_0 // "oca"
-    box_get
     assert // check self.oca exists
+    dup
     btoi
     itob
+    swap
+    dig 1
     ==
     assert
     // tests/artifacts/BoxContract/contract.py:17
     // assert op.Box.get(b"txn")[0] == op.itob(self.txn.value)
     bytec_1 // 0x74786e
     box_get
-    pop
-    bytec_1 // "txn"
-    box_get
     assert // check self.txn exists
+    dup
     btoi
     itob
+    swap
+    dig 1
     ==
     assert
     // tests/artifacts/BoxContract/contract.py:19
     // return arc4.Tuple((arc4.UInt64(self.oca.value), arc4.UInt64(self.txn.value)))
-    bytec_0 // "oca"
-    box_get
-    assert // check self.oca exists
-    btoi
-    itob
-    bytec_1 // "txn"
-    box_get
-    assert // check self.txn exists
-    btoi
-    itob
     concat
     retsub

@@ -1,9 +1,9 @@
 import typing
 
 from algopy import (
-    Array,
     Bytes,
     ImmutableArray,
+    ReferenceArray,
     String,
     Txn,
     UInt64,
@@ -353,7 +353,7 @@ class ImmutableArrayContract(arc4.ARC4Contract):
     def test_convert_to_array_and_back(
         self, arr: ImmutableArray[MyTuple], append: UInt64
     ) -> ImmutableArray[MyTuple]:
-        mutable = Array[MyTuple]()
+        mutable = ReferenceArray[MyTuple]()
         mutable.extend(arr)
         for i in urange(append):
             mutable.append(MyTuple(foo=i, bar=i % 2 == 0, baz=i % 3 == 0))
