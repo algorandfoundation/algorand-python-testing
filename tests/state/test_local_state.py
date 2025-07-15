@@ -120,7 +120,7 @@ class TestLocalState:
             assert ls.get(context.default_sender, default=None) is None
 
             ls[context.default_sender] = value
-            assert ls.get(context.default_sender) == value
+            assert ls.get(context.default_sender, default=None) == value
 
     @pytest.mark.parametrize(("type_", "value"), *test_data_array)
     def test_maybe_method(self, context: AlgopyTestContext, type_: Any, value: Any) -> None:

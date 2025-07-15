@@ -226,7 +226,7 @@ class TestGlobalState:
             assert gs.get(default=None) is None
 
             gs.value = value
-            assert gs.get() == value
+            assert gs.get(default=None) == value
 
     @pytest.mark.parametrize(("type_", "value", "expected_value"), *test_data_array)
     def test_maybe_method(

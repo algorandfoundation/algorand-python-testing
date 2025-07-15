@@ -120,11 +120,11 @@ class GlobalState(typing.Generic[_T]):
     def __bool__(self) -> bool:
         return self._key is not None or self._pending_value is not None
 
-    def get(self, default: _T | None = None) -> _T:
+    def get(self, default: _T) -> _T:
         try:
             return self.value
         except ValueError:
-            return typing.cast(_T, default)
+            return default
 
     def maybe(self) -> tuple[_T | None, bool]:
         try:

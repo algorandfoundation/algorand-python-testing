@@ -70,12 +70,12 @@ class LocalState(typing.Generic[_T]):
             return False
         return True
 
-    def get(self, key: algopy.Account | algopy.UInt64 | int, default: _T | None = None) -> _T:
+    def get(self, key: algopy.Account | algopy.UInt64 | int, default: _T) -> _T:
         account = _get_account(key)
         try:
             return self[account]
         except KeyError:
-            return typing.cast(_T, default)
+            return default
 
     def maybe(self, key: algopy.Account | algopy.UInt64 | int) -> tuple[_T, bool]:
         account = _get_account(key)
