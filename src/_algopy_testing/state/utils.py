@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import inspect
 import typing
 
 from _algopy_testing.primitives.bytes import Bytes
@@ -64,7 +63,7 @@ def cast_from_bytes(typ: type[_TValue], value: bytes) -> _TValue:
     """
     from _algopy_testing.utils import as_int64
 
-    if inspect.isclass(typ) and issubclass(typ, bool | UInt64Backed | UInt64):
+    if isinstance(typ, type) and issubclass(typ, bool | UInt64Backed | UInt64):
         if len(value) > 8:
             raise ValueError("uint64 value too big")
         serialized: SerializableValue = int.from_bytes(value)

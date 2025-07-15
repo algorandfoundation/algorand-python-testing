@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import functools
-import inspect
 import typing
 from dataclasses import dataclass
 
@@ -202,12 +201,12 @@ def _get_state_totals(contract: Contract, cls_state_totals: StateTotals) -> _Sta
 
     global_bytes = global_uints = local_bytes = local_uints = 0
     for type_ in get_global_states(contract).values():
-        if inspect.isclass(type_) and issubclass(type_, UInt64 | UInt64Backed | bool):
+        if isinstance(type_, type) and issubclass(type_, UInt64 | UInt64Backed | bool):
             global_uints += 1
         else:
             global_bytes += 1
     for type_ in get_local_states(contract).values():
-        if inspect.isclass(type_) and issubclass(type_, UInt64 | UInt64Backed | bool):
+        if isinstance(type_, type) and issubclass(type_, UInt64 | UInt64Backed | bool):
             local_uints += 1
         else:
             local_bytes += 1
