@@ -10,6 +10,13 @@ from _algopy_testing.models.account import Account
 from _algopy_testing.models.application import Application
 from _algopy_testing.models.asset import Asset
 from _algopy_testing.op.pure import itob
+from _algopy_testing.primitives.array import (
+    Array,
+    FixedArray,
+    ImmutableArray,
+    ImmutableFixedArray,
+    Struct,
+)
 from _algopy_testing.primitives.biguint import BigUInt
 from _algopy_testing.primitives.bytes import Bytes
 from _algopy_testing.primitives.string import String
@@ -367,3 +374,86 @@ def test_enums_in_boxes() -> None:
         # Assert
         assert context.ledger.get_box(contract, b"oca") == itob(oca.native)
         assert context.ledger.get_box(contract, b"txn") == itob(txn.native)
+
+
+class Swapped2(Struct):
+    a: Array[UInt64]
+    b: Array[UInt64]
+
+
+def test_arrays_and_struct_in_boxes(context: AlgopyTestContext) -> None:  # noqa: ARG001
+    # Array
+    arr1 = Array([UInt64(1), UInt64(2), UInt64(3)])
+    arr2 = Array([UInt64(4), UInt64(5), UInt64(6)])
+    nested_arr1 = Array([arr1, arr2])
+    box1 = Box(Array[Array[UInt64]], key=b"test_array_1")
+    box1.value = nested_arr1
+    _op_box_content, op_box_exists = algopy.op.Box.get(b"test_array_1")
+    op_box_length, _ = algopy.op.Box.length(b"test_array_1")
+    assert op_box_exists
+    assert box1.length == op_box_length
+
+    box1.value[0][1] = UInt64(20)
+    assert list(box1.value[0]) == [UInt64(1), UInt64(20), UInt64(3)]
+
+    # FixedArray
+    arr3 = FixedArray[UInt64, typing.Literal[3]]([UInt64(1), UInt64(2), UInt64(3)])
+    arr4 = FixedArray[UInt64, typing.Literal[3]]([UInt64(4), UInt64(5), UInt64(6)])
+    nested_arr2 = FixedArray[FixedArray[UInt64, typing.Literal[3]], typing.Literal[2]](
+        [arr3, arr4]
+    )
+    box2 = Box(
+        FixedArray[FixedArray[UInt64, typing.Literal[3]], typing.Literal[2]], key=b"test_array_2"
+    )
+    box2.value = nested_arr2
+    _op_box_content, op_box_exists = algopy.op.Box.get(b"test_array_2")
+    op_box_length, _ = algopy.op.Box.length(b"test_array_2")
+    assert op_box_exists
+    assert box2.length == op_box_length
+
+    box2.value[0][1] = UInt64(20)
+    assert list(box2.value[0]) == [UInt64(1), UInt64(20), UInt64(3)]
+
+    # ImmutableArray
+    nested_arr3 = ImmutableArray[Array[UInt64]](arr1, arr2)
+    box3 = Box(ImmutableArray[Array[UInt64]], key=b"test_array_3")
+    box3.value = nested_arr3
+    _op_box_content, op_box_exists = algopy.op.Box.get(b"test_array_3")
+    op_box_length, _ = algopy.op.Box.length(b"test_array_3")
+    assert op_box_exists
+    assert box3.length == op_box_length
+
+    box3.value[0][1] = UInt64(20)
+    assert list(box3.value[0]) == [UInt64(1), UInt64(20), UInt64(3)]
+
+    # ImmutableFixedArray
+    nested_arr4 = ImmutableFixedArray[FixedArray[UInt64, typing.Literal[3]], typing.Literal[2]](
+        [arr3, arr4]
+    )
+    box4 = Box(
+        ImmutableFixedArray[FixedArray[UInt64, typing.Literal[3]], typing.Literal[2]],
+        key=b"test_array_4",
+    )
+    box4.value = nested_arr4
+    _op_box_content, op_box_exists = algopy.op.Box.get(b"test_array_4")
+    op_box_length, _ = algopy.op.Box.length(b"test_array_4")
+    assert op_box_exists
+    assert box4.length == op_box_length
+
+    box4.value[0][1] = UInt64(20)
+    assert list(box4.value[0]) == [UInt64(1), UInt64(20), UInt64(3)]
+
+    # Struct
+    struct1 = Swapped2(arr1, arr2)
+    box5 = Box(
+        Swapped2,
+        key=b"test_struct_1",
+    )
+    box5.value = struct1
+    _op_box_content, op_box_exists = algopy.op.Box.get(b"test_struct_1")
+    op_box_length, _ = algopy.op.Box.length(b"test_struct_1")
+    assert op_box_exists
+    assert box5.length == op_box_length
+
+    box5.value.a[1] = UInt64(20)
+    assert list(box5.value.a) == [UInt64(1), UInt64(20), UInt64(3)]

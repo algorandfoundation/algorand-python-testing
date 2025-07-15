@@ -118,12 +118,16 @@ main_verify_bool_bytes_route@45:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    pushbytes 0x0001
     // tests/artifacts/Arc4PrimitiveOps/contract.py:6
     // class Arc4PrimitiveOpsContract(ARC4Contract):
     txna ApplicationArgs 1
     // tests/artifacts/Arc4PrimitiveOps/contract.py:240
     // @arc4.abimethod()
+    dup
+    len
+    itob
+    extract 6 2
+    swap
     concat
     bytec_0 // 0x151f7c75
     swap
@@ -367,12 +371,16 @@ main_verify_bigufixednxm_bytes_route@34:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    pushbytes 0x0020
     // tests/artifacts/Arc4PrimitiveOps/contract.py:6
     // class Arc4PrimitiveOpsContract(ARC4Contract):
     txna ApplicationArgs 1
     // tests/artifacts/Arc4PrimitiveOps/contract.py:183
     // @arc4.abimethod()
+    dup
+    len
+    itob
+    extract 6 2
+    swap
     concat
     bytec_0 // 0x151f7c75
     swap
@@ -389,12 +397,16 @@ main_verify_ufixednxm_bytes_route@33:
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    pushbytes 0x0004
     // tests/artifacts/Arc4PrimitiveOps/contract.py:6
     // class Arc4PrimitiveOpsContract(ARC4Contract):
     txna ApplicationArgs 1
     // tests/artifacts/Arc4PrimitiveOps/contract.py:177
     // @arc4.abimethod()
+    dup
+    len
+    itob
+    extract 6 2
+    swap
     concat
     bytec_0 // 0x151f7c75
     swap
@@ -2083,17 +2095,17 @@ verify_string_add:
     proto 2 1
     // tests/artifacts/Arc4PrimitiveOps/contract.py:220
     // result = a + b
-    frame_dig -2
-    extract 2 0
     frame_dig -1
     extract 2 0
-    concat
+    frame_dig -2
+    swap
+    concat // on error: max array length exceeded
     dup
+    extract 2 0
     len
     itob
     extract 6 2
-    swap
-    concat
+    replace2 0
     // tests/artifacts/Arc4PrimitiveOps/contract.py:221
     // return result
     retsub

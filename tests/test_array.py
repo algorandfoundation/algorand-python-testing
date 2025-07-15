@@ -2,10 +2,16 @@ import typing
 
 import algosdk
 import pytest
+from _algopy_testing.constants import MAX_UINT512
 from algopy import ImmutableArray, String, UInt64, arc4
 from algopy_testing import AlgopyTestContext, algopy_testing_context
 
-from tests.artifacts.Arrays.immutable import ImmutableArrayContract, MyDynamicSizedTuple, MyTuple
+from tests.artifacts.Arrays.immutable import (
+    ImmutableArrayContract,
+    MyDynamicSizedTuple,
+    MyStruct,
+    MyTuple,
+)
 from tests.artifacts.Arrays.static_size import More, StaticSizeContract
 from tests.artifacts.Arrays.uint64 import Contract as UInt64Contract
 
@@ -32,6 +38,9 @@ def test_array_uint64(context: AlgopyTestContext) -> None:  # noqa: ARG001
 
     contract.test_quicksort()
 
+    contract.test_array_assignment_maximum_cursage()
+    contract.test_unobserved_write()
+
 
 def test_array_static_size(context: AlgopyTestContext) -> None:
     contract = StaticSizeContract()
@@ -46,11 +55,11 @@ def test_array_static_size(context: AlgopyTestContext) -> None:
 
     assert context.ledger.box_exists(contract, b"a")
     assert context.ledger.get_box(contract, b"a") == _get_arc4_bytes(
-        "(uint64,uint64,(uint64,uint64,address,(uint64,uint64)))[]",
+        "(uint64,uint64,(uint64,uint64,address,(uint64,uint64),uint512))[]",
         [
-            (0, 0, (5, 1, sender, (2, 1))),
-            (x1, y1, (5, 2, sender, (3, 4))),
-            (x2, y2, (5, 3, sender, (4, 9))),
+            (0, 0, (5, 1, sender, (2, 1), 1)),
+            (x1, y1, (5, 2, sender, (3, 4), 2)),
+            (x2, y2, (5, 3, sender, (4, 9), 3)),
         ],
     )
 
@@ -76,6 +85,9 @@ def test_array_static_size(context: AlgopyTestContext) -> None:
         More(arc4.UInt64(3), arc4.UInt64(4)),
     ]
 
+    arc4_bool = contract.test_arc4_bool()
+    assert list(arc4_bool) == [arc4.Bool(False), arc4.Bool(True)]
+
 
 def test_immutable_array(context: AlgopyTestContext) -> None:
     app = ImmutableArrayContract()
@@ -83,6 +95,11 @@ def test_immutable_array(context: AlgopyTestContext) -> None:
     app.test_uint64_array()
     assert context.ledger.get_global_state(app, b"a") == _get_arc4_bytes(
         "uint64[]", [42, 0, 23, 2, *range(10), 44]
+    )
+
+    app.test_biguint_array()
+    assert context.ledger.get_box(app, b"biguint") == _get_arc4_bytes(
+        "uint512[]", [0, 0, 1, 2, 3, 4, MAX_UINT512 - 1, MAX_UINT512]
     )
 
     app.test_fixed_size_tuple_array()
@@ -147,6 +164,26 @@ def test_immutable_array(context: AlgopyTestContext) -> None:
         ImmutableArray(one, two), ImmutableArray(three, four)
     )
     assert list(response) == [one, two, three, four]
+
+    immutable_arc4_input = ImmutableArray(
+        MyStruct(arc4.UInt64(1), arc4.UInt64(2)),
+        MyStruct(arc4.UInt64(3), arc4.UInt64(4)),
+        MyStruct(arc4.UInt64(5), arc4.UInt64(6)),
+    )
+    immutable_arc4_result = app.test_immutable_arc4(immutable_arc4_input)
+    assert list(immutable_arc4_result) == [
+        MyStruct(arc4.UInt64(1), arc4.UInt64(2)),
+        MyStruct(arc4.UInt64(3), arc4.UInt64(4)),
+        MyStruct(arc4.UInt64(1), arc4.UInt64(2)),
+    ]
+    assert list(immutable_arc4_input) == [
+        MyStruct(arc4.UInt64(1), arc4.UInt64(2)),
+        MyStruct(arc4.UInt64(3), arc4.UInt64(4)),
+        MyStruct(arc4.UInt64(5), arc4.UInt64(6)),
+    ]
+
+    imm_fixed_arr = app.test_imm_fixed_arr()
+    assert len(imm_fixed_arr) == 3
 
 
 _EXPECTED_LENGTH_20 = [False, False, True, *(False,) * 17]

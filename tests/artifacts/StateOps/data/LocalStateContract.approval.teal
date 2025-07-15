@@ -206,14 +206,13 @@ main_get_implicit_key_tuple_route@13:
     extract 6 2
     uncover 3
     concat
+    swap
+    pushbytes 0x000b
+    concat
     bytec_1 // 0x00
     intc_0 // 0
     uncover 4
     setbit
-    uncover 2
-    pushbytes 0x000b
-    concat
-    swap
     concat
     swap
     concat
@@ -482,7 +481,11 @@ opt_in:
     // self.arc4_string[Global.creator_address] = arc4.String("Hello")
     global CreatorAddress
     bytec 15 // "explicit_key_arc4_string"
+    // tests/artifacts/StateOps/contract.py:689
+    // self.implicit_key_arc4_string[Global.creator_address] = arc4.String("Hello")
     bytec 5 // 0x000548656c6c6f
+    // tests/artifacts/StateOps/contract.py:702
+    // self.arc4_string[Global.creator_address] = arc4.String("Hello")
     app_local_put
     // tests/artifacts/StateOps/contract.py:703
     // self.arc4_byte[Global.creator_address] = arc4.Byte(0)
@@ -494,7 +497,11 @@ opt_in:
     // self.arc4_bool[Global.creator_address] = arc4.Bool(True)
     global CreatorAddress
     bytec 17 // "explicit_key_arc4_bool"
+    // tests/artifacts/StateOps/contract.py:691
+    // self.implicit_key_arc4_bool[Global.creator_address] = arc4.Bool(True)
     pushbytes 0x80
+    // tests/artifacts/StateOps/contract.py:704
+    // self.arc4_bool[Global.creator_address] = arc4.Bool(True)
     app_local_put
     // tests/artifacts/StateOps/contract.py:705
     // self.arc4_address[Global.creator_address] = arc4.Address(Global.creator_address)
@@ -512,7 +519,13 @@ opt_in:
     // self.arc4_dynamic_bytes[Global.creator_address] = arc4.DynamicBytes(b"dynamic bytes")
     global CreatorAddress
     bytec 20 // "explicit_key_arc4_dynamic_bytes"
+    // tests/artifacts/StateOps/contract.py:696-698
+    // self.implicit_key_arc4_dynamic_bytes[Global.creator_address] = arc4.DynamicBytes(
+    //     b"dynamic bytes"
+    // )
     bytec 12 // 0x000d64796e616d6963206279746573
+    // tests/artifacts/StateOps/contract.py:707
+    // self.arc4_dynamic_bytes[Global.creator_address] = arc4.DynamicBytes(b"dynamic bytes")
     app_local_put
     retsub
 
@@ -657,12 +670,6 @@ get_implicit_key_tuple:
     extract 2 0
     uncover 2
     pushint 80 // 80
-    getbit
-    bytec_1 // 0x00
-    intc_0 // 0
-    uncover 2
-    setbit
-    intc_0 // 0
     getbit
     retsub
 

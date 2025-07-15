@@ -5,6 +5,7 @@ import typing
 from collections.abc import Callable, Sequence
 
 from _algopy_testing.primitives.uint64 import UInt64
+from _algopy_testing.utils import get_type_generic_from_int_literal
 
 if typing.TYPE_CHECKING:
     from _algopy_testing.arc4 import _ABIEncoded
@@ -25,9 +26,17 @@ def identity(i: _T) -> _T:
     return i
 
 
-def get_native_to_arc4_serializer(typ: type) -> _Serializer[typing.Any, typing.Any]:
+def get_native_to_arc4_serializer(  # noqa: PLR0911
+    typ: type,
+) -> _Serializer[typing.Any, typing.Any]:
     from _algopy_testing import arc4
-    from _algopy_testing.primitives import ImmutableArray
+    from _algopy_testing.primitives import (
+        Array,
+        FixedArray,
+        ImmutableArray,
+        ImmutableFixedArray,
+        Struct,
+    )
     from _algopy_testing.protocols import UInt64Backed
 
     origin_type = typing.get_origin(typ)
@@ -54,7 +63,9 @@ def get_native_to_arc4_serializer(typ: type) -> _Serializer[typing.Any, typing.A
             if any(isinstance(f, str) for f in tuple_fields):
                 raise TypeError("string annotations in typing.NamedTuple fields are not supported")
             return _get_tuple_serializer(tuple_fields)
-        if issubclass(typ, ImmutableArray):
+        if issubclass(typ, Struct):
+            return _get_struct_serializer(typ)
+        if issubclass(typ, Array | ImmutableArray):
             native_element_type = typ._element_type
             element_serializer = get_native_to_arc4_serializer(native_element_type)
             arc4_element_type = element_serializer.arc4_type
@@ -62,10 +73,27 @@ def get_native_to_arc4_serializer(typ: type) -> _Serializer[typing.Any, typing.A
             return _Serializer(
                 arc4_type=arc4_type,
                 native_to_arc4=lambda arr: arc4_type(
-                    *(element_serializer.native_to_arc4(e) for e in arr)
+                    *[element_serializer.native_to_arc4(e) for e in arr]
+                ),
+                arc4_to_native=lambda arr: (
+                    typ([element_serializer.arc4_to_native(e) for e in arr])
+                    if issubclass(typ, Array)
+                    else typ(*[element_serializer.arc4_to_native(e) for e in arr])
+                ),
+            )
+        if issubclass(typ, FixedArray | ImmutableFixedArray):
+            native_element_type = typ._element_type
+            length_type = get_type_generic_from_int_literal(typ._length)
+            element_serializer = get_native_to_arc4_serializer(native_element_type)
+            arc4_element_type = element_serializer.arc4_type
+            arc4_fixed_type = arc4.StaticArray[arc4_element_type, length_type]  # type: ignore[valid-type]
+            return _Serializer(
+                arc4_type=arc4_fixed_type,
+                native_to_arc4=lambda arr: arc4_fixed_type(
+                    *[element_serializer.native_to_arc4(e) for e in arr]
                 ),
                 arc4_to_native=lambda arr: typ(
-                    *(element_serializer.arc4_to_native(e) for e in arr)
+                    [element_serializer.arc4_to_native(e) for e in arr]
                 ),
             )
     raise TypeError(f"unserializable type: {typ}")
@@ -108,6 +136,36 @@ def _get_tuple_serializer(item_types: tuple[type, ...]) -> _Serializer[typing.An
         arc4_type=arc4.Tuple[*(s.arc4_type for s in serializers)],  # type: ignore[misc]
         native_to_arc4=lambda t: arc4.Tuple(_items_to_arc4(t)),
         arc4_to_native=lambda t: _items_to_native(t),
+    )
+
+
+def _get_struct_serializer(typ: type) -> _Serializer[typing.Any, typing.Any]:
+    from _algopy_testing import arc4
+
+    struct_fields = inspect.get_annotations(typ)
+    serializers = {k: get_native_to_arc4_serializer(v) for k, v in struct_fields.items()}
+
+    def _items_to_arc4(items: object) -> dict[str, object]:
+        result = {}
+        for key in inspect.get_annotations(type(items)):
+            serializer = serializers[key]
+            result[key] = serializer.native_to_arc4(getattr(items, key))
+        return result
+
+    def _items_to_native(items: object) -> dict[str, object]:
+        result = {}
+        for key in inspect.get_annotations(type(items)):
+            serializer = serializers[key]
+            result[key] = serializer.arc4_to_native(getattr(items, key))
+        return result
+
+    class TempStruct(arc4.Struct):
+        __annotations__ = {k: s.arc4_type for k, s in serializers.items()}
+
+    return _Serializer(
+        arc4_type=TempStruct,
+        native_to_arc4=lambda t: TempStruct(**_items_to_arc4(t)),
+        arc4_to_native=lambda t: typ(**_items_to_native(t)),
     )
 
 
