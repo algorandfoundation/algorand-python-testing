@@ -1,4 +1,10 @@
 # CHANGELOG
+## v1.0.0-beta.1 (2025-07-16)
+
+### Features
+
+* support storing tuples in state ([`911cd3c`](https://github.com/algorandfoundation/algorand-python-testing/commit/911cd3cb54f69f8fdded5c677f32c1969e8827bf))
+
 ## v0.6.0-beta.3 (2025-05-16)
 
 ### Bug fixes
@@ -28,6 +34,10 @@
 * include size_of in coverage doc ([`2c73646`](https://github.com/algorandfoundation/algorand-python-testing/commit/2c7364626357844437fd80b6039c112a87b277bb))
 
 ## v0.5.0 (2025-02-20)
+
+### Features
+
+* accept abi method reference as a parameter to arc4_signature method ([`a1cb365`](https://github.com/algorandfoundation/algorand-python-testing/commit/a1cb365f2be1eb1965d9b86a5193498772131412))
 
 ## v0.5.0-beta.1 (2025-02-19)
 
@@ -69,13 +79,9 @@
 
 ### Bug fixes
 
-* ability to pass kw_only flag to dataclass when defining struct subclass (#23) ([`24bcf9d`](https://github.com/algorandfoundation/algorand-python-testing/commit/24bcf9d8af34eb2675ddf85ce9d71802f82f2d6a))
+* ability to pass kw_only flag to dataclass when defining struct subclass ([`24bcf9d`](https://github.com/algorandfoundation/algorand-python-testing/commit/24bcf9d8af34eb2675ddf85ce9d71802f82f2d6a))
 
-  * fix: ability to pass kw_only flag to dataclass when defining struct subclass
-
-  * chore: add dependabot yaml
-
-  * chore: adding ability to pass args to struct init subclass
+* ability to pass kw_only flag to dataclass when defining struct subclass ([`24bcf9d`](https://github.com/algorandfoundation/algorand-python-testing/commit/24bcf9d8af34eb2675ddf85ce9d71802f82f2d6a))
 
 ## v0.4.0 (2024-08-27)
 
@@ -115,13 +121,25 @@
 
 ## v0.3.0-beta.10 (2024-08-22)
 
+### Documentation
+
+* refining docs ([`b714783`](https://github.com/algorandfoundation/algorand-python-testing/commit/b714783b4cf15d31f91dc1c776d304bd2eb9a154))
+
+* note on future refinement ([`b714783`](https://github.com/algorandfoundation/algorand-python-testing/commit/b714783b4cf15d31f91dc1c776d304bd2eb9a154))
+
+* further refining the api section ([`b714783`](https://github.com/algorandfoundation/algorand-python-testing/commit/b714783b4cf15d31f91dc1c776d304bd2eb9a154))
+
 ## v0.3.0-beta.9 (2024-08-22)
+
+### Bug fixes
+
+* Make Global.latest_timestamp constant for a transaction ([`51c2817`](https://github.com/algorandfoundation/algorand-python-testing/commit/51c2817c262d686996e2aa4d639d259409dc8d43))
 
 ## v0.3.0-beta.8 (2024-08-22)
 
 ### Features
 
-* include ARC4 results in log, and handle > 15 ARC4 arguments (#18) ([`fd83ee8`](https://github.com/algorandfoundation/algorand-python-testing/commit/fd83ee8525a393d4a1a66f20acdb661906d84b51))
+* include ARC4 results in log, and handle > 15 ARC4 arguments ([`fd83ee8`](https://github.com/algorandfoundation/algorand-python-testing/commit/fd83ee8525a393d4a1a66f20acdb661906d84b51))
 
 ## v0.3.0-beta.7 (2024-08-21)
 
@@ -129,49 +147,35 @@
 
 ### Documentation
 
-* documentation for initial stable release of `algorand-python-testing` (#8) ([`9d97d0d`](https://github.com/algorandfoundation/algorand-python-testing/commit/9d97d0de5ff9897e642ec3f11a186f2fb95375bb))
+* documentation for initial stable release of `algorand-python-testing` ([`9d97d0d`](https://github.com/algorandfoundation/algorand-python-testing/commit/9d97d0de5ff9897e642ec3f11a186f2fb95375bb))
 
-  * docs: wip
+  docs: wip
 
-  * chore: refresh pyproject
+* refining docs (wip) ([`9d97d0d`](https://github.com/algorandfoundation/algorand-python-testing/commit/9d97d0de5ff9897e642ec3f11a186f2fb95375bb))
 
-  * docs: refining docs (wip)
+* revamping docs with latest features ([`9d97d0d`](https://github.com/algorandfoundation/algorand-python-testing/commit/9d97d0de5ff9897e642ec3f11a186f2fb95375bb))
 
-  * chore: integrating doctests
+* minor consistency with main readme; patching doctests ([`9d97d0d`](https://github.com/algorandfoundation/algorand-python-testing/commit/9d97d0de5ff9897e642ec3f11a186f2fb95375bb))
 
-  * docs: revamping docs with latest features
+* removing the box from examples ([`9d97d0d`](https://github.com/algorandfoundation/algorand-python-testing/commit/9d97d0de5ff9897e642ec3f11a186f2fb95375bb))
 
-  * docs: minor consistency with main readme; patching doctests
+* refine op codes section ([`9d97d0d`](https://github.com/algorandfoundation/algorand-python-testing/commit/9d97d0de5ff9897e642ec3f11a186f2fb95375bb))
 
-  * docs: removing the box from examples
-
-  * docs: refine op codes section
-
-  * chore: merge conflicts
-
-  * chore: apply suggestions from code review
-
-  Co-authored-by: Daniel McGregor <daniel.mcgregor@makerx.com.au>
-
-  * docs: addressing docs pr comments
+* addressing docs pr comments ([`9d97d0d`](https://github.com/algorandfoundation/algorand-python-testing/commit/9d97d0de5ff9897e642ec3f11a186f2fb95375bb))
 
 ## v0.3.0-beta.5 (2024-08-21)
 
+### Features
+
+* add __str__ and __repr__ implementations for ARC4 types ([`1f1f2ea`](https://github.com/algorandfoundation/algorand-python-testing/commit/1f1f2ea43a2f4f906cbcd5709b8e86b5c1f2bc63))
+
 ### Bug fixes
 
-* ensure mutable types (ARC4 tuple, array and structs) have their changes propagated back to container-like types (global/local state, boxes, ARC4 mutable types) (#14) ([`1f1f2ea`](https://github.com/algorandfoundation/algorand-python-testing/commit/1f1f2ea43a2f4f906cbcd5709b8e86b5c1f2bc63))
+* ensure mutable types (ARC4 tuple, array and structs) have their changes propagated back to container-like types (global/local state, boxes, ARC4 mutable types) ([`1f1f2ea`](https://github.com/algorandfoundation/algorand-python-testing/commit/1f1f2ea43a2f4f906cbcd5709b8e86b5c1f2bc63))
 
-  * fix: add default __eq__ implementation for ARC4 types
+* add default __eq__ implementation for ARC4 types ([`1f1f2ea`](https://github.com/algorandfoundation/algorand-python-testing/commit/1f1f2ea43a2f4f906cbcd5709b8e86b5c1f2bc63))
 
-  * fix: ensure mutable types (ARC4 tuple, array and structs) have their changes propagated back to container-like types (global/local state, boxes, ARC4 mutable types)
-
-  * feat: add __str__ and __repr__ implementations for ARC4 types
-
-  * refactor: make ARC4 type_info private
-
-  * refactor: make ARC4 struct inherit _ABIEncoded
-
-  * refactor: removing get_app_for_contract; expanding get_app; parsing on_complete
+* ensure mutable types (ARC4 tuple, array and structs) have their changes propagated back to container-like types (global/local state, boxes, ARC4 mutable types) ([`1f1f2ea`](https://github.com/algorandfoundation/algorand-python-testing/commit/1f1f2ea43a2f4f906cbcd5709b8e86b5c1f2bc63))
 
 ## v0.3.0-beta.4 (2024-08-21)
 
@@ -197,231 +201,47 @@
 
 ## v0.3.0-beta.2 (2024-08-16)
 
+### Features
+
+* implement gaid op ([`71801f0`](https://github.com/algorandfoundation/algorand-python-testing/commit/71801f01e49b683d81fa46d2ddb1c8aaf38b89f2))
+
+### Bug fixes
+
+* added mock implementations for new algopy functions, add util for raising consistent mockable method errors ([`71801f0`](https://github.com/algorandfoundation/algorand-python-testing/commit/71801f01e49b683d81fa46d2ddb1c8aaf38b89f2))
+
 ## v0.3.0-beta.1 (2024-08-14)
 
 ### Features
 
-* deferred app calls, modular test context, refined access to value generators, numerous fixes/improvements (#4) ([`85dd58a`](https://github.com/algorandfoundation/algorand-python-testing/commit/85dd58a60f56a0737de84dcb549c01ca5a7a2851))
+* deferred app calls, modular test context, refined access to value generators, numerous fixes/improvements ([`85dd58a`](https://github.com/algorandfoundation/algorand-python-testing/commit/85dd58a60f56a0737de84dcb549c01ca5a7a2851))
 
-  * feat: work in progress on asset, application related state ops
+* work in progress on asset, application related state ops ([`85dd58a`](https://github.com/algorandfoundation/algorand-python-testing/commit/85dd58a60f56a0737de84dcb549c01ca5a7a2851))
 
-  * test: adding extra tests
+* extra tests and implementation wrappers around AppLocal ([`85dd58a`](https://github.com/algorandfoundation/algorand-python-testing/commit/85dd58a60f56a0737de84dcb549c01ca5a7a2851))
 
-  * feat: extra tests and implementation wrappers around AppLocal
+  chore: wip
 
-  * chore: wip
+* adding acctparamsget; extra tests; pr comments ([`85dd58a`](https://github.com/algorandfoundation/algorand-python-testing/commit/85dd58a60f56a0737de84dcb549c01ca5a7a2851))
 
-  * chore: update src/algopy_testing/op.py
+* add arc4factory ([`85dd58a`](https://github.com/algorandfoundation/algorand-python-testing/commit/85dd58a60f56a0737de84dcb549c01ca5a7a2851))
 
-  Co-authored-by: Daniel McGregor <daniel.mcgregor@makerx.com.au>
+* continue with txn_group_for and add a test ([`85dd58a`](https://github.com/algorandfoundation/algorand-python-testing/commit/85dd58a60f56a0737de84dcb549c01ca5a7a2851))
 
-  * feat: adding acctparamsget; extra tests; pr comments
+### Bug fixes
 
-  * refactor: adding final bits around AcctParamsGet; unit tests and fixes
+* handle populating foreign arrays correctly for abi method calls ([`85dd58a`](https://github.com/algorandfoundation/algorand-python-testing/commit/85dd58a60f56a0737de84dcb549c01ca5a7a2851))
 
-  * refactor: adding lookup by index to acct/app/asset get ops; tweaking ci
+### Documentation
 
-  * refactor: addressing pr comments
-
-  * chore: fixing failing test
-
-  * refactor: simplifying test_context validation
-
-  * use specific enum types in box example with latest puya version
-
-  * include box types in algopy_testing
-
-  * fix inconsistent usage of field names on application fields use state total overrides when determining state totals reduce usage of `import algopy` in implementations
-
-  * expose fields property on application to aid debugging
-
-  * added section to CONTRIBUTING.md describing relationship between `algopy` and `algopy_testing`
-
-  * remove lazy algopy imports from utils remove some unnecessary ignores add TODO
-
-  * simplify abimethod and add TODO's
-
-  * add TODO for state totals
-
-  * add some tests (including currently failing ones) for app transactions
-
-  * feat: add arc4factory
-
-  * refactor: ensuring underlying _key is properly reflected on local/global states
-
-  * refactor: change guards for setting keys to explicitly check for None
-
-  * refactor: use implementation types in internal mappings
-
-  * refactor: remove usages of `import algopy` from op.py, remove explicit imports from typing module add TODO's
-
-  * test: use non-abstract contract base
-
-  * allow empty box prefix
-
-  * refactor
-
-  * use immutable param defaults
-
-  * fix: handle populating foreign arrays correctly for abi method calls
-
-  * refactor: remove lazy import algopy
-
-  * remove irrelevant comment
-
-  * initialize accounts correctly
-
-  * build: adding post install command into examples venv in hatch settings
-
-  * refactor: refine arc4 factory; add corresponding tests
-
-  * chore: adding the missing clear methods
-
-  * chore: merging everything from docs branch except docs changes
-
-  * chore: merge conflicts
-
-  * refactor: simplify txn implementations provide default values for unspecified txn fields
-
-  * docs: adding pep257 formatter; using reST docstrings style for context.py
-
-  * test: adding tests for scratch slots
-
-  * refactor: renaming set_txn_fields -> scoped_txn_fields
-
-  * chore: adding `amount` field and open question under TODO;
-
-  also adding adding get_box_map  that reuses get_box but appends the bytes box_map prefix
-
-  * chore: bumping ruff
-
-  * refactor: adding context manager for lsig args setup (similar to algopy.Txn)
-
-  also running latest ruff - some rules are updated
-
-  * refactor: move helper classes into their own file
-
-  * refactor: simplify itxn loader
-
-  * refactor: isolate get_test_context to reduce circular imports
-
-  * chore: using multiprocessing in refresh test artifacts script
-
-  * refactor: adding tests for ITxn, ITxnCreate and GITxn, fixing related bugs
-
-  * refactor: default_creator -> default_sender; setting creator as default_sender
-
-  * chore: parsing name to op name in ITxn
-
-  * chore: updating default extension for mypy to use ms-python
-
-  * test: remove incorrect test and replace with TODO
-
-  * chore: add TODO about subroutine support
-
-  * add stricter type checks for primitives
-
-  * track when contracts are in a "creating" state or not
-
-  * todos
-
-  * refactor: moving GITxn class to itxn.py
-
-  * refactor: generate arc4 signatures from types added more robust system for tracking arc4 types removed unneeded functions on StaticArray
-
-  * only support native tuples when handling generic aliases in arc4 tuples
-
-  * refactor: 1/2 adding paged access to clear state program in txn fields
-
-  * refactor: consolidating txn and itxn related context attributes/methods
-
-  * minor refactors
-
-  * support arc4 structs
-
-  * refactor: simplify logic sig implementation, and remove mapping
-
-  * refactor: fix itxn op behaviour with program pages, and other array like fields
-
-  * refactor: simplify account properties
-
-  * refactor: move crypto ops into their own module
-
-  * refactor: move pure ops into their own module
-
-  * refactor: move other misc ops
-
-  * refactor: consolidating value generators; ledger and txn contexts;
-
-  * refactor: add active group/txn properties change local/global state storage to store values against the app, not the contract instance add UInt64Backed type to simplify serialization to/from int/bytes
-
-  * refactor: remove nested private modules, replace usages of get_test_context with lazy_context
-
-  * refactor: move inner transactions onto transaction group
-
-  * refactor: remove scoped_lsig_args
-
-  * refactor: remove maybe_active_app_id
-
-  * refactor: include bool in test for uint64
-
-  * refactor: ensure arc4 values always have fully parametrized types
-
-  * refactor: use _paramatize_type
-
-  * refactor: addressing TODOs
-
-  refactor: removing txn from method names inside txn context manager prop
-
-  chore: restoring initial pre-commit
-
-  refactor: expanding scoped_execution
-
-  chore: remove redundant fields
-
-  chore: addressing minor todos and removing the ones already addressed
-
-  * refactor: adding unit tests for global/local state with implicit keys
-
-  * refactor: improving handling of initial value for implicit global/local state keys
-
-  * test: extra test cases for accessing implicit/explicit keyed local/global state
-
-  * refactor: wip adding txn_group_for method
-
-  * chore: fix linting errors
-
-  * feat: continue with txn_group_for and add a test
-
-  * chore: remove scoped_txn_fields methods
-
-  * add some additional TODO's for scoped_execution
-
-  * remove TODO
-
-  * expand gaid TODO
-
-  * tweak op.exit implementation and add TODO
-
-  * remove arc4 property from AlgopyTestContext
-
-  * add more TODOs
-
-  * refactor: addressing TODOs; adding marketplace contract example (devrel bootcamps)
-
-  * test: fixing failing tests
+* adding pep257 formatter; using reST docstrings style for context.py ([`85dd58a`](https://github.com/algorandfoundation/algorand-python-testing/commit/85dd58a60f56a0737de84dcb549c01ca5a7a2851))
 
 ## v0.2.2-beta.5 (2024-07-30)
 
 ### Documentation
 
-* patch urls in README.md (#9) ([`eddf612`](https://github.com/algorandfoundation/algorand-python-testing/commit/eddf612b177a2acddf15d58be3f375e99fb6564b))
+* patch urls in README.md ([`eddf612`](https://github.com/algorandfoundation/algorand-python-testing/commit/eddf612b177a2acddf15d58be3f375e99fb6564b))
 
-  * chore: patch urls in README.md
-
-  * ci: relaxing rules around paths-ignore
-
-  * docs: patching old namespace name in readme
+* patching old namespace name in readme ([`eddf612`](https://github.com/algorandfoundation/algorand-python-testing/commit/eddf612b177a2acddf15d58be3f375e99fb6564b))
 
 ## v0.2.2-beta.4 (2024-07-25)
 
@@ -432,3 +252,7 @@
 ## v0.2.2-beta.1 (2024-07-24)
 
 ## v0.2.1 (2024-07-10)
+
+### Bug fixes
+
+* patching helper scripts; adding pre-commit; bumping compiler version ([`8d43492`](https://github.com/algorandfoundation/algorand-python-testing/commit/8d43492adfeb53fd2824f0ea812a9c30bf6bb339))
