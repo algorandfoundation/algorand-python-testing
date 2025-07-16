@@ -742,7 +742,9 @@ class Address(StaticArray[Byte, typing.Literal[32]]):
 
 
 class _DynamicArrayTypeInfo(_TypeInfo):
-    def __init__(self, item_type: _TypeInfo):
+    _subclass_type: Callable[[], type] | None
+
+    def __init__(self, item_type: _TypeInfo) -> None:
         self.item_type = item_type
 
     @property
@@ -888,8 +890,19 @@ class DynamicArray(  # TODO: inherit from StaticArray?
         return f"{_arc4_type_repr(type(self))}({', '.join(items)})"
 
 
+class _DynamicBytesTypeInfo(_DynamicArrayTypeInfo):
+    def __init__(self) -> None:
+        super().__init__(Byte._type_info)
+
+    @property
+    def typ(self) -> type:
+        return DynamicBytes
+
+
 class DynamicBytes(DynamicArray[Byte]):
     """A variable sized array of bytes."""
+
+    _type_info: _DynamicBytesTypeInfo = _DynamicBytesTypeInfo()
 
     @typing.overload
     def __init__(self, *values: Byte | UInt8 | int): ...
@@ -995,6 +1008,12 @@ class Tuple(
                         f"item must be of type {self._type_info!r}, not {item_type_info!r}"
                     )
         self._value = _encode(items)
+
+    def __bool__(self) -> bool:
+        try:
+            return bool(self.native)
+        except ValueError:
+            return False
 
     def __len__(self) -> int:
         return len(self.native)
@@ -1103,6 +1122,8 @@ class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):  # type: ignore[
     def from_bytes(cls, value: algopy.Bytes | bytes, /) -> typing.Self:
         tuple_type = _tuple_type_from_struct(cls)
         tuple_value = tuple_type.from_bytes(value)
+        if not tuple_value:
+            return typing.cast(typing.Self, tuple_value)
         return cls(*tuple_value.native)
 
     @property

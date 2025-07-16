@@ -3,7 +3,7 @@
 
 // tests.artifacts.StateOps.contract.StateAppLocalExContract.__algopy_entrypoint_with_init() -> uint64:
 main:
-    // tests/artifacts/StateOps/contract.py:347
+    // tests/artifacts/StateOps/contract.py:346
     // class StateAppLocalExContract(ARC4Contract):
     txn NumAppArgs
     bz main_bare_routing@6
@@ -12,13 +12,13 @@ main:
     match main_opt_in_route@5
 
 main_after_if_else@8:
-    // tests/artifacts/StateOps/contract.py:347
+    // tests/artifacts/StateOps/contract.py:346
     // class StateAppLocalExContract(ARC4Contract):
     pushint 0 // 0
     return
 
 main_opt_in_route@5:
-    // tests/artifacts/StateOps/contract.py:364
+    // tests/artifacts/StateOps/contract.py:363
     // @arc4.abimethod(allow_actions=["OptIn"])
     txn OnCompletion
     pushint 1 // OptIn
@@ -31,7 +31,7 @@ main_opt_in_route@5:
     return
 
 main_bare_routing@6:
-    // tests/artifacts/StateOps/contract.py:347
+    // tests/artifacts/StateOps/contract.py:346
     // class StateAppLocalExContract(ARC4Contract):
     txn OnCompletion
     bnz main_after_if_else@8
@@ -44,21 +44,21 @@ main_bare_routing@6:
 
 // tests.artifacts.StateOps.contract.StateAppLocalExContract.opt_in() -> void:
 opt_in:
-    // tests/artifacts/StateOps/contract.py:366
+    // tests/artifacts/StateOps/contract.py:365
     // self.local_bytes[Global.creator_address] = Bytes(b"dummy_bytes_from_external_contract")
     global CreatorAddress
     pushbytess "local_bytes" 0x64756d6d795f62797465735f66726f6d5f65787465726e616c5f636f6e7472616374 // "local_bytes", 0x64756d6d795f62797465735f66726f6d5f65787465726e616c5f636f6e7472616374
     app_local_put
-    // tests/artifacts/StateOps/contract.py:367
+    // tests/artifacts/StateOps/contract.py:366
     // self.local_uint64[Global.creator_address] = UInt64(99)
     global CreatorAddress
     pushbytes "local_uint64"
     pushint 99 // 99
     app_local_put
-    // tests/artifacts/StateOps/contract.py:368
+    // tests/artifacts/StateOps/contract.py:367
     // self.local_arc4_bytes[Global.creator_address] = algopy.arc4.DynamicBytes(
     global CreatorAddress
-    // tests/artifacts/StateOps/contract.py:368-370
+    // tests/artifacts/StateOps/contract.py:367-369
     // self.local_arc4_bytes[Global.creator_address] = algopy.arc4.DynamicBytes(
     //     b"dummy_arc4_bytes"
     // )

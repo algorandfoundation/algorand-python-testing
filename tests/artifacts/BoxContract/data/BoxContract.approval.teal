@@ -87,10 +87,8 @@ read_enums:
     pop
     bytec_0 // "oca"
     box_get
-    swap
-    btoi
-    swap
     assert // check self.oca exists
+    btoi
     itob
     ==
     assert
@@ -101,10 +99,8 @@ read_enums:
     pop
     bytec_1 // "txn"
     box_get
-    swap
-    btoi
-    swap
     assert // check self.txn exists
+    btoi
     itob
     ==
     assert
@@ -112,17 +108,13 @@ read_enums:
     // return arc4.Tuple((arc4.UInt64(self.oca.value), arc4.UInt64(self.txn.value)))
     bytec_0 // "oca"
     box_get
-    swap
-    btoi
-    swap
     assert // check self.oca exists
+    btoi
     itob
     bytec_1 // "txn"
     box_get
-    swap
-    btoi
-    swap
     assert // check self.txn exists
+    btoi
     itob
     concat
     retsub
