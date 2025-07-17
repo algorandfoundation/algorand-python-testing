@@ -18,7 +18,7 @@ _TArrayLength = typing.TypeVar("_TArrayLength", bound=int)
 _T = typing.TypeVar("_T")
 
 
-class _FixedArrayMeta(type, typing.Generic[_TArrayItem, _TArrayLength]):
+class _ImmutableFixedArrayMeta(type, typing.Generic[_TArrayItem, _TArrayLength]):
     __concrete__: typing.ClassVar[dict[tuple[type, type], type]] = {}
 
     # get or create a type that is parametrized with element_t and length
@@ -43,19 +43,20 @@ class _FixedArrayMeta(type, typing.Generic[_TArrayItem, _TArrayLength]):
 
 
 class ImmutableFixedArray(
-    Serializable, typing.Generic[_TArrayItem, _TArrayLength], metaclass=_FixedArrayMeta
+    Serializable, typing.Generic[_TArrayItem, _TArrayLength], metaclass=_ImmutableFixedArrayMeta
 ):
     """An immutable fixed length Array of the specified type and length."""
 
     _element_type: typing.ClassVar[type]
     _length: int
 
-    def __new__(cls, *items: _TArrayItem) -> typing.Self:
+    def __new__(cls, values: Iterable[_TArrayItem]) -> typing.Self:
         try:
             assert cls._element_type
             assert cls._length
         except AttributeError:
             try:
+                items = list(values)
                 item = items[0]
             except IndexError:
                 raise TypeError("array must have an item type") from None
@@ -64,8 +65,9 @@ class ImmutableFixedArray(
         instance = super().__new__(cls)
         return instance
 
-    def __init__(self, *items: _TArrayItem) -> None:
+    def __init__(self, values: Iterable[_TArrayItem]) -> None:
         super().__init__()
+        items = list(values)
         if len(items) != 0 and len(items) != self._length:
             raise TypeError(f"expected {self._length} items, not {len(items)}")
         for item in items:
@@ -73,9 +75,22 @@ class ImmutableFixedArray(
                 raise TypeError(f"item must be of type {self._element_type!r}, not {type(item)!r}")
         self._items = tuple(items)
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, self.__class__):
+            return (
+                self._element_type == other._element_type
+                and self._length == other._length
+                and self.serialize() == other.serialize()
+            )
+        else:
+            return NotImplemented
+
+    def __hash__(self) -> int:
+        return hash(self.serialize())
+
     @classmethod
     def full(cls, item: _TArrayItem) -> typing.Self:
-        return cls(*(item for _ in range(cls._length)))
+        return cls(item for _ in range(cls._length))
 
     def __iter__(self) -> typing.Iterator[_TArrayItem]:
         return iter(self._items)
@@ -86,6 +101,9 @@ class ImmutableFixedArray(
     @property
     def length(self) -> UInt64:
         return UInt64(len(self._items))
+
+    def __len__(self) -> UInt64:
+        return self.length
 
     def __getitem__(self, index: UInt64 | int) -> _TArrayItem:
         return self._items[index]
@@ -104,9 +122,9 @@ class ImmutableFixedArray(
         self, items: Iterable[_TArrayItem]
     ) -> "ImmutableFixedArray[_TArrayItem, _TArrayLength]":
         el_type = self._element_type
-        l_type = self._length
+        l_type = get_type_generic_from_int_literal(self._length)
         typ = ImmutableFixedArray[el_type, l_type]  # type: ignore[valid-type]
-        return typ(*items)
+        return typ(items)
 
     def serialize(self) -> bytes:
         return serialize_to_bytes(self)
@@ -114,6 +132,30 @@ class ImmutableFixedArray(
     @classmethod
     def from_bytes(cls, value: bytes, /) -> typing.Self:
         return deserialize_from_bytes(cls, value)
+
+
+class _FixedArrayMeta(type, typing.Generic[_TArrayItem, _TArrayLength]):
+    __concrete__: typing.ClassVar[dict[tuple[type, type], type]] = {}
+
+    # get or create a type that is parametrized with element_t and length
+    def __getitem__(cls, item: tuple[type[_TArrayItem], type[_TArrayLength]]) -> type:
+        cache = cls.__concrete__
+        if c := cache.get(item, None):
+            return c
+
+        element_t, length_t = item
+        length = get_int_literal_from_type_generic(length_t)
+        cls_name = f"{cls.__name__}[{element_t.__name__},{length}]"
+        cache[item] = c = types.new_class(
+            cls_name,
+            bases=(cls,),
+            exec_body=lambda ns: ns.update(
+                _element_type=element_t,
+                _length=length,
+            ),
+        )
+
+        return c
 
 
 class FixedArray(
@@ -124,12 +166,13 @@ class FixedArray(
     _element_type: typing.ClassVar[type]
     _length: int
 
-    def __new__(cls, *items: _TArrayItem) -> typing.Self:
+    def __new__(cls, values: Iterable[_TArrayItem]) -> typing.Self:
         try:
             assert cls._element_type
             assert cls._length
         except AttributeError:
             try:
+                items = list(values)
                 item = items[0]
             except IndexError:
                 raise TypeError("array must have an item type") from None
@@ -138,8 +181,9 @@ class FixedArray(
         instance = super().__new__(cls)
         return instance
 
-    def __init__(self, *items: _TArrayItem) -> None:
+    def __init__(self, values: Iterable[_TArrayItem]) -> None:
         super().__init__()
+        items = list(values)
         if len(items) != 0 and len(items) != self._length:
             raise TypeError(f"expected {self._length} items, not {len(items)}")
         for item in items:
@@ -149,7 +193,7 @@ class FixedArray(
 
     @classmethod
     def full(cls, item: _TArrayItem) -> typing.Self:
-        return cls(*(item for _ in range(cls._length)))
+        return cls(item for _ in range(cls._length))
 
     def __iter__(self) -> typing.Iterator[_TArrayItem]:
         return iter(self._items)
@@ -160,6 +204,9 @@ class FixedArray(
     @property
     def length(self) -> UInt64:
         return UInt64(len(self._items))
+
+    def __len__(self) -> UInt64:
+        return self.length
 
     def __getitem__(self, index: UInt64 | int) -> _TArrayItem:
         return self._items[index]
@@ -179,13 +226,13 @@ class FixedArray(
         return self.__class__.from_bytes(self.serialize())
 
     def freeze(self) -> ImmutableFixedArray[_TArrayItem, _TArrayLength]:
-        return ImmutableFixedArray(*self._items)
+        return ImmutableFixedArray(self._items)
 
     def _from_iter(self, items: Iterable[_TArrayItem]) -> "FixedArray[_TArrayItem, _TArrayLength]":
         el_type = self._element_type
         l_type = self._length
         typ = FixedArray[el_type, l_type]  # type: ignore[valid-type]
-        return typ(*items)
+        return typ(items)
 
     def serialize(self) -> bytes:
         return serialize_to_bytes(self)
@@ -249,6 +296,9 @@ class ImmutableArray(Serializable, typing.Generic[_TArrayItem], metaclass=_Immut
     @property
     def length(self) -> UInt64:
         return UInt64(len(self._items))
+
+    def __len__(self) -> UInt64:
+        return self.length
 
     def __getitem__(self, index: UInt64 | int) -> _TArrayItem:
         return self._items[index]
@@ -356,13 +406,14 @@ class Array(Serializable, typing.Generic[_TArrayItem], metaclass=_ArrayMeta):
     _element_type: typing.ClassVar[type]
 
     # ensure type is fully parameterized by looking up type from metaclass
-    def __new__(cls, *items: _TArrayItem) -> typing.Self:
+    def __new__(cls, values: Iterable[_TArrayItem]) -> typing.Self:
         from _algopy_testing.serialize import type_of
 
         try:
             assert cls._element_type
         except AttributeError:
             try:
+                items = list(values)
                 item = items[0]
             except IndexError:
                 raise TypeError("array must have an item type") from None
@@ -385,6 +436,9 @@ class Array(Serializable, typing.Generic[_TArrayItem], metaclass=_ArrayMeta):
     @property
     def length(self) -> UInt64:
         return UInt64(len(self._items))
+
+    def __len__(self) -> UInt64:
+        return self.length
 
     def __getitem__(self, index: UInt64 | int) -> _TArrayItem:
         return self._items[index]

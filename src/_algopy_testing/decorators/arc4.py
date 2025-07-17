@@ -192,7 +192,6 @@ def abimethod(  # noqa: PLR0913
             check_routing_conditions(app_id, metadata)
             result = fn(*args, **kwargs)
             if result is not None:
-
                 abi_result = native_to_arc4(result)
                 log(ARC4_RETURN_PREFIX, abi_result)
             return result
@@ -329,7 +328,13 @@ def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa:
     from _algopy_testing.arc4 import _ABIEncoded
     from _algopy_testing.gtxn import Transaction, TransactionBase
     from _algopy_testing.models import Account, Application, Asset
-    from _algopy_testing.primitives import ImmutableArray
+    from _algopy_testing.primitives import (
+        Array,
+        FixedArray,
+        ImmutableArray,
+        ImmutableFixedArray,
+        Struct,
+    )
 
     if annotation is None:
         return "void"
@@ -341,12 +346,14 @@ def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa:
     if not isinstance(annotation, type):
         raise TypeError(f"expected type: {annotation!r}")
 
-    if typing.NamedTuple in getattr(annotation, "__orig_bases__", []):
+    if typing.NamedTuple in getattr(annotation, "__orig_bases__", []) or issubclass(
+        annotation, Struct
+    ):
         tuple_fields = list(inspect.get_annotations(annotation).values())
         tuple_args = [_type_to_arc4(a) for a in tuple_fields]
         return f"({','.join(tuple_args)})"
 
-    if issubclass(annotation, ImmutableArray):
+    if issubclass(annotation, Array | FixedArray | ImmutableArray | ImmutableFixedArray):
         return f"{_type_to_arc4(annotation._element_type)}[]"
     # arc4 types
     if issubclass(annotation, _ABIEncoded):

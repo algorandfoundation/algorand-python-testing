@@ -2,6 +2,7 @@ import typing
 
 from algopy import (
     Account,
+    BigUInt,
     Box,
     ImmutableArray,
     ReferenceArray,
@@ -24,6 +25,7 @@ class Xtra(typing.NamedTuple):
     b: UInt64
     c: Account
     d: More
+    e: BigUInt
 
 
 class Point(typing.NamedTuple):
@@ -78,6 +80,11 @@ class StaticSizeContract(arc4.ARC4Contract):
         for i in urange(1, length + 1):
             arr.append(i % 2 == 0)
         assert arr.length == length, "expected correct length"
+
+        arr2 = arr.copy()
+        arr2.extend(arr)
+        assert arr2.length == length * 2, "expected correct length"
+
         count = UInt64(0)
         for val in arr:
             if val:
@@ -121,11 +128,38 @@ class StaticSizeContract(arc4.ARC4Contract):
             b=self.count,
             c=Txn.sender,
             d=self.more(),
+            e=BigUInt(self.count),
         )
 
     @subroutine(inline=False)
     def more(self) -> More:
         return More(foo=arc4.UInt64(self.count + 1), bar=arc4.UInt64(self.count * self.count))
+
+    @arc4.abimethod()
+    def test_arc4_bool(self) -> ImmutableArray[arc4.Bool]:
+        arr = ReferenceArray[arc4.Bool]()
+        arr.append(arc4.Bool(Txn.sender == Txn.receiver))
+        arr.append(arc4.Bool(Txn.sender != Txn.receiver))
+
+        dyn_arr = arc4.DynamicArray[arc4.Bool]()
+        dyn_arr.extend(arr)
+        assert dyn_arr.length == 2, "expected correct length"
+        assert dyn_arr.bytes.length == 3, "expected 3 bytes"
+        assert dyn_arr[0] == (Txn.sender == Txn.receiver), "expected correct value at 0"
+        assert dyn_arr[1] == (Txn.sender != Txn.receiver), "expected correct value at 1"
+
+        arr2 = arr.copy()
+        # note: not supported currently
+        # arr2.extend(dyn_array)
+        for b in dyn_arr:
+            arr2.append(b)
+        assert arr2.length == 4, "expected correct length"
+        assert arr2[0] == (Txn.sender == Txn.receiver), "expected correct value at 0"
+        assert arr2[1] == (Txn.sender != Txn.receiver), "expected correct value at 1"
+        assert arr2[2] == (Txn.sender == Txn.receiver), "expected correct value at 2"
+        assert arr2[3] == (Txn.sender != Txn.receiver), "expected correct value at 3"
+
+        return arr.freeze()
 
 
 @subroutine

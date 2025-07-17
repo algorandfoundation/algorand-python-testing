@@ -531,6 +531,13 @@ class Bool(_ABIEncoded):
     def __init__(self, value: bool = False, /) -> None:  # noqa: FBT001, FBT002
         self._value = int_to_bytes(self._true_int_value if value else self._false_int_value, 1)
 
+    def __eq__(self, other: object) -> bool:
+        try:
+            other_bool = bool(other)
+        except (TypeError, ValueError):
+            return NotImplemented
+        return self.native == other_bool
+
     def __bool__(self) -> bool:
         """Allow Bool to be used in boolean contexts."""
         return self.native

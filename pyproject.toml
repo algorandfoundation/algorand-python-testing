@@ -81,7 +81,7 @@ check = [
 ]
 # type checks algorand-python-testing code
 mypy_testing = "mypy . --exclude examples"
-tests = "pytest --cov=src --cov-report xml"
+tests = "pytest --cov=src --cov-report xml {args}"
 tests_cov = [
     "pytest --cov=src --cov-report=html",
     "python -m webbrowser -t 'file://{root:uri}/htmlcov/index.html'"

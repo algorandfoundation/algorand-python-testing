@@ -90,9 +90,7 @@ def get_native_to_arc4_serializer(  # noqa: PLR0911
                 native_to_arc4=lambda arr: arc4_fixed_type(
                     *(element_serializer.native_to_arc4(e) for e in arr)
                 ),
-                arc4_to_native=lambda arr: typ(
-                    *(element_serializer.arc4_to_native(e) for e in arr)
-                ),
+                arc4_to_native=lambda arr: typ(element_serializer.arc4_to_native(e) for e in arr),
             )
     raise TypeError(f"unserializable type: {typ}")
 
@@ -143,18 +141,18 @@ def _get_struct_serializer(typ: type) -> _Serializer[typing.Any, typing.Any]:
     struct_fields = inspect.get_annotations(typ)
     serializers = {k: get_native_to_arc4_serializer(v) for k, v in struct_fields.items()}
 
-    def _items_to_arc4(items: dict[str, object]) -> dict[str, object]:
+    def _items_to_arc4(items: object) -> dict[str, object]:
         result = {}
-        for key, item in items.items():
+        for key in inspect.get_annotations(type(items)):
             serializer = serializers[key]
-            result[key] = serializer.native_to_arc4(item)
+            result[key] = serializer.native_to_arc4(getattr(items, key))
         return result
 
-    def _items_to_native(items: dict[str, object]) -> dict[str, object]:
+    def _items_to_native(items: object) -> dict[str, object]:
         result = {}
-        for key, item in items.items():
+        for key in inspect.get_annotations(type(items)):
             serializer = serializers[key]
-            result[key] = serializer.arc4_to_native(item)
+            result[key] = serializer.arc4_to_native(getattr(items, key))
         return result
 
     class TempStruct(arc4.Struct):
@@ -163,7 +161,7 @@ def _get_struct_serializer(typ: type) -> _Serializer[typing.Any, typing.Any]:
     return _Serializer(
         arc4_type=TempStruct,
         native_to_arc4=lambda t: TempStruct(**_items_to_arc4(t)),
-        arc4_to_native=lambda t: typ(_items_to_native(t)),
+        arc4_to_native=lambda t: typ(**_items_to_native(t)),
     )
 
 

@@ -1,4 +1,13 @@
-from algopy import ReferenceArray, Txn, UInt64, arc4, op, subroutine, uenumerate, urange
+from algopy import (
+    ReferenceArray,
+    Txn,
+    UInt64,
+    arc4,
+    op,
+    subroutine,
+    uenumerate,
+    urange,
+)
 
 
 class Contract(arc4.ARC4Contract):
@@ -114,6 +123,15 @@ class Contract(arc4.ARC4Contract):
         assert arr[3] == 6
 
     @arc4.abimethod()
+    def test_array_assignment_maximum_cursage(self) -> None:
+        arr = ReferenceArray[UInt64]()
+        arr.append(UInt64(3))
+        append_length_and_return(arr)[0] = UInt64(42)
+        assert arr.length == 2
+        assert arr[0] == 42
+        assert arr[1] == 1
+
+    @arc4.abimethod()
     def test_allocations(self, num: UInt64) -> None:
         for _i in urange(num):
             alloc_test = ReferenceArray[UInt64]()
@@ -170,6 +188,15 @@ class Contract(arc4.ARC4Contract):
             assert value >= last, "array is not sorted"
             last = value
 
+    @arc4.abimethod()
+    def test_unobserved_write(self) -> None:
+        arr = create_array()
+        last = arr.length - 1
+        arr[last] = UInt64(0)  # write
+        assert_last_is_zero(arr)
+        arr[last] = UInt64(1)  # write
+        assert arr[last] == 1
+
 
 @subroutine
 def quicksort_window(
@@ -223,6 +250,19 @@ def quicksort_window(
     # sort right half of window
     if left < window_right:
         quicksort_window(arr, left, window_right)
+
+
+@subroutine(inline=False)
+def create_array() -> ReferenceArray[UInt64]:
+    arr = ReferenceArray[UInt64]()
+    for i in urange(5):
+        arr.append(i)
+    return arr
+
+
+@subroutine(inline=False)
+def assert_last_is_zero(arr: ReferenceArray[UInt64]) -> None:
+    assert arr[arr.length - 1] == 0
 
 
 @subroutine
