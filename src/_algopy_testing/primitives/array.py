@@ -53,7 +53,6 @@ class ImmutableFixedArray(
     def __new__(cls, values: Iterable[_TArrayItem]) -> typing.Self:
         try:
             assert cls._element_type
-            assert cls._length
         except AttributeError:
             try:
                 items = list(values)
@@ -169,7 +168,6 @@ class FixedArray(
     def __new__(cls, values: Iterable[_TArrayItem]) -> typing.Self:
         try:
             assert cls._element_type
-            assert cls._length
         except AttributeError:
             try:
                 items = list(values)

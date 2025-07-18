@@ -367,3 +367,16 @@ def test_enums_in_boxes() -> None:
         # Assert
         assert context.ledger.get_box(contract, b"oca") == itob(oca.native)
         assert context.ledger.get_box(contract, b"txn") == itob(txn.native)
+
+
+# def test_arrays_in_boxes(context: AlgopyTestContext) -> None:
+#     arr1 = Array([UInt64(1), UInt64(2), UInt64(3)])
+#     box = Box(Array[UInt64], key=b"test_array_1")
+#     box.value = arr1
+#     op_box_content, op_box_exists = algopy.op.Box.get(b"test_array_1")
+#     op_box_length, _ = algopy.op.Box.length(b"test_array_1")
+#     assert op_box_exists
+#     assert box.length == op_box_length
+
+#     arr1[1] = UInt64(20)
+#     assert box.value[1] == UInt64(20)

@@ -25,6 +25,7 @@ from _algopy_testing.mutable import (
 )
 from _algopy_testing.primitives import Bytes
 from _algopy_testing.protocols import BytesBacked
+from _algopy_testing.serialize import get_native_to_arc4_serializer
 from _algopy_testing.utils import (
     as_bytes,
     as_int,
@@ -556,6 +557,7 @@ class Bool(_ABIEncoded):
 
 
 _TArrayItem = typing.TypeVar("_TArrayItem", bound=_ABIEncoded)
+_TNativeArrayItem = typing.TypeVar("_TNativeArrayItem")
 _TArrayLength = typing.TypeVar("_TArrayLength", bound=int)
 
 
@@ -649,7 +651,7 @@ class StaticArray(
 
     @property
     def length(self) -> algopy.UInt64:
-        # """Returns the current length of the array"""
+        # """Returns the length of the array"""
         import algopy
 
         return algopy.UInt64(self._type_info.size)
@@ -678,6 +680,26 @@ class StaticArray(
     def __repr__(self) -> str:
         items = map(repr, self._list())
         return f"{_arc4_type_repr(type(self))}({', '.join(items)})"
+
+    def to_native(
+        self, element_type: type[_TNativeArrayItem], /
+    ) -> algopy.FixedArray[_TNativeArrayItem, _TArrayLength]:
+        """Convert to an `algopy.FixedArray` with the specified element type.
+
+        Only allowed if the element type is compatible with this arrays element type
+        e.g. arc4.UInt64 -> UInt64
+        """
+        import algopy
+
+        serializer = get_native_to_arc4_serializer(element_type)
+        type_info = serializer.arc4_type._type_info
+        if type_info != self._type_info.item_type:
+            raise TypeError(
+                f"cannot convert {self._type_info.item_type!r} to {type_info!r} "
+                f"for element type {element_type!r}"
+            )
+        items = [serializer.arc4_to_native(item) for item in self._list()]
+        return algopy.FixedArray(items)
 
 
 class _AddressTypeInfo(_StaticArrayTypeInfo):
@@ -886,6 +908,26 @@ class DynamicArray(  # TODO: inherit from StaticArray?
     def __repr__(self) -> str:
         items = map(repr, self._list())
         return f"{_arc4_type_repr(type(self))}({', '.join(items)})"
+
+    def to_native(
+        self, element_type: type[_TNativeArrayItem], /
+    ) -> algopy.Array[_TNativeArrayItem]:
+        """Convert to an `algopy.Array` with the specified element type.
+
+        Only allowed if the element type is compatible with this arrays element type
+        e.g. arc4.UInt64 -> UInt64
+        """
+        import algopy
+
+        serializer = get_native_to_arc4_serializer(element_type)
+        type_info = serializer.arc4_type._type_info
+        if type_info != self._type_info.item_type:
+            raise TypeError(
+                f"cannot convert {self._type_info.item_type!r} to {type_info!r} "
+                f"for element type {element_type!r}"
+            )
+        items = [serializer.arc4_to_native(item) for item in self._list()]
+        return algopy.Array(items)
 
 
 class _DynamicBytesTypeInfo(_DynamicArrayTypeInfo):
