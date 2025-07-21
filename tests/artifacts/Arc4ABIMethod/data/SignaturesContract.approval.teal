@@ -504,11 +504,13 @@ complex_sig:
     dig 2
     substring3
     dup
-    extract 0 8 // on error: Index access is out of bounds
+    extract 0 8
     bytec_1 // 0x0000000000000001
     b==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:90
+    // tests/artifacts/Arc4ABIMethod/contract.py:88-90
+    // # struct
+    // assert struct1.another_struct.one == 1
     // assert struct1.another_struct.two == "2"
     dup
     pushint 8 // 8
@@ -518,6 +520,8 @@ complex_sig:
     dig 2
     cover 2
     substring3
+    // tests/artifacts/Arc4ABIMethod/contract.py:90
+    // assert struct1.another_struct.two == "2"
     bytec_2 // 0x000132
     ==
     assert
@@ -530,11 +534,12 @@ complex_sig:
     uncover 2
     substring3
     dup
-    extract 0 8 // on error: Index access is out of bounds
+    extract 0 8
     bytec_1 // 0x0000000000000001
     b==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:92
+    // tests/artifacts/Arc4ABIMethod/contract.py:91-92
+    // assert struct1.another_struct_alias.one == 1
     // assert struct1.another_struct_alias.two == "2"
     dup
     pushint 8 // 8
@@ -542,20 +547,24 @@ complex_sig:
     dig 1
     len
     substring3
+    // tests/artifacts/Arc4ABIMethod/contract.py:90
+    // assert struct1.another_struct.two == "2"
     bytec_2 // 0x000132
+    // tests/artifacts/Arc4ABIMethod/contract.py:92
+    // assert struct1.another_struct_alias.two == "2"
     ==
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:93
     // assert struct1.three == 3
     frame_dig -4
-    extract 4 16 // on error: Index access is out of bounds
+    extract 4 16
     pushbytes 0x00000000000000000000000000000003
     b==
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:94
     // assert struct1.four == 4
     frame_dig -4
-    extract 20 16 // on error: Index access is out of bounds
+    extract 20 16
     pushbytes 0x00000000000000000000000000000004
     b==
     assert

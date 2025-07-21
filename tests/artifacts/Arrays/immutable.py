@@ -1,10 +1,15 @@
 import typing
 
 from algopy import (
-    Array,
+    BigUInt,
+    Box,
     Bytes,
+    FixedArray,
     ImmutableArray,
+    ImmutableFixedArray,
+    ReferenceArray,
     String,
+    Struct,
     Txn,
     UInt64,
     arc4,
@@ -13,6 +18,7 @@ from algopy import (
     subroutine,
     uenumerate,
     urange,
+    zero_bytes,
 )
 
 
@@ -71,6 +77,19 @@ class NineBoolTuple(typing.NamedTuple):
     bar: UInt64
 
 
+class MyStruct(arc4.Struct, frozen=True):
+    foo: arc4.UInt64
+    bar: arc4.UInt64
+
+
+class NativeStruct(Struct, frozen=True):
+    foo: UInt64
+    bar: UInt64
+
+
+NativeStruct3 = ImmutableFixedArray[NativeStruct, typing.Literal[3]]
+
+
 class ImmutableArrayContract(arc4.ARC4Contract):
     @arc4.abimethod()
     def test_uint64_array(self) -> None:
@@ -107,6 +126,31 @@ class ImmutableArrayContract(arc4.ARC4Contract):
         assert arr[2] == 23
 
         self.a = arr
+
+    @arc4.abimethod()
+    def test_biguint_array(self) -> None:
+        arr = ImmutableArray[BigUInt]()
+        assert arr.length == 0
+
+        arr = arr.append(BigUInt(Txn.num_app_args - 1))
+        assert arr.length == 1
+        assert arr[-1] == 0
+
+        arr = add_xb(arr, UInt64(5))
+        assert arr.length == 6
+        assert arr[-1] == 4
+
+        arr = arr.append(BigUInt(2**512 - 1) - Txn.num_app_args)
+        assert arr.length == 7
+        assert arr[-1] == 2**512 - 2
+        assert arr[0] == 0
+
+        arr = arr.append(BigUInt(2**512 - 1))
+        assert arr.length == 8
+        assert arr[-1] == 2**512 - 1
+        assert arr[0] == 0
+
+        Box(ImmutableArray[BigUInt], key=b"biguint").value = arr
 
     @arc4.abimethod()
     def test_bool_array(self, length: UInt64) -> None:
@@ -353,7 +397,7 @@ class ImmutableArrayContract(arc4.ARC4Contract):
     def test_convert_to_array_and_back(
         self, arr: ImmutableArray[MyTuple], append: UInt64
     ) -> ImmutableArray[MyTuple]:
-        mutable = Array[MyTuple]()
+        mutable = ReferenceArray[MyTuple]()
         mutable.extend(arr)
         for i in urange(append):
             mutable.append(MyTuple(foo=i, bar=i % 2 == 0, baz=i % 3 == 0))
@@ -397,6 +441,49 @@ class ImmutableArrayContract(arc4.ARC4Contract):
     ) -> ImmutableArray[MyDynamicSizedTuple]:
         return imm1 + imm2
 
+    @arc4.abimethod()
+    def test_immutable_arc4(self, imm: ImmutableArray[MyStruct]) -> ImmutableArray[MyStruct]:
+        assert imm, "expected non empty array"
+        imm = imm.replace(imm.length - 1, imm[0])
+        return imm
+
+    @arc4.abimethod()
+    def test_imm_fixed_arr(self) -> NativeStruct3:
+        arr1 = zero_bytes(NativeStruct3)
+        struct12 = NativeStruct(Txn.num_app_args + 1, Txn.num_app_args + 2)
+        arr2 = NativeStruct3((struct12, struct12, struct12))
+        arr3 = NativeStruct3.full(struct12)
+        assert arr1 != arr2, "expected arrays to be different"
+        assert arr2 == arr3, "expected arrays to be the same"
+
+        for i in urange(3):
+            arr1 = arr1.replace(i, struct12)
+
+        assert arr1 == arr2, "expected arrays to be the same"
+
+        for struct_it in arr1:
+            assert struct_it == struct12, "expected items on iteration to be the same"
+
+        self.imm_fixed_arr = arr1
+        assert self.imm_fixed_arr == arr2, "expected array in storage to be the same"
+
+        mut_arr: FixedArray[NativeStruct, typing.Literal[3]] = FixedArray(arr1)
+        assert sum_imm_fixed(mut_arr.freeze()) == 15, "expected sum to be 15"
+
+        mut_arr[0] = NativeStruct(UInt64(), UInt64())
+        assert sum_imm_fixed(mut_arr.freeze()) == 10, "expected sum to be 10"
+
+        return self.imm_fixed_arr
+
+
+@subroutine
+def sum_imm_fixed(arr: NativeStruct3) -> UInt64:
+    total = UInt64(0)
+    for item in arr:
+        total += item.foo
+        total += item.bar
+    return total
+
 
 @subroutine
 def times(n: UInt64) -> String:
@@ -417,6 +504,13 @@ def add_x(arr: ImmutableArray[UInt64], x: UInt64) -> ImmutableArray[UInt64]:
 def pop_x(arr: ImmutableArray[UInt64], x: UInt64) -> ImmutableArray[UInt64]:
     for _i in urange(x):
         arr = arr.pop()
+    return arr
+
+
+@subroutine
+def add_xb(arr: ImmutableArray[BigUInt], x: UInt64) -> ImmutableArray[BigUInt]:
+    for i in urange(x):
+        arr = arr.append(BigUInt(i))
     return arr
 
 

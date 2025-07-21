@@ -213,3 +213,22 @@ def get_static_size_of(typ: type | object, /) -> int | None:
     size = get_max_bytes_static_len(type_info)
 
     return size
+
+
+def get_int_literal_from_type_generic(literal_type: type) -> int:
+    type_args = typing.get_args(literal_type)
+    try:
+        (int_arg,) = type_args
+    except ValueError:
+        int_arg = 0
+    return int(int_arg)
+
+
+def get_type_generic_from_int_literal(value: int) -> type:
+    return typing.cast("type", typing.Literal[value])
+
+
+def parameterize_type(type_: type, *params: type) -> type:
+    if len(params) == 1:
+        return typing.cast("type", type_[params[0]])  # type: ignore[index]
+    return typing.cast("type", type_[params])  # type: ignore[index]

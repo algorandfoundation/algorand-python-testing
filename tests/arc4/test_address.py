@@ -246,3 +246,10 @@ def test_comparison_with_other_from_account(value: bytes, other: bytes) -> None:
     assert arc4_value != other_account
 
     assert arc4_value != arc4.Address(algopy.Bytes(other))
+
+
+def test_to_native() -> None:
+    a1 = arc4.Address("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ")
+    native_a1 = a1.to_native(arc4.Byte)
+    assert native_a1.length == 32
+    assert [x.native for x in native_a1] == [0] * 32

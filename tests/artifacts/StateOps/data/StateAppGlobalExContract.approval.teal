@@ -52,7 +52,11 @@ main:
     // tests/artifacts/StateOps/contract.py:442
     // self.global_arc4_bytes_explicit = algopy.arc4.DynamicBytes(b"dummy_arc4_bytes")
     pushbytes "global_arc4_bytes_explicit"
+    // tests/artifacts/StateOps/contract.py:440
+    // algopy.arc4.DynamicBytes(b"dummy_arc4_bytes"), key="global_arc4_bytes"
     bytec_1 // 0x001064756d6d795f617263345f6279746573
+    // tests/artifacts/StateOps/contract.py:442
+    // self.global_arc4_bytes_explicit = algopy.arc4.DynamicBytes(b"dummy_arc4_bytes")
     app_global_put
 
 main_after_if_else@2:

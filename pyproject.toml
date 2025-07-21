@@ -30,7 +30,7 @@ dependencies = [
     "pynacl>=1.4.0,<2",
     "ecdsa>=0.17.0",
     "coincurve>=19.0.1",
-    "algorand-python>=2.0"
+    "algorand-python @ file://{root}/../puya/stubs",
 ]
 
 [project.urls]
@@ -50,7 +50,7 @@ type = "virtual"
 path = ".venv"
 python = "3.12"
 dependencies = [
-    "puyapy>=3.0",
+    "puyapy @ {root:parent:uri}/puya",
     "pytest>=7.4",
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
@@ -81,7 +81,7 @@ check = [
 ]
 # type checks algorand-python-testing code
 mypy_testing = "mypy . --exclude examples"
-tests = "pytest --cov=src --cov-report xml"
+tests = "pytest --cov=src --cov-report xml {args}"
 tests_cov = [
     "pytest --cov=src --cov-report=html",
     "python -m webbrowser -t 'file://{root:uri}/htmlcov/index.html'"
@@ -132,7 +132,7 @@ dependencies = [
     "pytest-cov>=4.1.0",
     "py-algorand-sdk>=2.4.0",
     "algokit-utils>=3.0.0",
-    "puyapy>=3.0",
+    "puyapy @ {root:parent:uri}/puya",
 ]
 
 [tool.hatch.envs.test.scripts]
@@ -183,7 +183,7 @@ post-install-commands = [
   "hatch run examples:reload_algopy_testing",
 ]
 dependencies = [
-    "algorand-python>=1.2",
+    "algorand-python @ file://{root}/../puya/stubs",
     "pytest>=7.4",
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
