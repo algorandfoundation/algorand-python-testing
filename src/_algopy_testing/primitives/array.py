@@ -45,7 +45,6 @@ class _ImmutableFixedArrayMeta(type, typing.Generic[_TArrayItem, _TArrayLength])
 
 class ImmutableFixedArray(
     Serializable,
-    MutableBytes,
     typing.Generic[_TArrayItem, _TArrayLength],
     metaclass=_ImmutableFixedArrayMeta,
 ):
@@ -58,8 +57,8 @@ class ImmutableFixedArray(
         try:
             assert cls._element_type
         except AttributeError:
+            items = list(values)
             try:
-                items = list(values)
                 item = items[0]
             except IndexError:
                 raise TypeError("array must have an item type") from None
@@ -106,12 +105,11 @@ class ImmutableFixedArray(
     def length(self) -> UInt64:
         return UInt64(len(self._items))
 
-    def __len__(self) -> UInt64:
-        return self.length
+    def __len__(self) -> int:
+        return len(self._items)
 
     def __getitem__(self, index: UInt64 | int) -> _TArrayItem:
-        value = self._items[index]
-        return set_item_on_mutate(self, index, value)
+        return self._items[index]
 
     def __setitem__(self, index: UInt64 | int, value: _TArrayItem) -> _TArrayItem:
         self._items[int(index)] = value
@@ -180,11 +178,9 @@ class FixedArray(
     _length: int
 
     def __new__(cls, values: Iterable[_TArrayItem]) -> typing.Self:
-        try:
-            assert cls._element_type
-        except AttributeError:
+        if not hasattr(cls, "_element_type"):
+            items = list(values)
             try:
-                items = list(values)
                 item = items[0]
             except IndexError:
                 raise TypeError("array must have an item type") from None
@@ -206,7 +202,7 @@ class FixedArray(
 
     @classmethod
     def full(cls, item: _TArrayItem) -> typing.Self:
-        return cls(item for _ in range(cls._length))
+        return cls([item] * cls._length)
 
     def __iter__(self) -> typing.Iterator[_TArrayItem]:
         return iter(self._items)
@@ -218,8 +214,8 @@ class FixedArray(
     def length(self) -> UInt64:
         return UInt64(len(self._items))
 
-    def __len__(self) -> UInt64:
-        return self.length
+    def __len__(self) -> int:
+        return len(self._items)
 
     def __getitem__(self, index: UInt64 | int) -> _TArrayItem:
         value = self._items[index]
@@ -278,9 +274,7 @@ class _ImmutableArrayMeta(type):
         return c
 
 
-class ImmutableArray(
-    Serializable, MutableBytes, typing.Generic[_TArrayItem], metaclass=_ImmutableArrayMeta
-):
+class ImmutableArray(Serializable, typing.Generic[_TArrayItem], metaclass=_ImmutableArrayMeta):
     _element_type: typing.ClassVar[type]
 
     # ensure type is fully parameterized by looking up type from metaclass
@@ -316,12 +310,11 @@ class ImmutableArray(
     def length(self) -> UInt64:
         return UInt64(len(self._items))
 
-    def __len__(self) -> UInt64:
-        return self.length
+    def __len__(self) -> int:
+        return len(self._items)
 
     def __getitem__(self, index: UInt64 | int) -> _TArrayItem:
-        value = self._items[index]
-        return set_item_on_mutate(self, index, value)
+        return self._items[index]
 
     def __setitem__(self, index: UInt64 | int, value: _TArrayItem) -> _TArrayItem:
         self._items[int(index)] = value
@@ -437,8 +430,8 @@ class Array(Serializable, MutableBytes, typing.Generic[_TArrayItem], metaclass=_
         try:
             assert cls._element_type
         except AttributeError:
+            items = list(values)
             try:
-                items = list(values)
                 item = items[0]
             except IndexError:
                 raise TypeError("array must have an item type") from None
@@ -464,8 +457,8 @@ class Array(Serializable, MutableBytes, typing.Generic[_TArrayItem], metaclass=_
     def length(self) -> UInt64:
         return UInt64(len(self._items))
 
-    def __len__(self) -> UInt64:
-        return self.length
+    def __len__(self) -> int:
+        return len(self._items)
 
     def __getitem__(self, index: UInt64 | int) -> _TArrayItem:
         value = self._items[index]

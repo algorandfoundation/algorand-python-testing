@@ -415,23 +415,22 @@ def test_arrays_and_struct_in_boxes(context: AlgopyTestContext) -> None:  # noqa
     assert list(box2.value[0]) == [UInt64(1), UInt64(20), UInt64(3)]
 
     # ImmutableArray
-    nested_arr3 = ImmutableArray[Array[UInt64]](arr1, arr2)
-    box3 = Box(ImmutableArray[Array[UInt64]], key=b"test_array_3")
+    nested_arr3 = ImmutableArray[ImmutableArray[UInt64]](
+        ImmutableArray(*arr1), ImmutableArray(*arr2)
+    )
+    box3 = Box(ImmutableArray[ImmutableArray[UInt64]], key=b"test_array_3")
     box3.value = nested_arr3
     _op_box_content, op_box_exists = algopy.op.Box.get(b"test_array_3")
     op_box_length, _ = algopy.op.Box.length(b"test_array_3")
     assert op_box_exists
     assert box3.length == op_box_length
 
-    box3.value[0][1] = UInt64(20)
-    assert list(box3.value[0]) == [UInt64(1), UInt64(20), UInt64(3)]
-
     # ImmutableFixedArray
-    nested_arr4 = ImmutableFixedArray[FixedArray[UInt64, typing.Literal[3]], typing.Literal[2]](
-        [arr3, arr4]
-    )
+    nested_arr4 = ImmutableFixedArray[
+        ImmutableFixedArray[UInt64, typing.Literal[3]], typing.Literal[2]
+    ]([ImmutableFixedArray(arr3), ImmutableFixedArray(arr4)])
     box4 = Box(
-        ImmutableFixedArray[FixedArray[UInt64, typing.Literal[3]], typing.Literal[2]],
+        ImmutableFixedArray[ImmutableFixedArray[UInt64, typing.Literal[3]], typing.Literal[2]],
         key=b"test_array_4",
     )
     box4.value = nested_arr4
@@ -439,9 +438,6 @@ def test_arrays_and_struct_in_boxes(context: AlgopyTestContext) -> None:  # noqa
     op_box_length, _ = algopy.op.Box.length(b"test_array_4")
     assert op_box_exists
     assert box4.length == op_box_length
-
-    box4.value[0][1] = UInt64(20)
-    assert list(box4.value[0]) == [UInt64(1), UInt64(20), UInt64(3)]
 
     # Struct
     struct1 = Swapped2(arr1, arr2)
