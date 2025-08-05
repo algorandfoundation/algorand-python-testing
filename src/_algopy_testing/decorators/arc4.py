@@ -34,6 +34,8 @@ if typing.TYPE_CHECKING:
         ]
     )
 _CreateValues = typing.Literal["allow", "require", "disallow"]
+_ResourceEncoding = typing.Literal["index", "value"]
+_Direction = typing.Literal["input", "output"]
 ARC4_METADATA_ATTR = "arc4_metadata"
 
 
@@ -51,6 +53,7 @@ class MethodMetadata:
     create: _CreateValues
     allow_actions: Sequence[_AllowActions]
     arc4_signature: str | None = None
+    resource_encoding: _ResourceEncoding = "value"
 
     @property
     def is_create(self) -> bool:
@@ -145,6 +148,7 @@ def abimethod(  # noqa: PLR0913
     name: str | None = None,
     create: _CreateValues = "disallow",
     allow_actions: Sequence[_AllowActions] = ("NoOp",),
+    resource_encoding: _ResourceEncoding = "value",
     readonly: bool = False,
     default_args: Mapping[str, str | object] | None = None,
 ) -> Callable[[Callable[_P, _R]], Callable[_P, _R]] | Callable[_P, _R]:
@@ -160,13 +164,15 @@ def abimethod(  # noqa: PLR0913
             allow_actions=allow_actions,
             readonly=readonly,
             default_args=default_args,
+            resource_encoding=resource_encoding,
         )
 
     arc4_name = name or fn.__name__
     metadata = MethodMetadata(
         create=create,
         allow_actions=allow_actions,
-        arc4_signature=_generate_arc4_signature_from_fn(fn, arc4_name),
+        arc4_signature=_generate_arc4_signature_from_fn(fn, arc4_name, resource_encoding),
+        resource_encoding=resource_encoding,
     )
     set_arc4_metadata(fn, metadata)
 
@@ -187,6 +193,7 @@ def abimethod(  # noqa: PLR0913
             arc4_signature=metadata.arc4_signature,
             args=ordered_args,
             allow_actions=allow_actions,
+            resource_encoding=metadata.resource_encoding,
         )
         with context.txn._maybe_implicit_txn_group(txns):
             check_routing_conditions(app_id, metadata)
@@ -204,6 +211,7 @@ def create_abimethod_txns(
     arc4_signature: str,
     args: Sequence[object],
     allow_actions: Sequence[_AllowActions],
+    resource_encoding: _ResourceEncoding,
 ) -> list[algopy.gtxn.TransactionBase]:
     contract_app = lazy_context.ledger.get_app(app_id)
     txn_fields = get_active_txn_fields(contract_app, allow_actions)
@@ -215,6 +223,7 @@ def create_abimethod_txns(
         method_selector=method_selector,
         sender=txn_fields["sender"],
         app=contract_app,
+        resource_encoding=resource_encoding,
     )
     txn_fields.setdefault("accounts", txn_arrays.accounts)
     txn_fields.setdefault("assets", txn_arrays.assets)
@@ -273,11 +282,12 @@ class _TxnArrays:
     app_args: list[algopy.Bytes]
 
 
-def _extract_arrays_from_args(
+def _extract_arrays_from_args(  # noqa: PLR0912
     args: Sequence[object],
     method_selector: algopy.Bytes,
     app: algopy.Application,
     sender: algopy.Account,
+    resource_encoding: _ResourceEncoding,
 ) -> _TxnArrays:
     from _algopy_testing.serialize import native_to_arc4
 
@@ -291,14 +301,23 @@ def _extract_arrays_from_args(
             case _algopy_testing.gtxn.TransactionBase() as txn:
                 txns.append(txn)
             case _algopy_testing.Account() as acc:
-                app_args.append(_algopy_testing.arc4.UInt8(len(accounts)))
-                accounts.append(acc)
+                if resource_encoding == "index":
+                    app_args.append(_algopy_testing.arc4.UInt8(len(accounts)))
+                    accounts.append(acc)
+                else:
+                    app_args.append(native_to_arc4(acc))
             case _algopy_testing.Asset() as asset:
-                app_args.append(_algopy_testing.arc4.UInt8(len(assets)))
-                assets.append(asset)
+                if resource_encoding == "index":
+                    app_args.append(_algopy_testing.arc4.UInt8(len(assets)))
+                    assets.append(asset)
+                else:
+                    app_args.append(native_to_arc4(asset.id))
             case _algopy_testing.Application() as arg_app:
-                app_args.append(_algopy_testing.arc4.UInt8(len(apps)))
-                apps.append(arg_app)
+                if resource_encoding == "index":
+                    app_args.append(_algopy_testing.arc4.UInt8(len(apps)))
+                    apps.append(arg_app)
+                else:
+                    app_args.append(native_to_arc4(arg_app.id))
             case _ as maybe_native:
                 app_args.append(native_to_arc4(maybe_native))
     if len(app_args) > 15:
@@ -313,18 +332,29 @@ def _extract_arrays_from_args(
     )
 
 
-def _generate_arc4_signature_from_fn(fn: typing.Callable[_P, _R], arc4_name: str) -> str:
+def _generate_arc4_signature_from_fn(
+    fn: typing.Callable[_P, _R], arc4_name: str, resource_encoding: _ResourceEncoding
+) -> str:
     annotations = inspect.get_annotations(fn, eval_str=True).copy()
-    returns = algosdk.abi.Returns(_type_to_arc4(annotations.pop("return")))
+    returns = algosdk.abi.Returns(
+        _type_to_arc4(annotations.pop("return"), resource_encoding, "output")
+    )
     method = algosdk.abi.Method(
         name=arc4_name,
-        args=[algosdk.abi.Argument(_type_to_arc4(a)) for a in annotations.values()],
+        args=[
+            algosdk.abi.Argument(_type_to_arc4(a, resource_encoding, "input"))
+            for a in annotations.values()
+        ],
         returns=returns,
     )
     return method.get_signature()
 
 
-def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa: PLR0911, PLR0912
+def _type_to_arc4(  # noqa: PLR0912 PLR0911
+    annotation: types.GenericAlias | type | None,
+    resource_encoding: _ResourceEncoding,
+    direction: _Direction,
+) -> str:
     from _algopy_testing.arc4 import _ABIEncoded
     from _algopy_testing.gtxn import Transaction, TransactionBase
     from _algopy_testing.models import Account, Application, Asset
@@ -340,7 +370,9 @@ def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa:
         return "void"
 
     if isinstance(annotation, types.GenericAlias) and typing.get_origin(annotation) is tuple:
-        tuple_args = [_type_to_arc4(a) for a in typing.get_args(annotation)]
+        tuple_args = [
+            _type_to_arc4(a, resource_encoding, direction) for a in typing.get_args(annotation)
+        ]
         return f"({','.join(tuple_args)})"
 
     if not isinstance(annotation, type):
@@ -350,11 +382,11 @@ def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa:
         annotation, Struct
     ):
         tuple_fields = list(inspect.get_annotations(annotation).values())
-        tuple_args = [_type_to_arc4(a) for a in tuple_fields]
+        tuple_args = [_type_to_arc4(a, resource_encoding, direction) for a in tuple_fields]
         return f"({','.join(tuple_args)})"
 
     if issubclass(annotation, Array | FixedArray | ImmutableArray | ImmutableFixedArray):
-        return f"{_type_to_arc4(annotation._element_type)}[]"
+        return f"{_type_to_arc4(annotation._element_type, resource_encoding, direction)}[]"
     # arc4 types
     if issubclass(annotation, _ABIEncoded):
         return annotation._type_info.arc4_name
@@ -365,11 +397,17 @@ def _type_to_arc4(annotation: types.GenericAlias | type | None) -> str:  # noqa:
         return annotation.type_enum.txn_name
     # reference types
     if issubclass(annotation, Account):
-        return "account"
+        if resource_encoding == "index" and direction == "input":
+            return "account"
+        return "address"
     if issubclass(annotation, Asset):
-        return "asset"
+        if resource_encoding == "index" and direction == "input":
+            return "asset"
+        return "uint64"
     if issubclass(annotation, Application):
-        return "application"
+        if resource_encoding == "index" and direction == "input":
+            return "application"
+        return "uint64"
     # native types
     if issubclass(annotation, UInt64):
         return "uint64"
