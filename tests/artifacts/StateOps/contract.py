@@ -22,7 +22,7 @@ def _get_1st_ref_index() -> UInt64:
 
 
 class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_balance(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_balance(a)
         value_index, funded_index = op.AcctParamsGet.acct_balance(_get_1st_ref_index())
@@ -35,7 +35,7 @@ class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
         ), "expected op.balance by index to match"
         return value
 
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_min_balance(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_min_balance(a)
         value_index, funded_index = op.AcctParamsGet.acct_min_balance(_get_1st_ref_index())
@@ -48,7 +48,7 @@ class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
         ), "expected op.min_balance by index to match"
         return value
 
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_auth_addr(self, a: algopy.Account) -> arc4.Address:
         value, funded = op.AcctParamsGet.acct_auth_addr(a)
         value_index, funded_index = op.AcctParamsGet.acct_auth_addr(_get_1st_ref_index())
@@ -56,7 +56,7 @@ class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
         assert funded == funded_index, "expected funded by index to match"
         return arc4.Address(value)
 
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_total_num_uint(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_num_uint(a)
         value_index, funded_index = op.AcctParamsGet.acct_total_num_uint(_get_1st_ref_index())
@@ -64,7 +64,7 @@ class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
         assert funded == funded_index, "expected funded by index to match"
         return value
 
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_total_num_byte_slice(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_num_byte_slice(a)
         value_index, funded_index = op.AcctParamsGet.acct_total_num_byte_slice(
@@ -74,7 +74,7 @@ class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
         assert funded == funded_index, "expected funded by index to match"
         return value
 
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_total_extra_app_pages(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_extra_app_pages(a)
         value_index, funded_index = op.AcctParamsGet.acct_total_extra_app_pages(
@@ -84,7 +84,7 @@ class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
         assert funded == funded_index, "expected funded by index to match"
         return value
 
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_total_apps_created(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_apps_created(a)
         value_index, funded_index = op.AcctParamsGet.acct_total_apps_created(_get_1st_ref_index())
@@ -92,7 +92,7 @@ class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
         assert funded == funded_index, "expected funded by index to match"
         return value
 
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_total_apps_opted_in(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_apps_opted_in(a)
         value_index, funded_index = op.AcctParamsGet.acct_total_apps_opted_in(_get_1st_ref_index())
@@ -100,7 +100,7 @@ class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
         assert funded == funded_index, "expected funded by index to match"
         return value
 
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_total_assets_created(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_assets_created(a)
         value_index, funded_index = op.AcctParamsGet.acct_total_assets_created(
@@ -110,7 +110,7 @@ class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
         assert funded == funded_index, "expected funded by index to match"
         return value
 
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_total_assets(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_assets(a)
         value_index, funded_index = op.AcctParamsGet.acct_total_assets(_get_1st_ref_index())
@@ -118,7 +118,7 @@ class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
         assert funded == funded_index, "expected funded by index to match"
         return value
 
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_total_boxes(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_boxes(a)
         value_index, funded_index = op.AcctParamsGet.acct_total_boxes(_get_1st_ref_index())
@@ -126,7 +126,7 @@ class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
         assert funded == funded_index, "expected funded by index to match"
         return value
 
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_total_box_bytes(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_total_box_bytes(a)
         value_index, funded_index = op.AcctParamsGet.acct_total_box_bytes(_get_1st_ref_index())
@@ -134,7 +134,7 @@ class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
         assert funded == funded_index, "expected funded by index to match"
         return value
 
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_incentive_eligible(self, a: algopy.Account) -> bool:
         value, funded = op.AcctParamsGet.acct_incentive_eligible(a)
         value_index, funded_index = op.AcctParamsGet.acct_incentive_eligible(_get_1st_ref_index())
@@ -142,7 +142,7 @@ class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
         assert funded == funded_index, "expected funded by index to match"
         return value
 
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_last_heartbeat(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_last_heartbeat(a)
         value_index, funded_index = op.AcctParamsGet.acct_last_heartbeat(_get_1st_ref_index())
@@ -150,7 +150,7 @@ class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
         assert funded == funded_index, "expected funded by index to match"
         return value
 
-    @arc4.abimethod()
+    @arc4.abimethod(resource_encoding="index")
     def verify_acct_last_proposed(self, a: algopy.Account) -> algopy.UInt64:
         value, funded = op.AcctParamsGet.acct_last_proposed(a)
         value_index, funded_index = op.AcctParamsGet.acct_last_proposed(_get_1st_ref_index())

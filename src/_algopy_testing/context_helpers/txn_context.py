@@ -121,6 +121,7 @@ class TransactionContext:
                 arc4_signature=arc4_metadata.arc4_signature,
                 args=ordered_args,
                 allow_actions=allow_actions,
+                resource_encoding=arc4_metadata.resource_encoding,
             )
         # Handle bare methods
         else:
@@ -169,7 +170,7 @@ class TransactionContext:
         new_group = TransactionGroup(
             txns=processed_gtxns,
             active_txn_index=active_txn_index,
-            active_txn_overrides=typing.cast(dict[str, typing.Any], active_txn_overrides),
+            active_txn_overrides=typing.cast("dict[str, typing.Any]", active_txn_overrides),
         )
         self._active_group = new_group
         try:

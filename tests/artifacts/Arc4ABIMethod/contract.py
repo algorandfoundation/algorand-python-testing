@@ -51,14 +51,14 @@ class SignaturesContract(ARC4Contract):
         assert Txn.group_index == 1
         assert pay.amount == 123
 
-    @arc4.abimethod
+    @arc4.abimethod(resource_encoding="index")
     def with_asset(self, value: arc4.String, asset: Asset, arr: UInt8Array) -> None:
         assert value
         assert arr
         assert asset.total == 123
         assert Txn.assets(0) == asset
 
-    @arc4.abimethod
+    @arc4.abimethod(resource_encoding="index")
     def with_app(
         self, value: arc4.String, app: Application, app_id: arc4.UInt64, arr: UInt8Array
     ) -> None:
@@ -72,7 +72,7 @@ class SignaturesContract(ARC4Contract):
         assert app_txn.apps(1) == app
         assert Txn.applications(1) == app
 
-    @arc4.abimethod
+    @arc4.abimethod(resource_encoding="index")
     def with_acc(self, value: arc4.String, acc: Account, arr: UInt8Array) -> None:
         assert value
         assert arr
@@ -80,7 +80,7 @@ class SignaturesContract(ARC4Contract):
         assert Txn.accounts(0) == Txn.sender
         assert Txn.accounts(1) == acc
 
-    @arc4.abimethod
+    @arc4.abimethod(resource_encoding="index")
     def complex_sig(
         self, struct1: MyStruct, txn: algopy.gtxn.Transaction, acc: Account, five: UInt8Array
     ) -> tuple[MyStructAlias, MyStruct]:
@@ -102,3 +102,31 @@ class SignaturesContract(ARC4Contract):
         assert five[0] == 5
 
         return struct1.another_struct.copy(), struct1.copy()
+
+    @arc4.abimethod(
+        resource_encoding="index",
+    )
+    def echo_resource_by_index(
+        self, asset: Asset, app: Application, acc: Account
+    ) -> tuple[Asset, Application, Account]:
+        asset_idx = op.btoi(Txn.application_args(1))
+        assert asset == Txn.assets(asset_idx), "expected asset to be passed by index"
+        app_idx = op.btoi(Txn.application_args(2))
+        assert app == Txn.applications(app_idx), "expected application to be passed by index"
+        acc_idx = op.btoi(Txn.application_args(3))
+        assert acc == Txn.accounts(acc_idx), "expected account to be passed by index"
+        return asset, app, acc
+
+    @arc4.abimethod(
+        resource_encoding="value",
+    )
+    def echo_resource_by_value(
+        self, asset: Asset, app: Application, acc: Account
+    ) -> tuple[Asset, Application, Account]:
+        asset_id = op.btoi(Txn.application_args(1))
+        assert asset.id == asset_id, "expected asset to be passed by value"
+        app_id = op.btoi(Txn.application_args(2))
+        assert app.id == app_id, "expected application to be passed by value"
+        address = Txn.application_args(3)
+        assert acc.bytes == address, "expected account to be passed by value"
+        return asset, app, acc

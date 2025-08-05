@@ -369,3 +369,106 @@ def test_prepare_txns_with_complex(
     assert app_args[0] == arc4.arc4_signature(SignaturesContract.complex_sig)
     assert result[0].bytes == struct.another_struct.bytes
     assert result[1].bytes == struct.bytes
+
+
+def test_app_args_is_correct_with_index_resource_encoding(  # noqa: PLR0913
+    context: _algopy_testing.AlgopyTestContext,
+    localnet_creator_address: str,
+    other_app_id: int,
+    funded_account: str,
+    algorand: AlgorandClient,
+    get_avm_result: AVMInvoker,
+) -> None:
+    # arrange
+    contract = SignaturesContract()
+    contract.create()
+
+    asa_id = algorand.send.asset_create(
+        AssetCreateParams(
+            sender=localnet_creator_address,
+            total=123,
+        )
+    ).confirmation[
+        "asset-index"
+    ]  # type: ignore[call-overload]
+
+    # act
+    contract.echo_resource_by_index(
+        context.any.asset(total=algopy.UInt64(123)),
+        context.ledger.get_app(other_app_id),
+        context.ledger.get_account(funded_account),
+    )
+    result = get_avm_result(
+        "echo_resource_by_index",
+        asset=asa_id,
+        app=other_app_id,
+        acc=funded_account,
+    )
+
+    # assert
+    txn = context.txn.last_active
+    app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
+    assert app_args == [
+        algosdk.abi.Method.from_signature(
+            "echo_resource_by_index(asset,application,account)(uint64,uint64,address)"
+        ).get_selector(),
+        b"\x00",
+        b"\x01",
+        b"\x01",
+    ]
+    assert app_args[0] == arc4.arc4_signature(SignaturesContract.echo_resource_by_index)
+
+    assert result == [asa_id, other_app_id, funded_account]
+
+
+def test_app_args_is_correct_with_value_resource_encoding(  # noqa: PLR0913
+    context: _algopy_testing.AlgopyTestContext,
+    localnet_creator_address: str,
+    other_app_id: int,
+    funded_account: str,
+    algorand: AlgorandClient,
+    get_avm_result: AVMInvoker,
+) -> None:
+    # arrange
+    contract = SignaturesContract()
+    contract.create()
+
+    asa_id = algorand.send.asset_create(
+        AssetCreateParams(
+            sender=localnet_creator_address,
+            total=123,
+        )
+    ).confirmation[
+        "asset-index"
+    ]  # type: ignore[call-overload]
+
+    asset = context.any.asset(asset_id=asa_id, total=algopy.UInt64(123))
+    app = context.ledger.get_app(other_app_id)
+    acc = context.ledger.get_account(funded_account)
+    # act
+    contract.echo_resource_by_value(
+        asset,
+        app,
+        acc,
+    )
+    result = get_avm_result(
+        "echo_resource_by_value",
+        asset=asa_id,
+        app=other_app_id,
+        acc=funded_account,
+    )
+
+    # assert
+    txn = context.txn.last_active
+    app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
+    assert app_args == [
+        algosdk.abi.Method.from_signature(
+            "echo_resource_by_value(uint64,uint64,address)(uint64,uint64,address)"
+        ).get_selector(),
+        asa_id.to_bytes(length=8),  # asset id as bytes
+        other_app_id.to_bytes(length=8),  # app id as bytes
+        context.ledger.get_account(funded_account).bytes,  # account address as bytes
+    ]
+    assert app_args[0] == arc4.arc4_signature(SignaturesContract.echo_resource_by_value)
+
+    assert result == [asset.id, app.id, acc]
