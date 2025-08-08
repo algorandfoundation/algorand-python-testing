@@ -193,7 +193,7 @@ class TransactionFieldsGetter(abc.ABC):
     def fields(self) -> dict[str, object]:
         raise NotImplementedError
 
-    # explicitly define some properties commonly accessed by algopy testing
+    # explicitly define all fields to have correct type hints
     @property
     def amount(self) -> algopy.UInt64:
         return self.fields["amount"]  # type: ignore[return-value]
@@ -203,8 +203,188 @@ class TransactionFieldsGetter(abc.ABC):
         return self.fields["app_id"]  # type: ignore[return-value]
 
     @property
+    def asset_amount(self) -> algopy.UInt64:
+        return self.fields["asset_amount"]  # type: ignore[return-value]
+
+    @property
+    def asset_close_to(self) -> algopy.Account:
+        return self.fields["asset_close_to"]  # type: ignore[return-value]
+
+    @property
+    def asset_name(self) -> algopy.Bytes:
+        return self.fields["asset_name"]  # type: ignore[return-value]
+
+    @property
+    def asset_receiver(self) -> algopy.Account:
+        return self.fields["asset_receiver"]  # type: ignore[return-value]
+
+    @property
+    def asset_sender(self) -> algopy.Account:
+        return self.fields["asset_sender"]  # type: ignore[return-value]
+
+    @property
+    def clawback(self) -> algopy.Account:
+        return self.fields["clawback"]  # type: ignore[return-value]
+
+    @property
+    def close_remainder_to(self) -> algopy.Account:
+        return self.fields["close_remainder_to"]  # type: ignore[return-value]
+
+    @property
+    def config_asset(self) -> algopy.Asset:
+        return self.fields["config_asset"]  # type: ignore[return-value]
+
+    @property
+    def created_app(self) -> algopy.Application:
+        return self.fields["created_app"]  # type: ignore[return-value]
+
+    @property
+    def created_asset(self) -> algopy.Asset:
+        return self.fields["created_asset"]  # type: ignore[return-value]
+
+    @property
+    def decimals(self) -> algopy.UInt64:
+        return self.fields["decimals"]  # type: ignore[return-value]
+
+    @property
+    def default_frozen(self) -> bool:
+        return self.fields["default_frozen"]  # type: ignore[return-value]
+
+    @property
+    def extra_program_pages(self) -> algopy.UInt64:
+        return self.fields["extra_program_pages"]  # type: ignore[return-value]
+
+    @property
+    def fee(self) -> algopy.UInt64:
+        return self.fields["fee"]  # type: ignore[return-value]
+
+    @property
+    def first_valid(self) -> algopy.UInt64:
+        return self.fields["first_valid"]  # type: ignore[return-value]
+
+    @property
+    def first_valid_time(self) -> algopy.UInt64:
+        return self.fields["first_valid_time"]  # type: ignore[return-value]
+
+    @property
+    def freeze(self) -> algopy.Account:
+        return self.fields["freeze"]  # type: ignore[return-value]
+
+    @property
+    def freeze_account(self) -> algopy.Account:
+        return self.fields["freeze_account"]  # type: ignore[return-value]
+
+    @property
+    def freeze_asset(self) -> algopy.Asset:
+        return self.fields["freeze_asset"]  # type: ignore[return-value]
+
+    @property
+    def frozen(self) -> bool:
+        return self.fields["frozen"]  # type: ignore[return-value]
+
+    @property
+    def global_num_bytes(self) -> algopy.UInt64:
+        return self.fields["global_num_bytes"]  # type: ignore[return-value]
+
+    @property
+    def global_num_uint(self) -> algopy.UInt64:
+        return self.fields["global_num_uint"]  # type: ignore[return-value]
+
+    @property
+    def last_valid(self) -> algopy.UInt64:
+        return self.fields["last_valid"]  # type: ignore[return-value]
+
+    @property
+    def lease(self) -> algopy.Bytes:
+        return self.fields["lease"]  # type: ignore[return-value]
+
+    @property
+    def local_num_bytes(self) -> algopy.UInt64:
+        return self.fields["local_num_bytes"]  # type: ignore[return-value]
+
+    @property
+    def local_num_uint(self) -> algopy.UInt64:
+        return self.fields["local_num_uint"]  # type: ignore[return-value]
+
+    @property
+    def manager(self) -> algopy.Account:
+        return self.fields["manager"]  # type: ignore[return-value]
+
+    @property
+    def metadata_hash(self) -> algopy.Bytes:
+        return self.fields["metadata_hash"]  # type: ignore[return-value]
+
+    @property
+    def non_participation(self) -> bool:
+        return self.fields["non_participation"]  # type: ignore[return-value]
+
+    @property
+    def note(self) -> algopy.Bytes:
+        return self.fields["note"]  # type: ignore[return-value]
+
+    @property
+    def on_completion(self) -> algopy.OnCompleteAction:
+        return self.fields["on_completion"]  # type: ignore[return-value]
+
+    @property
+    def receiver(self) -> algopy.Account:
+        return self.fields["receiver"]  # type: ignore[return-value]
+
+    @property
+    def rekey_to(self) -> algopy.Account:
+        return self.fields["rekey_to"]  # type: ignore[return-value]
+
+    @property
+    def reserve(self) -> algopy.Account:
+        return self.fields["reserve"]  # type: ignore[return-value]
+
+    @property
+    def selection_key(self) -> algopy.Bytes:
+        return self.fields["selection_key"]  # type: ignore[return-value]
+
+    @property
     def sender(self) -> algopy.Account:
         return self.fields["sender"]  # type: ignore[return-value]
+
+    @property
+    def state_proof_key(self) -> algopy.Bytes:
+        return self.fields["state_proof_key"]  # type: ignore[return-value]
+
+    @property
+    def total(self) -> algopy.UInt64:
+        return self.fields["total"]  # type: ignore[return-value]
+
+    @property
+    def type(self) -> algopy.TransactionType:
+        return self.fields["type"]  # type: ignore[return-value]
+
+    @property
+    def unit_name(self) -> algopy.Bytes:
+        return self.fields["unit_name"]  # type: ignore[return-value]
+
+    @property
+    def url(self) -> algopy.Bytes:
+        return self.fields["url"]  # type: ignore[return-value]
+
+    @property
+    def vote_first(self) -> algopy.UInt64:
+        return self.fields["vote_first"]  # type: ignore[return-value]
+
+    @property
+    def vote_key(self) -> algopy.Bytes:
+        return self.fields["vote_key"]  # type: ignore[return-value]
+
+    @property
+    def vote_key_dilution(self) -> algopy.UInt64:
+        return self.fields["vote_key_dilution"]  # type: ignore[return-value]
+
+    @property
+    def vote_last(self) -> algopy.UInt64:
+        return self.fields["vote_last"]  # type: ignore[return-value]
+
+    @property
+    def xfer_asset(self) -> algopy.Asset:
+        return self.fields["xfer_asset"]  # type: ignore[return-value]
 
     @property
     def txn_id(self) -> algopy.Bytes:
@@ -263,10 +443,6 @@ class TransactionFieldsGetter(abc.ABC):
         return _create_array_accessor(self._app_args)
 
     @property
-    def type(self) -> algopy.TransactionType:
-        return self.fields["type"]  # type: ignore[return-value]
-
-    @property
     def type_bytes(self) -> algopy.Bytes:
         return Bytes(self.type.txn_name.encode("utf8"))
 
@@ -303,18 +479,6 @@ class TransactionFieldsGetter(abc.ABC):
     @property
     def num_clear_state_program_pages(self) -> algopy.UInt64:
         return UInt64(len(self._clear_state_program_pages))
-
-    @property
-    def on_completion(self) -> algopy.OnCompleteAction:
-        return self.fields["on_completion"]  # type: ignore[return-value]
-
-    @property
-    def created_app(self) -> algopy.Application:
-        return self.fields["created_app"]  # type: ignore[return-value]
-
-    @property
-    def created_asset(self) -> algopy.Asset:
-        return self.fields["created_asset"]  # type: ignore[return-value]
 
     @property
     def _logs(self) -> Sequence[algopy.Bytes]:
