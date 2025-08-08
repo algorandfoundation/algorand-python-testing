@@ -86,7 +86,13 @@ class InnerTransactionResult(_BaseInnerTransactionResult):
     pass
 
 
-class _BaseInnerTransactionFields:
+_TResult_co = typing.TypeVar(
+    "_TResult_co",
+    covariant=True,
+)
+
+
+class _BaseInnerTransactionFields(typing.Protocol[_TResult_co]):
     txn_class: type[_BaseInnerTransactionResult]
     fields: dict[str, typing.Any]
 
@@ -107,10 +113,10 @@ class _BaseInnerTransactionFields:
         _narrow_covariant_types(fields)
         self.fields.update(fields)
 
-    def submit(self) -> typing.Any:
+    def submit(self) -> _TResult_co:
         result = _get_itxn_result(self)
         lazy_context.active_group._add_itxn_group([result])  # type: ignore[list-item]
-        return result
+        return typing.cast("_TResult_co", result)
 
     def copy(self) -> typing.Self:
         return deepcopy(self)
@@ -124,36 +130,36 @@ def _check_fields(fields: dict[str, object]) -> None:
         raise ValueError(f"unexpected fields: {','.join(fields.keys())}")
 
 
-class InnerTransaction(_BaseInnerTransactionFields):
+class InnerTransaction(_BaseInnerTransactionFields[InnerTransactionResult]):
     txn_class = InnerTransactionResult
 
 
-class Payment(_BaseInnerTransactionFields):
+class Payment(_BaseInnerTransactionFields[PaymentInnerTransaction]):
     txn_class = PaymentInnerTransaction
 
 
-class KeyRegistration(_BaseInnerTransactionFields):
+class KeyRegistration(_BaseInnerTransactionFields[KeyRegistrationInnerTransaction]):
     txn_class = KeyRegistrationInnerTransaction
 
 
-class AssetConfig(_BaseInnerTransactionFields):
+class AssetConfig(_BaseInnerTransactionFields[AssetConfigInnerTransaction]):
     txn_class = AssetConfigInnerTransaction
 
 
-class AssetTransfer(_BaseInnerTransactionFields):
+class AssetTransfer(_BaseInnerTransactionFields[AssetTransferInnerTransaction]):
     txn_class = AssetTransferInnerTransaction
 
 
-class AssetFreeze(_BaseInnerTransactionFields):
+class AssetFreeze(_BaseInnerTransactionFields[AssetFreezeInnerTransaction]):
     txn_class = AssetFreezeInnerTransaction
 
 
-class ApplicationCall(_BaseInnerTransactionFields):
+class ApplicationCall(_BaseInnerTransactionFields[ApplicationCallInnerTransaction]):
     txn_class = ApplicationCallInnerTransaction
 
 
 def submit_txns(
-    *transactions: _BaseInnerTransactionFields,
+    *transactions: _BaseInnerTransactionFields[_TResult_co],
 ) -> tuple[_BaseInnerTransactionResult, ...]:
     if len(transactions) > algosdk.constants.TX_GROUP_LIMIT:
         raise ValueError("Cannot submit more than 16 inner transactions at once")
@@ -164,7 +170,9 @@ def submit_txns(
     return results
 
 
-def _get_itxn_result(itxn: _BaseInnerTransactionFields) -> _BaseInnerTransactionResult:
+def _get_itxn_result(
+    itxn: _BaseInnerTransactionFields[_TResult_co],
+) -> _BaseInnerTransactionResult:
     fields = itxn.fields
     txn_type = fields["type"]
     result = _TXN_HANDLERS[txn_type](fields)
