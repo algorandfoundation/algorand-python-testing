@@ -1,4 +1,10 @@
 # CHANGELOG
+## v1.0.0-beta.2 (2025-09-03)
+
+### Features
+
+* add stub implementations of array types ([`b7b831d`](https://github.com/algorandfoundation/algorand-python-testing/commit/b7b831da7570367494e823485910bc7191376e48))
+
 ## v1.0.0-beta.1 (2025-07-16)
 
 ### Features
