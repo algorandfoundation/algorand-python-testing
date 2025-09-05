@@ -3,349 +3,39 @@
 
 // algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
-    intcblock 1 0
+    intcblock 1
     bytecblock 0x151f7c75
     // tests/artifacts/StateOps/contract.py:174
     // class StateAssetParamsContract(ARC4Contract):
     txn NumAppArgs
-    bz main_bare_routing@17
-    pushbytess 0xad719a6f 0x1d603013 0x9fb731cd 0x0f5a4911 0xf5b370c6 0xc7d6af74 0x6b71a263 0x3040ebc8 0x1d07e844 0x3e40cb50 0x340c786b 0xe38a9815 // method "verify_asset_params_get_total(asset)uint64", method "verify_asset_params_get_decimals(asset)uint64", method "verify_asset_params_get_default_frozen(asset)bool", method "verify_asset_params_get_unit_name(asset)byte[]", method "verify_asset_params_get_name(asset)byte[]", method "verify_asset_params_get_url(asset)byte[]", method "verify_asset_params_get_metadata_hash(asset)byte[]", method "verify_asset_params_get_manager(asset)address", method "verify_asset_params_get_reserve(asset)address", method "verify_asset_params_get_freeze(asset)address", method "verify_asset_params_get_clawback(asset)address", method "verify_asset_params_get_creator(asset)address"
+    bz main___algopy_default_create@19
+    txn OnCompletion
+    !
+    assert // OnCompletion must be NoOp
+    txn ApplicationID
+    assert
+    pushbytess 0xf05da7a4 0xc0e9c315 0xd8528273 0xf4468ad9 0x229d12f7 0xdf534f7b 0xe050b5a9 0x8b2a2d58 0xee15c4f7 0x157544ff 0x10492c07 0x5229fa37 // method "verify_asset_params_get_total(uint64)uint64", method "verify_asset_params_get_decimals(uint64)uint64", method "verify_asset_params_get_default_frozen(uint64)bool", method "verify_asset_params_get_unit_name(uint64)byte[]", method "verify_asset_params_get_name(uint64)byte[]", method "verify_asset_params_get_url(uint64)byte[]", method "verify_asset_params_get_metadata_hash(uint64)byte[]", method "verify_asset_params_get_manager(uint64)address", method "verify_asset_params_get_reserve(uint64)address", method "verify_asset_params_get_freeze(uint64)address", method "verify_asset_params_get_clawback(uint64)address", method "verify_asset_params_get_creator(uint64)address"
     txna ApplicationArgs 0
-    match main_verify_asset_params_get_total_route@3 main_verify_asset_params_get_decimals_route@4 main_verify_asset_params_get_default_frozen_route@5 main_verify_asset_params_get_unit_name_route@6 main_verify_asset_params_get_name_route@7 main_verify_asset_params_get_url_route@8 main_verify_asset_params_get_metadata_hash_route@9 main_verify_asset_params_get_manager_route@10 main_verify_asset_params_get_reserve_route@11 main_verify_asset_params_get_freeze_route@12 main_verify_asset_params_get_clawback_route@13 main_verify_asset_params_get_creator_route@14
+    match verify_asset_params_get_total verify_asset_params_get_decimals verify_asset_params_get_default_frozen verify_asset_params_get_unit_name verify_asset_params_get_name verify_asset_params_get_url verify_asset_params_get_metadata_hash verify_asset_params_get_manager verify_asset_params_get_reserve verify_asset_params_get_freeze verify_asset_params_get_clawback verify_asset_params_get_creator
+    err
 
-main_after_if_else@21:
-    // tests/artifacts/StateOps/contract.py:174
-    // class StateAssetParamsContract(ARC4Contract):
-    intc_1 // 0
-    return
-
-main_verify_asset_params_get_creator_route@14:
-    // tests/artifacts/StateOps/contract.py:263
-    // @arc4.abimethod()
+main___algopy_default_create@19:
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:174
-    // class StateAssetParamsContract(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    txnas Assets
-    // tests/artifacts/StateOps/contract.py:263
-    // @arc4.abimethod()
-    callsub verify_asset_params_get_creator
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_asset_params_get_clawback_route@13:
-    // tests/artifacts/StateOps/contract.py:255
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:174
-    // class StateAssetParamsContract(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    txnas Assets
-    // tests/artifacts/StateOps/contract.py:255
-    // @arc4.abimethod()
-    callsub verify_asset_params_get_clawback
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_asset_params_get_freeze_route@12:
-    // tests/artifacts/StateOps/contract.py:247
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:174
-    // class StateAssetParamsContract(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    txnas Assets
-    // tests/artifacts/StateOps/contract.py:247
-    // @arc4.abimethod()
-    callsub verify_asset_params_get_freeze
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_asset_params_get_reserve_route@11:
-    // tests/artifacts/StateOps/contract.py:239
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:174
-    // class StateAssetParamsContract(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    txnas Assets
-    // tests/artifacts/StateOps/contract.py:239
-    // @arc4.abimethod()
-    callsub verify_asset_params_get_reserve
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_asset_params_get_manager_route@10:
-    // tests/artifacts/StateOps/contract.py:231
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:174
-    // class StateAssetParamsContract(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    txnas Assets
-    // tests/artifacts/StateOps/contract.py:231
-    // @arc4.abimethod()
-    callsub verify_asset_params_get_manager
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_asset_params_get_metadata_hash_route@9:
-    // tests/artifacts/StateOps/contract.py:223
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:174
-    // class StateAssetParamsContract(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    txnas Assets
-    // tests/artifacts/StateOps/contract.py:223
-    // @arc4.abimethod()
-    callsub verify_asset_params_get_metadata_hash
-    dup
-    len
-    itob
-    extract 6 2
-    swap
-    concat
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_asset_params_get_url_route@8:
-    // tests/artifacts/StateOps/contract.py:215
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:174
-    // class StateAssetParamsContract(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    txnas Assets
-    // tests/artifacts/StateOps/contract.py:215
-    // @arc4.abimethod()
-    callsub verify_asset_params_get_url
-    dup
-    len
-    itob
-    extract 6 2
-    swap
-    concat
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_asset_params_get_name_route@7:
-    // tests/artifacts/StateOps/contract.py:207
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:174
-    // class StateAssetParamsContract(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    txnas Assets
-    // tests/artifacts/StateOps/contract.py:207
-    // @arc4.abimethod()
-    callsub verify_asset_params_get_name
-    dup
-    len
-    itob
-    extract 6 2
-    swap
-    concat
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_asset_params_get_unit_name_route@6:
-    // tests/artifacts/StateOps/contract.py:199
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:174
-    // class StateAssetParamsContract(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    txnas Assets
-    // tests/artifacts/StateOps/contract.py:199
-    // @arc4.abimethod()
-    callsub verify_asset_params_get_unit_name
-    dup
-    len
-    itob
-    extract 6 2
-    swap
-    concat
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_asset_params_get_default_frozen_route@5:
-    // tests/artifacts/StateOps/contract.py:191
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:174
-    // class StateAssetParamsContract(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    txnas Assets
-    // tests/artifacts/StateOps/contract.py:191
-    // @arc4.abimethod()
-    callsub verify_asset_params_get_default_frozen
-    pushbytes 0x00
-    intc_1 // 0
-    uncover 2
-    setbit
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_asset_params_get_decimals_route@4:
-    // tests/artifacts/StateOps/contract.py:183
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:174
-    // class StateAssetParamsContract(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    txnas Assets
-    // tests/artifacts/StateOps/contract.py:183
-    // @arc4.abimethod()
-    callsub verify_asset_params_get_decimals
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_asset_params_get_total_route@3:
-    // tests/artifacts/StateOps/contract.py:175
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:174
-    // class StateAssetParamsContract(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    txnas Assets
-    // tests/artifacts/StateOps/contract.py:175
-    // @arc4.abimethod()
-    callsub verify_asset_params_get_total
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_bare_routing@17:
-    // tests/artifacts/StateOps/contract.py:174
-    // class StateAssetParamsContract(ARC4Contract):
-    txn OnCompletion
-    bnz main_after_if_else@21
     txn ApplicationID
     !
-    assert // can only call when creating
-    intc_0 // 1
-    return
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
 
 
-// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_total(a: uint64) -> uint64:
+// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_total[routing]() -> void:
 verify_asset_params_get_total:
-    // tests/artifacts/StateOps/contract.py:175-176
+    // tests/artifacts/StateOps/contract.py:175
     // @arc4.abimethod()
-    // def verify_asset_params_get_total(self, a: Asset) -> UInt64:
-    proto 1 1
+    txna ApplicationArgs 1
+    btoi
     // tests/artifacts/StateOps/contract.py:177
     // value, exists = op.AssetParamsGet.asset_total(a)
-    frame_dig -1
     asset_params_get AssetTotal
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -364,20 +54,25 @@ verify_asset_params_get_total:
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:181
-    // return value
-    retsub
-
-
-// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_decimals(a: uint64) -> uint64:
-verify_asset_params_get_decimals:
-    // tests/artifacts/StateOps/contract.py:183-184
+    // tests/artifacts/StateOps/contract.py:175
     // @arc4.abimethod()
-    // def verify_asset_params_get_decimals(self, a: Asset) -> UInt64:
-    proto 1 1
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_decimals[routing]() -> void:
+verify_asset_params_get_decimals:
+    // tests/artifacts/StateOps/contract.py:183
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    btoi
     // tests/artifacts/StateOps/contract.py:185
     // value, exists = op.AssetParamsGet.asset_decimals(a)
-    frame_dig -1
     asset_params_get AssetDecimals
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -396,20 +91,25 @@ verify_asset_params_get_decimals:
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:189
-    // return value
-    retsub
-
-
-// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_default_frozen(a: uint64) -> uint64:
-verify_asset_params_get_default_frozen:
-    // tests/artifacts/StateOps/contract.py:191-192
+    // tests/artifacts/StateOps/contract.py:183
     // @arc4.abimethod()
-    // def verify_asset_params_get_default_frozen(self, a: Asset) -> bool:
-    proto 1 1
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_default_frozen[routing]() -> void:
+verify_asset_params_get_default_frozen:
+    // tests/artifacts/StateOps/contract.py:191
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    btoi
     // tests/artifacts/StateOps/contract.py:193
     // value, exists = op.AssetParamsGet.asset_default_frozen(a)
-    frame_dig -1
     asset_params_get AssetDefaultFrozen
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -428,20 +128,28 @@ verify_asset_params_get_default_frozen:
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:197
-    // return value
-    retsub
-
-
-// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_unit_name(a: uint64) -> bytes:
-verify_asset_params_get_unit_name:
-    // tests/artifacts/StateOps/contract.py:199-200
+    // tests/artifacts/StateOps/contract.py:191
     // @arc4.abimethod()
-    // def verify_asset_params_get_unit_name(self, a: Asset) -> Bytes:
-    proto 1 1
+    pushbytes 0x00
+    pushint 0 // 0
+    uncover 2
+    setbit
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_unit_name[routing]() -> void:
+verify_asset_params_get_unit_name:
+    // tests/artifacts/StateOps/contract.py:199
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    btoi
     // tests/artifacts/StateOps/contract.py:201
     // value, exists = op.AssetParamsGet.asset_unit_name(a)
-    frame_dig -1
     asset_params_get AssetUnitName
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -460,20 +168,30 @@ verify_asset_params_get_unit_name:
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:205
-    // return value
-    retsub
-
-
-// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_name(a: uint64) -> bytes:
-verify_asset_params_get_name:
-    // tests/artifacts/StateOps/contract.py:207-208
+    // tests/artifacts/StateOps/contract.py:199
     // @arc4.abimethod()
-    // def verify_asset_params_get_name(self, a: Asset) -> Bytes:
-    proto 1 1
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_name[routing]() -> void:
+verify_asset_params_get_name:
+    // tests/artifacts/StateOps/contract.py:207
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    btoi
     // tests/artifacts/StateOps/contract.py:209
     // value, exists = op.AssetParamsGet.asset_name(a)
-    frame_dig -1
     asset_params_get AssetName
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -492,20 +210,30 @@ verify_asset_params_get_name:
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:213
-    // return value
-    retsub
-
-
-// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_url(a: uint64) -> bytes:
-verify_asset_params_get_url:
-    // tests/artifacts/StateOps/contract.py:215-216
+    // tests/artifacts/StateOps/contract.py:207
     // @arc4.abimethod()
-    // def verify_asset_params_get_url(self, a: Asset) -> Bytes:
-    proto 1 1
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_url[routing]() -> void:
+verify_asset_params_get_url:
+    // tests/artifacts/StateOps/contract.py:215
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    btoi
     // tests/artifacts/StateOps/contract.py:217
     // value, exists = op.AssetParamsGet.asset_url(a)
-    frame_dig -1
     asset_params_get AssetURL
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -524,20 +252,30 @@ verify_asset_params_get_url:
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:221
-    // return value
-    retsub
-
-
-// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_metadata_hash(a: uint64) -> bytes:
-verify_asset_params_get_metadata_hash:
-    // tests/artifacts/StateOps/contract.py:223-224
+    // tests/artifacts/StateOps/contract.py:215
     // @arc4.abimethod()
-    // def verify_asset_params_get_metadata_hash(self, a: Asset) -> Bytes:
-    proto 1 1
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_metadata_hash[routing]() -> void:
+verify_asset_params_get_metadata_hash:
+    // tests/artifacts/StateOps/contract.py:223
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    btoi
     // tests/artifacts/StateOps/contract.py:225
     // value, exists = op.AssetParamsGet.asset_metadata_hash(a)
-    frame_dig -1
     asset_params_get AssetMetadataHash
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -556,20 +294,30 @@ verify_asset_params_get_metadata_hash:
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:229
-    // return value
-    retsub
-
-
-// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_manager(a: uint64) -> bytes:
-verify_asset_params_get_manager:
-    // tests/artifacts/StateOps/contract.py:231-232
+    // tests/artifacts/StateOps/contract.py:223
     // @arc4.abimethod()
-    // def verify_asset_params_get_manager(self, a: Asset) -> arc4.Address:
-    proto 1 1
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_manager[routing]() -> void:
+verify_asset_params_get_manager:
+    // tests/artifacts/StateOps/contract.py:231
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    btoi
     // tests/artifacts/StateOps/contract.py:233
     // value, exists = op.AssetParamsGet.asset_manager(a)
-    frame_dig -1
     asset_params_get AssetManager
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -588,20 +336,24 @@ verify_asset_params_get_manager:
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:237
-    // return arc4.Address(value)
-    retsub
-
-
-// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_reserve(a: uint64) -> bytes:
-verify_asset_params_get_reserve:
-    // tests/artifacts/StateOps/contract.py:239-240
+    // tests/artifacts/StateOps/contract.py:231
     // @arc4.abimethod()
-    // def verify_asset_params_get_reserve(self, a: Asset) -> arc4.Address:
-    proto 1 1
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_reserve[routing]() -> void:
+verify_asset_params_get_reserve:
+    // tests/artifacts/StateOps/contract.py:239
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    btoi
     // tests/artifacts/StateOps/contract.py:241
     // value, exists = op.AssetParamsGet.asset_reserve(a)
-    frame_dig -1
     asset_params_get AssetReserve
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -620,20 +372,24 @@ verify_asset_params_get_reserve:
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:245
-    // return arc4.Address(value)
-    retsub
-
-
-// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_freeze(a: uint64) -> bytes:
-verify_asset_params_get_freeze:
-    // tests/artifacts/StateOps/contract.py:247-248
+    // tests/artifacts/StateOps/contract.py:239
     // @arc4.abimethod()
-    // def verify_asset_params_get_freeze(self, a: Asset) -> arc4.Address:
-    proto 1 1
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_freeze[routing]() -> void:
+verify_asset_params_get_freeze:
+    // tests/artifacts/StateOps/contract.py:247
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    btoi
     // tests/artifacts/StateOps/contract.py:249
     // value, exists = op.AssetParamsGet.asset_freeze(a)
-    frame_dig -1
     asset_params_get AssetFreeze
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -652,20 +408,24 @@ verify_asset_params_get_freeze:
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:253
-    // return arc4.Address(value)
-    retsub
-
-
-// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_clawback(a: uint64) -> bytes:
-verify_asset_params_get_clawback:
-    // tests/artifacts/StateOps/contract.py:255-256
+    // tests/artifacts/StateOps/contract.py:247
     // @arc4.abimethod()
-    // def verify_asset_params_get_clawback(self, a: Asset) -> arc4.Address:
-    proto 1 1
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_clawback[routing]() -> void:
+verify_asset_params_get_clawback:
+    // tests/artifacts/StateOps/contract.py:255
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    btoi
     // tests/artifacts/StateOps/contract.py:257
     // value, exists = op.AssetParamsGet.asset_clawback(a)
-    frame_dig -1
     asset_params_get AssetClawback
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -684,20 +444,24 @@ verify_asset_params_get_clawback:
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:261
-    // return arc4.Address(value)
-    retsub
-
-
-// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_creator(a: uint64) -> bytes:
-verify_asset_params_get_creator:
-    // tests/artifacts/StateOps/contract.py:263-264
+    // tests/artifacts/StateOps/contract.py:255
     // @arc4.abimethod()
-    // def verify_asset_params_get_creator(self, a: Asset) -> arc4.Address:
-    proto 1 1
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_creator[routing]() -> void:
+verify_asset_params_get_creator:
+    // tests/artifacts/StateOps/contract.py:263
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    btoi
     // tests/artifacts/StateOps/contract.py:265
     // value, exists = op.AssetParamsGet.asset_creator(a)
-    frame_dig -1
     asset_params_get AssetCreator
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -716,6 +480,11 @@ verify_asset_params_get_creator:
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:269
-    // return arc4.Address(value)
-    retsub
+    // tests/artifacts/StateOps/contract.py:263
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return

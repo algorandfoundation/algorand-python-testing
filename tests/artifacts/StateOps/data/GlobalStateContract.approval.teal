@@ -3,74 +3,74 @@
 
 // tests.artifacts.StateOps.contract.GlobalStateContract.__algopy_entrypoint_with_init() -> uint64:
 main:
-    intcblock 1 0 8 80
-    bytecblock 0x151f7c75 0x00 "implicit_key_arc4_uint" "implicit_key_arc4_string" "implicit_key_arc4_byte" "implicit_key_arc4_bool" "implicit_key_arc4_address" "implicit_key_arc4_uint128" "implicit_key_arc4_dynamic_bytes" "implicit_key_tuple" "explicit_key_arc4_uint" "explicit_key_arc4_string" "explicit_key_arc4_byte" "explicit_key_arc4_bool" "explicit_key_arc4_address" "explicit_key_arc4_uint128" "explicit_key_arc4_dynamic_bytes" 0x0000000000000539 0x000548656c6c6f 0x00000010000000000000000000000000 0x000d64796e616d6963206279746573 0x000b
+    intcblock 1 0
+    bytecblock 0x151f7c75 "implicit_key_arc4_uint" "implicit_key_arc4_string" "implicit_key_arc4_byte" "implicit_key_arc4_bool" "implicit_key_arc4_address" "implicit_key_arc4_uint128" "implicit_key_arc4_dynamic_bytes" "implicit_key_tuple" "explicit_key_arc4_uint" "explicit_key_arc4_string" "explicit_key_arc4_byte" "explicit_key_arc4_bool" "explicit_key_arc4_address" "explicit_key_arc4_uint128" "explicit_key_arc4_dynamic_bytes" 0x0000000000000539 0x000548656c6c6f 0x00000010000000000000000000000000 0x000d64796e616d6963206279746573
     txn ApplicationID
     bnz main_after_if_else@2
     // tests/artifacts/StateOps/contract.py:515-516
     // # Implicit key state variables
     // self.implicit_key_arc4_uint = GlobalState(arc4.UInt64(1337))
-    bytec_2 // "implicit_key_arc4_uint"
-    bytec 17 // 0x0000000000000539
+    bytec_1 // "implicit_key_arc4_uint"
+    bytec 16 // 0x0000000000000539
     app_global_put
     // tests/artifacts/StateOps/contract.py:517
     // self.implicit_key_arc4_string = GlobalState(arc4.String("Hello"))
-    bytec_3 // "implicit_key_arc4_string"
-    bytec 18 // 0x000548656c6c6f
+    bytec_2 // "implicit_key_arc4_string"
+    bytec 17 // 0x000548656c6c6f
     app_global_put
     // tests/artifacts/StateOps/contract.py:518
     // self.implicit_key_arc4_byte = GlobalState(arc4.Byte(0))
-    bytec 4 // "implicit_key_arc4_byte"
-    bytec_1 // 0x00
+    bytec_3 // "implicit_key_arc4_byte"
+    pushbytes 0x00
     app_global_put
     // tests/artifacts/StateOps/contract.py:519
     // self.implicit_key_arc4_bool = GlobalState(arc4.Bool(True))
-    bytec 5 // "implicit_key_arc4_bool"
+    bytec 4 // "implicit_key_arc4_bool"
     pushbytes 0x80
     app_global_put
     // tests/artifacts/StateOps/contract.py:520
     // self.implicit_key_arc4_address = GlobalState(arc4.Address(Global.creator_address))
-    bytec 6 // "implicit_key_arc4_address"
+    bytec 5 // "implicit_key_arc4_address"
     global CreatorAddress
     app_global_put
     // tests/artifacts/StateOps/contract.py:521
     // self.implicit_key_arc4_uint128 = GlobalState(arc4.UInt128(2**100))
-    bytec 7 // "implicit_key_arc4_uint128"
-    bytec 19 // 0x00000010000000000000000000000000
+    bytec 6 // "implicit_key_arc4_uint128"
+    bytec 18 // 0x00000010000000000000000000000000
     app_global_put
     // tests/artifacts/StateOps/contract.py:522
     // self.implicit_key_arc4_dynamic_bytes = GlobalState(arc4.DynamicBytes(b"dynamic bytes"))
-    bytec 8 // "implicit_key_arc4_dynamic_bytes"
-    bytec 20 // 0x000d64796e616d6963206279746573
+    bytec 7 // "implicit_key_arc4_dynamic_bytes"
+    bytec 19 // 0x000d64796e616d6963206279746573
     app_global_put
     // tests/artifacts/StateOps/contract.py:523
     // self.implicit_key_tuple = GlobalState((UInt64(10), Bytes(b"test"), False))
-    bytec 9 // "implicit_key_tuple"
+    bytec 8 // "implicit_key_tuple"
     pushbytes 0x000000000000000a000b00000474657374
     app_global_put
     // tests/artifacts/StateOps/contract.py:525-526
     // # Explicit key state variables
     // self.arc4_uint = GlobalState(arc4.UInt64(1337), key="explicit_key_arc4_uint")
-    bytec 10 // "explicit_key_arc4_uint"
-    bytec 17 // 0x0000000000000539
+    bytec 9 // "explicit_key_arc4_uint"
+    bytec 16 // 0x0000000000000539
     app_global_put
     // tests/artifacts/StateOps/contract.py:527
     // self.arc4_string = GlobalState(arc4.String("Hello"), key="explicit_key_arc4_string")
-    bytec 11 // "explicit_key_arc4_string"
+    bytec 10 // "explicit_key_arc4_string"
     // tests/artifacts/StateOps/contract.py:517
     // self.implicit_key_arc4_string = GlobalState(arc4.String("Hello"))
-    bytec 18 // 0x000548656c6c6f
+    bytec 17 // 0x000548656c6c6f
     // tests/artifacts/StateOps/contract.py:527
     // self.arc4_string = GlobalState(arc4.String("Hello"), key="explicit_key_arc4_string")
     app_global_put
     // tests/artifacts/StateOps/contract.py:528
     // self.arc4_byte = GlobalState(arc4.Byte(0), key="explicit_key_arc4_byte")
-    bytec 12 // "explicit_key_arc4_byte"
-    bytec_1 // 0x00
+    bytec 11 // "explicit_key_arc4_byte"
+    pushbytes 0x00
     app_global_put
     // tests/artifacts/StateOps/contract.py:529
     // self.arc4_bool = GlobalState(arc4.Bool(True), key="explicit_key_arc4_bool")
-    bytec 13 // "explicit_key_arc4_bool"
+    bytec 12 // "explicit_key_arc4_bool"
     // tests/artifacts/StateOps/contract.py:519
     // self.implicit_key_arc4_bool = GlobalState(arc4.Bool(True))
     pushbytes 0x80
@@ -79,7 +79,7 @@ main:
     app_global_put
     // tests/artifacts/StateOps/contract.py:531
     // arc4.Address(Global.creator_address), key="explicit_key_arc4_address"
-    bytec 14 // "explicit_key_arc4_address"
+    bytec 13 // "explicit_key_arc4_address"
     global CreatorAddress
     // tests/artifacts/StateOps/contract.py:530-532
     // self.arc4_address = GlobalState(
@@ -88,15 +88,15 @@ main:
     app_global_put
     // tests/artifacts/StateOps/contract.py:533
     // self.arc4_uint128 = GlobalState(arc4.UInt128(2**100), key="explicit_key_arc4_uint128")
-    bytec 15 // "explicit_key_arc4_uint128"
-    bytec 19 // 0x00000010000000000000000000000000
+    bytec 14 // "explicit_key_arc4_uint128"
+    bytec 18 // 0x00000010000000000000000000000000
     app_global_put
     // tests/artifacts/StateOps/contract.py:535
     // arc4.DynamicBytes(b"dynamic bytes"), key="explicit_key_arc4_dynamic_bytes"
-    bytec 16 // "explicit_key_arc4_dynamic_bytes"
+    bytec 15 // "explicit_key_arc4_dynamic_bytes"
     // tests/artifacts/StateOps/contract.py:522
     // self.implicit_key_arc4_dynamic_bytes = GlobalState(arc4.DynamicBytes(b"dynamic bytes"))
-    bytec 20 // 0x000d64796e616d6963206279746573
+    bytec 19 // 0x000d64796e616d6963206279746573
     // tests/artifacts/StateOps/contract.py:534-536
     // self.arc4_dynamic_bytes = GlobalState(
     //     arc4.DynamicBytes(b"dynamic bytes"), key="explicit_key_arc4_dynamic_bytes"
@@ -107,968 +107,552 @@ main_after_if_else@2:
     // tests/artifacts/StateOps/contract.py:513
     // class GlobalStateContract(ARC4Contract):
     txn NumAppArgs
-    bz main_bare_routing@35
+    bz main___algopy_default_create@37
+    txn OnCompletion
+    !
+    assert // OnCompletion must be NoOp
+    txn ApplicationID
+    assert
     pushbytess 0x1cc966ee 0x2367cd4b 0x69128e90 0x68d590e2 0x44ef0681 0x1cd294ec 0xaac8ecb1 0x166c6afd 0x3cc3bb7b 0x9a6946ad 0xded75033 0x66279e93 0x096e927b 0x97531fbc 0x6ea3f996 0xa7f4f402 0xaaddcc4c 0x5ec3116d 0x20f56eee 0x1c149a43 0xa575ac7d 0x87f0869b 0x461afc6d 0x048116ea 0x30e34a93 0xd2e646ef 0xe674a270 0xa87e540d 0x720a3ca0 0x257708f7 // method "get_implicit_key_arc4_uint()uint64", method "get_implicit_key_arc4_string()string", method "get_implicit_key_arc4_byte()byte", method "get_implicit_key_arc4_bool()bool", method "get_implicit_key_arc4_address()address", method "get_implicit_key_arc4_uint128()uint128", method "get_implicit_key_arc4_dynamic_bytes()byte[]", method "get_implicit_key_tuple()(uint64,byte[],bool)", method "get_arc4_uint()uint64", method "get_arc4_string()string", method "get_arc4_byte()byte", method "get_arc4_bool()bool", method "get_arc4_address()address", method "get_arc4_uint128()uint128", method "get_arc4_dynamic_bytes()byte[]", method "set_implicit_key_arc4_uint(uint64)void", method "set_implicit_key_arc4_string(string)void", method "set_implicit_key_arc4_byte(byte)void", method "set_implicit_key_arc4_bool(bool)void", method "set_implicit_key_arc4_address(address)void", method "set_implicit_key_arc4_uint128(uint128)void", method "set_implicit_key_arc4_dynamic_bytes(byte[])void", method "set_implicit_key_tuple((uint64,byte[],bool))void", method "set_arc4_uint(uint64)void", method "set_arc4_string(string)void", method "set_arc4_byte(byte)void", method "set_arc4_bool(bool)void", method "set_arc4_address(address)void", method "set_arc4_uint128(uint128)void", method "set_arc4_dynamic_bytes(byte[])void"
     txna ApplicationArgs 0
-    match main_get_implicit_key_arc4_uint_route@5 main_get_implicit_key_arc4_string_route@6 main_get_implicit_key_arc4_byte_route@7 main_get_implicit_key_arc4_bool_route@8 main_get_implicit_key_arc4_address_route@9 main_get_implicit_key_arc4_uint128_route@10 main_get_implicit_key_arc4_dynamic_bytes_route@11 main_get_implicit_key_tuple_route@12 main_get_arc4_uint_route@13 main_get_arc4_string_route@14 main_get_arc4_byte_route@15 main_get_arc4_bool_route@16 main_get_arc4_address_route@17 main_get_arc4_uint128_route@18 main_get_arc4_dynamic_bytes_route@19 main_set_implicit_key_arc4_uint_route@20 main_set_implicit_key_arc4_string_route@21 main_set_implicit_key_arc4_byte_route@22 main_set_implicit_key_arc4_bool_route@23 main_set_implicit_key_arc4_address_route@24 main_set_implicit_key_arc4_uint128_route@25 main_set_implicit_key_arc4_dynamic_bytes_route@26 main_set_implicit_key_tuple_route@27 main_set_arc4_uint_route@28 main_set_arc4_string_route@29 main_set_arc4_byte_route@30 main_set_arc4_bool_route@31 main_set_arc4_address_route@32 main_set_arc4_uint128_route@33 main_set_arc4_dynamic_bytes_route@34
+    match get_implicit_key_arc4_uint get_implicit_key_arc4_string get_implicit_key_arc4_byte get_implicit_key_arc4_bool get_implicit_key_arc4_address get_implicit_key_arc4_uint128 get_implicit_key_arc4_dynamic_bytes get_implicit_key_tuple get_arc4_uint get_arc4_string get_arc4_byte get_arc4_bool get_arc4_address get_arc4_uint128 get_arc4_dynamic_bytes set_implicit_key_arc4_uint set_implicit_key_arc4_string set_implicit_key_arc4_byte set_implicit_key_arc4_bool set_implicit_key_arc4_address set_implicit_key_arc4_uint128 set_implicit_key_arc4_dynamic_bytes set_implicit_key_tuple set_arc4_uint set_arc4_string set_arc4_byte set_arc4_bool set_arc4_address set_arc4_uint128 set_arc4_dynamic_bytes
+    err
 
-main_after_if_else@37:
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    intc_1 // 0
-    return
-
-main_set_arc4_dynamic_bytes_route@34:
-    // tests/artifacts/StateOps/contract.py:658
-    // @arc4.abimethod()
+main___algopy_default_create@37:
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    // tests/artifacts/StateOps/contract.py:658
-    // @arc4.abimethod()
-    callsub set_arc4_dynamic_bytes
-    intc_0 // 1
-    return
-
-main_set_arc4_uint128_route@33:
-    // tests/artifacts/StateOps/contract.py:654
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    // tests/artifacts/StateOps/contract.py:654
-    // @arc4.abimethod()
-    callsub set_arc4_uint128
-    intc_0 // 1
-    return
-
-main_set_arc4_address_route@32:
-    // tests/artifacts/StateOps/contract.py:650
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    // tests/artifacts/StateOps/contract.py:650
-    // @arc4.abimethod()
-    callsub set_arc4_address
-    intc_0 // 1
-    return
-
-main_set_arc4_bool_route@31:
-    // tests/artifacts/StateOps/contract.py:646
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    // tests/artifacts/StateOps/contract.py:646
-    // @arc4.abimethod()
-    callsub set_arc4_bool
-    intc_0 // 1
-    return
-
-main_set_arc4_byte_route@30:
-    // tests/artifacts/StateOps/contract.py:642
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    // tests/artifacts/StateOps/contract.py:642
-    // @arc4.abimethod()
-    callsub set_arc4_byte
-    intc_0 // 1
-    return
-
-main_set_arc4_string_route@29:
-    // tests/artifacts/StateOps/contract.py:638
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    // tests/artifacts/StateOps/contract.py:638
-    // @arc4.abimethod()
-    callsub set_arc4_string
-    intc_0 // 1
-    return
-
-main_set_arc4_uint_route@28:
-    // tests/artifacts/StateOps/contract.py:633-634
-    // # Setter methods for explicit key state variables
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    // tests/artifacts/StateOps/contract.py:633-634
-    // # Setter methods for explicit key state variables
-    // @arc4.abimethod()
-    callsub set_arc4_uint
-    intc_0 // 1
-    return
-
-main_set_implicit_key_tuple_route@27:
-    // tests/artifacts/StateOps/contract.py:629
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    dup
-    intc_1 // 0
-    extract_uint64
-    dig 1
-    intc_2 // 8
-    extract_uint16
-    dig 2
-    len
-    dig 3
-    cover 2
-    substring3
-    extract 2 0
-    uncover 2
-    intc_3 // 80
-    getbit
-    // tests/artifacts/StateOps/contract.py:629
-    // @arc4.abimethod()
-    callsub set_implicit_key_tuple
-    intc_0 // 1
-    return
-
-main_set_implicit_key_arc4_dynamic_bytes_route@26:
-    // tests/artifacts/StateOps/contract.py:625
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    // tests/artifacts/StateOps/contract.py:625
-    // @arc4.abimethod()
-    callsub set_implicit_key_arc4_dynamic_bytes
-    intc_0 // 1
-    return
-
-main_set_implicit_key_arc4_uint128_route@25:
-    // tests/artifacts/StateOps/contract.py:621
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    // tests/artifacts/StateOps/contract.py:621
-    // @arc4.abimethod()
-    callsub set_implicit_key_arc4_uint128
-    intc_0 // 1
-    return
-
-main_set_implicit_key_arc4_address_route@24:
-    // tests/artifacts/StateOps/contract.py:617
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    // tests/artifacts/StateOps/contract.py:617
-    // @arc4.abimethod()
-    callsub set_implicit_key_arc4_address
-    intc_0 // 1
-    return
-
-main_set_implicit_key_arc4_bool_route@23:
-    // tests/artifacts/StateOps/contract.py:613
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    // tests/artifacts/StateOps/contract.py:613
-    // @arc4.abimethod()
-    callsub set_implicit_key_arc4_bool
-    intc_0 // 1
-    return
-
-main_set_implicit_key_arc4_byte_route@22:
-    // tests/artifacts/StateOps/contract.py:609
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    // tests/artifacts/StateOps/contract.py:609
-    // @arc4.abimethod()
-    callsub set_implicit_key_arc4_byte
-    intc_0 // 1
-    return
-
-main_set_implicit_key_arc4_string_route@21:
-    // tests/artifacts/StateOps/contract.py:605
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    // tests/artifacts/StateOps/contract.py:605
-    // @arc4.abimethod()
-    callsub set_implicit_key_arc4_string
-    intc_0 // 1
-    return
-
-main_set_implicit_key_arc4_uint_route@20:
-    // tests/artifacts/StateOps/contract.py:600-601
-    // # Setter methods for implicit key state variables
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txna ApplicationArgs 1
-    // tests/artifacts/StateOps/contract.py:600-601
-    // # Setter methods for implicit key state variables
-    // @arc4.abimethod()
-    callsub set_implicit_key_arc4_uint
-    intc_0 // 1
-    return
-
-main_get_arc4_dynamic_bytes_route@19:
-    // tests/artifacts/StateOps/contract.py:596
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_arc4_dynamic_bytes
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_get_arc4_uint128_route@18:
-    // tests/artifacts/StateOps/contract.py:592
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_arc4_uint128
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_get_arc4_address_route@17:
-    // tests/artifacts/StateOps/contract.py:588
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_arc4_address
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_get_arc4_bool_route@16:
-    // tests/artifacts/StateOps/contract.py:584
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_arc4_bool
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_get_arc4_byte_route@15:
-    // tests/artifacts/StateOps/contract.py:580
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_arc4_byte
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_get_arc4_string_route@14:
-    // tests/artifacts/StateOps/contract.py:576
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_arc4_string
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_get_arc4_uint_route@13:
-    // tests/artifacts/StateOps/contract.py:571-572
-    // # Getter methods for explicit key state variables
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_arc4_uint
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_get_implicit_key_tuple_route@12:
-    // tests/artifacts/StateOps/contract.py:567
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_implicit_key_tuple
-    uncover 2
-    itob
-    dig 2
-    len
-    itob
-    extract 6 2
-    uncover 3
-    concat
-    swap
-    bytec 21 // 0x000b
-    concat
-    bytec_1 // 0x00
-    intc_1 // 0
-    uncover 4
-    setbit
-    concat
-    swap
-    concat
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_get_implicit_key_arc4_dynamic_bytes_route@11:
-    // tests/artifacts/StateOps/contract.py:563
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_implicit_key_arc4_dynamic_bytes
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_get_implicit_key_arc4_uint128_route@10:
-    // tests/artifacts/StateOps/contract.py:559
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_implicit_key_arc4_uint128
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_get_implicit_key_arc4_address_route@9:
-    // tests/artifacts/StateOps/contract.py:555
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_implicit_key_arc4_address
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_get_implicit_key_arc4_bool_route@8:
-    // tests/artifacts/StateOps/contract.py:551
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_implicit_key_arc4_bool
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_get_implicit_key_arc4_byte_route@7:
-    // tests/artifacts/StateOps/contract.py:547
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_implicit_key_arc4_byte
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_get_implicit_key_arc4_string_route@6:
-    // tests/artifacts/StateOps/contract.py:543
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_implicit_key_arc4_string
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_get_implicit_key_arc4_uint_route@5:
-    // tests/artifacts/StateOps/contract.py:538-539
-    // # Getter methods for implicit key state variables
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub get_implicit_key_arc4_uint
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_bare_routing@35:
-    // tests/artifacts/StateOps/contract.py:513
-    // class GlobalStateContract(ARC4Contract):
-    txn OnCompletion
-    bnz main_after_if_else@37
     txn ApplicationID
     !
-    assert // can only call when creating
-    intc_0 // 1
-    return
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_arc4_uint() -> bytes:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_arc4_uint[routing]() -> void:
 get_implicit_key_arc4_uint:
     // tests/artifacts/StateOps/contract.py:541
     // return self.implicit_key_arc4_uint.value
     intc_1 // 0
-    bytec_2 // "implicit_key_arc4_uint"
+    bytec_1 // "implicit_key_arc4_uint"
     app_global_get_ex
     assert // check self.implicit_key_arc4_uint exists
-    retsub
+    // tests/artifacts/StateOps/contract.py:538-539
+    // # Getter methods for implicit key state variables
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_arc4_string() -> bytes:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_arc4_string[routing]() -> void:
 get_implicit_key_arc4_string:
     // tests/artifacts/StateOps/contract.py:545
     // return self.implicit_key_arc4_string.value
     intc_1 // 0
-    bytec_3 // "implicit_key_arc4_string"
+    bytec_2 // "implicit_key_arc4_string"
     app_global_get_ex
     assert // check self.implicit_key_arc4_string exists
-    retsub
+    // tests/artifacts/StateOps/contract.py:543
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_arc4_byte() -> bytes:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_arc4_byte[routing]() -> void:
 get_implicit_key_arc4_byte:
     // tests/artifacts/StateOps/contract.py:549
     // return self.implicit_key_arc4_byte.value
     intc_1 // 0
-    bytec 4 // "implicit_key_arc4_byte"
+    bytec_3 // "implicit_key_arc4_byte"
     app_global_get_ex
     assert // check self.implicit_key_arc4_byte exists
-    retsub
+    // tests/artifacts/StateOps/contract.py:547
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_arc4_bool() -> bytes:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_arc4_bool[routing]() -> void:
 get_implicit_key_arc4_bool:
     // tests/artifacts/StateOps/contract.py:553
     // return self.implicit_key_arc4_bool.value
     intc_1 // 0
-    bytec 5 // "implicit_key_arc4_bool"
+    bytec 4 // "implicit_key_arc4_bool"
     app_global_get_ex
     assert // check self.implicit_key_arc4_bool exists
-    retsub
+    // tests/artifacts/StateOps/contract.py:551
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_arc4_address() -> bytes:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_arc4_address[routing]() -> void:
 get_implicit_key_arc4_address:
     // tests/artifacts/StateOps/contract.py:557
     // return self.implicit_key_arc4_address.value
     intc_1 // 0
-    bytec 6 // "implicit_key_arc4_address"
+    bytec 5 // "implicit_key_arc4_address"
     app_global_get_ex
     assert // check self.implicit_key_arc4_address exists
-    retsub
+    // tests/artifacts/StateOps/contract.py:555
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_arc4_uint128() -> bytes:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_arc4_uint128[routing]() -> void:
 get_implicit_key_arc4_uint128:
     // tests/artifacts/StateOps/contract.py:561
     // return self.implicit_key_arc4_uint128.value
     intc_1 // 0
-    bytec 7 // "implicit_key_arc4_uint128"
+    bytec 6 // "implicit_key_arc4_uint128"
     app_global_get_ex
     assert // check self.implicit_key_arc4_uint128 exists
-    retsub
+    // tests/artifacts/StateOps/contract.py:559
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_arc4_dynamic_bytes() -> bytes:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_arc4_dynamic_bytes[routing]() -> void:
 get_implicit_key_arc4_dynamic_bytes:
     // tests/artifacts/StateOps/contract.py:565
     // return self.implicit_key_arc4_dynamic_bytes.value
     intc_1 // 0
-    bytec 8 // "implicit_key_arc4_dynamic_bytes"
+    bytec 7 // "implicit_key_arc4_dynamic_bytes"
     app_global_get_ex
     assert // check self.implicit_key_arc4_dynamic_bytes exists
-    retsub
+    // tests/artifacts/StateOps/contract.py:563
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_tuple() -> uint64, bytes, uint64:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_implicit_key_tuple[routing]() -> void:
 get_implicit_key_tuple:
     // tests/artifacts/StateOps/contract.py:569
     // return self.implicit_key_tuple.value
     intc_1 // 0
-    bytec 9 // "implicit_key_tuple"
+    bytec 8 // "implicit_key_tuple"
     app_global_get_ex
     assert // check self.implicit_key_tuple exists
-    dup
-    intc_1 // 0
-    extract_uint64
-    dig 1
-    intc_2 // 8
-    extract_uint16
-    dig 2
-    len
-    dig 3
-    cover 2
-    substring3
-    extract 2 0
-    uncover 2
-    intc_3 // 80
-    getbit
-    retsub
+    // tests/artifacts/StateOps/contract.py:567
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_arc4_uint() -> bytes:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_arc4_uint[routing]() -> void:
 get_arc4_uint:
     // tests/artifacts/StateOps/contract.py:574
     // return self.arc4_uint.value
     intc_1 // 0
-    bytec 10 // "explicit_key_arc4_uint"
+    bytec 9 // "explicit_key_arc4_uint"
     app_global_get_ex
     assert // check self.arc4_uint exists
-    retsub
+    // tests/artifacts/StateOps/contract.py:571-572
+    // # Getter methods for explicit key state variables
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_arc4_string() -> bytes:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_arc4_string[routing]() -> void:
 get_arc4_string:
     // tests/artifacts/StateOps/contract.py:578
     // return self.arc4_string.value
     intc_1 // 0
-    bytec 11 // "explicit_key_arc4_string"
+    bytec 10 // "explicit_key_arc4_string"
     app_global_get_ex
     assert // check self.arc4_string exists
-    retsub
+    // tests/artifacts/StateOps/contract.py:576
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_arc4_byte() -> bytes:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_arc4_byte[routing]() -> void:
 get_arc4_byte:
     // tests/artifacts/StateOps/contract.py:582
     // return self.arc4_byte.value
     intc_1 // 0
-    bytec 12 // "explicit_key_arc4_byte"
+    bytec 11 // "explicit_key_arc4_byte"
     app_global_get_ex
     assert // check self.arc4_byte exists
-    retsub
+    // tests/artifacts/StateOps/contract.py:580
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_arc4_bool() -> bytes:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_arc4_bool[routing]() -> void:
 get_arc4_bool:
     // tests/artifacts/StateOps/contract.py:586
     // return self.arc4_bool.value
     intc_1 // 0
-    bytec 13 // "explicit_key_arc4_bool"
+    bytec 12 // "explicit_key_arc4_bool"
     app_global_get_ex
     assert // check self.arc4_bool exists
-    retsub
+    // tests/artifacts/StateOps/contract.py:584
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_arc4_address() -> bytes:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_arc4_address[routing]() -> void:
 get_arc4_address:
     // tests/artifacts/StateOps/contract.py:590
     // return self.arc4_address.value
     intc_1 // 0
-    bytec 14 // "explicit_key_arc4_address"
+    bytec 13 // "explicit_key_arc4_address"
     app_global_get_ex
     assert // check self.arc4_address exists
-    retsub
+    // tests/artifacts/StateOps/contract.py:588
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_arc4_uint128() -> bytes:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_arc4_uint128[routing]() -> void:
 get_arc4_uint128:
     // tests/artifacts/StateOps/contract.py:594
     // return self.arc4_uint128.value
     intc_1 // 0
-    bytec 15 // "explicit_key_arc4_uint128"
+    bytec 14 // "explicit_key_arc4_uint128"
     app_global_get_ex
     assert // check self.arc4_uint128 exists
-    retsub
+    // tests/artifacts/StateOps/contract.py:592
+    // @arc4.abimethod()
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.get_arc4_dynamic_bytes() -> bytes:
+// tests.artifacts.StateOps.contract.GlobalStateContract.get_arc4_dynamic_bytes[routing]() -> void:
 get_arc4_dynamic_bytes:
     // tests/artifacts/StateOps/contract.py:598
     // return self.arc4_dynamic_bytes.value
     intc_1 // 0
-    bytec 16 // "explicit_key_arc4_dynamic_bytes"
+    bytec 15 // "explicit_key_arc4_dynamic_bytes"
     app_global_get_ex
     assert // check self.arc4_dynamic_bytes exists
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_arc4_uint(value: bytes) -> void:
-set_implicit_key_arc4_uint:
-    // tests/artifacts/StateOps/contract.py:600-602
-    // # Setter methods for implicit key state variables
+    // tests/artifacts/StateOps/contract.py:596
     // @arc4.abimethod()
-    // def set_implicit_key_arc4_uint(self, value: arc4.UInt64) -> None:
-    proto 1 0
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_arc4_uint[routing]() -> void:
+set_implicit_key_arc4_uint:
     // tests/artifacts/StateOps/contract.py:603
     // self.implicit_key_arc4_uint.value = value
-    bytec_2 // "implicit_key_arc4_uint"
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_arc4_string(value: bytes) -> void:
-set_implicit_key_arc4_string:
-    // tests/artifacts/StateOps/contract.py:605-606
+    bytec_1 // "implicit_key_arc4_uint"
+    // tests/artifacts/StateOps/contract.py:600-601
+    // # Setter methods for implicit key state variables
     // @arc4.abimethod()
-    // def set_implicit_key_arc4_string(self, value: arc4.String) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:603
+    // self.implicit_key_arc4_uint.value = value
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:600-601
+    // # Setter methods for implicit key state variables
+    // @arc4.abimethod()
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_arc4_string[routing]() -> void:
+set_implicit_key_arc4_string:
     // tests/artifacts/StateOps/contract.py:607
     // self.implicit_key_arc4_string.value = value
-    bytec_3 // "implicit_key_arc4_string"
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_arc4_byte(value: bytes) -> void:
-set_implicit_key_arc4_byte:
-    // tests/artifacts/StateOps/contract.py:609-610
+    bytec_2 // "implicit_key_arc4_string"
+    // tests/artifacts/StateOps/contract.py:605
     // @arc4.abimethod()
-    // def set_implicit_key_arc4_byte(self, value: arc4.Byte) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:607
+    // self.implicit_key_arc4_string.value = value
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:605
+    // @arc4.abimethod()
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_arc4_byte[routing]() -> void:
+set_implicit_key_arc4_byte:
     // tests/artifacts/StateOps/contract.py:611
     // self.implicit_key_arc4_byte.value = value
-    bytec 4 // "implicit_key_arc4_byte"
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_arc4_bool(value: bytes) -> void:
-set_implicit_key_arc4_bool:
-    // tests/artifacts/StateOps/contract.py:613-614
+    bytec_3 // "implicit_key_arc4_byte"
+    // tests/artifacts/StateOps/contract.py:609
     // @arc4.abimethod()
-    // def set_implicit_key_arc4_bool(self, value: arc4.Bool) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:611
+    // self.implicit_key_arc4_byte.value = value
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:609
+    // @arc4.abimethod()
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_arc4_bool[routing]() -> void:
+set_implicit_key_arc4_bool:
     // tests/artifacts/StateOps/contract.py:615
     // self.implicit_key_arc4_bool.value = value
-    bytec 5 // "implicit_key_arc4_bool"
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_arc4_address(value: bytes) -> void:
-set_implicit_key_arc4_address:
-    // tests/artifacts/StateOps/contract.py:617-618
+    bytec 4 // "implicit_key_arc4_bool"
+    // tests/artifacts/StateOps/contract.py:613
     // @arc4.abimethod()
-    // def set_implicit_key_arc4_address(self, value: arc4.Address) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:615
+    // self.implicit_key_arc4_bool.value = value
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:613
+    // @arc4.abimethod()
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_arc4_address[routing]() -> void:
+set_implicit_key_arc4_address:
     // tests/artifacts/StateOps/contract.py:619
     // self.implicit_key_arc4_address.value = value
-    bytec 6 // "implicit_key_arc4_address"
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_arc4_uint128(value: bytes) -> void:
-set_implicit_key_arc4_uint128:
-    // tests/artifacts/StateOps/contract.py:621-622
+    bytec 5 // "implicit_key_arc4_address"
+    // tests/artifacts/StateOps/contract.py:617
     // @arc4.abimethod()
-    // def set_implicit_key_arc4_uint128(self, value: arc4.UInt128) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:619
+    // self.implicit_key_arc4_address.value = value
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:617
+    // @arc4.abimethod()
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_arc4_uint128[routing]() -> void:
+set_implicit_key_arc4_uint128:
     // tests/artifacts/StateOps/contract.py:623
     // self.implicit_key_arc4_uint128.value = value
-    bytec 7 // "implicit_key_arc4_uint128"
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_arc4_dynamic_bytes(value: bytes) -> void:
-set_implicit_key_arc4_dynamic_bytes:
-    // tests/artifacts/StateOps/contract.py:625-626
+    bytec 6 // "implicit_key_arc4_uint128"
+    // tests/artifacts/StateOps/contract.py:621
     // @arc4.abimethod()
-    // def set_implicit_key_arc4_dynamic_bytes(self, value: arc4.DynamicBytes) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:623
+    // self.implicit_key_arc4_uint128.value = value
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:621
+    // @arc4.abimethod()
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_arc4_dynamic_bytes[routing]() -> void:
+set_implicit_key_arc4_dynamic_bytes:
     // tests/artifacts/StateOps/contract.py:627
     // self.implicit_key_arc4_dynamic_bytes.value = value.copy()
-    bytec 8 // "implicit_key_arc4_dynamic_bytes"
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_tuple(value.0: uint64, value.1: bytes, value.2: uint64) -> void:
-set_implicit_key_tuple:
-    // tests/artifacts/StateOps/contract.py:629-630
+    bytec 7 // "implicit_key_arc4_dynamic_bytes"
+    // tests/artifacts/StateOps/contract.py:625
     // @arc4.abimethod()
-    // def set_implicit_key_tuple(self, value: tuple[UInt64, Bytes, bool]) -> None:
-    proto 3 0
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:627
+    // self.implicit_key_arc4_dynamic_bytes.value = value.copy()
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:625
+    // @arc4.abimethod()
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_implicit_key_tuple[routing]() -> void:
+set_implicit_key_tuple:
     // tests/artifacts/StateOps/contract.py:631
     // self.implicit_key_tuple.value = value
-    frame_dig -3
-    itob
-    frame_dig -2
-    len
-    itob
-    extract 6 2
-    frame_dig -2
-    concat
-    swap
-    bytec 21 // 0x000b
-    concat
-    bytec_1 // 0x00
-    intc_1 // 0
-    frame_dig -1
-    setbit
-    concat
-    swap
-    concat
-    bytec 9 // "implicit_key_tuple"
-    swap
-    app_global_put
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_arc4_uint(value: bytes) -> void:
-set_arc4_uint:
-    // tests/artifacts/StateOps/contract.py:633-635
-    // # Setter methods for explicit key state variables
+    bytec 8 // "implicit_key_tuple"
+    // tests/artifacts/StateOps/contract.py:629
     // @arc4.abimethod()
-    // def set_arc4_uint(self, value: arc4.UInt64) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:631
+    // self.implicit_key_tuple.value = value
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:629
+    // @arc4.abimethod()
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_arc4_uint[routing]() -> void:
+set_arc4_uint:
     // tests/artifacts/StateOps/contract.py:636
     // self.arc4_uint.value = value
-    bytec 10 // "explicit_key_arc4_uint"
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_arc4_string(value: bytes) -> void:
-set_arc4_string:
-    // tests/artifacts/StateOps/contract.py:638-639
+    bytec 9 // "explicit_key_arc4_uint"
+    // tests/artifacts/StateOps/contract.py:633-634
+    // # Setter methods for explicit key state variables
     // @arc4.abimethod()
-    // def set_arc4_string(self, value: arc4.String) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:636
+    // self.arc4_uint.value = value
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:633-634
+    // # Setter methods for explicit key state variables
+    // @arc4.abimethod()
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_arc4_string[routing]() -> void:
+set_arc4_string:
     // tests/artifacts/StateOps/contract.py:640
     // self.arc4_string.value = value
-    bytec 11 // "explicit_key_arc4_string"
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_arc4_byte(value: bytes) -> void:
-set_arc4_byte:
-    // tests/artifacts/StateOps/contract.py:642-643
+    bytec 10 // "explicit_key_arc4_string"
+    // tests/artifacts/StateOps/contract.py:638
     // @arc4.abimethod()
-    // def set_arc4_byte(self, value: arc4.Byte) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:640
+    // self.arc4_string.value = value
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:638
+    // @arc4.abimethod()
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_arc4_byte[routing]() -> void:
+set_arc4_byte:
     // tests/artifacts/StateOps/contract.py:644
     // self.arc4_byte.value = value
-    bytec 12 // "explicit_key_arc4_byte"
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_arc4_bool(value: bytes) -> void:
-set_arc4_bool:
-    // tests/artifacts/StateOps/contract.py:646-647
+    bytec 11 // "explicit_key_arc4_byte"
+    // tests/artifacts/StateOps/contract.py:642
     // @arc4.abimethod()
-    // def set_arc4_bool(self, value: arc4.Bool) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:644
+    // self.arc4_byte.value = value
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:642
+    // @arc4.abimethod()
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_arc4_bool[routing]() -> void:
+set_arc4_bool:
     // tests/artifacts/StateOps/contract.py:648
     // self.arc4_bool.value = value
-    bytec 13 // "explicit_key_arc4_bool"
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_arc4_address(value: bytes) -> void:
-set_arc4_address:
-    // tests/artifacts/StateOps/contract.py:650-651
+    bytec 12 // "explicit_key_arc4_bool"
+    // tests/artifacts/StateOps/contract.py:646
     // @arc4.abimethod()
-    // def set_arc4_address(self, value: arc4.Address) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:648
+    // self.arc4_bool.value = value
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:646
+    // @arc4.abimethod()
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_arc4_address[routing]() -> void:
+set_arc4_address:
     // tests/artifacts/StateOps/contract.py:652
     // self.arc4_address.value = value
-    bytec 14 // "explicit_key_arc4_address"
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_arc4_uint128(value: bytes) -> void:
-set_arc4_uint128:
-    // tests/artifacts/StateOps/contract.py:654-655
+    bytec 13 // "explicit_key_arc4_address"
+    // tests/artifacts/StateOps/contract.py:650
     // @arc4.abimethod()
-    // def set_arc4_uint128(self, value: arc4.UInt128) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:652
+    // self.arc4_address.value = value
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:650
+    // @arc4.abimethod()
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_arc4_uint128[routing]() -> void:
+set_arc4_uint128:
     // tests/artifacts/StateOps/contract.py:656
     // self.arc4_uint128.value = value
-    bytec 15 // "explicit_key_arc4_uint128"
-    frame_dig -1
-    app_global_put
-    retsub
-
-
-// tests.artifacts.StateOps.contract.GlobalStateContract.set_arc4_dynamic_bytes(value: bytes) -> void:
-set_arc4_dynamic_bytes:
-    // tests/artifacts/StateOps/contract.py:658-659
+    bytec 14 // "explicit_key_arc4_uint128"
+    // tests/artifacts/StateOps/contract.py:654
     // @arc4.abimethod()
-    // def set_arc4_dynamic_bytes(self, value: arc4.DynamicBytes) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:656
+    // self.arc4_uint128.value = value
+    app_global_put
+    // tests/artifacts/StateOps/contract.py:654
+    // @arc4.abimethod()
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.GlobalStateContract.set_arc4_dynamic_bytes[routing]() -> void:
+set_arc4_dynamic_bytes:
     // tests/artifacts/StateOps/contract.py:660
     // self.arc4_dynamic_bytes.value = value.copy()
-    bytec 16 // "explicit_key_arc4_dynamic_bytes"
-    frame_dig -1
+    bytec 15 // "explicit_key_arc4_dynamic_bytes"
+    // tests/artifacts/StateOps/contract.py:658
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    // tests/artifacts/StateOps/contract.py:660
+    // self.arc4_dynamic_bytes.value = value.copy()
     app_global_put
-    retsub
+    // tests/artifacts/StateOps/contract.py:658
+    // @arc4.abimethod()
+    intc_0 // 1
+    return

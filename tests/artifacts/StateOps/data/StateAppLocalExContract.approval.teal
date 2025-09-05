@@ -6,16 +6,11 @@ main:
     // tests/artifacts/StateOps/contract.py:346
     // class StateAppLocalExContract(ARC4Contract):
     txn NumAppArgs
-    bz main_bare_routing@6
+    bz main___algopy_default_create@7
     pushbytes 0x30c6d58a // method "opt_in()void"
     txna ApplicationArgs 0
     match main_opt_in_route@5
-
-main_after_if_else@8:
-    // tests/artifacts/StateOps/contract.py:346
-    // class StateAppLocalExContract(ARC4Contract):
-    pushint 0 // 0
-    return
+    err
 
 main_opt_in_route@5:
     // tests/artifacts/StateOps/contract.py:363
@@ -23,26 +18,21 @@ main_opt_in_route@5:
     txn OnCompletion
     pushint 1 // OptIn
     ==
-    assert // OnCompletion is not OptIn
     txn ApplicationID
-    assert // can only call when not creating
-    callsub opt_in
-    pushint 1 // 1
-    return
+    &&
+    assert // OnCompletion must be OptIn && can only call when not creating
+    b opt_in
 
-main_bare_routing@6:
-    // tests/artifacts/StateOps/contract.py:346
-    // class StateAppLocalExContract(ARC4Contract):
+main___algopy_default_create@7:
     txn OnCompletion
-    bnz main_after_if_else@8
+    !
     txn ApplicationID
     !
-    assert // can only call when creating
-    pushint 1 // 1
-    return
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
 
 
-// tests.artifacts.StateOps.contract.StateAppLocalExContract.opt_in() -> void:
+// tests.artifacts.StateOps.contract.StateAppLocalExContract.opt_in[routing]() -> void:
 opt_in:
     // tests/artifacts/StateOps/contract.py:365
     // self.local_bytes[Global.creator_address] = Bytes(b"dummy_bytes_from_external_contract")
@@ -64,4 +54,7 @@ opt_in:
     // )
     pushbytess "local_arc4_bytes" 0x001064756d6d795f617263345f6279746573 // "local_arc4_bytes", 0x001064756d6d795f617263345f6279746573
     app_local_put
-    retsub
+    // tests/artifacts/StateOps/contract.py:363
+    // @arc4.abimethod(allow_actions=["OptIn"])
+    pushint 1 // 1
+    return

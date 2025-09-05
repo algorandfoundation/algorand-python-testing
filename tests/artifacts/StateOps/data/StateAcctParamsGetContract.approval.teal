@@ -3,405 +3,41 @@
 
 // algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
-    intcblock 1 0
+    intcblock 1
     bytecblock 0x151f7c75
     // tests/artifacts/StateOps/contract.py:24
     // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
     txn NumAppArgs
-    bz main_bare_routing@20
+    bz main___algopy_default_create@22
+    txn OnCompletion
+    !
+    assert // OnCompletion must be NoOp
+    txn ApplicationID
+    assert
     pushbytess 0x5f5b43e4 0x73dc93c7 0x5626dfeb 0xdc8a25bf 0x198ebd8c 0x2301ab26 0x9f68fca6 0xa975c2d1 0xd1e04801 0xb6966be5 0x195d5418 0x6adae3f1 0xdf8cfee5 0x6ad70d21 0x1735fd22 // method "verify_acct_balance(account)uint64", method "verify_acct_min_balance(account)uint64", method "verify_acct_auth_addr(account)address", method "verify_acct_total_num_uint(account)uint64", method "verify_acct_total_num_byte_slice(account)uint64", method "verify_acct_total_extra_app_pages(account)uint64", method "verify_acct_total_apps_created(account)uint64", method "verify_acct_total_apps_opted_in(account)uint64", method "verify_acct_total_assets_created(account)uint64", method "verify_acct_total_assets(account)uint64", method "verify_acct_total_boxes(account)uint64", method "verify_acct_total_box_bytes(account)uint64", method "verify_acct_incentive_eligible(account)bool", method "verify_acct_last_heartbeat(account)uint64", method "verify_acct_last_proposed(account)uint64"
     txna ApplicationArgs 0
-    match main_verify_acct_balance_route@3 main_verify_acct_min_balance_route@4 main_verify_acct_auth_addr_route@5 main_verify_acct_total_num_uint_route@6 main_verify_acct_total_num_byte_slice_route@7 main_verify_acct_total_extra_app_pages_route@8 main_verify_acct_total_apps_created_route@9 main_verify_acct_total_apps_opted_in_route@10 main_verify_acct_total_assets_created_route@11 main_verify_acct_total_assets_route@12 main_verify_acct_total_boxes_route@13 main_verify_acct_total_box_bytes_route@14 main_verify_acct_incentive_eligible_route@15 main_verify_acct_last_heartbeat_route@16 main_verify_acct_last_proposed_route@17
+    match verify_acct_balance verify_acct_min_balance verify_acct_auth_addr verify_acct_total_num_uint verify_acct_total_num_byte_slice verify_acct_total_extra_app_pages verify_acct_total_apps_created verify_acct_total_apps_opted_in verify_acct_total_assets_created verify_acct_total_assets verify_acct_total_boxes verify_acct_total_box_bytes verify_acct_incentive_eligible verify_acct_last_heartbeat verify_acct_last_proposed
+    err
 
-main_after_if_else@24:
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    intc_1 // 0
-    return
-
-main_verify_acct_last_proposed_route@17:
-    // tests/artifacts/StateOps/contract.py:153
-    // @arc4.abimethod()
+main___algopy_default_create@22:
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:153
-    // @arc4.abimethod()
-    callsub verify_acct_last_proposed
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_acct_last_heartbeat_route@16:
-    // tests/artifacts/StateOps/contract.py:145
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:145
-    // @arc4.abimethod()
-    callsub verify_acct_last_heartbeat
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_acct_incentive_eligible_route@15:
-    // tests/artifacts/StateOps/contract.py:137
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:137
-    // @arc4.abimethod()
-    callsub verify_acct_incentive_eligible
-    pushbytes 0x00
-    intc_1 // 0
-    uncover 2
-    setbit
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_acct_total_box_bytes_route@14:
-    // tests/artifacts/StateOps/contract.py:129
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:129
-    // @arc4.abimethod()
-    callsub verify_acct_total_box_bytes
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_acct_total_boxes_route@13:
-    // tests/artifacts/StateOps/contract.py:121
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:121
-    // @arc4.abimethod()
-    callsub verify_acct_total_boxes
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_acct_total_assets_route@12:
-    // tests/artifacts/StateOps/contract.py:113
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:113
-    // @arc4.abimethod()
-    callsub verify_acct_total_assets
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_acct_total_assets_created_route@11:
-    // tests/artifacts/StateOps/contract.py:103
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:103
-    // @arc4.abimethod()
-    callsub verify_acct_total_assets_created
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_acct_total_apps_opted_in_route@10:
-    // tests/artifacts/StateOps/contract.py:95
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:95
-    // @arc4.abimethod()
-    callsub verify_acct_total_apps_opted_in
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_acct_total_apps_created_route@9:
-    // tests/artifacts/StateOps/contract.py:87
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:87
-    // @arc4.abimethod()
-    callsub verify_acct_total_apps_created
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_acct_total_extra_app_pages_route@8:
-    // tests/artifacts/StateOps/contract.py:77
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:77
-    // @arc4.abimethod()
-    callsub verify_acct_total_extra_app_pages
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_acct_total_num_byte_slice_route@7:
-    // tests/artifacts/StateOps/contract.py:67
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:67
-    // @arc4.abimethod()
-    callsub verify_acct_total_num_byte_slice
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_acct_total_num_uint_route@6:
-    // tests/artifacts/StateOps/contract.py:59
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:59
-    // @arc4.abimethod()
-    callsub verify_acct_total_num_uint
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_acct_auth_addr_route@5:
-    // tests/artifacts/StateOps/contract.py:51
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:51
-    // @arc4.abimethod()
-    callsub verify_acct_auth_addr
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_acct_min_balance_route@4:
-    // tests/artifacts/StateOps/contract.py:38
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:38
-    // @arc4.abimethod()
-    callsub verify_acct_min_balance
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_verify_acct_balance_route@3:
-    // tests/artifacts/StateOps/contract.py:25
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    // tests/artifacts/StateOps/contract.py:25
-    // @arc4.abimethod()
-    callsub verify_acct_balance
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_bare_routing@20:
-    // tests/artifacts/StateOps/contract.py:24
-    // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
-    txn OnCompletion
-    bnz main_after_if_else@24
     txn ApplicationID
     !
-    assert // can only call when creating
-    intc_0 // 1
-    return
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_balance(a: bytes) -> uint64:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_balance[routing]() -> void:
 verify_acct_balance:
-    // tests/artifacts/StateOps/contract.py:25-26
-    // @arc4.abimethod()
-    // def verify_acct_balance(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:25
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:27
     // value, funded = op.AcctParamsGet.acct_balance(a)
-    frame_dig -1
+    dup
     acct_params_get AcctBalance
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -422,7 +58,7 @@ verify_acct_balance:
     assert // expected funded by index to match
     // tests/artifacts/StateOps/contract.py:31
     // assert value == a.balance, "expected Account balance to match"
-    frame_dig -1
+    dig 1
     acct_params_get AcctBalance
     assert // account funded
     dig 1
@@ -430,7 +66,7 @@ verify_acct_balance:
     assert // expected Account balance to match
     // tests/artifacts/StateOps/contract.py:32
     // assert value == algopy.op.balance(a), "expected op.balance to match"
-    frame_dig -1
+    swap
     balance
     dig 1
     ==
@@ -447,20 +83,27 @@ verify_acct_balance:
     dig 1
     ==
     assert // expected op.balance by index to match
-    // tests/artifacts/StateOps/contract.py:36
-    // return value
-    retsub
+    // tests/artifacts/StateOps/contract.py:25
+    // @arc4.abimethod(resource_encoding="index")
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_min_balance(a: bytes) -> uint64:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_min_balance[routing]() -> void:
 verify_acct_min_balance:
-    // tests/artifacts/StateOps/contract.py:38-39
-    // @arc4.abimethod()
-    // def verify_acct_min_balance(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:38
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:40
     // value, funded = op.AcctParamsGet.acct_min_balance(a)
-    frame_dig -1
+    dup
     acct_params_get AcctMinBalance
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -481,7 +124,7 @@ verify_acct_min_balance:
     assert // expected funded by index to match
     // tests/artifacts/StateOps/contract.py:44
     // assert value == a.min_balance, "expected Account min_balance to match"
-    frame_dig -1
+    dig 1
     acct_params_get AcctMinBalance
     assert // account funded
     dig 1
@@ -489,7 +132,7 @@ verify_acct_min_balance:
     assert // expected Account min_balance to match
     // tests/artifacts/StateOps/contract.py:45
     // assert value == algopy.op.min_balance(a), "expected op.min_balance to match"
-    frame_dig -1
+    swap
     min_balance
     dig 1
     ==
@@ -506,20 +149,26 @@ verify_acct_min_balance:
     dig 1
     ==
     assert // expected op.min_balance by index to match
-    // tests/artifacts/StateOps/contract.py:49
-    // return value
-    retsub
+    // tests/artifacts/StateOps/contract.py:38
+    // @arc4.abimethod(resource_encoding="index")
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_auth_addr(a: bytes) -> bytes:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_auth_addr[routing]() -> void:
 verify_acct_auth_addr:
-    // tests/artifacts/StateOps/contract.py:51-52
-    // @arc4.abimethod()
-    // def verify_acct_auth_addr(self, a: algopy.Account) -> arc4.Address:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:51
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:53
     // value, funded = op.AcctParamsGet.acct_auth_addr(a)
-    frame_dig -1
     acct_params_get AcctAuthAddr
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -538,20 +187,25 @@ verify_acct_auth_addr:
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:57
-    // return arc4.Address(value)
-    retsub
+    // tests/artifacts/StateOps/contract.py:51
+    // @arc4.abimethod(resource_encoding="index")
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_num_uint(a: bytes) -> uint64:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_num_uint[routing]() -> void:
 verify_acct_total_num_uint:
-    // tests/artifacts/StateOps/contract.py:59-60
-    // @arc4.abimethod()
-    // def verify_acct_total_num_uint(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:59
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:61
     // value, funded = op.AcctParamsGet.acct_total_num_uint(a)
-    frame_dig -1
     acct_params_get AcctTotalNumUint
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -570,20 +224,26 @@ verify_acct_total_num_uint:
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:65
-    // return value
-    retsub
+    // tests/artifacts/StateOps/contract.py:59
+    // @arc4.abimethod(resource_encoding="index")
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_num_byte_slice(a: bytes) -> uint64:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_num_byte_slice[routing]() -> void:
 verify_acct_total_num_byte_slice:
-    // tests/artifacts/StateOps/contract.py:67-68
-    // @arc4.abimethod()
-    // def verify_acct_total_num_byte_slice(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:67
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:69
     // value, funded = op.AcctParamsGet.acct_total_num_byte_slice(a)
-    frame_dig -1
     acct_params_get AcctTotalNumByteSlice
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -604,20 +264,26 @@ verify_acct_total_num_byte_slice:
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:75
-    // return value
-    retsub
+    // tests/artifacts/StateOps/contract.py:67
+    // @arc4.abimethod(resource_encoding="index")
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_extra_app_pages(a: bytes) -> uint64:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_extra_app_pages[routing]() -> void:
 verify_acct_total_extra_app_pages:
-    // tests/artifacts/StateOps/contract.py:77-78
-    // @arc4.abimethod()
-    // def verify_acct_total_extra_app_pages(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:77
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:79
     // value, funded = op.AcctParamsGet.acct_total_extra_app_pages(a)
-    frame_dig -1
     acct_params_get AcctTotalExtraAppPages
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -638,20 +304,26 @@ verify_acct_total_extra_app_pages:
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:85
-    // return value
-    retsub
+    // tests/artifacts/StateOps/contract.py:77
+    // @arc4.abimethod(resource_encoding="index")
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_apps_created(a: bytes) -> uint64:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_apps_created[routing]() -> void:
 verify_acct_total_apps_created:
-    // tests/artifacts/StateOps/contract.py:87-88
-    // @arc4.abimethod()
-    // def verify_acct_total_apps_created(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:87
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:89
     // value, funded = op.AcctParamsGet.acct_total_apps_created(a)
-    frame_dig -1
     acct_params_get AcctTotalAppsCreated
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -670,20 +342,26 @@ verify_acct_total_apps_created:
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:93
-    // return value
-    retsub
+    // tests/artifacts/StateOps/contract.py:87
+    // @arc4.abimethod(resource_encoding="index")
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_apps_opted_in(a: bytes) -> uint64:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_apps_opted_in[routing]() -> void:
 verify_acct_total_apps_opted_in:
-    // tests/artifacts/StateOps/contract.py:95-96
-    // @arc4.abimethod()
-    // def verify_acct_total_apps_opted_in(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:95
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:97
     // value, funded = op.AcctParamsGet.acct_total_apps_opted_in(a)
-    frame_dig -1
     acct_params_get AcctTotalAppsOptedIn
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -702,20 +380,26 @@ verify_acct_total_apps_opted_in:
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:101
-    // return value
-    retsub
+    // tests/artifacts/StateOps/contract.py:95
+    // @arc4.abimethod(resource_encoding="index")
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_assets_created(a: bytes) -> uint64:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_assets_created[routing]() -> void:
 verify_acct_total_assets_created:
-    // tests/artifacts/StateOps/contract.py:103-104
-    // @arc4.abimethod()
-    // def verify_acct_total_assets_created(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:103
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:105
     // value, funded = op.AcctParamsGet.acct_total_assets_created(a)
-    frame_dig -1
     acct_params_get AcctTotalAssetsCreated
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -736,20 +420,26 @@ verify_acct_total_assets_created:
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:111
-    // return value
-    retsub
+    // tests/artifacts/StateOps/contract.py:103
+    // @arc4.abimethod(resource_encoding="index")
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_assets(a: bytes) -> uint64:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_assets[routing]() -> void:
 verify_acct_total_assets:
-    // tests/artifacts/StateOps/contract.py:113-114
-    // @arc4.abimethod()
-    // def verify_acct_total_assets(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:113
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:115
     // value, funded = op.AcctParamsGet.acct_total_assets(a)
-    frame_dig -1
     acct_params_get AcctTotalAssets
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -768,20 +458,26 @@ verify_acct_total_assets:
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:119
-    // return value
-    retsub
+    // tests/artifacts/StateOps/contract.py:113
+    // @arc4.abimethod(resource_encoding="index")
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_boxes(a: bytes) -> uint64:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_boxes[routing]() -> void:
 verify_acct_total_boxes:
-    // tests/artifacts/StateOps/contract.py:121-122
-    // @arc4.abimethod()
-    // def verify_acct_total_boxes(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:121
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:123
     // value, funded = op.AcctParamsGet.acct_total_boxes(a)
-    frame_dig -1
     acct_params_get AcctTotalBoxes
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -800,20 +496,26 @@ verify_acct_total_boxes:
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:127
-    // return value
-    retsub
+    // tests/artifacts/StateOps/contract.py:121
+    // @arc4.abimethod(resource_encoding="index")
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_box_bytes(a: bytes) -> uint64:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_box_bytes[routing]() -> void:
 verify_acct_total_box_bytes:
-    // tests/artifacts/StateOps/contract.py:129-130
-    // @arc4.abimethod()
-    // def verify_acct_total_box_bytes(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:129
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:131
     // value, funded = op.AcctParamsGet.acct_total_box_bytes(a)
-    frame_dig -1
     acct_params_get AcctTotalBoxBytes
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -832,20 +534,26 @@ verify_acct_total_box_bytes:
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:135
-    // return value
-    retsub
+    // tests/artifacts/StateOps/contract.py:129
+    // @arc4.abimethod(resource_encoding="index")
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_incentive_eligible(a: bytes) -> uint64:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_incentive_eligible[routing]() -> void:
 verify_acct_incentive_eligible:
-    // tests/artifacts/StateOps/contract.py:137-138
-    // @arc4.abimethod()
-    // def verify_acct_incentive_eligible(self, a: algopy.Account) -> bool:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:137
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:139
     // value, funded = op.AcctParamsGet.acct_incentive_eligible(a)
-    frame_dig -1
     acct_params_get AcctIncentiveEligible
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -864,20 +572,29 @@ verify_acct_incentive_eligible:
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:143
-    // return value
-    retsub
+    // tests/artifacts/StateOps/contract.py:137
+    // @arc4.abimethod(resource_encoding="index")
+    pushbytes 0x00
+    pushint 0 // 0
+    uncover 2
+    setbit
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_last_heartbeat(a: bytes) -> uint64:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_last_heartbeat[routing]() -> void:
 verify_acct_last_heartbeat:
-    // tests/artifacts/StateOps/contract.py:145-146
-    // @arc4.abimethod()
-    // def verify_acct_last_heartbeat(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:145
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:147
     // value, funded = op.AcctParamsGet.acct_last_heartbeat(a)
-    frame_dig -1
     acct_params_get AcctLastHeartbeat
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -896,20 +613,26 @@ verify_acct_last_heartbeat:
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:151
-    // return value
-    retsub
+    // tests/artifacts/StateOps/contract.py:145
+    // @arc4.abimethod(resource_encoding="index")
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
 
 
-// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_last_proposed(a: bytes) -> uint64:
+// tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_last_proposed[routing]() -> void:
 verify_acct_last_proposed:
-    // tests/artifacts/StateOps/contract.py:153-154
-    // @arc4.abimethod()
-    // def verify_acct_last_proposed(self, a: algopy.Account) -> algopy.UInt64:
-    proto 1 1
+    // tests/artifacts/StateOps/contract.py:153
+    // @arc4.abimethod(resource_encoding="index")
+    txna ApplicationArgs 1
+    btoi
+    txnas Accounts
     // tests/artifacts/StateOps/contract.py:155
     // value, funded = op.AcctParamsGet.acct_last_proposed(a)
-    frame_dig -1
     acct_params_get AcctLastProposed
     // tests/artifacts/StateOps/contract.py:21
     // return op.btoi(Txn.application_args(1))
@@ -928,6 +651,12 @@ verify_acct_last_proposed:
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:159
-    // return value
-    retsub
+    // tests/artifacts/StateOps/contract.py:153
+    // @arc4.abimethod(resource_encoding="index")
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return

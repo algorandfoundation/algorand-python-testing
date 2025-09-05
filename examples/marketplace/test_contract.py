@@ -162,19 +162,19 @@ def test_buy(
         buy_pay=context.any.txn.payment(
             receiver=context.default_sender,
             amount=contract.quantity_price(
-                quantity=test_buy_quantity.native,
-                price=test_unitary_price.native,
+                quantity=test_buy_quantity.as_uint64(),
+                price=test_unitary_price.as_uint64(),
                 asset_decimals=test_asset.decimals,
             ),
         ),
-        quantity=test_buy_quantity.native,
+        quantity=test_buy_quantity.as_uint64(),
     )
 
     # Assert
     updated_listing = ListingValue.from_bytes(
         context.ledger.get_box(contract, b"listings" + listing_key.bytes)
     )
-    assert updated_listing.deposited == initial_deposit.native - test_buy_quantity.native
+    assert updated_listing.deposited == initial_deposit.as_uint64() - test_buy_quantity.as_uint64()
     assert (
         context.txn.last_group.get_itxn_group(0).asset_transfer(0).asset_receiver
         == context.default_sender
@@ -215,7 +215,7 @@ def test_withdraw(
     asset_transfer_txn = context.txn.last_group.get_itxn_group(1).asset_transfer(0)
     assert asset_transfer_txn.xfer_asset == test_asset
     assert asset_transfer_txn.asset_receiver == test_owner.native
-    assert asset_transfer_txn.asset_amount == initial_deposit.native
+    assert asset_transfer_txn.asset_amount == initial_deposit.as_uint64()
 
 
 def test_bid(
@@ -240,12 +240,12 @@ def test_bid(
     )
 
     bidder = context.any.account()
-    bid_quantity = context.any.arc4.uint64(max_value=int(initial_deposit.native))
+    bid_quantity = context.any.arc4.uint64(max_value=int(initial_deposit.as_uint64()))
     bid_price = context.any.arc4.uint64(
-        min_value=int(initial_price.native) + 1, max_value=int(10e6)
+        min_value=int(initial_price.as_uint64()) + 1, max_value=int(10e6)
     )
     bid_amount = contract.quantity_price(
-        bid_quantity.native, bid_price.native, test_asset.decimals
+        bid_quantity.as_uint64(), bid_price.as_uint64(), test_asset.decimals
     )
 
     # Act
@@ -277,7 +277,7 @@ def test_accept_bid(
     # Arrange
     owner = context.default_sender
     initial_deposit = context.any.arc4.uint64(min_value=1, max_value=int(1e6))
-    bid_quantity = context.any.arc4.uint64(max_value=int(initial_deposit.native))
+    bid_quantity = context.any.arc4.uint64(max_value=int(initial_deposit.as_uint64()))
     bid_price = context.any.arc4.uint64(max_value=int(10e6))
     bidder = context.any.account()
 
@@ -294,10 +294,10 @@ def test_accept_bid(
         bid_unitary_price=bid_price,
     )
 
-    min_quantity = min(initial_deposit.native, bid_quantity.native)
+    min_quantity = min(initial_deposit.as_uint64(), bid_quantity.as_uint64())
     expected_payment = contract.quantity_price(
         min_quantity,
-        bid_price.native,
+        bid_price.as_uint64(),
         asset_decimals=test_asset.decimals,
     )
 
@@ -306,7 +306,7 @@ def test_accept_bid(
 
     # Assert
     updated_listing = contract.listings[listing_key]
-    assert updated_listing.deposited == initial_deposit.native - min_quantity
+    assert updated_listing.deposited == initial_deposit.as_uint64() - min_quantity
 
     assert len(context.txn.last_group.itxn_groups) == 2
 
