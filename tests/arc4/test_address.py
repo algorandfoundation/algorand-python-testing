@@ -252,4 +252,4 @@ def test_to_native() -> None:
     a1 = arc4.Address("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ")
     native_a1 = a1.to_native(arc4.Byte)
     assert native_a1.length == 32
-    assert [x.native for x in native_a1] == [0] * 32
+    assert [x.as_uint64() for x in native_a1] == [0] * 32

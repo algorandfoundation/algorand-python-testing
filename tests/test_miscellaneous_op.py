@@ -1017,21 +1017,26 @@ def test_select_uint64_input_overflow(a: int, b: int, c: int) -> None:
 @pytest.mark.parametrize(
     ("a", "b", "c"),
     [
-        (b"\x00", 0, 1),
-        (b"\x00" * 2 + int_to_bytes(256), 3, 1),
-        (b"\x00" * 2 + int_to_bytes(256), 0, 1),
-        (b"\x00" * 2 + int_to_bytes(256), 11, 1),
-        (b"\x00" * 2 + int_to_bytes(65535), 31, 0),
-        (b"\x00" * 2 + int_to_bytes(65535), 24, 0),
-        (int_to_bytes(MAX_UINT64), 63, 0),
-        (int_to_bytes(MAX_UINT64 - 1), 63, 1),
-        (int_to_bytes(MAX_UINT512), 511, 0),
-        (int_to_bytes(MAX_UINT512 - 1), 511, 1),
-        (int_to_bytes(MAX_UINT64), 0, 0),
-        (int_to_bytes(MAX_UINT512), 0, 0),
+        (b"\x00", 0, True),
+        (b"\x00" * 2 + int_to_bytes(256), 3, True),
+        (b"\x00" * 2 + int_to_bytes(256), 0, True),
+        (b"\x00" * 2 + int_to_bytes(256), 11, True),
+        (b"\x00" * 2 + int_to_bytes(65535), 31, False),
+        (b"\x00" * 2 + int_to_bytes(65535), 24, False),
+        (int_to_bytes(MAX_UINT64), 63, False),
+        (int_to_bytes(MAX_UINT64 - 1), 63, True),
+        (int_to_bytes(MAX_UINT512), 511, False),
+        (int_to_bytes(MAX_UINT512 - 1), 511, True),
+        (int_to_bytes(MAX_UINT64), 0, False),
+        (int_to_bytes(MAX_UINT512), 0, False),
     ],
 )
-def test_setbit_bytes(get_ops_avm_result: AVMInvoker, a: bytes, b: int, c: int) -> None:
+def test_setbit_bytes(
+    get_ops_avm_result: AVMInvoker,
+    a: bytes,
+    b: int,
+    c: bool,  # noqa: FBT001
+) -> None:
     avm_result = get_ops_avm_result("verify_setbit_bytes", a=a, b=b, c=c)
     result = op.setbit_bytes(a, b, c)
     assert avm_result == result
@@ -1040,15 +1045,18 @@ def test_setbit_bytes(get_ops_avm_result: AVMInvoker, a: bytes, b: int, c: int) 
 @pytest.mark.parametrize(
     ("a", "b", "c"),
     [
-        (b"\x00", 8, 1),
-        (int_to_bytes(MAX_UINT64), 64, 0),
-        (int_to_bytes(MAX_UINT64 - 1), 64, 1),
-        (int_to_bytes(MAX_UINT512), 512, 0),
-        (int_to_bytes(MAX_UINT512 - 1), 512, 1),
+        (b"\x00", 8, True),
+        (int_to_bytes(MAX_UINT64), 64, False),
+        (int_to_bytes(MAX_UINT64 - 1), 64, True),
+        (int_to_bytes(MAX_UINT512), 512, False),
+        (int_to_bytes(MAX_UINT512 - 1), 512, True),
     ],
 )
 def test_setbit_bytes_index_error(
-    get_ops_avm_result: AVMInvoker, a: bytes, b: int, c: int
+    get_ops_avm_result: AVMInvoker,
+    a: bytes,
+    b: int,
+    c: bool,  # noqa: FBT001
 ) -> None:
     with pytest.raises(algokit_utils.LogicError, match="setbit index beyond byteslice"):
         get_ops_avm_result("verify_setbit_bytes", a=a, b=b, c=c)
@@ -1056,34 +1064,29 @@ def test_setbit_bytes_index_error(
         op.setbit_bytes(a, b, c)
 
 
-def test_setbit_bytes_bit_error(get_ops_avm_result: AVMInvoker) -> None:
-    a = b"\x00"
-    b = 0
-    c = 2
-    with pytest.raises(algokit_utils.LogicError, match="setbit value > 1"):
-        get_ops_avm_result("verify_setbit_bytes", a=a, b=b, c=c)
-    with pytest.raises(ValueError, match=_too_big_error(1)):
-        op.setbit_bytes(a, b, c)
-
-
 @pytest.mark.parametrize(
     ("a", "b", "c"),
     [
-        (0, 0, 1),
-        (0, 3, 1),
-        (0, 10, 1),
-        (256, 3, 1),
-        (256, 0, 1),
-        (256, 11, 1),
-        (65535, 15, 0),
-        (65535, 7, 0),
-        (65535, 63, 1),
-        (MAX_UINT64, 63, 0),
-        (MAX_UINT64 - 1, 63, 1),
-        (MAX_UINT64, 0, 0),
+        (0, 0, True),
+        (0, 3, True),
+        (0, 10, True),
+        (256, 3, True),
+        (256, 0, True),
+        (256, 11, True),
+        (65535, 15, False),
+        (65535, 7, False),
+        (65535, 63, True),
+        (MAX_UINT64, 63, False),
+        (MAX_UINT64 - 1, 63, True),
+        (MAX_UINT64, 0, False),
     ],
 )
-def test_setbit_uint64(get_ops_avm_result: AVMInvoker, a: int, b: int, c: int) -> None:
+def test_setbit_uint64(
+    get_ops_avm_result: AVMInvoker,
+    a: int,
+    b: int,
+    c: bool,  # noqa: FBT001
+) -> None:
     avm_result = get_ops_avm_result("verify_setbit_uint64", a=a, b=b, c=c)
     result = op.setbit_uint64(a, b, c)
     assert avm_result == result
@@ -1092,24 +1095,19 @@ def test_setbit_uint64(get_ops_avm_result: AVMInvoker, a: int, b: int, c: int) -
 @pytest.mark.parametrize(
     ("a", "b", "c"),
     [
-        (MAX_UINT64, 64, 0),
-        (MAX_UINT64 - 1, 64, 1),
+        (MAX_UINT64, 64, False),
+        (MAX_UINT64 - 1, 64, True),
     ],
 )
-def test_setbit_uint64_index_error(get_ops_avm_result: AVMInvoker, a: int, b: int, c: int) -> None:
+def test_setbit_uint64_index_error(
+    get_ops_avm_result: AVMInvoker,
+    a: int,
+    b: int,
+    c: bool,  # noqa: FBT001
+) -> None:
     with pytest.raises(algokit_utils.LogicError, match="setbit index > 63 with Uint"):
         get_ops_avm_result("verify_setbit_uint64", a=a, b=b, c=c)
     with pytest.raises(ValueError, match=_too_big_error(7 if a == 0 else a.bit_length() - 1)):
-        op.setbit_uint64(a, b, c)
-
-
-def test_setbit_uint64_bit_error(get_ops_avm_result: AVMInvoker) -> None:
-    a = 0
-    b = 0
-    c = 2
-    with pytest.raises(algokit_utils.LogicError, match="setbit value > 1"):
-        get_ops_avm_result("verify_setbit_uint64", a=a, b=b, c=c)
-    with pytest.raises(ValueError, match=_too_big_error(1)):
         op.setbit_uint64(a, b, c)
 
 

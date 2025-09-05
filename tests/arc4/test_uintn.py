@@ -105,7 +105,7 @@ def test_uintn_overflow(get_avm_result: AVMInvoker, value: int, expected: int | 
     if expected is None:
         with pytest.raises(algokit_utils.LogicError, match="assert failed"):
             get_avm_result("verify_uintn_init", a=int_to_bytes(value))
-        with pytest.raises(ValueError, match=f"expected value <= {2**32-1}"):
+        with pytest.raises(ValueError, match=f"expected value <= {2**32 - 1}"):
             arc4.UInt32(value)
     else:
         avm_result = get_avm_result("verify_uintn_init", a=int_to_bytes(value))
@@ -300,3 +300,71 @@ def test_biguintn_from_log_invalid_length(get_avm_result: AVMInvoker, value: byt
 
     result = arc4.UInt256.from_log(Bytes(ARC4_RETURN_PREFIX + value))
     assert result == int.from_bytes(value)
+
+
+@pytest.mark.parametrize(
+    ("value"),
+    [
+        (int_to_bytes(1, 32)),
+        (int_to_bytes(MAX_UINT64, 32)),
+    ],
+)
+def test_biguintn_as_uint64(get_avm_result: AVMInvoker, value: bytes) -> None:
+    avm_result = get_avm_result("verify_biguintn_as_uint64", a=value)
+    result = arc4.UInt256.from_bytes(Bytes(value)).as_uint64()
+    assert avm_result == result
+
+
+@pytest.mark.parametrize(
+    ("value"),
+    [
+        (int_to_bytes(MAX_UINT64 + 1, 32)),
+        (int_to_bytes(2**256 - 1, 32)),
+    ],
+)
+def test_biguintn_as_uint64_overflow(get_avm_result: AVMInvoker, value: bytes) -> None:
+    with pytest.raises(algokit_utils.LogicError, match="assert failed"):
+        get_avm_result("verify_biguintn_as_uint64", a=value)
+    with pytest.raises(OverflowError, match="value too large to fit in UInt64"):
+        arc4.UInt256.from_bytes(Bytes(value)).as_uint64()
+
+
+@pytest.mark.parametrize(
+    ("value"),
+    [
+        (int_to_bytes(1, 32)),
+        (int_to_bytes(MAX_UINT64, 32)),
+        (int_to_bytes(MAX_UINT64 + 1, 32)),
+        (int_to_bytes(2**256 - 1, 32)),
+    ],
+)
+def test_biguintn_as_biguint(get_avm_result: AVMInvoker, value: bytes) -> None:
+    avm_result = get_avm_result("verify_biguintn_as_biguint", a=value)
+    result = arc4.UInt256.from_bytes(Bytes(value)).as_biguint()
+    assert avm_result == result
+
+
+@pytest.mark.parametrize(
+    ("value"),
+    [
+        (int_to_bytes(1, 8)),
+        (int_to_bytes(MAX_UINT64, 8)),
+    ],
+)
+def test_uintn64_as_uint64(get_avm_result: AVMInvoker, value: bytes) -> None:
+    avm_result = get_avm_result("verify_uintn64_as_uint64", a=value)
+    result = arc4.UInt64.from_bytes(Bytes(value)).as_uint64()
+    assert avm_result == result
+
+
+@pytest.mark.parametrize(
+    ("value"),
+    [
+        (int_to_bytes(1, 8)),
+        (int_to_bytes(MAX_UINT64, 8)),
+    ],
+)
+def test_uintn64_as_biguint(get_avm_result: AVMInvoker, value: bytes) -> None:
+    avm_result = get_avm_result("verify_uintn64_as_biguint", a=value)
+    result = arc4.UInt64.from_bytes(Bytes(value)).as_biguint()
+    assert avm_result == result

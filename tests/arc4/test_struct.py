@@ -369,6 +369,8 @@ def _compare_abi_and_arc4_values(
         while j < len(x):
             _compare_abi_and_arc4_values(x[j], abi_value[j])
             j += 1
+    elif hasattr(arc4_value, "as_uint64"):
+        assert arc4_value.as_uint64() == abi_value
     elif hasattr(arc4_value, "native"):
         assert arc4_value.native == abi_value
     else:

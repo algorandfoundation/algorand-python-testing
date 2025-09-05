@@ -104,12 +104,12 @@ class MiscellaneousOpsContract(ARC4Contract):
         return result
 
     @arc4.abimethod()
-    def verify_getbit_bytes(self, a: Bytes, b: UInt64) -> UInt64:
+    def verify_getbit_bytes(self, a: Bytes, b: UInt64) -> bool:
         result = op.getbit(a, b)
         return result
 
     @arc4.abimethod()
-    def verify_getbit_uint64(self, a: UInt64, b: UInt64) -> UInt64:
+    def verify_getbit_uint64(self, a: UInt64, b: UInt64) -> bool:
         result = op.getbit(a, b)
         return result
 
@@ -144,12 +144,12 @@ class MiscellaneousOpsContract(ARC4Contract):
         return result
 
     @arc4.abimethod()
-    def verify_setbit_bytes(self, a: Bytes, b: UInt64, c: UInt64) -> Bytes:
+    def verify_setbit_bytes(self, a: Bytes, b: UInt64, c: bool) -> Bytes:  # noqa: FBT001
         result = op.setbit_bytes(a, b, c)
         return result
 
     @arc4.abimethod()
-    def verify_setbit_uint64(self, a: UInt64, b: UInt64, c: UInt64) -> UInt64:
+    def verify_setbit_uint64(self, a: UInt64, b: UInt64, c: bool) -> UInt64:  # noqa: FBT001
         result = op.setbit_uint64(a, b, c)
         return result
 

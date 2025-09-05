@@ -3,120 +3,72 @@
 
 // algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
-    intcblock 1 0
     bytecblock 0x151f7c75
     // tests/artifacts/StateOps/contract.py:162
     // class StateAssetHoldingContract(ARC4Contract):
     txn NumAppArgs
-    bz main_bare_routing@7
-    pushbytess 0x68301476 0x784c64eb // method "verify_asset_holding_get(account,asset)uint64", method "verify_asset_frozen_get(account,asset)bool"
-    txna ApplicationArgs 0
-    match main_verify_asset_holding_get_route@3 main_verify_asset_frozen_get_route@4
-
-main_after_if_else@11:
-    // tests/artifacts/StateOps/contract.py:162
-    // class StateAssetHoldingContract(ARC4Contract):
-    intc_1 // 0
-    return
-
-main_verify_asset_frozen_get_route@4:
-    // tests/artifacts/StateOps/contract.py:168
-    // @arc4.abimethod()
+    bz main___algopy_default_create@9
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion must be NoOp
     txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:162
-    // class StateAssetHoldingContract(ARC4Contract):
+    assert
+    pushbytess 0x8f5235b4 0xde7a39f6 // method "verify_asset_holding_get(address,uint64)uint64", method "verify_asset_frozen_get(address,uint64)bool"
+    txna ApplicationArgs 0
+    match verify_asset_holding_get verify_asset_frozen_get
+    err
+
+main___algopy_default_create@9:
+    txn OnCompletion
+    !
+    txn ApplicationID
+    !
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
+
+
+// tests.artifacts.StateOps.contract.StateAssetHoldingContract.verify_asset_holding_get[routing]() -> void:
+verify_asset_holding_get:
+    // tests/artifacts/StateOps/contract.py:163
+    // @arc4.abimethod()
     txna ApplicationArgs 1
-    btoi
-    txnas Accounts
     txna ApplicationArgs 2
     btoi
-    txnas Assets
+    // tests/artifacts/StateOps/contract.py:165
+    // balance, _val = op.AssetHoldingGet.asset_balance(a, b)
+    asset_holding_get AssetBalance
+    pop
+    // tests/artifacts/StateOps/contract.py:163
+    // @arc4.abimethod()
+    itob
+    bytec_0 // 0x151f7c75
+    swap
+    concat
+    log
+    pushint 1 // 1
+    return
+
+
+// tests.artifacts.StateOps.contract.StateAssetHoldingContract.verify_asset_frozen_get[routing]() -> void:
+verify_asset_frozen_get:
     // tests/artifacts/StateOps/contract.py:168
     // @arc4.abimethod()
-    callsub verify_asset_frozen_get
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    btoi
+    // tests/artifacts/StateOps/contract.py:170
+    // frozen, _val = op.AssetHoldingGet.asset_frozen(a, b)
+    asset_holding_get AssetFrozen
+    pop
+    // tests/artifacts/StateOps/contract.py:168
+    // @arc4.abimethod()
     pushbytes 0x00
-    intc_1 // 0
+    pushint 0 // 0
     uncover 2
     setbit
     bytec_0 // 0x151f7c75
     swap
     concat
     log
-    intc_0 // 1
+    pushint 1 // 1
     return
-
-main_verify_asset_holding_get_route@3:
-    // tests/artifacts/StateOps/contract.py:163
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/StateOps/contract.py:162
-    // class StateAssetHoldingContract(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    txnas Accounts
-    txna ApplicationArgs 2
-    btoi
-    txnas Assets
-    // tests/artifacts/StateOps/contract.py:163
-    // @arc4.abimethod()
-    callsub verify_asset_holding_get
-    itob
-    bytec_0 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_bare_routing@7:
-    // tests/artifacts/StateOps/contract.py:162
-    // class StateAssetHoldingContract(ARC4Contract):
-    txn OnCompletion
-    bnz main_after_if_else@11
-    txn ApplicationID
-    !
-    assert // can only call when creating
-    intc_0 // 1
-    return
-
-
-// tests.artifacts.StateOps.contract.StateAssetHoldingContract.verify_asset_holding_get(a: bytes, b: uint64) -> uint64:
-verify_asset_holding_get:
-    // tests/artifacts/StateOps/contract.py:163-164
-    // @arc4.abimethod()
-    // def verify_asset_holding_get(self, a: Account, b: Asset) -> UInt64:
-    proto 2 1
-    // tests/artifacts/StateOps/contract.py:165
-    // balance, _val = op.AssetHoldingGet.asset_balance(a, b)
-    frame_dig -2
-    frame_dig -1
-    asset_holding_get AssetBalance
-    pop
-    // tests/artifacts/StateOps/contract.py:166
-    // return balance
-    retsub
-
-
-// tests.artifacts.StateOps.contract.StateAssetHoldingContract.verify_asset_frozen_get(a: bytes, b: uint64) -> uint64:
-verify_asset_frozen_get:
-    // tests/artifacts/StateOps/contract.py:168-169
-    // @arc4.abimethod()
-    // def verify_asset_frozen_get(self, a: Account, b: Asset) -> bool:
-    proto 2 1
-    // tests/artifacts/StateOps/contract.py:170
-    // frozen, _val = op.AssetHoldingGet.asset_frozen(a, b)
-    frame_dig -2
-    frame_dig -1
-    asset_holding_get AssetFrozen
-    pop
-    // tests/artifacts/StateOps/contract.py:171
-    // return frozen
-    retsub
