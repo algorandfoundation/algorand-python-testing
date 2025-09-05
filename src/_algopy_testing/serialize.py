@@ -50,7 +50,11 @@ def get_native_to_arc4_serializer(  # noqa: PLR0911
                 return _Serializer(
                     arc4_type=simple_arc4_type,
                     native_to_arc4=simple_arc4_type,
-                    arc4_to_native=lambda n: n.native,
+                    arc4_to_native=lambda n: (
+                        n.as_uint64()
+                        if isinstance(n, arc4.UIntN)
+                        else n.as_biguint() if isinstance(n, arc4.BigUIntN) else n.native
+                    ),
                 )
         if issubclass(typ, UInt64Backed):
             return _Serializer(

@@ -1,6 +1,6 @@
 import typing
 
-from algopy import ARC4Contract, BigUInt, Bytes, String, arc4
+from algopy import ARC4Contract, BigUInt, Bytes, String, UInt64, arc4
 
 
 class Arc4PrimitiveOpsContract(ARC4Contract):
@@ -173,6 +173,26 @@ class Arc4PrimitiveOpsContract(ARC4Contract):
     @arc4.abimethod()
     def verify_biguintn_from_log(self, a: Bytes) -> arc4.UInt256:
         return arc4.UInt256.from_log(a)
+
+    @arc4.abimethod()
+    def verify_biguintn_as_uint64(self, a: Bytes) -> UInt64:
+        a_biguint = BigUInt.from_bytes(a)
+        return arc4.UInt256(a_biguint).as_uint64()
+
+    @arc4.abimethod()
+    def verify_biguintn_as_biguint(self, a: Bytes) -> BigUInt:
+        a_biguint = BigUInt.from_bytes(a)
+        return arc4.UInt256(a_biguint).as_biguint()
+
+    @arc4.abimethod()
+    def verify_uintn64_as_uint64(self, a: Bytes) -> UInt64:
+        a_biguint = BigUInt.from_bytes(a)
+        return arc4.UInt64(a_biguint).as_uint64()
+
+    @arc4.abimethod()
+    def verify_uintn64_as_biguint(self, a: Bytes) -> BigUInt:
+        a_biguint = BigUInt.from_bytes(a)
+        return arc4.UInt64(a_biguint).as_biguint()
 
     @arc4.abimethod()
     def verify_ufixednxm_bytes(

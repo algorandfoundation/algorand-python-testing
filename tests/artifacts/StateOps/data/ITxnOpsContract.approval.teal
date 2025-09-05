@@ -8,42 +8,32 @@ main:
     // tests/artifacts/StateOps/contract.py:488
     // class ITxnOpsContract(ARC4Contract):
     txn NumAppArgs
-    bz main_bare_routing@6
+    bz main___algopy_default_create@5
     pushbytes 0x4e7cd9cb // method "verify_itxn_ops()void"
     txna ApplicationArgs 0
     match main_verify_itxn_ops_route@3
-
-main_after_if_else@10:
-    // tests/artifacts/StateOps/contract.py:488
-    // class ITxnOpsContract(ARC4Contract):
-    pushint 0 // 0
-    return
+    err
 
 main_verify_itxn_ops_route@3:
     // tests/artifacts/StateOps/contract.py:489
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // can only call when not creating
-    callsub verify_itxn_ops
-    intc_0 // 1
-    return
+    &&
+    assert // OnCompletion must be NoOp && can only call when not creating
+    b verify_itxn_ops
 
-main_bare_routing@6:
-    // tests/artifacts/StateOps/contract.py:488
-    // class ITxnOpsContract(ARC4Contract):
+main___algopy_default_create@5:
     txn OnCompletion
-    bnz main_after_if_else@10
+    !
     txn ApplicationID
     !
-    assert // can only call when creating
-    intc_0 // 1
-    return
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
 
 
-// tests.artifacts.StateOps.contract.ITxnOpsContract.verify_itxn_ops() -> void:
+// tests.artifacts.StateOps.contract.ITxnOpsContract.verify_itxn_ops[routing]() -> void:
 verify_itxn_ops:
     // tests/artifacts/StateOps/contract.py:491
     // algopy.op.ITxnCreate.begin()
@@ -120,5 +110,6 @@ verify_itxn_ops:
     gitxn 1 TypeEnum
     intc_0 // pay
     ==
-    assert
-    retsub
+    // tests/artifacts/StateOps/contract.py:489
+    // @arc4.abimethod()
+    return

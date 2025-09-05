@@ -3,58 +3,41 @@
 
 // algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
-    intcblock 1
     bytecblock 0xc0eb5c67
     // tests/artifacts/GlobalStateValidator/contract.py:4
     // class GlobalStateValidator(ARC4Contract):
     txn NumAppArgs
-    bz main_bare_routing@6
+    bz main___algopy_default_create@5
     bytec_0 // method "validate_g_args(uint64,string)void"
     txna ApplicationArgs 0
     match main_validate_g_args_route@3
-
-main_after_if_else@10:
-    // tests/artifacts/GlobalStateValidator/contract.py:4
-    // class GlobalStateValidator(ARC4Contract):
-    pushint 0 // 0
-    return
+    err
 
 main_validate_g_args_route@3:
     // tests/artifacts/GlobalStateValidator/contract.py:5
     // @arc4.abimethod
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/GlobalStateValidator/contract.py:4
-    // class GlobalStateValidator(ARC4Contract):
-    txna ApplicationArgs 1
-    txna ApplicationArgs 2
-    // tests/artifacts/GlobalStateValidator/contract.py:5
-    // @arc4.abimethod
-    callsub validate_g_args
-    intc_0 // 1
-    return
+    &&
+    assert // OnCompletion must be NoOp && can only call when not creating
+    b validate_g_args
 
-main_bare_routing@6:
-    // tests/artifacts/GlobalStateValidator/contract.py:4
-    // class GlobalStateValidator(ARC4Contract):
+main___algopy_default_create@5:
     txn OnCompletion
-    bnz main_after_if_else@10
+    !
     txn ApplicationID
     !
-    assert // can only call when creating
-    intc_0 // 1
-    return
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
 
 
-// tests.artifacts.GlobalStateValidator.contract.GlobalStateValidator.validate_g_args(arg1: bytes, arg2: bytes) -> void:
+// tests.artifacts.GlobalStateValidator.contract.GlobalStateValidator.validate_g_args[routing]() -> void:
 validate_g_args:
-    // tests/artifacts/GlobalStateValidator/contract.py:5-6
+    // tests/artifacts/GlobalStateValidator/contract.py:5
     // @arc4.abimethod
-    // def validate_g_args(self, arg1: arc4.UInt64, arg2: arc4.String) -> None:
-    proto 2 0
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
     // tests/artifacts/GlobalStateValidator/contract.py:7
     // assert Txn.application_args(0) == arc4.arc4_signature("validate_g_args(uint64,string)void")
     txna ApplicationArgs 0
@@ -64,13 +47,12 @@ validate_g_args:
     // tests/artifacts/GlobalStateValidator/contract.py:8
     // assert Txn.application_args(1) == arg1.bytes
     txna ApplicationArgs 1
-    frame_dig -2
+    dig 2
     ==
     assert
     // tests/artifacts/GlobalStateValidator/contract.py:9
     // assert Txn.application_args(2) == arg2.bytes
     txna ApplicationArgs 2
-    frame_dig -1
     ==
     assert
     // tests/artifacts/GlobalStateValidator/contract.py:10
@@ -81,30 +63,30 @@ validate_g_args:
     pushint 6 // appl
     ==
     assert // transaction type is appl
-    intc_0 // 1
+    pushint 1 // 1
     gtxnsas ApplicationArgs
-    frame_dig -2
+    dig 1
     ==
     assert
     // tests/artifacts/GlobalStateValidator/contract.py:11
     // assert gtxn.Transaction(Txn.group_index).app_args(1) == arg1.bytes
     txn GroupIndex
-    intc_0 // 1
+    pushint 1 // 1
     gtxnsas ApplicationArgs
-    frame_dig -2
+    dig 1
     ==
     assert
     // tests/artifacts/GlobalStateValidator/contract.py:12
     // assert op.GTxn.application_args(Txn.group_index, 1) == arg1.bytes
     txn GroupIndex
     gtxnsa ApplicationArgs 1
-    frame_dig -2
+    dig 1
     ==
     assert
     // tests/artifacts/GlobalStateValidator/contract.py:13
     // assert op.Txn.application_args(1) == arg1.bytes
     txna ApplicationArgs 1
-    frame_dig -2
     ==
-    assert
-    retsub
+    // tests/artifacts/GlobalStateValidator/contract.py:5
+    // @arc4.abimethod
+    return

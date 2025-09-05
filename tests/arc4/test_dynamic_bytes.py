@@ -135,8 +135,8 @@ def test_get_item(
 ) -> None:
     i = 0
     while i < arc4_value.length:
-        if hasattr(arc4_value[i], "native"):
-            assert arc4_value[i].native == abi_values[i]
+        if hasattr(arc4_value[i], "as_uint64"):
+            assert arc4_value[i].as_uint64() == abi_values[i]
         i += 1
 
     assert len(abi_values) == arc4_value.length
@@ -273,8 +273,8 @@ def test_from_bytes(
     i = 0
     arc4_value = arc4.DynamicBytes.from_bytes(_abi_dynamic_bytes_type.encode(abi_values))
     while i < arc4_value.length:
-        if hasattr(arc4_value[i], "native"):
-            assert arc4_value[i].native == abi_values[i]
+        if hasattr(arc4_value[i], "as_uint64"):
+            assert arc4_value[i].as_uint64() == abi_values[i]
         i += 1
 
     assert len(abi_values) == arc4_value.length
@@ -347,8 +347,8 @@ def test_pop(
     arc4_value_2 = arc4.pop()
     arc4_result = arc4.bytes
 
-    assert arc4_value_1.native == abi_value_1
-    assert arc4_value_2.native == abi_value_2
+    assert arc4_value_1.as_uint64() == abi_value_1
+    assert arc4_value_2.as_uint64() == abi_value_2
     assert abi_result == arc4_result
 
 

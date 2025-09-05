@@ -68,10 +68,10 @@ def as_int(value: object, *, max: int | None) -> int:  # noqa: A002
             pass
         case _algopy_testing.BigUInt(value=int_value):
             pass
-        case _algopy_testing.arc4.UIntN(native=native):
-            int_value = native.value
-        case _algopy_testing.arc4.BigUIntN(native=native):
-            int_value = native.value
+        case _algopy_testing.arc4.UIntN():
+            int_value = value.as_uint64().value
+        case _algopy_testing.arc4.BigUIntN():
+            int_value = value.as_biguint().value
         case _:
             raise TypeError(f"value must be a numeric type, not {type(value).__name__!r}")
     if int_value < 0:

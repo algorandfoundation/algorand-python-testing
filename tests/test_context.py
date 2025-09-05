@@ -186,7 +186,7 @@ def test_arc4_uint_methods(method: str, type_: type, min_val: int, max_val: int)
         func = getattr(context.any.arc4, method)
         value = func(min_val, max_val)
         assert isinstance(value, type_)
-        assert min_val <= value.native <= max_val  # type: ignore[attr-defined]
+        assert min_val <= value.as_biguint() <= max_val  # type: ignore[attr-defined]
 
         with pytest.raises(ValueError):  # noqa: PT011
             func(max_val + 1)

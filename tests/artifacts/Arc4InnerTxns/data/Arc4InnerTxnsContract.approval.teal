@@ -3,58 +3,40 @@
 
 // algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
-    intcblock 0 1
     // tests/artifacts/Arc4InnerTxns/contract.py:4
     // class Arc4InnerTxnsContract(ARC4Contract):
     txn NumAppArgs
-    bz main_bare_routing@6
-    pushbytes 0xe2353124 // method "opt_in_dummy_asset(asset)void"
+    bz main___algopy_default_create@5
+    pushbytes 0xab39c55a // method "opt_in_dummy_asset(uint64)void"
     txna ApplicationArgs 0
     match main_opt_in_dummy_asset_route@3
-
-main_after_if_else@10:
-    // tests/artifacts/Arc4InnerTxns/contract.py:4
-    // class Arc4InnerTxnsContract(ARC4Contract):
-    intc_0 // 0
-    return
+    err
 
 main_opt_in_dummy_asset_route@3:
     // tests/artifacts/Arc4InnerTxns/contract.py:5
     // @arc4.abimethod
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // can only call when not creating
-    // tests/artifacts/Arc4InnerTxns/contract.py:4
-    // class Arc4InnerTxnsContract(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    txnas Assets
-    // tests/artifacts/Arc4InnerTxns/contract.py:5
-    // @arc4.abimethod
-    callsub opt_in_dummy_asset
-    intc_1 // 1
-    return
+    &&
+    assert // OnCompletion must be NoOp && can only call when not creating
+    b opt_in_dummy_asset
 
-main_bare_routing@6:
-    // tests/artifacts/Arc4InnerTxns/contract.py:4
-    // class Arc4InnerTxnsContract(ARC4Contract):
+main___algopy_default_create@5:
     txn OnCompletion
-    bnz main_after_if_else@10
+    !
     txn ApplicationID
     !
-    assert // can only call when creating
-    intc_1 // 1
-    return
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
 
 
-// tests.artifacts.Arc4InnerTxns.contract.Arc4InnerTxnsContract.opt_in_dummy_asset(asset: uint64) -> void:
+// tests.artifacts.Arc4InnerTxns.contract.Arc4InnerTxnsContract.opt_in_dummy_asset[routing]() -> void:
 opt_in_dummy_asset:
-    // tests/artifacts/Arc4InnerTxns/contract.py:5-6
+    // tests/artifacts/Arc4InnerTxns/contract.py:5
     // @arc4.abimethod
-    // def opt_in_dummy_asset(self, asset: Asset) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    btoi
     // tests/artifacts/Arc4InnerTxns/contract.py:7-11
     // # Submit opt-in transaction: 0 asset transfer to self
     // itxn.AssetTransfer(
@@ -65,15 +47,14 @@ opt_in_dummy_asset:
     // tests/artifacts/Arc4InnerTxns/contract.py:9
     // asset_receiver=Global.current_application_address,
     global CurrentApplicationAddress
-    frame_dig -1
-    itxn_field XferAsset
     itxn_field AssetReceiver
+    itxn_field XferAsset
     // tests/artifacts/Arc4InnerTxns/contract.py:7-8
     // # Submit opt-in transaction: 0 asset transfer to self
     // itxn.AssetTransfer(
     pushint 4 // axfer
     itxn_field TypeEnum
-    intc_0 // 0
+    pushint 0 // 0
     itxn_field Fee
     // tests/artifacts/Arc4InnerTxns/contract.py:7-11
     // # Submit opt-in transaction: 0 asset transfer to self
@@ -82,4 +63,7 @@ opt_in_dummy_asset:
     //     xfer_asset=asset,
     // ).submit()
     itxn_submit
-    retsub
+    // tests/artifacts/Arc4InnerTxns/contract.py:5
+    // @arc4.abimethod
+    pushint 1 // 1
+    return

@@ -109,7 +109,7 @@ def extract_uint64(a: Bytes | bytes, b: UInt64 | int, /) -> UInt64:
     return UInt64(result_int)
 
 
-def getbit(a: Bytes | UInt64 | bytes | int, b: UInt64 | int, /) -> UInt64:
+def getbit(a: Bytes | UInt64 | bytes | int, b: UInt64 | int, /) -> bool:
     if isinstance(a, Bytes | bytes):
         return _getbit_bytes(a, b)
     if isinstance(a, UInt64 | int):
@@ -162,11 +162,11 @@ def select_uint64(a: UInt64 | int, b: UInt64 | int, c: bool | UInt64 | int, /) -
     return UInt64(b if c != 0 else a)
 
 
-def setbit_bytes(a: Bytes | bytes, b: UInt64 | int, c: UInt64 | int, /) -> Bytes:
+def setbit_bytes(a: Bytes | bytes, b: UInt64 | int, c: bool, /) -> Bytes:  # noqa: FBT001
     return _setbit_bytes(a, b, c)
 
 
-def setbit_uint64(a: UInt64 | int, b: UInt64 | int, c: UInt64 | int, /) -> UInt64:
+def setbit_uint64(a: UInt64 | int, b: UInt64 | int, c: bool, /) -> UInt64:  # noqa: FBT001
     a_bytes = _uint64_to_bytes(a)
     result = _setbit_bytes(a_bytes, b, c, "little")
     return UInt64(int.from_bytes(result.value))
@@ -241,7 +241,7 @@ def _int_list_to_bytes(a: list[int]) -> bytes:
 
 def _getbit_bytes(
     a: Bytes | bytes, b: UInt64 | int, byteorder: typing.Literal["little", "big"] = "big"
-) -> UInt64:
+) -> bool:
     a = as_bytes(a)
     if byteorder != "big":  # reverse bytes if NOT big endian
         a = bytes(reversed(a))
@@ -256,13 +256,13 @@ def _getbit_bytes(
         bit_index = 7 - bit_index
     bit = _get_bit(int_list[byte_index], bit_index)
 
-    return UInt64(bit)
+    return bit != 0
 
 
 def _setbit_bytes(
     a: Bytes | bytes,
     b: UInt64 | int,
-    c: UInt64 | int,
+    c: bool,  # noqa: FBT001
     byteorder: typing.Literal["little", "big"] = "big",
 ) -> Bytes:
     a = as_bytes(a)
@@ -272,7 +272,6 @@ def _setbit_bytes(
     int_list = list(a)
     max_index = len(int_list) * BITS_IN_BYTE - 1
     b = as_int(b, max=max_index)
-    c = as_int(c, max=1)
 
     byte_index = b // BITS_IN_BYTE
     bit_index = b % BITS_IN_BYTE
@@ -291,7 +290,7 @@ def _get_bit(v: int, index: int) -> int:
     return (v >> index) & 1
 
 
-def _set_bit(v: int, index: int, x: int) -> int:
+def _set_bit(v: int, index: int, x: bool) -> int:  # noqa: FBT001
     """Set the index:th bit of v to 1 if x is truthy, else to 0, and return the new
     value."""
     mask = 1 << index  # Compute mask, an integer with just bit 'index' set.
