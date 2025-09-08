@@ -1,4 +1,10 @@
 # CHANGELOG
+## v1.0.0-beta.3 (2025-09-08)
+
+### Features
+
+* add .as_uint64 and .as_biguint methods to replace native property ([`0f9c6c0`](https://github.com/algorandfoundation/algorand-python-testing/commit/0f9c6c06b6e1b986c4e512cbbe0098aea32615b7))
+
 ## v1.0.0-beta.2 (2025-09-03)
 
 ### Features
