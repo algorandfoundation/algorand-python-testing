@@ -372,8 +372,8 @@ def test_enums_in_boxes() -> None:
             oca, txn = defered_read.submit()
 
         # Assert
-        assert context.ledger.get_box(contract, b"oca") == itob(oca.native)
-        assert context.ledger.get_box(contract, b"txn") == itob(txn.native)
+        assert context.ledger.get_box(contract, b"oca") == itob(oca.as_uint64())
+        assert context.ledger.get_box(contract, b"txn") == itob(txn.as_uint64())
 
 
 class Swapped2(Struct):

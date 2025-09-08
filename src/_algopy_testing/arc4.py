@@ -8,6 +8,7 @@ import typing
 
 import algosdk
 from Cryptodome.Hash import SHA512
+from typing_extensions import deprecated
 
 from _algopy_testing.constants import (
     ARC4_RETURN_PREFIX,
@@ -313,31 +314,44 @@ class UIntN(_UIntN, typing.Generic[_TBitSize]):  # type: ignore[type-arg]
     """
 
     @property
+    @deprecated("Use `as_uint64` instead")
     def native(self) -> algopy.UInt64:
         """Return the UInt64 representation of the value after ARC4 decoding."""
         import algopy
 
         return algopy.UInt64(int.from_bytes(self._value))
 
+    def as_uint64(self) -> algopy.UInt64:
+        """Return the UInt64 representation of the value after ARC4 decoding."""
+        import algopy
+
+        return algopy.UInt64(int.from_bytes(self._value))
+
+    def as_biguint(self) -> algopy.BigUInt:
+        """Return the BigUInt representation of the value after ARC4 decoding."""
+        import algopy
+
+        return algopy.BigUInt.from_bytes(self._value)
+
     def __eq__(self, other: object) -> bool:
         try:
             other_int = as_int64(other)
         except (TypeError, ValueError):
             return NotImplemented
-        return as_int64(self.native) == other_int
+        return as_int64(self.as_uint64()) == other_int
 
     def __lt__(self, other: object) -> bool:
         try:
             other_int = as_int64(other)
         except (TypeError, ValueError):
             return NotImplemented
-        return as_int64(self.native) < other_int
+        return as_int64(self.as_uint64()) < other_int
 
     def __bool__(self) -> bool:
-        return bool(self.native)
+        return bool(self.as_uint64())
 
     def __str__(self) -> str:
-        return str(self.native)
+        return str(self.as_uint64())
 
     def __repr__(self) -> str:
         return _arc4_repr(self)
@@ -351,8 +365,24 @@ class BigUIntN(_UIntN, typing.Generic[_TBitSize]):  # type: ignore[type-arg]
     """
 
     @property
+    @deprecated("Use `as_biguint` instead")
     def native(self) -> algopy.BigUInt:
+        """Return the BigUInt representation of the value after ARC4 decoding."""
+        import algopy
+
+        return algopy.BigUInt.from_bytes(self._value)
+
+    def as_uint64(self) -> algopy.UInt64:
         """Return the UInt64 representation of the value after ARC4 decoding."""
+        import algopy
+
+        biguint = algopy.BigUInt.from_bytes(self._value)
+        if biguint.value > MAX_UINT64:
+            raise OverflowError("value too large to fit in UInt64")
+        return algopy.UInt64(biguint.value)
+
+    def as_biguint(self) -> algopy.BigUInt:
+        """Return the BigUInt representation of the value after ARC4 decoding."""
         import algopy
 
         return algopy.BigUInt.from_bytes(self._value)
@@ -362,20 +392,20 @@ class BigUIntN(_UIntN, typing.Generic[_TBitSize]):  # type: ignore[type-arg]
             other_int = as_int512(other)
         except (TypeError, ValueError):
             return NotImplemented
-        return as_int512(self.native) == other_int
+        return as_int512(self.as_biguint()) == other_int
 
     def __lt__(self, other: object) -> bool:
         try:
             other_int = as_int512(other)
         except (TypeError, ValueError):
             return NotImplemented
-        return as_int512(self.native) < other_int
+        return as_int512(self.as_biguint()) < other_int
 
     def __bool__(self) -> bool:
-        return bool(self.native)
+        return bool(self.as_biguint())
 
     def __str__(self) -> str:
-        return str(self.native)
+        return str(self.as_biguint())
 
     def __repr__(self) -> str:
         return _arc4_repr(self)
@@ -959,7 +989,7 @@ class DynamicBytes(DynamicArray[Byte]):
                         raise ValueError("expected single Bytes value")
                     items.extend([Byte(b) for b in as_bytes(x)])
                 case UIntN(_type_info=_UIntTypeInfo(bit_size=8)) as uint:
-                    items.append(Byte(as_int(uint.native, max=2**8)))
+                    items.append(Byte(as_int(uint.as_uint64(), max=2**8)))
                 case int(int_value):
                     items.append(Byte(int_value))
                 case _:

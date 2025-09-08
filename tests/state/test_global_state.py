@@ -204,7 +204,7 @@ class TestGlobalState:
             gs = GlobalState(type_, key="test_key")
 
             gs.value = value
-            response = gs.value.native if hasattr(gs.value, "native") else gs.value
+            response = gs.value.as_uint64() if hasattr(gs.value, "as_uint64") else gs.value
             assert response == expected_value
             assert compare_type(type_of(gs.value), type_) or isinstance(gs.value, type_)
 

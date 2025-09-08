@@ -130,7 +130,7 @@ class DigitalMarketplace(ARC4Contract):
         assert xfer.asset_amount > 0
 
         self.listings[key].deposited = arc4.UInt64(
-            self.listings[key].deposited.native + xfer.asset_amount
+            self.listings[key].deposited.as_uint64() + xfer.asset_amount
         )
 
     @abimethod
@@ -161,14 +161,14 @@ class DigitalMarketplace(ARC4Contract):
         listing = self.listings[key].copy()
 
         amount_to_be_paid = self.quantity_price(
-            quantity, listing.unitary_price.native, asset.decimals
+            quantity, listing.unitary_price.as_uint64(), asset.decimals
         )
 
         assert buy_pay.sender == Txn.sender
         assert buy_pay.receiver.bytes == owner.bytes
         assert buy_pay.amount == amount_to_be_paid
 
-        self.listings[key].deposited = arc4.UInt64(listing.deposited.native - quantity)
+        self.listings[key].deposited = arc4.UInt64(listing.deposited.as_uint64() - quantity)
 
         itxn.AssetTransfer(
             xfer_asset=asset,
@@ -187,8 +187,8 @@ class DigitalMarketplace(ARC4Contract):
         listing = self.listings[key].copy()
         if listing.bidder != arc4.Address():
             current_bid_deposit = self.quantity_price(
-                listing.bid.native,
-                listing.bid_unitary_price.native,
+                listing.bid.as_uint64(),
+                listing.bid_unitary_price.as_uint64(),
                 asset.decimals,
             )
             itxn.Payment(receiver=listing.bidder.native, amount=current_bid_deposit).submit()
@@ -200,7 +200,7 @@ class DigitalMarketplace(ARC4Contract):
         itxn.AssetTransfer(
             xfer_asset=asset,
             asset_receiver=Txn.sender,
-            asset_amount=listing.deposited.native,
+            asset_amount=listing.deposited.as_uint64(),
         ).submit()
 
     @abimethod
@@ -220,13 +220,13 @@ class DigitalMarketplace(ARC4Contract):
             assert unitary_price > listing.bid_unitary_price
 
             current_bid_amount = self.quantity_price(
-                listing.bid.native, listing.bid_unitary_price.native, asset.decimals
+                listing.bid.as_uint64(), listing.bid_unitary_price.as_uint64(), asset.decimals
             )
 
             itxn.Payment(receiver=listing.bidder.native, amount=current_bid_amount).submit()
 
         amount_to_be_bid = self.quantity_price(
-            quantity.native, unitary_price.native, asset.decimals
+            quantity.as_uint64(), unitary_price.as_uint64(), asset.decimals
         )
 
         assert bid_pay.sender == Txn.sender
@@ -245,12 +245,12 @@ class DigitalMarketplace(ARC4Contract):
         assert listing.bidder != arc4.Address()
 
         min_quantity = (
-            listing.deposited.native
-            if listing.deposited.native < listing.bid.native
-            else listing.bid.native
+            listing.deposited.as_uint64()
+            if listing.deposited.as_uint64() < listing.bid.as_uint64()
+            else listing.bid.as_uint64()
         )
         best_bid_amount = self.quantity_price(
-            min_quantity, listing.bid_unitary_price.native, asset.decimals
+            min_quantity, listing.bid_unitary_price.as_uint64(), asset.decimals
         )
 
         itxn.Payment(receiver=Txn.sender, amount=best_bid_amount).submit()
@@ -262,6 +262,6 @@ class DigitalMarketplace(ARC4Contract):
         ).submit()
 
         self.listings[key].deposited = arc4.UInt64(
-            self.listings[key].deposited.native - min_quantity
+            self.listings[key].deposited.as_uint64() - min_quantity
         )
-        self.listings[key].bid = arc4.UInt64(self.listings[key].bid.native - min_quantity)
+        self.listings[key].bid = arc4.UInt64(self.listings[key].bid.as_uint64() - min_quantity)

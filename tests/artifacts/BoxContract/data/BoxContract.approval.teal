@@ -3,67 +3,35 @@
 
 // tests.artifacts.BoxContract.contract.BoxContract.__algopy_entrypoint_with_init() -> uint64:
 main:
-    intcblock 1
     bytecblock 0x6f6361 0x74786e
     // tests/artifacts/BoxContract/contract.py:4
     // class BoxContract(ARC4Contract):
     txn NumAppArgs
-    bz main_bare_routing@7
+    bz main___algopy_default_create@9
+    txn OnCompletion
+    !
+    assert // OnCompletion must be NoOp
+    txn ApplicationID
+    assert
     pushbytess 0xf26c6d42 0xef186cf7 // method "store_enums()void", method "read_enums()(uint64,uint64)"
     txna ApplicationArgs 0
-    match main_store_enums_route@5 main_read_enums_route@6
+    match store_enums read_enums
+    err
 
-main_after_if_else@9:
-    // tests/artifacts/BoxContract/contract.py:4
-    // class BoxContract(ARC4Contract):
-    pushint 0 // 0
-    return
-
-main_read_enums_route@6:
-    // tests/artifacts/BoxContract/contract.py:14
-    // @arc4.abimethod()
+main___algopy_default_create@9:
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub read_enums
-    pushbytes 0x151f7c75
-    swap
-    concat
-    log
-    intc_0 // 1
-    return
-
-main_store_enums_route@5:
-    // tests/artifacts/BoxContract/contract.py:9
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub store_enums
-    intc_0 // 1
-    return
-
-main_bare_routing@7:
-    // tests/artifacts/BoxContract/contract.py:4
-    // class BoxContract(ARC4Contract):
-    txn OnCompletion
-    bnz main_after_if_else@9
     txn ApplicationID
     !
-    assert // can only call when creating
-    intc_0 // 1
-    return
+    &&
+    return // on error: OnCompletion must be NoOp && can only call when creating
 
 
-// tests.artifacts.BoxContract.contract.BoxContract.store_enums() -> void:
+// tests.artifacts.BoxContract.contract.BoxContract.store_enums[routing]() -> void:
 store_enums:
     // tests/artifacts/BoxContract/contract.py:11
     // self.oca.value = OnCompleteAction.OptIn
-    intc_0 // OptIn
+    pushint 1 // OptIn
     itob
     bytec_0 // "oca"
     swap
@@ -75,10 +43,13 @@ store_enums:
     bytec_1 // "txn"
     swap
     box_put
-    retsub
+    // tests/artifacts/BoxContract/contract.py:9
+    // @arc4.abimethod()
+    pushint 1 // 1
+    return
 
 
-// tests.artifacts.BoxContract.contract.BoxContract.read_enums() -> bytes:
+// tests.artifacts.BoxContract.contract.BoxContract.read_enums[routing]() -> void:
 read_enums:
     // tests/artifacts/BoxContract/contract.py:16
     // assert op.Box.get(b"oca")[0] == op.itob(self.oca.value)
@@ -107,4 +78,11 @@ read_enums:
     // tests/artifacts/BoxContract/contract.py:19
     // return arc4.Tuple((arc4.UInt64(self.oca.value), arc4.UInt64(self.txn.value)))
     concat
-    retsub
+    // tests/artifacts/BoxContract/contract.py:14
+    // @arc4.abimethod()
+    pushbytes 0x151f7c75
+    swap
+    concat
+    log
+    pushint 1 // 1
+    return
