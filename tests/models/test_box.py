@@ -4,7 +4,8 @@ from collections.abc import Generator
 
 import algopy
 import pytest
-from _algopy_testing import algopy_testing_context, arc4
+from _algopy_testing import algopy_testing_context, arc4, op
+from _algopy_testing.constants import MAX_BYTES_SIZE
 from _algopy_testing.context import AlgopyTestContext
 from _algopy_testing.models.account import Account
 from _algopy_testing.models.application import Application
@@ -25,7 +26,12 @@ from _algopy_testing.state.box import Box
 from _algopy_testing.state.utils import cast_to_bytes
 from _algopy_testing.utils import as_bytes, as_string
 
-from tests.artifacts.BoxContract.contract import BoxContract
+from tests.artifacts.BoxContract.contract import (
+    BoxContract,
+    InnerStruct,
+    LargeNestedStruct,
+    NestedStruct,
+)
 
 BOX_NOT_CREATED_ERROR = "Box has not been created"
 
@@ -453,3 +459,130 @@ def test_arrays_and_struct_in_boxes(context: AlgopyTestContext) -> None:  # noqa
 
     box5.value.a[1] = UInt64(20)
     assert list(box5.value.a) == [UInt64(1), UInt64(20), UInt64(3)]
+
+
+def test_box() -> None:
+    with algopy_testing_context():
+        contract = BoxContract()
+
+        (a_exist, b_exist, c_exist, large_exist) = contract.boxes_exist()
+        assert not a_exist
+        assert not b_exist
+        assert not c_exist
+        assert not large_exist
+
+        contract.set_boxes(a=UInt64(56), b=arc4.DynamicBytes(b"Hello"), c=arc4.String("World"))
+
+        (a_exist, b_exist, c_exist, large_exist) = contract.boxes_exist()
+        assert a_exist
+        assert b_exist
+        assert c_exist
+        assert large_exist
+
+        contract.check_keys()
+
+        (a, b, c, large) = contract.read_boxes()
+
+        assert (a, b, c, large) == (59, b"Hello", "World", 42)
+
+        contract.indirect_extract_and_replace()
+
+        contract.delete_boxes()
+
+        (a_exist, b_exist, c_exist, large_exist) = contract.boxes_exist()
+
+        assert not a_exist
+        assert not b_exist
+        assert not c_exist
+        assert not large_exist
+
+        contract.slice_box()
+
+        contract.arc4_box()
+
+        contract.create_many_ints()
+
+        contract.set_many_ints(index=UInt64(1), value=UInt64(1))
+        contract.set_many_ints(index=UInt64(2), value=UInt64(2))
+        contract.set_many_ints(index=UInt64(256), value=UInt64(256))
+        contract.set_many_ints(index=UInt64(511), value=UInt64(511))
+        contract.set_many_ints(index=UInt64(512), value=UInt64(512))
+
+        sum_many_ints = contract.sum_many_ints()
+        assert sum_many_ints == (1 + 2 + 256 + 511 + 512)
+
+
+def test_nested_struct_box() -> None:
+    with algopy_testing_context() as ctx:
+        contract = BoxContract()
+        r = iter(range(1, 256))
+
+        def n() -> UInt64:
+            return UInt64(next(r))
+
+        def inner() -> object:
+            c, arr, d = (n() for _ in range(3))
+            return InnerStruct(c=c, arr_arr=Array([Array([arr] * 4) for _ in range(3)]), d=d)
+
+        struct = NestedStruct(a=n(), inner=inner(), woah=Array([inner() for _ in range(3)]), b=n())
+        assert n() < 100, "too many ints"
+        contract.set_nested_struct(struct=struct)
+        response = contract.nested_read(i1=UInt64(1), i2=UInt64(2), i3=UInt64(3))
+        assert response == 33, "expected sum to be correct"
+
+        contract.nested_write(index=UInt64(1), value=UInt64(10))
+        response = contract.nested_read(i1=UInt64(1), i2=UInt64(2), i3=UInt64(3))
+        assert response == 60, "expected sum to be correct"
+
+        # verify box contents
+        with ctx.txn.create_group(
+            [ctx.any.txn.application_call(app_id=ctx.ledger.get_app(contract))]
+        ):
+            box_length = op.Box.length(b"box")[0]
+            padding_bytes = op.Box.extract(b"box", 0, MAX_BYTES_SIZE)
+            struct_bytes = op.Box.extract(b"box", MAX_BYTES_SIZE, box_length - MAX_BYTES_SIZE)
+            box_bytes = padding_bytes.value + struct_bytes.value
+            large_nested_struct = LargeNestedStruct.from_bytes(box_bytes)
+            assert list(large_nested_struct.padding) == [
+                arc4.Byte(b) for b in b"\x00" * MAX_BYTES_SIZE
+            ]
+            assert large_nested_struct.nested.a == 10
+            assert large_nested_struct.nested.b == 11
+            assert large_nested_struct.nested.inner.arr_arr[1][1] == 12
+            assert large_nested_struct.nested.inner.c == 13
+            assert large_nested_struct.nested.inner.d == 14
+            assert large_nested_struct.nested.woah[1].arr_arr[1][1] == 15
+
+
+def test_too_many_bools() -> None:
+    with algopy_testing_context():
+        contract = BoxContract()
+
+        contract.create_bools()
+
+        contract.set_bool(index=UInt64(0), value=True)
+        contract.set_bool(index=UInt64(42), value=True)
+        contract.set_bool(index=UInt64(500), value=True)
+        contract.set_bool(index=UInt64(32_999), value=True)
+
+        total = contract.sum_bools(stop_at_total=UInt64(3))
+        expected_sum = 3
+        assert total == expected_sum, f"expected sum to be {expected_sum}"
+
+        box_response = contract.too_many_bools.value
+        assert box_response[0]
+        assert box_response[42]
+        assert box_response[500]
+        assert box_response[32_999]
+
+        too_many_bools = [False] * 33_000
+        too_many_bools[0] = True
+        too_many_bools[42] = True
+        too_many_bools[500] = True
+        too_many_bools[32_999] = True
+        # encode bools into bytes (as SDK is too slow)
+        expected_bytes = sum(
+            val << shift for shift, val in enumerate(reversed(too_many_bools))
+        ).to_bytes(length=33_000 // 8)
+
+        assert box_response._value == expected_bytes, "expected box contents to be correct"

@@ -13,6 +13,8 @@ from _algopy_testing.state.box import BoxMap
 from _algopy_testing.state.utils import cast_to_bytes
 from _algopy_testing.utils import as_bytes, as_string
 
+from tests.artifacts.BoxContract.contract import BoxContract
+
 BOX_NOT_CREATED_ERROR = "Box has not been created"
 
 
@@ -252,6 +254,29 @@ def test_maybe_when_box_does_not_exists(
     op_box_content, op_box_exists = algopy.op.Box.get(full_key)
     assert not op_box_exists
     assert not op_box_content
+
+
+def test_box_map() -> None:
+    with algopy_testing_context():
+        contract = BoxContract()
+
+        contract.box_map_test()
+
+        key = UInt64(2)
+
+        assert not contract.box_map_exists(key=key), "Box does not exist (yet)"
+
+        contract.box_map_set(
+            key=key,
+            value=String("Hello 123"),
+        )
+        assert contract.box_map_get(key=key) == "Hello 123", "Box value is what was set"
+
+        assert contract.box_map_exists(key=key), "Box exists"
+
+        contract.box_map_del(key=key)
+
+        assert not contract.box_map_exists(key=key), "Box does not exist after deletion"
 
 
 def _assert_box_content_equality(

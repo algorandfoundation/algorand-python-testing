@@ -7,8 +7,10 @@ from _algopy_testing.constants import MAX_BOX_SIZE, MAX_BYTES_SIZE
 from _algopy_testing.context import AlgopyTestContext
 from _algopy_testing.primitives.bytes import Bytes
 from _algopy_testing.primitives.string import String
-from _algopy_testing.state.box import BoxRef
+from _algopy_testing.state.box import Box
 from _algopy_testing.utils import as_bytes, as_string
+
+from tests.artifacts.BoxContract.contract import BoxContract
 
 TEST_BOX_KEY = b"test_key"
 BOX_NOT_CREATED_ERROR = "Box has not been created"
@@ -16,7 +18,7 @@ BOX_NOT_CREATED_ERROR = "Box has not been created"
 
 class ATestContract(algopy.ARC4Contract):
     def __init__(self) -> None:
-        self.uint_64_box_ref = algopy.BoxRef()
+        self.uint_64_box_ref = Box(Bytes)
 
 
 @pytest.fixture()
@@ -45,7 +47,7 @@ def test_init_with_key(
     context: AlgopyTestContext,  # noqa: ARG001
     key: bytes | str | Bytes | String,
 ) -> None:
-    box = BoxRef(key=key)
+    box = Box(Bytes, key=key)
     assert not box
     assert len(box.key) > 0
 
@@ -71,7 +73,7 @@ def test_create(
     context: AlgopyTestContext,  # noqa: ARG001
     size: int,
 ) -> None:
-    box = BoxRef(key=TEST_BOX_KEY)
+    box = Box(Bytes, key=TEST_BOX_KEY)
 
     box.create(size=size)
 
@@ -83,7 +85,7 @@ def test_create(
 def test_create_overflow(
     context: AlgopyTestContext,  # noqa: ARG001
 ) -> None:
-    box = BoxRef(key=TEST_BOX_KEY)
+    box = Box(Bytes, key=TEST_BOX_KEY)
 
     with pytest.raises(ValueError, match=f"Box size cannot exceed {MAX_BOX_SIZE}"):
         box.create(size=MAX_BOX_SIZE + 1)
@@ -92,13 +94,13 @@ def test_create_overflow(
 def test_delete(
     context: AlgopyTestContext,  # noqa: ARG001
 ) -> None:
-    box = BoxRef(key=TEST_BOX_KEY)
+    box = Box(Bytes, key=TEST_BOX_KEY)
 
     box.create(size=MAX_BOX_SIZE)
     assert box.length == MAX_BOX_SIZE
 
-    box_existed = box.delete()
-    assert box_existed
+    assert box
+    del box.value
     assert not box
 
     with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
@@ -110,7 +112,7 @@ def test_delete(
     with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         box.replace(0, b"\x11")
 
-    assert not box.delete()
+    assert not box
 
 
 @pytest.mark.parametrize(
@@ -127,7 +129,7 @@ def test_resize_to_smaller(
     size: int,
     new_size: int,
 ) -> None:
-    box = BoxRef(key=TEST_BOX_KEY)
+    box = Box(Bytes, key=TEST_BOX_KEY)
 
     box.create(size=size)
     _initialise_box_value(box, b"\x11" * size)
@@ -151,7 +153,7 @@ def test_resize_to_bigger(
     size: int,
     new_size: int,
 ) -> None:
-    box = BoxRef(key=TEST_BOX_KEY)
+    box = Box(Bytes, key=TEST_BOX_KEY)
 
     box.create(size=size)
     _initialise_box_value(box, b"\x11" * size)
@@ -165,7 +167,7 @@ def test_resize_to_bigger(
 def test_resize_overflow(
     context: AlgopyTestContext,  # noqa: ARG001
 ) -> None:
-    box = BoxRef(key=TEST_BOX_KEY)
+    box = Box(Bytes, key=TEST_BOX_KEY)
 
     box.create(size=10)
 
@@ -176,7 +178,7 @@ def test_resize_overflow(
 def test_replace_extract(
     context: AlgopyTestContext,  # noqa: ARG001
 ) -> None:
-    box = BoxRef(key=TEST_BOX_KEY)
+    box = Box(Bytes, key=TEST_BOX_KEY)
 
     box.create(size=MAX_BOX_SIZE)
     box_value = b"\x01\x02" * int(MAX_BOX_SIZE / 2)
@@ -189,7 +191,7 @@ def test_replace_extract(
 def test_replace_when_box_does_not_exists(
     context: AlgopyTestContext,  # noqa: ARG001
 ) -> None:
-    box = BoxRef(key=TEST_BOX_KEY)
+    box = Box(Bytes, key=TEST_BOX_KEY)
 
     with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         box.replace(0, b"\x11")
@@ -208,7 +210,7 @@ def test_replace_overflow(
     start: int,
     replacement: bytes,
 ) -> None:
-    box = BoxRef(key=TEST_BOX_KEY)
+    box = Box(Bytes, key=TEST_BOX_KEY)
 
     box.create(size=10)
 
@@ -221,10 +223,10 @@ def test_maybe(
 ) -> None:
     key = b"test_key"
 
-    box = BoxRef(key=key)
+    box = Box(Bytes, key=key)
     box.create(size=10)
     box_value = b"\x01\x02" * 5
-    box.put(box_value)
+    box.value = Bytes(box_value)
 
     box_content, box_exists = box.maybe()
 
@@ -241,11 +243,11 @@ def test_maybe_when_box_does_not_exist(
 ) -> None:
     key = b"test_key"
 
-    box = BoxRef(key=key)
+    box = Box(Bytes, key=key)
     box.create(size=10)
     box_value = b"\x01\x02" * 5
-    box.put(box_value)
-    box.delete()
+    box.value = Bytes(box_value)
+    del box.value
 
     box_content, box_exists = box.maybe()
     assert not box_content
@@ -271,12 +273,12 @@ def test_put_get(
 ) -> None:
     key = b"test_key"
 
-    box = BoxRef(key=key)
+    box = Box(Bytes, key=key)
     box.create(size=size)
 
-    box.put(value)
+    box.value = Bytes(value)
 
-    box_content = box.get(default=b"\x00" * size)
+    box_content = box.get(default=Bytes(b"\x00" * size))
     assert box_content == Bytes(value)
 
     op_box_content, op_box_exists = algopy.op.Box.get(key)
@@ -289,11 +291,11 @@ def test_put_when_box_does_not_exist(
 ) -> None:
     key = b"test_key"
 
-    box = BoxRef(key=key)
+    box = Box(Bytes, key=key)
     box_value = b"\x01\x02" * 5
-    box.put(box_value)
+    box.value = Bytes(box_value)
 
-    box_content = box.get(default=b"\x00" * 10)
+    box_content = box.get(default=Bytes(b"\x00" * 10))
     assert box_content == Bytes(box_value)
 
 
@@ -301,11 +303,11 @@ def test_get_when_box_does_not_exist(
     context: AlgopyTestContext,  # noqa: ARG001
 ) -> None:
     key = b"test_key"
-    box = BoxRef(key=key)
+    box = Box(Bytes, key=key)
 
-    default_value = b"\x00" * 10
+    default_value = Bytes(b"\x00" * 10)
     box_content = box.get(default=default_value)
-    assert box_content == Bytes(default_value)
+    assert box_content == default_value
 
 
 def test_put_get_overflow(
@@ -313,27 +315,27 @@ def test_put_get_overflow(
 ) -> None:
     key = b"test_key"
 
-    box = BoxRef(key=key)
+    box = Box(Bytes, key=key)
     box.create(size=MAX_BOX_SIZE)
 
     with pytest.raises(ValueError, match=f"expected value length <= {MAX_BYTES_SIZE}"):
-        box.put(b"\x11" * MAX_BOX_SIZE)
+        box.value = Bytes(b"\x11" * MAX_BOX_SIZE)
     with pytest.raises(ValueError, match=f"expected value length <= {MAX_BYTES_SIZE}"):
-        box.get(default=b"\x00" * MAX_BOX_SIZE)
+        box.get(default=Bytes(b"\x00" * MAX_BOX_SIZE))
 
 
 def test_splice_when_new_value_is_longer(
     context: AlgopyTestContext,  # noqa: ARG001
 ) -> None:
     size = 10
-    box = BoxRef(key=TEST_BOX_KEY)
+    box = Box(Bytes, key=TEST_BOX_KEY)
     box.create(size=size)
     box_value = b"\x01\x02" * 5
     replacement_value = b"\x11" * 2
-    box.put(box_value)
+    box.value = Bytes(box_value)
 
     box.splice(1, 1, replacement_value)
-    box_content = box.get(default=b"\x00" * size)
+    box_content = box.get(default=Bytes(b"\x00" * size))
 
     op_box_key = b"another_key"
     algopy.op.Box.create(op_box_key, size)
@@ -351,14 +353,14 @@ def test_splice_when_new_value_is_shorter(
     context: AlgopyTestContext,  # noqa: ARG001
 ) -> None:
     size = 10
-    box = BoxRef(key=TEST_BOX_KEY)
+    box = Box(Bytes, key=TEST_BOX_KEY)
     box.create(size=size)
     box_value = b"\x01\x02" * 5
     replacement_value = b"\x11" * 2
-    box.put(box_value)
+    box.value = Bytes(box_value)
 
     box.splice(1, 5, replacement_value)
-    box_content = box.get(default=b"\x00" * size)
+    box_content = box.get(default=Bytes(b"\x00" * size))
 
     op_box_key = b"another_key"
     algopy.op.Box.create(op_box_key, size)
@@ -375,7 +377,7 @@ def test_splice_when_new_value_is_shorter(
 def test_splice_when_box_does_not_exist(
     context: AlgopyTestContext,  # noqa: ARG001
 ) -> None:
-    box = BoxRef(key=TEST_BOX_KEY)
+    box = Box(Bytes, key=TEST_BOX_KEY)
 
     with pytest.raises(RuntimeError, match=BOX_NOT_CREATED_ERROR):
         box.splice(0, 1, b"\x11")
@@ -384,14 +386,23 @@ def test_splice_when_box_does_not_exist(
 def test_splice_out_of_bounds(
     context: AlgopyTestContext,  # noqa: ARG001
 ) -> None:
-    box = BoxRef(key=TEST_BOX_KEY)
+    box = Box(Bytes, key=TEST_BOX_KEY)
     box.create(size=10)
 
     with pytest.raises(ValueError, match="Start index exceeds box size"):
         box.splice(11, 1, b"\x11")
 
 
-def _initialise_box_value(box: BoxRef, value: bytes) -> None:
+def test_box_ref() -> None:
+    # Arrange
+    with algopy_testing_context():
+        contract = BoxContract()
+
+        # Act
+        contract.test_box_ref()
+
+
+def _initialise_box_value(box: Box[Bytes], value: bytes) -> None:
     index = 0
     size = len(value)
     while index < size:
@@ -400,7 +411,7 @@ def _initialise_box_value(box: BoxRef, value: bytes) -> None:
         index += length
 
 
-def _assert_box_value(box: BoxRef, expected_value: bytes, start: int = 0) -> None:
+def _assert_box_value(box: Box[Bytes], expected_value: bytes, start: int = 0) -> None:
     index = start
     size = len(expected_value)
     while index < size:

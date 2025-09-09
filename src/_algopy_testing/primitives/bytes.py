@@ -12,7 +12,7 @@ from itertools import zip_longest
 
 from _algopy_testing.constants import MAX_BYTES_SIZE
 from _algopy_testing.primitives.uint64 import UInt64
-from _algopy_testing.utils import as_bytes, as_int64, check_type
+from _algopy_testing.utils import as_bytes, check_type
 
 # TypeError, ValueError are used for operations that are compile time errors
 # ArithmeticError and subclasses are used for operations that would fail during AVM execution
@@ -74,7 +74,8 @@ class Bytes:
         if isinstance(index, slice):
             return Bytes(self.value[index])
         else:
-            int_index = as_int64(index)
+            int_index = index.value if isinstance(index, UInt64) else index
+            int_index = len(self.value) + int_index if int_index < 0 else int_index
             # my_bytes[0:1] => b'j' whereas my_bytes[0] => 106
             return Bytes(self.value[slice(int_index, int_index + 1)])
 

@@ -246,7 +246,7 @@ class FixedArray(
         return typ(items)
 
     def serialize(self) -> bytes:
-        return serialize_to_bytes(self)
+        return self._value
 
     @classmethod
     def from_bytes(cls, value: bytes, /) -> typing.Self:
@@ -523,6 +523,16 @@ class Struct(Serializable, MutableBytes):
     def __getattribute__(self, name: str) -> typing.Any:
         value = super().__getattribute__(name)
         return add_mutable_callback(lambda _: self._update_backing_value(), value)
+
+    def __setattr__(self, key: str, value: typing.Any) -> None:
+        super().__setattr__(key, value)
+        # don't update backing value until base class has been init'd
+        if hasattr(self, "_on_mutate") and key not in {
+            "_MutableBytes__value",
+            "_on_mutate",
+            "_value",
+        }:
+            self._update_backing_value()
 
     def copy(self) -> typing.Self:
         return self.__class__.from_bytes(self.serialize())
