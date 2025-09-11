@@ -14,6 +14,9 @@ from _algopy_testing.utils import (
     parameterize_type,
 )
 
+if typing.TYPE_CHECKING:
+    from _typeshed import DataclassInstance
+
 _TArrayItem = typing.TypeVar("_TArrayItem")
 _TArrayLength = typing.TypeVar("_TArrayLength", bound=int)
 _T = typing.TypeVar("_T")
@@ -509,10 +512,15 @@ class Array(Serializable, MutableBytes, typing.Generic[_TArrayItem], metaclass=_
 class Struct(Serializable, MutableBytes):
     """Base class for Struct types."""
 
+    _field_names: typing.ClassVar[list[str]]
+
     def __init_subclass__(cls, *args: typing.Any, **kwargs: dict[str, typing.Any]) -> None:
         # make implementation not frozen, so we can conditionally control behaviour
         dataclasses.dataclass(cls, *args, **{**kwargs, "frozen": False})
         frozen = kwargs.get("frozen", False)
+        cls._field_names = [
+            f.name for f in dataclasses.fields(typing.cast("type[DataclassInstance]", cls))
+        ]
         assert isinstance(frozen, bool)
 
     def __post_init__(self) -> None:
@@ -527,11 +535,8 @@ class Struct(Serializable, MutableBytes):
     def __setattr__(self, key: str, value: typing.Any) -> None:
         super().__setattr__(key, value)
         # don't update backing value until base class has been init'd
-        if hasattr(self, "_on_mutate") and key not in {
-            "_MutableBytes__value",
-            "_on_mutate",
-            "_value",
-        }:
+
+        if hasattr(self, "_on_mutate") and key in self._field_names:
             self._update_backing_value()
 
     def copy(self) -> typing.Self:
