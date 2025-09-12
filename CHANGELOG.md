@@ -1,4 +1,10 @@
 # CHANGELOG
+## v1.0.0-beta.4 (2025-09-12)
+
+### Features
+
+* make BoxRef methods directly accessible on Box class ([`38e12f6`](https://github.com/algorandfoundation/algorand-python-testing/commit/38e12f6d595c204eb6f7dcd74c393c46f166e3d4))
+
 ## v1.0.0-beta.3 (2025-09-08)
 
 ### Features
