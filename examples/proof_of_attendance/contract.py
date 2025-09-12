@@ -45,11 +45,11 @@ class ProofOfAttendance(algopy.ARC4Contract):
         minted_asset = self._mint_poa(algopy.Txn.sender)
         self.total_attendees += 1
 
-        box_ref = algopy.BoxRef(key=algopy.Txn.sender.bytes)
+        box_ref = algopy.Box(algopy.Bytes, key=algopy.Txn.sender.bytes)
         has_claimed = bool(box_ref)
         assert not has_claimed, "Already claimed POA"
 
-        box_ref.put(algopy.op.itob(minted_asset.id))
+        box_ref.value = algopy.op.itob(minted_asset.id)
 
     @algopy.arc4.abimethod()
     def confirm_attendance_with_box_map(self) -> None:
@@ -78,7 +78,7 @@ class ProofOfAttendance(algopy.ARC4Contract):
 
     @algopy.arc4.abimethod(readonly=True)
     def get_poa_id_with_box_ref(self) -> algopy.UInt64:
-        box_ref = algopy.BoxRef(key=algopy.Txn.sender.bytes)
+        box_ref = algopy.Box(algopy.Bytes, key=algopy.Txn.sender.bytes)
         poa_id, exists = box_ref.maybe()
         assert exists, "POA not found"
         return algopy.op.btoi(poa_id)
@@ -130,7 +130,7 @@ class ProofOfAttendance(algopy.ARC4Contract):
 
     @algopy.arc4.abimethod()
     def claim_poa_with_box_ref(self, opt_in_txn: algopy.gtxn.AssetTransferTransaction) -> None:
-        box_ref = algopy.BoxRef(key=algopy.Txn.sender.bytes)
+        box_ref = algopy.Box(algopy.Bytes, key=algopy.Txn.sender.bytes)
         poa_id, exists = box_ref.maybe()
         assert exists, "POA not found, attendance validation failed!"
         assert opt_in_txn.xfer_asset.id == algopy.op.btoi(poa_id), "POA ID mismatch"

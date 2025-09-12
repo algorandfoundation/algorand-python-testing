@@ -3,6 +3,8 @@ from __future__ import annotations
 import typing
 import warnings
 
+from typing_extensions import deprecated
+
 import _algopy_testing
 from _algopy_testing.constants import MAX_BOX_SIZE
 from _algopy_testing.context_helpers import lazy_context
@@ -100,6 +102,61 @@ class Box(typing.Generic[_TValue]):
     def value(self) -> None:
         lazy_context.ledger.delete_box(self.app_id, self.key)
 
+    @property
+    @deprecated("Box methods previously accessed via `.ref` are now directly available")
+    def ref(self) -> BoxRef:
+        return BoxRef(key=self.key)
+
+    def extract(
+        self, start_index: algopy.UInt64 | int, length: algopy.UInt64 | int
+    ) -> algopy.Bytes:
+        """Extract a slice of bytes from the box.
+
+        Fails if the box does not exist, or if `start_index + length > len(box)`
+
+        :arg start_index: The offset to start extracting bytes from
+        :arg length: The number of bytes to extract
+        :return: The extracted bytes
+        """
+        return _BoxRef(key=self.key).extract(start_index, length)
+
+    def resize(self, new_size: algopy.UInt64 | int) -> None:
+        """Resizes the box the specified `new_size`. Truncating existing data if the new
+        value is shorter or padding with zero bytes if it is longer.
+
+        :arg new_size: The new size of the box
+        """
+        return _BoxRef(key=self.key).resize(new_size)
+
+    def replace(self, start_index: algopy.UInt64 | int, value: algopy.Bytes | bytes) -> None:
+        """Write `value` to the box starting at `start_index`. Fails if the box does not
+        exist, or if `start_index + len(value) > len(box)`
+
+        :arg start_index: The offset to start writing bytes from
+        :arg value: The bytes to be written
+        """
+        return _BoxRef(key=self.key).replace(start_index, value)
+
+    def splice(
+        self,
+        start_index: algopy.UInt64 | int,
+        length: algopy.UInt64 | int,
+        value: algopy.Bytes | bytes,
+    ) -> None:
+        """Set box to contain its previous bytes up to index `start_index`, followed by
+        `bytes`, followed by the original bytes of the box that began at index
+        `start_index + length`
+
+        **Important: This op does not resize the box**
+        If the new value is longer than the box size, it will be truncated.
+        If the new value is shorter than the box size, it will be padded with zero bytes
+
+        :arg start_index: The index to start inserting `value`
+        :arg length: The number of bytes after `start_index` to omit from the new value
+        :arg value: The `value` to be inserted.
+        """
+        return _BoxRef(key=self.key).splice(start_index, length, value)
+
     def get(self, *, default: _TValue) -> _TValue:
         box_content, box_exists = self.maybe()
         return default if not box_exists else box_content
@@ -117,7 +174,7 @@ class Box(typing.Generic[_TValue]):
         return _algopy_testing.UInt64(len(lazy_context.ledger.get_box(self.app_id, self.key)))
 
 
-class BoxRef:
+class _BoxRef:
     """BoxRef abstracts the reading and writing of boxes containing raw binary data.
 
     The size is configured manually, and can be set to values larger than what the AVM
@@ -186,14 +243,15 @@ class BoxRef:
         lazy_context.ledger.set_box(self.app_id, self.key, updated_content)
 
     def replace(self, start_index: algopy.UInt64 | int, value: algopy.Bytes | bytes) -> None:
+        replace_content = value.value if isinstance(value, _algopy_testing.Bytes) else value
         box_content, box_exists = self._maybe()
         if not box_exists:
             raise RuntimeError("Box has not been created")
         start = int(start_index)
-        length = len(value)
+        length = len(replace_content)
         if (start + length) > len(box_content):
             raise ValueError("Replacement content exceeds box size")
-        updated_content = box_content[:start] + value + box_content[start + length :]
+        updated_content = box_content[:start] + replace_content + box_content[start + length :]
         lazy_context.ledger.set_box(self.app_id, self.key, updated_content)
 
     def splice(
@@ -258,6 +316,11 @@ class BoxRef:
         if not box_exists:
             raise RuntimeError("Box has not been created")
         return _algopy_testing.UInt64(len(box_content))
+
+
+@deprecated("Methods in BoxRef are now directly available on Box")
+class BoxRef(_BoxRef):
+    pass
 
 
 class BoxMap(typing.Generic[_TKey, _TValue]):
@@ -338,3 +401,8 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
 
     def _full_key(self, key: _TKey) -> algopy.Bytes:
         return self.key_prefix + cast_to_bytes(key)
+
+    def box(self, key: _TKey) -> Box[_TValue]:
+        """Returns a Box holding the box value at key."""
+        key_bytes = self._full_key(key)
+        return Box(self._value_type, key=key_bytes)

@@ -174,7 +174,7 @@ def _get_struct_serializer(typ: type) -> _Serializer[typing.Any, typing.Any]:
 
 
 def serialize_to_bytes(value: object) -> bytes:
-    return native_to_arc4(value).bytes.value
+    return native_to_arc4(value)._value
 
 
 def type_of(value: object) -> type:

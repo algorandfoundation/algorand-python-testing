@@ -140,7 +140,7 @@ class _ABIEncoded(BytesBacked):
     def from_bytes(cls, value: algopy.Bytes | bytes, /) -> typing.Self:
         """Construct an instance from the underlying bytes (no validation)"""
         instance = cls()
-        instance._value = as_bytes(value)
+        instance._value = value.value if isinstance(value, Bytes) else value
         return instance
 
     @classmethod
@@ -556,11 +556,11 @@ class Bool(_ABIEncoded):
     _value: bytes
 
     # True value is encoded as having a 1 on the most significant bit (0x80 = 128)
-    _true_int_value = 128
-    _false_int_value = 0
+    _true_byte_value = int_to_bytes(128, 1)
+    _false_byte_value = int_to_bytes(0, 1)
 
     def __init__(self, value: bool = False, /) -> None:  # noqa: FBT001, FBT002
-        self._value = int_to_bytes(self._true_int_value if value else self._false_int_value, 1)
+        self._value = self._true_byte_value if value else self._false_byte_value
 
     def __eq__(self, other: object) -> bool:
         try:
@@ -576,8 +576,7 @@ class Bool(_ABIEncoded):
     @property
     def native(self) -> bool:
         """Return the bool representation of the value after ARC4 decoding."""
-        int_value = int.from_bytes(self._value)
-        return int_value == self._true_int_value
+        return self._value == self._true_byte_value
 
     def __str__(self) -> str:
         return f"{self.native}"
@@ -669,7 +668,8 @@ class StaticArray(
                     f"item must be of type {self._type_info.item_type!r}, not {item._type_info!r}"
                 )
 
-        self._value = _encode(items)
+        item_list = list(items)
+        self._value = _encode(item_list)
 
     def __iter__(self) -> Iterator[_TArrayItem]:
         # """Returns an iterator for the items in the array"""
@@ -854,7 +854,8 @@ class DynamicArray(  # TODO: inherit from StaticArray?
                 raise TypeError(
                     f"item must be of type {self._type_info.item_type!r}, not {item._type_info!r}"
                 )
-        self._value = self._encode_with_length(items)
+        item_list = list(items)
+        self._value = self._encode_with_length(item_list)
 
     def __iter__(self) -> typing.Iterator[_TArrayItem]:
         """Returns an iterator for the items in the array."""
@@ -1294,6 +1295,9 @@ def _find_bool(
     is_looking_forward = delta > 0
     is_looking_backward = delta < 0
     values_length = len(values) if isinstance(values, tuple | list) else values.length.value
+    if isinstance(values, (StaticArray | DynamicArray | list)):
+        return 0 if is_looking_backward else values_length - index - 1
+
     while True:
         curr = index + delta * until
         is_curr_at_end = curr == values_length - 1
@@ -1311,12 +1315,16 @@ def _find_bool(
     return until
 
 
-def _find_bool_types(values: typing.Sequence[_TypeInfo], index: int, delta: int) -> int:
+def _find_bool_types(
+    values: typing.Sequence[_TypeInfo], index: int, delta: int, *, is_homogeneous: bool = False
+) -> int:
     """Helper function to find consecutive booleans from current index in a tuple."""
     until = 0
     is_looking_forward = delta > 0
     is_looking_backward = delta < 0
     values_length = len(values)
+    if is_homogeneous:
+        return 0 if is_looking_backward else values_length - index - 1
     while True:
         curr = index + delta * until
         is_curr_at_end = curr == values_length - 1
@@ -1438,6 +1446,7 @@ def _encode(  # noqa: PLR0912
                     raise ValueError(
                         "expected before index should have number of bool mod 8 equal 0"
                     )
+
                 after = min(7, after)
                 consecutive_bool_list = [values[i] for i in range(i, i + after + 1)]
                 compressed_int = _compress_multiple_bool(consecutive_bool_list)
@@ -1467,13 +1476,15 @@ def _encode(  # noqa: PLR0912
     return values_length_bytes + b"".join(heads) + b"".join(tails)
 
 
-def _decode_tuple_items(  # noqa: PLR0912
+def _decode_tuple_items(  # noqa: PLR0912, PLR0915
     value: bytes, child_types: list[_TypeInfo]
 ) -> list[typing.Any]:
     dynamic_segments: list[list[int]] = []  # Store the start and end of a dynamic element
     value_partitions: list[bytes] = []
     i = 0
     array_index = 0
+
+    is_homogeneous_child_types = len(set(child_types)) == 1
 
     while i < len(child_types):
         child_type = child_types[i]
@@ -1489,8 +1500,12 @@ def _decode_tuple_items(  # noqa: PLR0912
             value_partitions.append(b"")
             array_index += _ABI_LENGTH_SIZE
         elif isinstance(child_type, _BoolTypeInfo):
-            before = _find_bool_types(child_types, i, -1)
-            after = _find_bool_types(child_types, i, 1)
+            before = _find_bool_types(
+                child_types, index=i, delta=-1, is_homogeneous=is_homogeneous_child_types
+            )
+            after = _find_bool_types(
+                child_types, index=i, delta=1, is_homogeneous=is_homogeneous_child_types
+            )
 
             if before % 8 != 0:
                 raise ValueError("expected before index should have number of bool mod 8 equal 0")
