@@ -32,7 +32,7 @@ dependencies = [
     "coincurve>=19.0.1",
     # TODO: uncomment below and remove direct git reference once puya 5.0 is released
     # "algorand-python>=3",
-    "algorand-python@git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.10#subdirectory=stubs",
+    "algorand-python@git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.11#subdirectory=stubs",
 ]
 
 [project.urls]
@@ -54,7 +54,7 @@ python = "3.12"
 dependencies = [
     # TODO: uncomment below and remove direct git reference once puya 5.0 is released
     # "puyapy>=5",
-    "puyapy@git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.10",
+    "puyapy@git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.11",
     "pytest>=7.4",
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
@@ -138,7 +138,7 @@ dependencies = [
     "algokit-utils>=3.0.0",
     # TODO: uncomment below and remove direct git reference once puya 5.0 is released
     # "puyapy>=5",
-    "puyapy@git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.10",
+    "puyapy@git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.11",
 ]
 
 [tool.hatch.envs.test.scripts]
@@ -191,7 +191,7 @@ post-install-commands = [
 dependencies = [
     # TODO: uncomment below and remove direct git reference once puya 5.0 is released
     # "algorand-python>=3",
-    "algorand-python@git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.10#subdirectory=stubs",
+    "algorand-python@git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.11#subdirectory=stubs",
     "pytest>=7.4",
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",

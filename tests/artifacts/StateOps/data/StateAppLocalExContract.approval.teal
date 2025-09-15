@@ -1,7 +1,7 @@
 #pragma version 10
 #pragma typetrack false
 
-// tests.artifacts.StateOps.contract.StateAppLocalExContract.__algopy_entrypoint_with_init() -> uint64:
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
     // tests/artifacts/StateOps/contract.py:346
     // class StateAppLocalExContract(ARC4Contract):

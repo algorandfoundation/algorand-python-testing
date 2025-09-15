@@ -367,28 +367,28 @@ class ImmutableArrayContract(arc4.ARC4Contract):
 
     @arc4.abimethod()
     def test_uint64_return(self, append: UInt64) -> ImmutableArray[UInt64]:
-        arr = ImmutableArray(UInt64(1), UInt64(2), UInt64(3))
+        arr = ImmutableArray((UInt64(1), UInt64(2), UInt64(3)))
         for i in urange(append):
             arr = arr.append(i)
         return arr
 
     @arc4.abimethod()
     def test_bool_return(self, append: UInt64) -> ImmutableArray[bool]:
-        arr = ImmutableArray(True, False, True, False, True)
+        arr = ImmutableArray((True, False, True, False, True))
         for i in urange(append):
             arr = arr.append(i % 2 == 0)
         return arr
 
     @arc4.abimethod()
     def test_tuple_return(self, append: UInt64) -> ImmutableArray[MyTuple]:
-        arr = ImmutableArray(MyTuple(UInt64(), True, False))
+        arr = ImmutableArray((MyTuple(UInt64(), True, False),))
         for i in urange(append):
             arr = arr.append(MyTuple(foo=i, bar=i % 2 == 0, baz=i % 3 == 0))
         return arr
 
     @arc4.abimethod()
     def test_dynamic_tuple_return(self, append: UInt64) -> ImmutableArray[MyDynamicSizedTuple]:
-        arr = ImmutableArray(MyDynamicSizedTuple(UInt64(), String("Hello")))
+        arr = ImmutableArray((MyDynamicSizedTuple(UInt64(), String("Hello")),))
         for i in urange(append):
             arr = arr.append(MyDynamicSizedTuple(i, times(i)))
         return arr
@@ -407,7 +407,7 @@ class ImmutableArrayContract(arc4.ARC4Contract):
     def test_concat_with_arc4_tuple(
         self, arg: arc4.Tuple[arc4.UInt64, arc4.UInt64]
     ) -> ImmutableArray[arc4.UInt64]:
-        prefix = ImmutableArray(arc4.UInt64(1), arc4.UInt64(2))
+        prefix = ImmutableArray((arc4.UInt64(1), arc4.UInt64(2)))
         result = prefix + arg
         return result
 
@@ -415,7 +415,7 @@ class ImmutableArrayContract(arc4.ARC4Contract):
     def test_concat_with_native_tuple(
         self, arg: tuple[arc4.UInt64, arc4.UInt64]
     ) -> ImmutableArray[arc4.UInt64]:
-        prefix = ImmutableArray(arc4.UInt64(1), arc4.UInt64(2))
+        prefix = ImmutableArray((arc4.UInt64(1), arc4.UInt64(2)))
         result = prefix + arg
         return result
 
@@ -423,7 +423,7 @@ class ImmutableArrayContract(arc4.ARC4Contract):
     def test_dynamic_concat_with_arc4_tuple(
         self, arg: arc4.Tuple[arc4.String, arc4.String]
     ) -> ImmutableArray[arc4.String]:
-        prefix = ImmutableArray(arc4.String("a"), arc4.String("b"))
+        prefix = ImmutableArray((arc4.String("a"), arc4.String("b")))
         result = prefix + arg
         return result
 
@@ -431,7 +431,7 @@ class ImmutableArrayContract(arc4.ARC4Contract):
     def test_dynamic_concat_with_native_tuple(
         self, arg: tuple[arc4.String, arc4.String]
     ) -> ImmutableArray[arc4.String]:
-        prefix = ImmutableArray(arc4.String("a"), arc4.String("b"))
+        prefix = ImmutableArray((arc4.String("a"), arc4.String("b")))
         result = prefix + arg
         return result
 
@@ -474,6 +474,96 @@ class ImmutableArrayContract(arc4.ARC4Contract):
         assert sum_imm_fixed(mut_arr.freeze()) == 10, "expected sum to be 10"
 
         return self.imm_fixed_arr
+
+
+class DynamicArrayInitContract(arc4.ARC4Contract):
+    @arc4.abimethod()
+    def test_immutable_array_init(self) -> None:
+        a1 = ImmutableArray[UInt64]((UInt64(1), UInt64(2), UInt64(3)))
+
+        a2 = ImmutableArray[UInt64](FixedArray((UInt64(1), UInt64(2), UInt64(3))))
+        assert a1.length == a2.length
+        assert a1[0] == a2[0]
+        assert a1[1] == a2[1]
+        assert a1[2] == a2[2]
+
+        a3 = ImmutableArray[UInt64](ReferenceArray((UInt64(1), UInt64(2), UInt64(3))))
+        assert a3.length == 3
+        assert a1[0] == a3[0]
+        assert a1[1] == a3[1]
+        assert a1[2] == a3[2]
+
+        a4 = ImmutableArray[UInt64](ImmutableArray((UInt64(1), UInt64(2), UInt64(3))))
+        assert a1.length == a4.length
+        assert a1[0] == a4[0]
+        assert a1[1] == a4[1]
+        assert a1[2] == a4[2]
+
+    @arc4.abimethod()
+    def test_immutable_array_init_without_type_generic(self) -> None:
+        a1 = ImmutableArray((UInt64(1), UInt64(2), UInt64(3)))
+
+        a2 = ImmutableArray(FixedArray((UInt64(1), UInt64(2), UInt64(3))))
+        assert a1.length == a2.length
+        assert a1[0] == a2[0]
+        assert a1[1] == a2[1]
+        assert a1[2] == a2[2]
+
+        a3 = ImmutableArray(ReferenceArray((UInt64(1), UInt64(2), UInt64(3))))
+        assert a3.length == 3
+        assert a1[0] == a3[0]
+        assert a1[1] == a3[1]
+        assert a1[2] == a3[2]
+
+        a4 = ImmutableArray(ImmutableArray((UInt64(1), UInt64(2), UInt64(3))))
+        assert a1.length == a4.length
+        assert a1[0] == a4[0]
+        assert a1[1] == a4[1]
+        assert a1[2] == a4[2]
+
+    @arc4.abimethod()
+    def test_reference_array_init(self) -> None:
+        a1 = ReferenceArray[UInt64]((UInt64(1), UInt64(2), UInt64(3)))
+
+        a2 = ReferenceArray[UInt64](FixedArray((UInt64(1), UInt64(2), UInt64(3))))
+        assert a1.length == a2.length
+        assert a1[0] == a2[0]
+        assert a1[1] == a2[1]
+        assert a1[2] == a2[2]
+
+        a3 = ReferenceArray[UInt64](ImmutableArray((UInt64(1), UInt64(2), UInt64(3))))
+        assert a3.length == 3
+        assert a1[0] == a3[0]
+        assert a1[1] == a3[1]
+        assert a1[2] == a3[2]
+
+        a4 = ReferenceArray[UInt64](ReferenceArray((UInt64(1), UInt64(2), UInt64(3))))
+        assert a1.length == a4.length
+        assert a1[0] == a4[0]
+        assert a1[1] == a4[1]
+        assert a1[2] == a4[2]
+
+    @arc4.abimethod()
+    def test_reference_array_init_without_type_generic(self) -> None:
+        a1 = ReferenceArray((UInt64(1), UInt64(2), UInt64(3)))
+
+        a2 = ReferenceArray(FixedArray((UInt64(1), UInt64(2), UInt64(3))))
+        assert a1.length == a2.length
+        assert a1[0] == a2[0]
+        assert a1[1] == a2[1]
+        assert a1[2] == a2[2]
+
+        a3 = ReferenceArray(ImmutableArray((UInt64(1), UInt64(2), UInt64(3))))
+        assert a3.length == 3
+        assert a1[0] == a3[0]
+        assert a1[1] == a3[1]
+        assert a1[2] == a3[2]
+
+        a4 = ReferenceArray(ReferenceArray((UInt64(1), UInt64(2), UInt64(3))))
+        assert a1.length == a4.length
+        assert a1[0] == a4[0]
+        assert a1[1] == a4[1]
+        assert a1[2] == a4[2]
 
 
 @subroutine

@@ -422,7 +422,7 @@ def test_arrays_and_struct_in_boxes(context: AlgopyTestContext) -> None:  # noqa
 
     # ImmutableArray
     nested_arr3 = ImmutableArray[ImmutableArray[UInt64]](
-        ImmutableArray(*arr1), ImmutableArray(*arr2)
+        (ImmutableArray(arr1), ImmutableArray(arr2))
     )
     box3 = Box(ImmutableArray[ImmutableArray[UInt64]], key=b"test_array_3")
     box3.value = nested_arr3
