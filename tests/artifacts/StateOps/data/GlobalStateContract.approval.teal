@@ -1,7 +1,7 @@
 #pragma version 10
 #pragma typetrack false
 
-// tests.artifacts.StateOps.contract.GlobalStateContract.__algopy_entrypoint_with_init() -> uint64:
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
     intcblock 1 0
     bytecblock 0x151f7c75 "implicit_key_arc4_uint" "implicit_key_arc4_string" "implicit_key_arc4_byte" "implicit_key_arc4_bool" "implicit_key_arc4_address" "implicit_key_arc4_uint128" "implicit_key_arc4_dynamic_bytes" "implicit_key_tuple" "explicit_key_arc4_uint" "explicit_key_arc4_string" "explicit_key_arc4_byte" "explicit_key_arc4_bool" "explicit_key_arc4_address" "explicit_key_arc4_uint128" "explicit_key_arc4_dynamic_bytes" 0x0000000000000539 0x000548656c6c6f 0x00000010000000000000000000000000 0x000d64796e616d6963206279746573
@@ -107,7 +107,7 @@ main_after_if_else@2:
     // tests/artifacts/StateOps/contract.py:513
     // class GlobalStateContract(ARC4Contract):
     txn NumAppArgs
-    bz main___algopy_default_create@37
+    bz main___algopy_default_create@39
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
@@ -118,7 +118,7 @@ main_after_if_else@2:
     match get_implicit_key_arc4_uint get_implicit_key_arc4_string get_implicit_key_arc4_byte get_implicit_key_arc4_bool get_implicit_key_arc4_address get_implicit_key_arc4_uint128 get_implicit_key_arc4_dynamic_bytes get_implicit_key_tuple get_arc4_uint get_arc4_string get_arc4_byte get_arc4_bool get_arc4_address get_arc4_uint128 get_arc4_dynamic_bytes set_implicit_key_arc4_uint set_implicit_key_arc4_string set_implicit_key_arc4_byte set_implicit_key_arc4_bool set_implicit_key_arc4_address set_implicit_key_arc4_uint128 set_implicit_key_arc4_dynamic_bytes set_implicit_key_tuple set_arc4_uint set_arc4_string set_arc4_byte set_arc4_bool set_arc4_address set_arc4_uint128 set_arc4_dynamic_bytes
     err
 
-main___algopy_default_create@37:
+main___algopy_default_create@39:
     txn OnCompletion
     !
     txn ApplicationID

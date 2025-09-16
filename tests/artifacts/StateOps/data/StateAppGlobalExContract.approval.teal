@@ -1,7 +1,7 @@
 #pragma version 10
 #pragma typetrack false
 
-// tests.artifacts.StateOps.contract.StateAppGlobalExContract.__algopy_entrypoint_with_init() -> uint64:
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
     bytecblock 0x64756d6d795f6279746573 0x001064756d6d795f617263345f6279746573
     txn ApplicationID

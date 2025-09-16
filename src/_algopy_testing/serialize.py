@@ -81,8 +81,6 @@ def get_native_to_arc4_serializer(  # noqa: PLR0911
                 ),
                 arc4_to_native=lambda arr: (
                     typ([element_serializer.arc4_to_native(e) for e in arr])
-                    if issubclass(typ, Array)
-                    else typ(*[element_serializer.arc4_to_native(e) for e in arr])
                 ),
             )
         if issubclass(typ, FixedArray | ImmutableFixedArray):

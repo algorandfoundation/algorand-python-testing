@@ -7,6 +7,7 @@ from algopy import ImmutableArray, String, UInt64, arc4
 from algopy_testing import AlgopyTestContext, algopy_testing_context
 
 from tests.artifacts.Arrays.immutable import (
+    DynamicArrayInitContract,
     ImmutableArrayContract,
     MyDynamicSizedTuple,
     MyStruct,
@@ -147,7 +148,7 @@ def test_immutable_array(context: AlgopyTestContext) -> None:
 
     append = 5
     arr = [MyTuple(UInt64(i), i % 2 == 0, i % 3 == 0) for i in range(append)]
-    response = app.test_convert_to_array_and_back(arr=ImmutableArray(*arr), append=UInt64(append))
+    response = app.test_convert_to_array_and_back(arr=ImmutableArray(arr), append=UInt64(append))
     assert list(response) == [*arr, *arr]
 
     response = app.test_concat_with_arc4_tuple(arc4.Tuple((arc4.UInt64(3), arc4.UInt64(4))))
@@ -161,14 +162,16 @@ def test_immutable_array(context: AlgopyTestContext) -> None:
     three = MyDynamicSizedTuple(UInt64(3), String("tree"))
     four = MyDynamicSizedTuple(UInt64(4), String("floor"))
     response = app.test_concat_immutable_dynamic(
-        ImmutableArray(one, two), ImmutableArray(three, four)
+        ImmutableArray((one, two)), ImmutableArray((three, four))
     )
     assert list(response) == [one, two, three, four]
 
     immutable_arc4_input = ImmutableArray(
-        MyStruct(arc4.UInt64(1), arc4.UInt64(2)),
-        MyStruct(arc4.UInt64(3), arc4.UInt64(4)),
-        MyStruct(arc4.UInt64(5), arc4.UInt64(6)),
+        (
+            MyStruct(arc4.UInt64(1), arc4.UInt64(2)),
+            MyStruct(arc4.UInt64(3), arc4.UInt64(4)),
+            MyStruct(arc4.UInt64(5), arc4.UInt64(6)),
+        )
     )
     immutable_arc4_result = app.test_immutable_arc4(immutable_arc4_input)
     assert list(immutable_arc4_result) == [
@@ -184,6 +187,18 @@ def test_immutable_array(context: AlgopyTestContext) -> None:
 
     imm_fixed_arr = app.test_imm_fixed_arr()
     assert len(imm_fixed_arr) == 3
+
+
+def test_dynamic_array_init(context: AlgopyTestContext) -> None:  # noqa: ARG001
+    app = DynamicArrayInitContract()
+
+    app.test_immutable_array_init()
+
+    app.test_immutable_array_init_without_type_generic()
+
+    app.test_reference_array_init()
+
+    app.test_immutable_array_init_without_type_generic()
 
 
 _EXPECTED_LENGTH_20 = [False, False, True, *(False,) * 17]
@@ -202,10 +217,10 @@ def test_immutable_routing(context: AlgopyTestContext) -> None:  # noqa: ARG001
     app = ImmutableArrayContract()
 
     response = app.sum_uints_and_lengths_and_trues(
-        arr1=ImmutableArray(*map(UInt64, range(5))),
-        arr2=ImmutableArray(*[i % 2 == 0 for i in range(6)]),
-        arr3=ImmutableArray(*[MyTuple(UInt64(i), i % 2 == 0, i % 3 == 0) for i in range(7)]),
-        arr4=ImmutableArray(*[MyDynamicSizedTuple(UInt64(i), String(" " * i)) for i in range(8)]),
+        arr1=ImmutableArray([*map(UInt64, range(5))]),
+        arr2=ImmutableArray([i % 2 == 0 for i in range(6)]),
+        arr3=ImmutableArray([MyTuple(UInt64(i), i % 2 == 0, i % 3 == 0) for i in range(7)]),
+        arr4=ImmutableArray([MyDynamicSizedTuple(UInt64(i), String(" " * i)) for i in range(8)]),
     )
     assert response == tuple(map(UInt64, (10, 3, 21 + 4 + 3, 28 * 2)))
 
@@ -240,9 +255,7 @@ def test_nested_immutable(context: AlgopyTestContext) -> None:  # noqa: ARG001
 
     response = app.test_nested_array(
         arr_to_add=UInt64(5),
-        arr=ImmutableArray(
-            *(ImmutableArray(*(UInt64(i * j) for i in range(5))) for j in range(3))
-        ),
+        arr=ImmutableArray([ImmutableArray([UInt64(i * j) for i in range(5)]) for j in range(3)]),
     )
     assert list(response) == list(
         map(

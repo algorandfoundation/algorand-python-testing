@@ -281,13 +281,15 @@ class ImmutableArray(Serializable, typing.Generic[_TArrayItem], metaclass=_Immut
     _element_type: typing.ClassVar[type]
 
     # ensure type is fully parameterized by looking up type from metaclass
-    def __new__(cls, *items: _TArrayItem) -> typing.Self:
+
+    def __new__(cls, values: Iterable[_TArrayItem] = ()) -> typing.Self:
         from _algopy_testing.serialize import type_of
 
         try:
             assert cls._element_type
         except AttributeError:
             try:
+                items = list(values)
                 item = items[0]
             except IndexError:
                 raise TypeError("array must have an item type") from None
@@ -295,8 +297,9 @@ class ImmutableArray(Serializable, typing.Generic[_TArrayItem], metaclass=_Immut
         instance = super().__new__(cls)
         return instance
 
-    def __init__(self, *items: _TArrayItem):
+    def __init__(self, values: Iterable[_TArrayItem] = ()):
         super().__init__()
+        items = list(values)
         for item in items:
             if not isinstance(item, typing.get_origin(self._element_type) or self._element_type):
                 raise TypeError(f"expected items of type {self._element_type}")
@@ -347,7 +350,7 @@ class ImmutableArray(Serializable, typing.Generic[_TArrayItem], metaclass=_Immut
         preserved."""
         el_type = self._element_type
         typ = ImmutableArray[el_type]  # type: ignore[valid-type]
-        return typ(*items)
+        return typ(items)
 
     def __bool__(self) -> bool:
         return bool(self._items)
@@ -361,8 +364,8 @@ class ImmutableArray(Serializable, typing.Generic[_TArrayItem], metaclass=_Immut
 
 
 class ReferenceArray(Reversible[_TArrayItem]):
-    def __init__(self, *items: _TArrayItem):
-        self._items = list(items)
+    def __init__(self, values: Iterable[_TArrayItem] = ()):
+        self._items = list(values)
 
     def __iter__(self) -> Iterator[_TArrayItem]:
         return iter(list(self._items))
@@ -391,10 +394,10 @@ class ReferenceArray(Reversible[_TArrayItem]):
         return self._items.pop()
 
     def copy(self) -> "ReferenceArray[_TArrayItem]":
-        return ReferenceArray(*self._items)
+        return ReferenceArray(self._items)
 
     def freeze(self) -> ImmutableArray[_TArrayItem]:
-        return ImmutableArray(*self._items)
+        return ImmutableArray(self._items)
 
     def __bool__(self) -> bool:
         return bool(self._items)
@@ -488,7 +491,7 @@ class Array(Serializable, MutableBytes, typing.Generic[_TArrayItem], metaclass=_
         return self.__class__.from_bytes(self.serialize())
 
     def freeze(self) -> ImmutableArray[_TArrayItem]:
-        return ImmutableArray(*self._items)
+        return ImmutableArray(self._items)
 
     def _from_iter(self, items: Iterable[_TArrayItem]) -> "Array[_TArrayItem]":
         """Returns a new array populated with items, also ensures element type info is
