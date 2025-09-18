@@ -6,7 +6,7 @@ from algokit_utils import AlgorandClient
 from tests.common import AVMInvoker, create_avm_invoker
 
 ARTIFACTS_DIR = Path(__file__).parent / ".." / "artifacts"
-APP_SPEC = ARTIFACTS_DIR / "Arc4PrimitiveOps" / "data" / "Arc4PrimitiveOpsContract.arc32.json"
+APP_SPEC = ARTIFACTS_DIR / "Arc4PrimitiveOps" / "data" / "Arc4PrimitiveOpsContract.arc56.json"
 
 
 @pytest.fixture(scope="module")

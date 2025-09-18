@@ -7,8 +7,8 @@ from algokit_utils import AlgorandClient, AppClientMethodCallParams
 from tests.common import AVMInvoker, create_avm_invoker
 
 ARTIFACTS_DIR = Path(__file__).parent / ".." / "artifacts"
-GLOBAL_STATE_APP_SPEC = ARTIFACTS_DIR / "StateOps" / "data" / "GlobalStateContract.arc32.json"
-LOCAL_STATE_APP_SPEC = ARTIFACTS_DIR / "StateOps" / "data" / "LocalStateContract.arc32.json"
+GLOBAL_STATE_APP_SPEC = ARTIFACTS_DIR / "StateOps" / "data" / "GlobalStateContract.arc56.json"
+LOCAL_STATE_APP_SPEC = ARTIFACTS_DIR / "StateOps" / "data" / "LocalStateContract.arc56.json"
 
 
 @pytest.fixture(scope="module")

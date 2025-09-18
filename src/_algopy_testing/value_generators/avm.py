@@ -168,6 +168,7 @@ class AVMValueGenerator:
             "local_num_bytes": _algopy_testing.UInt64(0),
             "extra_program_pages": _algopy_testing.UInt64(0),
             "creator": lazy_context.value.default_sender,
+            "version": _algopy_testing.UInt64(0),
         }
 
         # Merge provided fields with defaults, prioritizing provided fields

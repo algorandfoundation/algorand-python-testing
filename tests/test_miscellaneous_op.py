@@ -13,7 +13,7 @@ from tests.common import AVMInvoker, create_avm_invoker
 from tests.util import get_sha256_hash, int_to_bytes
 
 ARTIFACTS_DIR = Path(__file__).parent / "artifacts"
-APP_SPEC = ARTIFACTS_DIR / "MiscellaneousOps" / "data" / "MiscellaneousOpsContract.arc32.json"
+APP_SPEC = ARTIFACTS_DIR / "MiscellaneousOps" / "data" / "MiscellaneousOpsContract.arc56.json"
 
 
 def _too_big_error(max_length: int) -> str:
@@ -216,11 +216,11 @@ def test_btoi(get_ops_avm_result: AVMInvoker, a: bytes) -> None:
 )
 def test_btoi_input_overflow(get_ops_avm_result: AVMInvoker, a: bytes) -> None:
     with pytest.raises(
-        algokit_utils.LogicError, match=re.escape(f"btoi arg too long, got [{len(a)}]bytes")
+        algokit_utils.LogicError, match=re.escape(f"btoi arg too long, got {len(a)} bytes")
     ):
         get_ops_avm_result("verify_btoi", a=a)
 
-    with pytest.raises(ValueError, match=re.escape(f"btoi arg too long, got [{len(a)}]bytes")):
+    with pytest.raises(ValueError, match=re.escape(f"btoi arg too long, got {len(a)} bytes")):
         op.btoi(a)
 
 

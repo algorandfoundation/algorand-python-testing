@@ -94,7 +94,7 @@ class Contract(metaclass=_ContractMeta):
             algopy.urange | tuple[int | algopy.urange, ...] | list[int | algopy.urange] | None
         ) = None,
         state_totals: StateTotals | None = None,
-        avm_version: int = 10,
+        avm_version: int = 11,
     ):
         cls._name = name or cls.__name__
         cls._scratch_slots = scratch_slots
