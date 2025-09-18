@@ -59,7 +59,10 @@ def test_string_from_log_invalid_prefix(
 ) -> None:
     with pytest.raises(
         algokit_utils.LogicError,
-        match=re.compile("(assert failed)|(extraction start \\d+ is beyond length)"),
+        match=re.compile(
+            "(application log value is not the result of an ABI return)|"
+            "(extraction start \\d+ is beyond length)"
+        ),
     ):
         get_avm_result("verify_bool_from_log", a=prefix + value)
     with pytest.raises(ValueError, match="ABI return prefix not found"):

@@ -42,16 +42,16 @@ from tests.common import (
 )
 
 ARTIFACTS_DIR = Path(__file__).parent / "artifacts"
-CRYPTO_OPS_APP_SPEC = ARTIFACTS_DIR / "CryptoOps" / "data" / "CryptoOpsContract.arc32.json"
+CRYPTO_OPS_APP_SPEC = ARTIFACTS_DIR / "CryptoOps" / "data" / "CryptoOpsContract.arc56.json"
 STATE_OPS_APP_SPEC_ROOT = ARTIFACTS_DIR / "StateOps" / "data"
-STATE_OPS_ACCT_PARAMS_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAcctParamsGetContract.arc32.json"
-STATE_OPS_ASSET_HOLDING_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAssetHoldingContract.arc32.json"
-STATE_OPS_ASSET_PARAMS_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAssetParamsContract.arc32.json"
-STATE_OPS_APP_PARAMS_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppParamsContract.arc32.json"
-STATE_OPS_APP_LOCAL_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppLocalContract.arc32.json"
-STATE_OPS_APP_LOCAL_EX_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppLocalExContract.arc32.json"
-STATE_OPS_APP_GLOBAL_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppGlobalContract.arc32.json"
-STATE_OPS_APP_GLOBAL_EX_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppGlobalExContract.arc32.json"
+STATE_OPS_ACCT_PARAMS_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAcctParamsGetContract.arc56.json"
+STATE_OPS_ASSET_HOLDING_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAssetHoldingContract.arc56.json"
+STATE_OPS_ASSET_PARAMS_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAssetParamsContract.arc56.json"
+STATE_OPS_APP_PARAMS_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppParamsContract.arc56.json"
+STATE_OPS_APP_LOCAL_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppLocalContract.arc56.json"
+STATE_OPS_APP_LOCAL_EX_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppLocalExContract.arc56.json"
+STATE_OPS_APP_GLOBAL_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppGlobalContract.arc56.json"
+STATE_OPS_APP_GLOBAL_EX_SPEC = STATE_OPS_APP_SPEC_ROOT / "StateAppGlobalExContract.arc56.json"
 
 MAX_ARG_LEN = 2048
 MAX_BYTES_SIZE = 4096

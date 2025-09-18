@@ -25,6 +25,7 @@ class ApplicationFields(typing.TypedDict, total=False):
     local_num_bytes: algopy.UInt64
     extra_program_pages: algopy.UInt64
     creator: algopy.Account
+    version: algopy.UInt64
 
 
 AccountKey = str

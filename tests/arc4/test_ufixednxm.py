@@ -151,7 +151,9 @@ def test_ufixednxm_from_log(get_avm_result: AVMInvoker, value: bytes, expected: 
 def test_ufixednxm_from_log_invalid_prefix(
     get_avm_result: AVMInvoker, value: bytes, prefix: bytes
 ) -> None:
-    with pytest.raises(algokit_utils.LogicError, match="assert failed"):
+    with pytest.raises(
+        algokit_utils.LogicError, match="application log value is not the result of an ABI return"
+    ):
         get_avm_result("verify_ufixednxm_from_log", a=prefix + value)
     with pytest.raises(ValueError, match="ABI return prefix not found"):
         arc4.UFixedNxM[typing.Literal[32], typing.Literal[8]].from_log(Bytes(prefix + value))
@@ -204,7 +206,9 @@ def test_bigufixednxm_from_log(get_avm_result: AVMInvoker, value: bytes, expecte
 def test_bigufixednxm_from_log_invalid_prefix(
     get_avm_result: AVMInvoker, value: bytes, prefix: bytes
 ) -> None:
-    with pytest.raises(algokit_utils.LogicError, match="assert failed"):
+    with pytest.raises(
+        algokit_utils.LogicError, match="application log value is not the result of an ABI return"
+    ):
         get_avm_result("verify_bigufixednxm_from_log", a=prefix + value)
     with pytest.raises(ValueError, match="ABI return prefix not found"):
         arc4.BigUFixedNxM[typing.Literal[256], typing.Literal[16]].from_log(Bytes(prefix + value))

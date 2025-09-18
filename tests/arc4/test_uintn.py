@@ -103,7 +103,7 @@ def test_uintn_comparison(get_avm_result: AVMInvoker, op_name: str, a: int, b: i
 )
 def test_uintn_overflow(get_avm_result: AVMInvoker, value: int, expected: int | None) -> None:
     if expected is None:
-        with pytest.raises(algokit_utils.LogicError, match="assert failed"):
+        with pytest.raises(algokit_utils.LogicError, match="overflow"):
             get_avm_result("verify_uintn_init", a=int_to_bytes(value))
         with pytest.raises(ValueError, match=f"expected value <= {2**32 - 1}"):
             arc4.UInt32(value)
@@ -128,7 +128,7 @@ def test_uintn_overflow(get_avm_result: AVMInvoker, value: int, expected: int | 
 )
 def test_biguintn_overflow(get_avm_result: AVMInvoker, value: int, expected: int | None) -> None:
     if expected is None:
-        with pytest.raises(algokit_utils.LogicError, match="assert failed"):
+        with pytest.raises(algokit_utils.LogicError, match="overflow"):
             get_avm_result("verify_biguintn_init", a=int_to_bytes(value))
         with pytest.raises(ValueError, match=f"expected value <= {2**256 - 1}"):
             arc4.UInt256(value)
@@ -230,7 +230,9 @@ def test_uintn_from_log(get_avm_result: AVMInvoker, value: bytes, expected: int)
 def test_uintn_from_log_invalid_prefix(
     get_avm_result: AVMInvoker, value: bytes, prefix: bytes
 ) -> None:
-    with pytest.raises(algokit_utils.LogicError, match="assert failed"):
+    with pytest.raises(
+        algokit_utils.LogicError, match="application log value is not the result of an ABI return"
+    ):
         get_avm_result("verify_uintn_from_log", a=prefix + value)
     with pytest.raises(ValueError, match="ABI return prefix not found"):
         arc4.UInt32.from_log(Bytes(prefix + value))
@@ -279,7 +281,9 @@ def test_biguintn_from_log(get_avm_result: AVMInvoker, value: bytes, expected: i
 def test_biguintn_from_log_invalid_prefix(
     get_avm_result: AVMInvoker, value: bytes, prefix: bytes
 ) -> None:
-    with pytest.raises(algokit_utils.LogicError, match="assert failed"):
+    with pytest.raises(
+        algokit_utils.LogicError, match="application log value is not the result of an ABI return"
+    ):
         get_avm_result("verify_biguintn_from_log", a=prefix + value)
     with pytest.raises(ValueError, match="ABI return prefix not found"):
         arc4.UInt256.from_log(Bytes(prefix + value))
@@ -323,7 +327,7 @@ def test_biguintn_as_uint64(get_avm_result: AVMInvoker, value: bytes) -> None:
     ],
 )
 def test_biguintn_as_uint64_overflow(get_avm_result: AVMInvoker, value: bytes) -> None:
-    with pytest.raises(algokit_utils.LogicError, match="assert failed"):
+    with pytest.raises(algokit_utils.LogicError, match="overflow"):
         get_avm_result("verify_biguintn_as_uint64", a=value)
     with pytest.raises(OverflowError, match="value too large to fit in UInt64"):
         arc4.UInt256.from_bytes(Bytes(value)).as_uint64()

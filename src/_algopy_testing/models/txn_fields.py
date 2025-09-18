@@ -84,6 +84,7 @@ class ApplicationCallFields(ActiveTransactionFields, total=False):
     approval_program: Sequence[algopy.Bytes]
     clear_state_program: Sequence[algopy.Bytes]
     created_app: algopy.Application
+    reject_version: algopy.UInt64
 
 
 class KeyRegistrationFields(TransactionBaseFields, total=False):
@@ -153,6 +154,7 @@ _FIELD_TYPES = {
     "local_num_bytes": UInt64,
     "extra_program_pages": UInt64,
     "vote_first": UInt64,
+    "reject_version": UInt64,
     "vote_last": UInt64,
     "vote_key_dilution": UInt64,
     "created_app": Application,
@@ -504,6 +506,10 @@ class TransactionFieldsGetter(abc.ABC):
     @property
     def logs(self) -> Callable[[algopy.UInt64 | int], algopy.Bytes]:
         return _create_array_accessor(self._logs)
+
+    @property
+    def reject_version(self) -> algopy.UInt64:
+        return self.fields["reject_version"]  # type: ignore[return-value]
 
     def __getattr__(self, name: str) -> object:
         try:

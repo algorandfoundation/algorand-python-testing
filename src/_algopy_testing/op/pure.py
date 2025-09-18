@@ -31,7 +31,7 @@ def bsqrt(a: BigUInt | int, /) -> BigUInt:
 def btoi(a: Bytes | bytes, /) -> UInt64:
     a_bytes = as_bytes(a)
     if len(a_bytes) > 8:
-        raise ValueError(f"btoi arg too long, got [{len(a_bytes)}]bytes")
+        raise ValueError(f"btoi arg too long, got {len(a_bytes)} bytes")
     return UInt64(int.from_bytes(a_bytes))
 
 

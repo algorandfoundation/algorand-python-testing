@@ -19,7 +19,7 @@ from tests.artifacts.Arc4ABIMethod.contract import (
 from tests.common import AVMInvoker, create_avm_invoker
 
 ARTIFACTS_DIR = Path(__file__).parent / ".." / "artifacts"
-APP_SPEC = ARTIFACTS_DIR / "Arc4ABIMethod" / "data" / "SignaturesContract.arc32.json"
+APP_SPEC = ARTIFACTS_DIR / "Arc4ABIMethod" / "data" / "SignaturesContract.arc56.json"
 _FUNDED_ACCOUNT_SPENDING = 1234
 
 
