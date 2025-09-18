@@ -1,4 +1,10 @@
 # CHANGELOG
+## v1.0.0-beta.6 (2025-09-18)
+
+### Features
+
+* update langspec to 4.3.0 ([`c05bdc0`](https://github.com/algorandfoundation/algorand-python-testing/commit/c05bdc053f4b6aa52206cbeeaddb40609688b052))
+
 ## v1.0.0-beta.5 (2025-09-16)
 
 ## v1.0.0-beta.4 (2025-09-12)
