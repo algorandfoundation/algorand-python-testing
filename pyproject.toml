@@ -31,7 +31,7 @@ dependencies = [
     "ecdsa>=0.17.0",
     "coincurve>=19.0.1",
     # TODO: uncomment below and remove direct git reference once puya 5.0 is released
-    # "algorand-python>=3",
+    # "algorand-python>=3", 
     "algorand-python@git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.14#subdirectory=stubs",
 ]
 
