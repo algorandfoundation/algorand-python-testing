@@ -1,4 +1,12 @@
 # CHANGELOG
+## v1.0.0-beta.7 (2025-09-26)
+
+### Bug fixes
+
+* bump puyapy dependencies ([`8b2064d`](https://github.com/algorandfoundation/algorand-python-testing/commit/8b2064dc8bd94b0dadf6f283e8d639543241eadc))
+
+  Update to latest release candidates, so dependencies projects using both puyapy, language server and algorand python testing can resolve to a consistent version
+
 ## v1.0.0-beta.6 (2025-09-18)
 
 ### Features
