@@ -1,6 +1,6 @@
 # Transactions
 
-The testing framework follows the Transaction definitions described in [`algorand-python` docs](https://algorand-python.readthedocs.io/en/latest/algorand_sdk/transactions.html). This section focuses on _value generators_ and interactions with inner transactions, it also explains how the framework identifies _active_ transaction group during contract method/subroutine/logicsig invocation.
+The testing framework follows the Transaction definitions described in [`algorand-python` docs](https://algorandfoundation.github.io/puya/lg-transactions.html). This section focuses on _value generators_ and interactions with inner transactions, it also explains how the framework identifies _active_ transaction group during contract method/subroutine/logicsig invocation.
 
 ```{testsetup}
 import algopy
@@ -16,7 +16,7 @@ context = ctx_manager.__enter__()
 
 ## Group Transactions
 
-Refers to test implementation of transaction stubs available under `algopy.gtxn.*` namespace. Available under [`algopy.TxnValueGenerator`](../api.md) instance accessible via `context.any.txn` property:
+Refers to test implementation of transaction stubs available under `algopy.gtxn.*` namespace. Available under [`algopy.TxnValueGenerator`](#_algopy_testing.value_generators.txn.TxnValueGenerator) instance accessible via `context.any.txn` property:
 
 ```{mermaid}
 graph TD
@@ -107,7 +107,7 @@ generic_txn = context.any.txn.transaction(
 
 When a smart contract instance (application) is interacted with on the Algorand network, it must be performed in relation to a specific transaction or transaction group where one or many transactions are application calls to target smart contract instances.
 
-To emulate this behaviour, the `create_group` context manager is available on [`algopy.TransactionContext`](../api.md) instance that allows setting temporary transaction fields within a specific scope, passing in emulated transaction objects and identifying the active transaction index within the transaction group
+To emulate this behaviour, the `create_group` context manager is available on [`algopy.TransactionContext`](#_algopy_testing.context_helpers.txn_context.TransactionContext) instance that allows setting temporary transaction fields within a specific scope, passing in emulated transaction objects and identifying the active transaction index within the transaction group
 
 ```{testcode}
 import algopy
@@ -139,7 +139,7 @@ assert len(context.txn.last_group.txns) == 1
 
 Inner transactions are AVM transactions that are signed and executed by AVM applications (instances of deployed smart contracts or signatures).
 
-When testing smart contracts, to stay consistent with AVM, the framework \_does not allow you to submit inner transactions outside of contract/subroutine invocation, but you can interact with and manage inner transactions using the test context manager as follows:
+When testing smart contracts, to stay consistent with AVM, the framework _does not allow you to submit inner transactions outside of contract/subroutine invocation_, but you can interact with and manage inner transactions using the test context manager as follows:
 
 ```{testcode}
 class MyContract(algopy.ARC4Contract):

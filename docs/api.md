@@ -1,13 +1,13 @@
 # API Reference
 
-An overview of the `algorand-python-testing`'s `algopy_testing` module - covering the main classes and functions.
+An overview of the `algopy_testing` module in `algorand-python-testing` library - covering the main classes and functions.
 
 ```{hint}
-Spotted a typo in documentation? This project is open source, please submit an issue or a PR on [GitHub](https://github.com/algorand/algorand-python-testing).
+Spotted a typo in the documentation? This project is open source; please submit an issue or a PR on [GitHub](https://github.com/algorandfoundation/algorand-python-testing).
 ```
 
 ```{warning}
-Note, assume `_algopy_testing` to refer to `algopy_testing` namespace in the auto-generated class documentation above. To be patched in near future.
+Note: Auto-generated class documentation may reference `_algopy_testing`; these should be interpreted as the `algopy_testing` namespace. The naming discrepancy will be fixed in a future update.
 ```
 
 ## Contexts

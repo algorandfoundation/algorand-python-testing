@@ -1,6 +1,6 @@
 # Smart Contract Testing
 
-This guide provides an overview of how to test smart contracts using the Algorand Python SDK (`algopy`). We will cover the basics of testing `ARC4Contract` and `Contract` classes, focusing on `abimethod` and `baremethod` decorators.
+This guide provides an overview of how to test smart contracts using the Algorand Python SDK (`algopy`). It covers the basics of testing `ARC4Contract` and `Contract` classes, focusing on the `abimethod` and `baremethod` decorators.
 
 ![](https://mermaid.ink/img/pako:eNqVkrFugzAQhl_Fujnp1ImhEiJrJNREWeoOV9sNVsFG9iEVBd69R5w0JE2llsk2n7-7_-AAymsDGewDtpXYrqQT_GyKFwl5vfcBnRZlT5V3IjYYSCjvKKAiCa-JzXfrObyzgTqsxRpVZZ25YOX2nnRrIomCneZzpszLkllktu0f8ratrUKyjFsXCZ1K2gTH7i01_8dGUjOT_55YeLdUFVr3zRunf5b6R5hZoFnBq9cX72_Br_Cj8bl4vJCHaVucvowYxHk5Xg_sfPkY6SbbphDL5dMgQZu29n0U5DMJwzTVGyApySKZKFSNMXKVxPJYYAGNCQ1azX_VYboqgSrTcAcZLzWGDwnSjcxhR37TOwUZhc4sIPhuX0H2jnXkXddqrrCyyKNpTqfjF5m74B8?type=png)
 
@@ -24,7 +24,7 @@ context = ctx_manager.__enter__()
 
 Subclasses of `algopy.ARC4Contract` are **required** to be instantiated with an active test context. As part of instantiation, the test context will automatically create a matching `algopy.Application` object instance.
 
-Within the class implementation, methods decorated with `algopy.arc4.abimethod` and `algopy.arc4.baremethod` will automatically assemble an `algopy.gtxn.ApplicationCallTransaction` transaction to emulate the AVM application call. This behavior can be overriden by setting the transaction group manually as part of test setup, this is done via implicit invocation of `algopy_testing.context.any_application()` _value generator_ (refer to [APIs](../apis.md) for more details).
+Within the class implementation, methods decorated with `algopy.arc4.abimethod` and `algopy.arc4.baremethod` will automatically assemble an `algopy.gtxn.ApplicationCallTransaction` to emulate the AVM application call. This behaviour can be overridden by setting the transaction group manually as part of test setup; this is done via implicit invocation of the `algopy_testing.context.any_application()` _value generator_ (refer to the [API](../api.md) for more details).
 
 ```{testcode}
 class SimpleVotingContract(algopy.ARC4Contract):
@@ -104,9 +104,9 @@ assert votes == algopy.UInt64(0)
 
 For more examples of tests using `algopy.ARC4Contract`, see the [examples](../examples.md) section.
 
-## `algopy.Contract``
+## `algopy.Contract`
 
-Subclasses of `algopy.Contract` are **required** to be instantiated with an active test context. As part of instantiation, the test context will automatically create a matching `algopy.Application` object instance. This behavior is identical to `algopy.ARC4Contract` class instances.
+Subclasses of `algopy.Contract` are **required** to be instantiated with an active test context. As part of instantiation, the test context will automatically create a matching `algopy.Application` object instance. This behaviour is identical to `algopy.ARC4Contract` class instances.
 
 Unlike `algopy.ARC4Contract`, `algopy.Contract` requires manual setup of the transaction context and explicit method calls. Alternatively, you can use `active_txn_overrides` to specify application arguments and foreign arrays without needing to create a full transaction group if your aim is to patch a specific active transaction related metadata.
 

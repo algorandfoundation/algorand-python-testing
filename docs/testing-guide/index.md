@@ -33,7 +33,7 @@ The Algorand Python Testing framework streamlines unit testing of your Algorand 
 4. Verify logic signatures and subroutines
 5. Manage global state, local state, scratch slots, and boxes in test contexts
 6. Simulate transactions and transaction groups, including inner transactions
-7. Verify opcode behavior
+7. Verify opcode behaviour
 
 By using this framework, you can ensure your Algorand Python smart contracts function correctly before deploying them to a live network.
 
@@ -44,9 +44,9 @@ Key features of the framework include:
 -   ARC4 Support: Tools for testing ARC4 contracts and methods, including struct definitions and ABI encoding/decoding
 -   Transaction Simulation: Ability to create and execute various transaction types
 -   State Management: Tools for managing and verifying global and local state changes
--   Opcode Simulation: Implementations of AVM opcodes for accurate smart contract behavior testing
+-   Opcode Simulation: Implementations of AVM opcodes for accurate smart contract behaviour testing
 
-The framework is designed to work seamlessly with Algorand Python smart contracts, allowing developers to write comprehensive unit tests that closely mimic the behavior of contracts on the Algorand blockchain.
+The framework is designed to work seamlessly with Algorand Python smart contracts, allowing developers to write comprehensive unit tests that closely mimic the behaviour of contracts on the Algorand blockchain.
 
 ## Table of Contents
 
