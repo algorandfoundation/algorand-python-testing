@@ -1,9 +1,9 @@
 # ARC4 Types
 
-These types are available under the `algopy.arc4` namespace. Refer to the [ARC4 specification](https://arc.algorand.foundation/ARCs/arc-0004) for more details on the spec.
+These types are available under the `algopy.arc4` namespace. Refer to the [ARC4 specification](https://dev.algorand.co/arc-standards/arc-0004/) for more details on the spec.
 
 ```{hint}
-Test context manager provides _value generators_ for ARC4 types. To access their _value generators_, use `{context_instance}.any.arc4` property. See more examples below.
+The test context manager provides _value generators_ for ARC4 types. To access the _value generators_, use `{context_instance}.any.arc4` property. See more examples below.
 ```
 
 ```{note}
@@ -63,7 +63,7 @@ address_value = arc4.Address("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 # Generate a random address
 random_address = context.any.arc4.address()
 
-# Access native underlaying type
+# Access native underlying type
 native = random_address.native
 ```
 
@@ -76,7 +76,7 @@ from algopy import arc4
 bytes_value = arc4.DynamicBytes(b"Hello, Algorand!")
 
 # Generate random dynamic bytes
-random_dynamic_bytes = context.any.arc4.dynamic_bytes(n=123) # n is the number of bits in the arc4 dynamic bytes
+random_dynamic_bytes = context.any.arc4.dynamic_bytes(n=123) # n is the number of bits in the ARC4 dynamic bytes
 ```
 
 ## String
@@ -88,7 +88,7 @@ from algopy import arc4
 string_value = arc4.String("Hello, Algorand!")
 
 # Generate random string
-random_string = context.any.arc4.string(n=12) # n is the number of bits in the arc4 string
+random_string = context.any.arc4.string(n=12) # n is the number of bits in the ARC4 string
 ```
 
 ```{testcleanup}

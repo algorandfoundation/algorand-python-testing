@@ -1,6 +1,6 @@
 # AVM Opcodes
 
-The [coverage](coverage.md) file provides a comprehensive list of all opcodes and their respective types, categorized as _Mockable_, _Emulated_, or _Native_ within the `algorand-python-testing` package. This section highlights a **subset** of opcodes and types that typically require interaction with the test context manager.
+The [coverage](../coverage.md) file provides a comprehensive list of all opcodes and their respective types, categorized as _Mockable_, _Emulated_, or _Native_ within the `algorand-python-testing` package. This section highlights a **subset** of opcodes and types that typically require interaction with the test context manager.
 
 `Native` opcodes are assumed to function as they do in the Algorand Virtual Machine, given their stateless nature. If you encounter issues with any `Native` opcodes, please raise an issue in the [`algorand-python-testing` repo](https://github.com/algorandfoundation/algorand-python-testing/issues/new/choose) or contribute a PR following the [Contributing](https://github.com/algorandfoundation/algorand-python-testing/blob/main/CONTRIBUTING.md) guide.
 
@@ -375,7 +375,7 @@ These examples demonstrate how to mock key mockable opcodes in `algorand-python-
 
 Mocking these opcodes allows you to:
 
-1. Control complex operations' behavior not covered by _implemented_ and _emulated_ types.
+1. Control complex operations' behaviour not covered by _implemented_ and _emulated_ types.
 2. Test edge cases and error conditions.
 3. Isolate contract logic from external dependencies.
 

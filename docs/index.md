@@ -5,7 +5,7 @@
 [![github-stars](https://img.shields.io/github/stars/algorandfoundation/algorand-python-testing?color=74dfdc&logo=star&style=flat)](https://github.com/algorandfoundation/algorand-python-testing)
 [![visitor-badge](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Falgorandfoundation%2Falgorand-python-testing&countColor=%2374dfdc&style=flat)](https://developer.algorand.org/algokit/)
 
-`algorand-python-testing` is a companion package to [Algorand Python](https://github.com/algorandfoundation/puya) that enables efficient unit testing of Algorand Python smart contracts in an offline environment. This package emulates key AVM behaviors without requiring a network connection, offering fast and reliable testing capabilities with a familiar Pythonic interface.
+`algorand-python-testing` is a companion package to [Algorand Python](https://github.com/algorandfoundation/puya) that enables efficient unit testing of Algorand Python smart contracts in an offline environment. This package emulates key AVM behaviours without requiring a network connection, offering fast and reliable testing capabilities with a familiar Pythonic interface.
 
 The `algorand-python-testing` package provides:
 
@@ -160,7 +160,7 @@ This example demonstrates key aspects of testing with `algorand-python-testing` 
     - Checking global and local state changes after method execution.
     - Verifying return values from ABI methods using ARC4-specific types.
 
-> **NOTE**: Thorough testing is crucial in smart contract development due to their immutable nature post-deployment. Comprehensive unit and integration tests ensure contract validity and reliability. Optimizing for efficiency can significantly improve user experience by reducing transaction fees and simplifying interactions. Investing in robust testing and optimization practices is crucial and offers many benefits in the long run.
+> **NOTE**: Thorough testing is crucial in smart contract development due to their immutable nature post-deployment. Comprehensive unit and integration tests ensure contract validity and reliability. Optimising for efficiency can significantly improve user experience by reducing transaction fees and simplifying interactions. Investing in robust testing and optimisation practices is crucial and offers many benefits in the long run.
 
 ### Next steps
 

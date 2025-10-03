@@ -3,7 +3,7 @@
 These types are available directly under the `algopy` namespace. They represent the basic AVM primitive types and can be instantiated directly or via _value generators_:
 
 ```{note}
-For 'primitive `algopy` types such as `Account`, `Application`, `Asset`, `UInt64`, `BigUint`, `Bytes`, `Sting` with and without respective _value generator_, instantiation can be performed directly. If you have a suggestion for a new _value generator_ implementation, please open an issue in the [`algorand-python-testing`](https://github.com/algorandfoundation/algorand-python-testing) repository or contribute by following the [contribution guide](https://github.com/algorandfoundation/algorand-python-testing/blob/main/CONTRIBUTING.md).
+For primitive `algopy` types such as `Account`, `Application`, `Asset`, `UInt64`, `BigUint`, `Bytes`, and `String`, instantiation can be performed directly, with or without a corresponding _value generator_. If you have a suggestion for a new _value generator_ implementation, please open an issue in the [`algorand-python-testing`](https://github.com/algorandfoundation/algorand-python-testing) repository or contribute by following the [contribution guide](https://github.com/algorandfoundation/algorand-python-testing/blob/main/CONTRIBUTING.md).
 ```
 
 ```{testsetup}

@@ -14,7 +14,7 @@ Operational Codes, or opcodes, are AVM instructions that are executed directly b
 
 ## What are Value Generators?
 
-Value Generators are helper methods that generate randomized values for testing when the specific value of the tested type is not important. In the context of Algorand Python testing, these are represented by property on the context manager, accessed via `any.*` (or `any.arc4.*`, `any.txn.*`. in the case of ARC 4 types). To understand how to use Value Generators effectively, check out our [Value Generators section](testing-guide/concepts.md#value-generators) in the documentation.
+Value Generators are helper methods that produce randomized values for testing when the exact value of a type isn't important. In Algorand Python testing these generators are exposed as properties on the test context manager and accessed via `any.*` (for example, `any.arc4.*` and `any.txn.*` for ARC4 types). To learn more, see the [Value Generators section](testing-guide/concepts.md#value-generators).
 
 ## What are the limitations of the Algorand Python Testing framework?
 
@@ -26,7 +26,7 @@ The Algorand Python Testing framework emulates the Algorand Virtual Machine (AVM
 4. Certain cryptographic operations are mocked or simplified
 5. No state proof generation or verification
 
-For scenarios where these limitations are crucial, it's recommended to pair this framework with integration testing. If you have a solid reason to justify introducing new emulated behaviour, please open an issue or contribute to the project on [Github](https://github.com/algorandfoundation/algorand-python-testing).
+For scenarios where these limitations are crucial, it's recommended to pair this framework with integration testing. If you have a solid reason to justify introducing new emulated behaviour, please open an issue or contribute to the project on [GitHub](https://github.com/algorandfoundation/algorand-python-testing).
 
 ## How does balance tracking work in the testing framework?
 
@@ -46,16 +46,16 @@ Some cryptographic operations are mocked or simplified in the framework. For a d
 
 ## Can I use this framework for security-critical validations?
 
-While this framework is useful for unit testing and local development, it should not be the only tool used for security-critical validations or performance benchmarking. It's designed to approximate AVM behavior for common scenarios. Always complement your testing with additional integration testing options available in `algokit`, where you can test against real localnet or testnet environments.
+While this framework is useful for unit testing and local development, it should not be the only tool used for security-critical validations or performance benchmarking. It's designed to approximate AVM behaviour for common scenarios. Always complement your testing with additional integration testing options available in `algokit`, where you can test against real localnet or testnet environments.
 
 ## Is there an example of how to use this framework alongside integration tests?
 
 Yes, the `algokit-python-template`, accessible via `algokit init`, provides a working example of how to structure `algorand-python-testing` along with regular integration tests against localnet.
 
 ```{hint}
-An `algokit-python-template` accessible via `algokit init -t python`, provides a comprehensive and customizable working example of how to structure `algorand-python-testing` along with regular integration tests against localnet.
+The `algokit-python-template`, accessible via `algokit init -t python`, provides a comprehensive and customizable working example of how to structure `algorand-python-testing` along with regular integration tests against localnet.
 ```
 
 ## Is it compatible with `pytest`?
 
-Yes, it is compatible with `pytest` and _any_ other python testing framework as its agnostic of the testing framework as long as its python. If you spot incompatibility with a certain tool, please open an issue or contribute to the project on [Github](https://github.com/algorandfoundation/algorand-python-testing).
+Yes, it is compatible with `pytest` and _any_ other Python testing framework as it is agnostic of the testing framework as long as it's Python. If you spot incompatibility with a certain tool, please open an issue or contribute to the project on [GitHub](https://github.com/algorandfoundation/algorand-python-testing).
