@@ -30,9 +30,7 @@ dependencies = [
     "pynacl>=1.4.0,<2",
     "ecdsa>=0.17.0",
     "coincurve>=19.0.1",
-    # TODO: uncomment below and remove direct git reference once puya 5.0 is released
-    # "algorand-python>=3", 
-    "algorand-python@git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.14#subdirectory=stubs",
+    "algorand-python>=3", 
 ]
 
 [project.urls]
@@ -52,9 +50,7 @@ type = "virtual"
 path = ".venv"
 python = "3.12"
 dependencies = [
-    # TODO: uncomment below and remove direct git reference once puya 5.0 is released
-    # "puyapy>=5",
-    "puyapy@git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.14",
+    "puyapy>=5",
     "pytest>=7.4",
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
@@ -136,9 +132,7 @@ dependencies = [
     "pytest-cov>=4.1.0",
     "py-algorand-sdk>=2.4.0",
     "algokit-utils>=3.0.0",
-    # TODO: uncomment below and remove direct git reference once puya 5.0 is released
-    # "puyapy>=5",
-    "puyapy@git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.14",
+    "puyapy>=5",
 ]
 
 [tool.hatch.envs.test.scripts]
@@ -189,9 +183,7 @@ post-install-commands = [
   "hatch run examples:reload_algopy_testing",
 ]
 dependencies = [
-    # TODO: uncomment below and remove direct git reference once puya 5.0 is released
-    # "algorand-python>=3",
-    "algorand-python@git+https://github.com/algorandfoundation/puya.git@v5.0.0-rc.14#subdirectory=stubs",
+    "algorand-python>=3",
     "pytest>=7.4",
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
