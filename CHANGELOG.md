@@ -1,4 +1,10 @@
 # CHANGELOG
+## v1.0.0-beta.8 (2025-10-06)
+
+### Documentation
+
+* fix typos and broken links ([`f221910`](https://github.com/algorandfoundation/algorand-python-testing/commit/f221910b54a2cdc76aa99b8883d75d4ddae78ee3))
+
 ## v1.0.0-beta.7 (2025-09-26)
 
 ### Bug fixes
