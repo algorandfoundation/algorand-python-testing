@@ -1,4 +1,6 @@
 # CHANGELOG
+## v1.0.0 (2025-10-06)
+
 ## v1.0.0-beta.8 (2025-10-06)
 
 ### Documentation
