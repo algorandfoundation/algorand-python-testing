@@ -55,7 +55,7 @@ dependencies = [
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
     "py-algorand-sdk>=2.4.0",
-    "algokit-utils>=3.0.0",
+    "algokit-utils>=4.0.0",
     "pytest-cov>=4.1.0",
     "prettytable>=3.9.0",
     "mypy==1.10",
@@ -131,7 +131,7 @@ dependencies = [
     "pytest-xdist[psutil]>=3.3",
     "pytest-cov>=4.1.0",
     "py-algorand-sdk>=2.4.0",
-    "algokit-utils>=3.0.0",
+    "algokit-utils>=4.0.0",
     "puyapy>=5",
 ]
 
@@ -188,7 +188,7 @@ dependencies = [
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
     "py-algorand-sdk>=2.4.0",
-    "algokit-utils>=3.0.0",
+    "algokit-utils>=4.0.0",
     "pytest-cov>=4.1.0",
     "mypy==1.10",
 ]
