@@ -7,6 +7,7 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | algopy.Account                              | Emulated            |
 | algopy.Application                          | Emulated            |
 | algopy.Asset                                | Emulated            |
+| algopy.Array                                | Native              |
 | algopy.BigUInt                              | Native              |
 | algopy.Box                                  | Emulated            |
 | algopy.BoxMap                               | Emulated            |
@@ -18,6 +19,7 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | algopy.Contract                             | Emulated            |
 | algopy.Global                               | Emulated            |
 | algopy.GlobalState                          | Emulated            |
+| algopy.ImmutableArray                       | Native              |
 | algopy.LocalState                           | Emulated            |
 | algopy.LogicSig                             | Emulated            |
 | algopy.OnCompleteAction                     | Native              |
