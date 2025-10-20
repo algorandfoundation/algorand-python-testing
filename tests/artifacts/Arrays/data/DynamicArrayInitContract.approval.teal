@@ -5,7 +5,7 @@
 main:
     intcblock 8 3 1 0
     bytecblock 0x000000000000000100000000000000020000000000000003
-    // tests/artifacts/Arrays/immutable.py:479
+    // tests/artifacts/Arrays/immutable.py:480
     // class DynamicArrayInitContract(arc4.ARC4Contract):
     txn NumAppArgs
     bz main___algopy_default_create@11
@@ -25,16 +25,18 @@ main___algopy_default_create@11:
     txn ApplicationID
     !
     &&
-    return // on error: OnCompletion must be NoOp && can only call when creating
+    assert // OnCompletion must be NoOp && can only call when creating
+    intc_2 // 1
+    return
 
 
 // tests.artifacts.Arrays.immutable.DynamicArrayInitContract.test_immutable_array_init[routing]() -> void:
 test_immutable_array_init:
-    // tests/artifacts/Arrays/immutable.py:490
+    // tests/artifacts/Arrays/immutable.py:491
     // a3 = ImmutableArray[UInt64](ReferenceArray((UInt64(1), UInt64(2), UInt64(3))))
     bytec_0 // 0x000000000000000100000000000000020000000000000003
     pop
-    // tests/artifacts/Arrays/immutable.py:480
+    // tests/artifacts/Arrays/immutable.py:481
     // @arc4.abimethod()
     intc_2 // 1
     return
@@ -42,11 +44,11 @@ test_immutable_array_init:
 
 // tests.artifacts.Arrays.immutable.DynamicArrayInitContract.test_immutable_array_init_without_type_generic[routing]() -> void:
 test_immutable_array_init_without_type_generic:
-    // tests/artifacts/Arrays/immutable.py:512
+    // tests/artifacts/Arrays/immutable.py:513
     // a3 = ImmutableArray(ReferenceArray((UInt64(1), UInt64(2), UInt64(3))))
     bytec_0 // 0x000000000000000100000000000000020000000000000003
     pop
-    // tests/artifacts/Arrays/immutable.py:502
+    // tests/artifacts/Arrays/immutable.py:503
     // @arc4.abimethod()
     intc_2 // 1
     return
@@ -54,15 +56,15 @@ test_immutable_array_init_without_type_generic:
 
 // tests.artifacts.Arrays.immutable.DynamicArrayInitContract.test_reference_array_init[routing]() -> void:
 test_reference_array_init:
-    // tests/artifacts/Arrays/immutable.py:526
+    // tests/artifacts/Arrays/immutable.py:527
     // a1 = ReferenceArray[UInt64]((UInt64(1), UInt64(2), UInt64(3)))
     bytec_0 // 0x000000000000000100000000000000020000000000000003
-    // tests/artifacts/Arrays/immutable.py:528
+    // tests/artifacts/Arrays/immutable.py:529
     // a2 = ReferenceArray[UInt64](FixedArray((UInt64(1), UInt64(2), UInt64(3))))
     dup
     pop
     dupn 2
-    // tests/artifacts/Arrays/immutable.py:529
+    // tests/artifacts/Arrays/immutable.py:530
     // assert a1.length == a2.length
     len
     intc_0 // 8
@@ -70,7 +72,7 @@ test_reference_array_init:
     intc_1 // 3
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:530
+    // tests/artifacts/Arrays/immutable.py:531
     // assert a1[0] == a2[0]
     dup
     intc_3 // 0
@@ -78,7 +80,7 @@ test_reference_array_init:
     intc_2 // 1
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:531
+    // tests/artifacts/Arrays/immutable.py:532
     // assert a1[1] == a2[1]
     dup
     intc_0 // 8
@@ -86,26 +88,26 @@ test_reference_array_init:
     pushint 2 // 2
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:532
+    // tests/artifacts/Arrays/immutable.py:533
     // assert a1[2] == a2[2]
     pushint 16 // 16
     extract_uint64
     intc_1 // 3
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:534
+    // tests/artifacts/Arrays/immutable.py:535
     // a3 = ReferenceArray[UInt64](ImmutableArray((UInt64(1), UInt64(2), UInt64(3))))
     bytec_0 // 0x000000000000000100000000000000020000000000000003
     pop
     dupn 2
-    // tests/artifacts/Arrays/immutable.py:536
+    // tests/artifacts/Arrays/immutable.py:537
     // assert a1[0] == a3[0]
     intc_3 // 0
     extract_uint64
     intc_2 // 1
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:537
+    // tests/artifacts/Arrays/immutable.py:538
     // assert a1[1] == a3[1]
     dup
     intc_0 // 8
@@ -113,20 +115,20 @@ test_reference_array_init:
     pushint 2 // 2
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:538
+    // tests/artifacts/Arrays/immutable.py:539
     // assert a1[2] == a3[2]
     pushint 16 // 16
     extract_uint64
     intc_1 // 3
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:526
+    // tests/artifacts/Arrays/immutable.py:527
     // a1 = ReferenceArray[UInt64]((UInt64(1), UInt64(2), UInt64(3)))
     bytec_0 // 0x000000000000000100000000000000020000000000000003
     pop
     bytec_0 // 0x000000000000000100000000000000020000000000000003
     pop
-    // tests/artifacts/Arrays/immutable.py:541
+    // tests/artifacts/Arrays/immutable.py:542
     // assert a1.length == a4.length
     dup
     len
@@ -135,7 +137,7 @@ test_reference_array_init:
     intc_1 // 3
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:542
+    // tests/artifacts/Arrays/immutable.py:543
     // assert a1[0] == a4[0]
     dup
     intc_3 // 0
@@ -143,7 +145,7 @@ test_reference_array_init:
     intc_2 // 1
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:543
+    // tests/artifacts/Arrays/immutable.py:544
     // assert a1[1] == a4[1]
     dup
     intc_0 // 8
@@ -151,28 +153,28 @@ test_reference_array_init:
     pushint 2 // 2
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:544
+    // tests/artifacts/Arrays/immutable.py:545
     // assert a1[2] == a4[2]
     pushint 16 // 16
     extract_uint64
     intc_1 // 3
     ==
-    // tests/artifacts/Arrays/immutable.py:524
+    // tests/artifacts/Arrays/immutable.py:525
     // @arc4.abimethod()
     return
 
 
 // tests.artifacts.Arrays.immutable.DynamicArrayInitContract.test_reference_array_init_without_type_generic[routing]() -> void:
 test_reference_array_init_without_type_generic:
-    // tests/artifacts/Arrays/immutable.py:548
+    // tests/artifacts/Arrays/immutable.py:549
     // a1 = ReferenceArray((UInt64(1), UInt64(2), UInt64(3)))
     bytec_0 // 0x000000000000000100000000000000020000000000000003
-    // tests/artifacts/Arrays/immutable.py:550
+    // tests/artifacts/Arrays/immutable.py:551
     // a2 = ReferenceArray(FixedArray((UInt64(1), UInt64(2), UInt64(3))))
     dup
     pop
     dupn 2
-    // tests/artifacts/Arrays/immutable.py:551
+    // tests/artifacts/Arrays/immutable.py:552
     // assert a1.length == a2.length
     len
     intc_0 // 8
@@ -180,7 +182,7 @@ test_reference_array_init_without_type_generic:
     intc_1 // 3
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:552
+    // tests/artifacts/Arrays/immutable.py:553
     // assert a1[0] == a2[0]
     dup
     intc_3 // 0
@@ -188,7 +190,7 @@ test_reference_array_init_without_type_generic:
     intc_2 // 1
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:553
+    // tests/artifacts/Arrays/immutable.py:554
     // assert a1[1] == a2[1]
     dup
     intc_0 // 8
@@ -196,26 +198,26 @@ test_reference_array_init_without_type_generic:
     pushint 2 // 2
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:554
+    // tests/artifacts/Arrays/immutable.py:555
     // assert a1[2] == a2[2]
     pushint 16 // 16
     extract_uint64
     intc_1 // 3
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:556
+    // tests/artifacts/Arrays/immutable.py:557
     // a3 = ReferenceArray(ImmutableArray((UInt64(1), UInt64(2), UInt64(3))))
     bytec_0 // 0x000000000000000100000000000000020000000000000003
     pop
     dupn 2
-    // tests/artifacts/Arrays/immutable.py:558
+    // tests/artifacts/Arrays/immutable.py:559
     // assert a1[0] == a3[0]
     intc_3 // 0
     extract_uint64
     intc_2 // 1
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:559
+    // tests/artifacts/Arrays/immutable.py:560
     // assert a1[1] == a3[1]
     dup
     intc_0 // 8
@@ -223,20 +225,20 @@ test_reference_array_init_without_type_generic:
     pushint 2 // 2
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:560
+    // tests/artifacts/Arrays/immutable.py:561
     // assert a1[2] == a3[2]
     pushint 16 // 16
     extract_uint64
     intc_1 // 3
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:548
+    // tests/artifacts/Arrays/immutable.py:549
     // a1 = ReferenceArray((UInt64(1), UInt64(2), UInt64(3)))
     bytec_0 // 0x000000000000000100000000000000020000000000000003
     pop
     bytec_0 // 0x000000000000000100000000000000020000000000000003
     pop
-    // tests/artifacts/Arrays/immutable.py:563
+    // tests/artifacts/Arrays/immutable.py:564
     // assert a1.length == a4.length
     dup
     len
@@ -245,7 +247,7 @@ test_reference_array_init_without_type_generic:
     intc_1 // 3
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:564
+    // tests/artifacts/Arrays/immutable.py:565
     // assert a1[0] == a4[0]
     dup
     intc_3 // 0
@@ -253,7 +255,7 @@ test_reference_array_init_without_type_generic:
     intc_2 // 1
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:565
+    // tests/artifacts/Arrays/immutable.py:566
     // assert a1[1] == a4[1]
     dup
     intc_0 // 8
@@ -261,12 +263,12 @@ test_reference_array_init_without_type_generic:
     pushint 2 // 2
     ==
     assert
-    // tests/artifacts/Arrays/immutable.py:566
+    // tests/artifacts/Arrays/immutable.py:567
     // assert a1[2] == a4[2]
     pushint 16 // 16
     extract_uint64
     intc_1 // 3
     ==
-    // tests/artifacts/Arrays/immutable.py:546
+    // tests/artifacts/Arrays/immutable.py:547
     // @arc4.abimethod()
     return
