@@ -70,9 +70,11 @@ def generate_client(folder: Path) -> None:
             text=True,
         )
     except subprocess.CalledProcessError as e:
-        if "No app specs" in e.stderr:
+        output = e.stdout + e.stderr
+        if "No app specs" in output:
             logger.warning(f"No app spec found for: {folder}, skipping...")
         else:
+            logger.exception(output)
             raise
 
 
