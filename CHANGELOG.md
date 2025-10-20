@@ -1,4 +1,17 @@
 # CHANGELOG
+
+## v0.6.0 (2025-10-20)
+
+### Features
+
+* add mock implementations for validation functionality ([`ccde074`](https://github.com/algorandfoundation/algorand-python-testing/commit/ccde0740889bd68ef0fba418182d71ac0fc9f76a))
+
+### Documentation
+
+* add note about data validation in the testing library ([`bc47a68`](https://github.com/algorandfoundation/algorand-python-testing/commit/bc47a6838cf00907f2a718ddb8cb45fe97947d77))
+
+* add missing native types in coverage table ([`a95116c`](https://github.com/algorandfoundation/algorand-python-testing/commit/a95116c567dc77cfcf4f7ec517df60bb3d9d1eb5))
+
 ## v0.6.0-beta.3 (2025-05-16)
 
 ### Bug fixes

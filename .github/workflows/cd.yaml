@@ -65,8 +65,8 @@ jobs:
       - name: Check pre-commits (examples)
         run: hatch run examples:check
 
-      - name: Check wheels can be built
-        run: hatch build && hatch run cicd:clean_dist
+      - name: Build wheels
+        run: hatch build
 
       - name: Run tests (codebase)
         run: hatch run tests
@@ -74,17 +74,8 @@ jobs:
       - name: Run tests (examples)
         run: hatch run examples:tests
 
-      - name: Python Semantic Release
-        id: semantic-release
-        if: ${{ github.ref == 'refs/heads/main' }}
-        uses: python-semantic-release/python-semantic-release@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: ${{ env.PRERELEASE == 'true' }}
-          root_options: $DRY_RUN
-
       - name: Publish to PyPI
-        if: ${{ !inputs.dry_run && steps.semantic-release.outputs.released == 'true' }}
+        if: ${{ !inputs.dry_run }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist
