@@ -147,6 +147,7 @@ def abimethod(  # noqa: PLR0913
     allow_actions: Sequence[_AllowActions] = ("NoOp",),
     readonly: bool = False,
     default_args: Mapping[str, str | object] | None = None,
+    validate_encoding: typing.Literal["unsafe_disabled", "args"] = "args",  # noqa: ARG001
 ) -> Callable[[Callable[_P, _R]], Callable[_P, _R]] | Callable[_P, _R]:
     from _algopy_testing.utilities.log import log
 

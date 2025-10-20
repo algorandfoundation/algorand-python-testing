@@ -102,6 +102,9 @@ class ImmutableArray(Serializable, typing.Generic[_T], metaclass=_ImmutableArray
     def from_bytes(cls, value: bytes, /) -> typing.Self:
         return deserialize_from_bytes(cls, value)
 
+    def validate(self) -> None:
+        pass
+
 
 class Array(Reversible[_T]):
 

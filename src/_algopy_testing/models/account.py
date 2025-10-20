@@ -128,6 +128,9 @@ class Account(BytesBacked):
     def public_key(self) -> str:
         return algosdk.encoding.encode_address(self._public_key)  # type: ignore[no-any-return]
 
+    def validate(self) -> None:
+        pass
+
     def __getattr__(self, name: str) -> typing.Any:
         try:
             return self.data.fields[name]  # type: ignore[literal-required]
