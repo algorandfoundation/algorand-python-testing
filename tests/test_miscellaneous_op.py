@@ -216,11 +216,11 @@ def test_btoi(get_ops_avm_result: AVMInvoker, a: bytes) -> None:
 )
 def test_btoi_input_overflow(get_ops_avm_result: AVMInvoker, a: bytes) -> None:
     with pytest.raises(
-        algokit_utils.LogicError, match=re.escape(f"btoi arg too long, got [{len(a)}]bytes")
+        algokit_utils.LogicError, match=re.escape(f"btoi arg too long, got {len(a)} bytes")
     ):
         get_ops_avm_result("verify_btoi", a=a)
 
-    with pytest.raises(ValueError, match=re.escape(f"btoi arg too long, got [{len(a)}]bytes")):
+    with pytest.raises(ValueError, match=re.escape(f"btoi arg too long, got {len(a)} bytes")):
         op.btoi(a)
 
 
