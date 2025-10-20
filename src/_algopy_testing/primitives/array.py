@@ -144,6 +144,9 @@ class ImmutableFixedArray(
     def from_bytes(cls, value: bytes, /) -> typing.Self:
         return deserialize_from_bytes(cls, value)
 
+    def validate(self) -> None:
+        pass
+
 
 class _FixedArrayMeta(type, typing.Generic[_TArrayItem, _TArrayLength]):
     __concrete__: typing.ClassVar[dict[tuple[type, type], type]] = {}
@@ -255,6 +258,9 @@ class FixedArray(
     def from_bytes(cls, value: bytes, /) -> typing.Self:
         return deserialize_from_bytes(cls, value)
 
+    def validate(self) -> None:
+        pass
+
 
 class _ImmutableArrayMeta(type):
     __concrete__: typing.ClassVar[dict[type, type]] = {}
@@ -361,6 +367,9 @@ class ImmutableArray(Serializable, typing.Generic[_TArrayItem], metaclass=_Immut
     @classmethod
     def from_bytes(cls, value: bytes, /) -> typing.Self:
         return deserialize_from_bytes(cls, value)
+
+    def validate(self) -> None:
+        pass
 
 
 class ReferenceArray(Reversible[_TArrayItem]):
@@ -510,6 +519,9 @@ class Array(Serializable, MutableBytes, typing.Generic[_TArrayItem], metaclass=_
     def from_bytes(cls, value: bytes, /) -> typing.Self:
         return deserialize_from_bytes(cls, value)
 
+    def validate(self) -> None:
+        pass
+
 
 @typing.dataclass_transform()
 class Struct(Serializable, MutableBytes):
@@ -557,6 +569,9 @@ class Struct(Serializable, MutableBytes):
 
     def _update_backing_value(self) -> None:
         self._value = serialize_to_bytes(self)
+
+    def validate(self) -> None:
+        pass
 
 
 def zero_bytes(typ: type[_T]) -> _T:

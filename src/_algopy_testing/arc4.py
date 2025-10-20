@@ -158,6 +158,9 @@ class _ABIEncoded(BytesBacked):
 
         return algopy.Bytes(self._value)
 
+    def validate(self) -> None:
+        pass
+
     def __eq__(self, other: object) -> bool:
         if isinstance(other, _ABIEncoded):
             return self._type_info == other._type_info and self.bytes == other.bytes

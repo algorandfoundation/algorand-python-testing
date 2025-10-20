@@ -155,6 +155,7 @@ class ImmutableArrayContract(arc4.ARC4Contract):
     @arc4.abimethod()
     def test_bool_array(self, length: UInt64) -> None:
         arr = ImmutableArray[bool]()
+        arr.validate()  # does nothing but should still be callable
         assert arr.length == 0
 
         for i in urange(length):
