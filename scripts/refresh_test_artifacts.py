@@ -31,6 +31,10 @@ def compile_contract(folder: Path) -> None:
         str(contract_path),
         "--out-dir",
         "data",
+        # testing library does not perform ABI validation
+        # so ensure compiled contracts also do not, so behaviour matches
+        "--no-validate-abi-args",
+        "--no-validate-abi-return",
     ]
     subprocess.run(
         compile_cmd,
