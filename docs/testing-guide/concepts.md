@@ -58,3 +58,8 @@ As explained in the [introduction](index.md), `algorand-python-testing` _injects
 3. **Mockable**: Not implemented, but can be mocked or patched. For example, `algopy.abi_call` can be mocked to return specific values or behaviours; otherwise, it raises a `NotImplementedError`. This category covers cases where native or emulated implementation in a unit test context is impractical or overly complex.
 
 For a full list of all public `algopy` types and their corresponding implementation category, refer to the [Coverage](../coverage.md) section.
+
+## Data Validation
+
+Algorand Python and the puya compiler have functionality to perform validation of transaction inputs via the `--validate-abi-args`, `--validate-abi-return` CLI arguments, `arc4.abimethod(validate_encoding=...)` decorator and `.validate()` methods. 
+The Algorand Python Testing library does *NOT* implement this validation behaviour, as you should test invalid inputs using an integrated test against a real Algorand network. 
