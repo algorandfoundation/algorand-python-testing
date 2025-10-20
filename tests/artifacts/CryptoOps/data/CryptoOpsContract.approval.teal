@@ -25,7 +25,9 @@ main___algopy_default_create@20:
     txn ApplicationID
     !
     &&
-    return // on error: OnCompletion must be NoOp && can only call when creating
+    assert // OnCompletion must be NoOp && can only call when creating
+    intc_1 // 1
+    return
 
 
 // _puya_lib.util.ensure_budget(required_budget: uint64, fee_source: uint64) -> void:
