@@ -33,7 +33,7 @@ class SignaturesContract(ARC4Contract):
         assert app_txn.app_id == 0, "expected txn to have 0"
         assert Txn.application_id == 0, "expected txn to have 0"
 
-    @arc4.abimethod
+    @arc4.abimethod(validate_encoding="unsafe_disabled")
     def sink(self, value: arc4.String, arr: UInt8Array) -> None:
         assert value
         assert arr
@@ -84,6 +84,7 @@ class SignaturesContract(ARC4Contract):
     def complex_sig(
         self, struct1: MyStruct, txn: algopy.gtxn.Transaction, acc: Account, five: UInt8Array
     ) -> tuple[MyStructAlias, MyStruct]:
+        five.validate()
         assert Txn.num_app_args == 4
         # struct
         assert struct1.another_struct.one == 1
@@ -123,6 +124,7 @@ class SignaturesContract(ARC4Contract):
     def echo_resource_by_value(
         self, asset: Asset, app: Application, acc: Account
     ) -> tuple[Asset, Application, Account]:
+        acc.validate()
         asset_id = op.btoi(Txn.application_args(1))
         assert asset.id == asset_id, "expected asset to be passed by value"
         app_id = op.btoi(Txn.application_args(2))
