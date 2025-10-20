@@ -170,7 +170,7 @@ main_alias_route@5:
 
 main_sink_route@4:
     // tests/artifacts/Arc4ABIMethod/contract.py:36
-    // @arc4.abimethod
+    // @arc4.abimethod(validate_encoding="unsafe_disabled")
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
@@ -181,7 +181,7 @@ main_sink_route@4:
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     // tests/artifacts/Arc4ABIMethod/contract.py:36
-    // @arc4.abimethod
+    // @arc4.abimethod(validate_encoding="unsafe_disabled")
     callsub sink
     intc_0 // 1
     return
@@ -242,7 +242,7 @@ create:
 // tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.sink(value: bytes, arr: bytes) -> void:
 sink:
     // tests/artifacts/Arc4ABIMethod/contract.py:36-37
-    // @arc4.abimethod
+    // @arc4.abimethod(validate_encoding="unsafe_disabled")
     // def sink(self, value: arc4.String, arr: UInt8Array) -> None:
     proto 2 0
     // tests/artifacts/Arc4ABIMethod/contract.py:38
@@ -485,12 +485,23 @@ complex_sig:
     // ) -> tuple[MyStructAlias, MyStruct]:
     proto 4 2
     // tests/artifacts/Arc4ABIMethod/contract.py:87
+    // five.validate()
+    frame_dig -1
+    intc_1 // 0
+    extract_uint16 // on error: invalid array length header
+    pushint 2 // 2
+    +
+    frame_dig -1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    // tests/artifacts/Arc4ABIMethod/contract.py:88
     // assert Txn.num_app_args == 4
     txn NumAppArgs
     intc_2 // 4
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:88-89
+    // tests/artifacts/Arc4ABIMethod/contract.py:89-90
     // # struct
     // assert struct1.another_struct.one == 1
     frame_dig -4
@@ -508,7 +519,7 @@ complex_sig:
     bytec_1 // 0x0000000000000001
     b==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:90
+    // tests/artifacts/Arc4ABIMethod/contract.py:91
     // assert struct1.another_struct.two == "2"
     dup
     pushint 8 // 8
@@ -521,7 +532,7 @@ complex_sig:
     bytec_2 // 0x000132
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:91
+    // tests/artifacts/Arc4ABIMethod/contract.py:92
     // assert struct1.another_struct_alias.one == 1
     frame_dig -4
     len
@@ -534,7 +545,7 @@ complex_sig:
     bytec_1 // 0x0000000000000001
     b==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:92
+    // tests/artifacts/Arc4ABIMethod/contract.py:93
     // assert struct1.another_struct_alias.two == "2"
     dup
     pushint 8 // 8
@@ -545,21 +556,21 @@ complex_sig:
     bytec_2 // 0x000132
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:93
+    // tests/artifacts/Arc4ABIMethod/contract.py:94
     // assert struct1.three == 3
     frame_dig -4
     extract 4 16 // on error: Index access is out of bounds
     pushbytes 0x00000000000000000000000000000003
     b==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:94
+    // tests/artifacts/Arc4ABIMethod/contract.py:95
     // assert struct1.four == 4
     frame_dig -4
     extract 20 16 // on error: Index access is out of bounds
     pushbytes 0x00000000000000000000000000000004
     b==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:96-97
+    // tests/artifacts/Arc4ABIMethod/contract.py:97-98
     // # txn
     // assert txn.group_index == Txn.group_index - 1
     frame_dig -3
@@ -569,14 +580,14 @@ complex_sig:
     -
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:99-100
+    // tests/artifacts/Arc4ABIMethod/contract.py:100-101
     // # acc
     // assert Txn.application_args(2) == arc4.UInt8(1).bytes  # acc array ref
     txna ApplicationArgs 2
     pushbytes 0x01
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:101
+    // tests/artifacts/Arc4ABIMethod/contract.py:102
     // assert acc.balance == acc.min_balance + 1234
     frame_dig -2
     acct_params_get AcctBalance
@@ -588,14 +599,14 @@ complex_sig:
     +
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:102
+    // tests/artifacts/Arc4ABIMethod/contract.py:103
     // assert five[0] == 5
     frame_dig -1
     extract 2 1
     pushbytes 0x05
     b==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:104
+    // tests/artifacts/Arc4ABIMethod/contract.py:105
     // return struct1.another_struct.copy(), struct1.copy()
     frame_dig -4
     retsub
