@@ -4,6 +4,7 @@ import inspect
 import typing
 from collections.abc import Callable, Sequence
 
+from _algopy_testing.primitives.fixed_bytes import FixedBytes
 from _algopy_testing.primitives.uint64 import UInt64
 from _algopy_testing.utils import get_type_generic_from_int_literal
 
@@ -62,6 +63,15 @@ def get_native_to_arc4_serializer(  # noqa: PLR0911
                 native_to_arc4=lambda n: arc4.UInt64(n.int_),
                 arc4_to_native=lambda a: typ.from_int(a.native),
             )
+        if issubclass(typ, FixedBytes):
+            length_type = get_type_generic_from_int_literal(typ._length)
+            arc4_static_bytes = arc4.StaticArray[arc4.Byte, length_type]  # type: ignore[valid-type]
+            return _Serializer(
+                arc4_type=arc4_static_bytes,
+                native_to_arc4=lambda n: arc4_static_bytes(*[arc4.Byte.from_bytes(e) for e in n]),
+                arc4_to_native=lambda a: typ(a.bytes),
+            )
+
         if typing.NamedTuple in getattr(typ, "__orig_bases__", []):
             tuple_fields = tuple(inspect.get_annotations(typ).values())
             if any(isinstance(f, str) for f in tuple_fields):

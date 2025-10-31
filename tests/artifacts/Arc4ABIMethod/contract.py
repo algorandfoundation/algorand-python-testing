@@ -1,7 +1,7 @@
 import typing
 
 import algopy.gtxn
-from algopy import Account, Application, ARC4Contract, Asset, Txn, arc4, gtxn, op
+from algopy import Account, Application, ARC4Contract, Asset, FixedBytes, Txn, arc4, gtxn, op
 
 UInt8Array = arc4.DynamicArray[arc4.UInt8]
 MyAlias: typing.TypeAlias = arc4.BigUIntN[typing.Literal[128]]
@@ -34,9 +34,12 @@ class SignaturesContract(ARC4Contract):
         assert Txn.application_id == 0, "expected txn to have 0"
 
     @arc4.abimethod(validate_encoding="unsafe_disabled")
-    def sink(self, value: arc4.String, arr: UInt8Array) -> None:
+    def sink(
+        self, value: arc4.String, arr: UInt8Array, fixed_bytes: FixedBytes[typing.Literal[4]]
+    ) -> None:
         assert value
         assert arr
+        assert fixed_bytes
 
     @arc4.abimethod(name="alias")
     def sink2(self, value: arc4.String, arr: UInt8Array) -> None:

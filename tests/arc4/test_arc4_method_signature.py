@@ -1,3 +1,4 @@
+import typing
 from collections.abc import Generator
 from pathlib import Path
 
@@ -72,15 +73,20 @@ def test_app_args_is_correct_with_simple_args(
     # ensure same execution in AVM runs without errors
     get_avm_result("sink", value="hello", arr=[1, 2])
     # then run inside emulator
-    contract.sink(arc4.String("hello"), UInt8Array(arc4.UInt8(1), arc4.UInt8(2)))
+    contract.sink(
+        arc4.String("hello"),
+        UInt8Array(arc4.UInt8(1), arc4.UInt8(2)),
+        algopy.FixedBytes[typing.Literal[4]](b"test"),
+    )
 
     # assert
     txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
-        algosdk.abi.Method.from_signature("sink(string,uint8[])void").get_selector(),
+        algosdk.abi.Method.from_signature("sink(string,uint8[],byte[4])void").get_selector(),
         b"\x00\x05hello",
         b"\x00\x02\x01\x02",
+        b"test",
     ]
     assert app_args[0] == arc4.arc4_signature(SignaturesContract.sink)
 
