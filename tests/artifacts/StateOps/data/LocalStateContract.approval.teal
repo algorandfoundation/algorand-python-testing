@@ -18,7 +18,7 @@ main_switch_case_next@6:
     // class LocalStateContract(ARC4Contract):
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0xb3cfa389 0xdb858176 0x78267762 0x426351c8 0x075cae91 0x59c0b80b 0x0d6fa690 0x97e10d9c 0x2e4a8c49 0xb22cd21e 0xb3f44701 0xedd97297 0x671d353c 0xa3fd6fdc 0xcd2e5d66 // method "get_implicit_key_arc4_uint(address)uint64", method "get_implicit_key_arc4_string(address)string", method "get_implicit_key_arc4_byte(address)byte", method "get_implicit_key_arc4_bool(address)bool", method "get_implicit_key_arc4_address(address)address", method "get_implicit_key_arc4_uint128(address)uint128", method "get_implicit_key_arc4_dynamic_bytes(address)byte[]", method "get_implicit_key_tuple(address)(uint64,byte[],bool)", method "get_arc4_uint(address)uint64", method "get_arc4_string(address)string", method "get_arc4_byte(address)byte", method "get_arc4_bool(address)bool", method "get_arc4_address(address)address", method "get_arc4_uint128(address)uint128", method "get_arc4_dynamic_bytes(address)byte[]"
@@ -34,7 +34,7 @@ main_opt_in_route@5:
     ==
     txn ApplicationID
     &&
-    assert // OnCompletion must be OptIn && can only call when not creating
+    assert
     b opt_in
 
 main___algopy_default_create@26:
@@ -43,8 +43,6 @@ main___algopy_default_create@26:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    intc_0 // 1
     return
 
 

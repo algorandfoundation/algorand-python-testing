@@ -3,8 +3,8 @@
 
 // algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
-    intcblock 8 1 0 5 512
-    bytecblock 0x 0x000000000000000100000000000000020000000000000003 0x0000000000000000 0x0000000000000004
+    intcblock 1 8 0 5 512
+    bytecblock 0x 0x0000000000000000 0x0000000000000004
     pushbytes 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
     store 0
     // tests/artifacts/Arrays/uint64.py:13
@@ -13,7 +13,7 @@ main:
     bz main___algopy_default_create@19
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0xa33be873 0xe0c378e9 0x366f509d 0x58351a50 0xfa99e984 0xa20e440f 0x179ac3f9 0x45dcc836 0xf17f6f0a 0x845e1b4e 0x7621cfd1 0x5661a67c // method "test_array()void", method "test_array_extend()void", method "test_array_multiple_append()void", method "overhead()void", method "test_array_too_long()void", method "test_array_copy_and_extend()void", method "test_array_evaluation_order()void", method "test_array_assignment_maximum_cursage()void", method "test_allocations(uint64)void", method "test_iteration()void", method "test_quicksort()void", method "test_unobserved_write()void"
@@ -24,7 +24,7 @@ main:
 main_overhead_route@7:
     // tests/artifacts/Arrays/uint64.py:71
     // @arc4.abimethod()
-    intc_1 // 1
+    intc_0 // 1
     return
 
 main___algopy_default_create@19:
@@ -33,8 +33,6 @@ main___algopy_default_create@19:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    intc_1 // 1
     return
 
 
@@ -53,12 +51,12 @@ quicksort_window:
     frame_dig -2
     frame_dig -1
     +
-    pushint 2 // 2
+    pushint 2
     /
     frame_dig -3
     loads
     swap
-    intc_0 // 8
+    intc_1 // 8
     *
     extract_uint64
     frame_dig -1
@@ -71,7 +69,7 @@ quicksort_window_while_top@3:
     frame_dig -3
     loads
     frame_dig 4
-    intc_0 // 8
+    intc_1 // 8
     *
     dup
     frame_bury 0
@@ -82,7 +80,7 @@ quicksort_window_while_top@3:
     // tests/artifacts/Arrays/uint64.py:213
     // left += 1
     frame_dig 4
-    intc_1 // 1
+    intc_0 // 1
     +
     frame_bury 4
     b quicksort_window_while_top@3
@@ -94,7 +92,7 @@ quicksort_window_while_top@6:
     frame_dig -3
     loads
     frame_dig 3
-    intc_0 // 8
+    intc_1 // 8
     *
     dup
     frame_bury 1
@@ -110,7 +108,7 @@ quicksort_window_while_top@6:
     // tests/artifacts/Arrays/uint64.py:219
     // right -= 1
     frame_dig 3
-    intc_1 // 1
+    intc_0 // 1
     -
     frame_bury 3
     b quicksort_window_while_top@6
@@ -164,13 +162,13 @@ quicksort_window_after_while@10:
     frame_dig 1
     dup
     cover 3
-    intc_0 // 8
+    intc_1 // 8
     extract3 // on error: index access is out of bounds
     dig 1
     frame_dig 0
     dup
     cover 3
-    intc_0 // 8
+    intc_1 // 8
     extract3 // on error: index access is out of bounds
     cover 3
     replace3 // on error: index access is out of bounds
@@ -182,7 +180,7 @@ quicksort_window_after_while@10:
     // tests/artifacts/Arrays/uint64.py:224
     // left += 1
     frame_dig 4
-    intc_1 // 1
+    intc_0 // 1
     +
     frame_bury 4
     // tests/artifacts/Arrays/uint64.py:225-226
@@ -193,7 +191,7 @@ quicksort_window_after_while@10:
     // tests/artifacts/Arrays/uint64.py:228
     // right -= 1
     frame_dig 3
-    intc_1 // 1
+    intc_0 // 1
     -
     dup
     frame_bury 3
@@ -216,7 +214,7 @@ quicksort_window_after_if_else@16:
     // tests/artifacts/Arrays/uint64.py:237
     // left += 1
     frame_dig 4
-    intc_1 // 1
+    intc_0 // 1
     +
     frame_bury 4
     // tests/artifacts/Arrays/uint64.py:238-239
@@ -227,7 +225,7 @@ quicksort_window_after_if_else@16:
     // tests/artifacts/Arrays/uint64.py:240
     // right -= 1
     frame_dig 3
-    intc_1 // 1
+    intc_0 // 1
     -
     frame_bury 3
     b quicksort_window_after_while@22
@@ -269,7 +267,7 @@ create_array_for_header@1:
     stores
     // tests/artifacts/Arrays/uint64.py:258
     // for i in urange(5):
-    intc_1 // 1
+    intc_0 // 1
     +
     frame_bury 1
     b create_array_for_header@1
@@ -292,11 +290,11 @@ assert_last_is_zero:
     loads
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
-    intc_1 // 1
+    intc_0 // 1
     -
-    intc_0 // 8
+    intc_1 // 8
     *
     extract_uint64
     !
@@ -335,7 +333,7 @@ add_x_for_header@1:
     stores
     // tests/artifacts/Arrays/uint64.py:279
     // for i in urange(x):
-    intc_1 // 1
+    intc_0 // 1
     +
     frame_bury 0
     b add_x_for_header@1
@@ -356,7 +354,7 @@ append_length_and_return:
     loads
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     itob
     concat // on error: max array length exceeded
@@ -377,7 +375,7 @@ test_array:
     dup
     // tests/artifacts/Arrays/uint64.py:19
     // arr.append(UInt64(42))
-    pushint 42 // 42
+    pushint 42
     itob
     dig 1
     swap
@@ -392,25 +390,25 @@ test_array:
     loads
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     dup
-    pushint 6 // 6
+    pushint 6
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:25
     // assert arr[-1] == 4
-    intc_1 // 1
+    intc_0 // 1
     -
-    intc_0 // 8
+    intc_1 // 8
     *
     extract_uint64
-    pushint 4 // 4
+    pushint 4
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:27
     // pop_x(arr, x=UInt64(3), expected=UInt64(4))
-    pushint 4 // 4
+    pushint 4
     // tests/artifacts/Arrays/uint64.py:285
     // for _i in urange(x):
     intc_2 // 0
@@ -421,7 +419,7 @@ test_array_for_header@2:
     dup
     // tests/artifacts/Arrays/uint64.py:27
     // pop_x(arr, x=UInt64(3), expected=UInt64(4))
-    pushint 3 // 3
+    pushint 3
     // tests/artifacts/Arrays/uint64.py:285
     // for _i in urange(x):
     <
@@ -434,7 +432,7 @@ test_array_for_header@2:
     dup
     len
     dup
-    intc_0 // 8
+    intc_1 // 8
     -
     dig 2
     intc_2 // 0
@@ -456,13 +454,13 @@ test_array_for_header@2:
     assert
     // tests/artifacts/Arrays/uint64.py:288
     // expected -= 1
-    intc_1 // 1
+    intc_0 // 1
     -
     bury 2
     // tests/artifacts/Arrays/uint64.py:285
     // for _i in urange(x):
     dup
-    intc_1 // 1
+    intc_0 // 1
     +
     bury 1
     b test_array_for_header@2
@@ -475,27 +473,27 @@ test_array_after_for@4:
     loads
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     dup
-    pushint 3 // 3
+    pushint 3
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:29
     // assert arr[-1] == 1
-    intc_1 // 1
+    intc_0 // 1
     -
-    intc_0 // 8
+    intc_1 // 8
     *
     dig 1
     swap
     extract_uint64
-    intc_1 // 1
+    intc_0 // 1
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:31
     // arr.append(UInt64(43))
-    pushint 43 // 43
+    pushint 43
     itob
     concat // on error: max array length exceeded
     dup2
@@ -504,35 +502,35 @@ test_array_after_for@4:
     // assert arr.length == 4
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     dup
-    pushint 4 // 4
+    pushint 4
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:33
     // assert arr[-1] == 43
-    intc_1 // 1
+    intc_0 // 1
     -
-    intc_0 // 8
+    intc_1 // 8
     *
     dig 1
     swap
     extract_uint64
-    pushint 43 // 43
+    pushint 43
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:34
     // assert arr[0] == 42
     intc_2 // 0
     extract_uint64
-    pushint 42 // 42
+    pushint 42
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:36
     // add_x(arr, UInt64(10))
     dup
-    pushint 10 // 10
+    pushint 10
     callsub add_x
     // tests/artifacts/Arrays/uint64.py:37
     // assert arr.length == 14
@@ -540,59 +538,59 @@ test_array_after_for@4:
     loads
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     dup
-    pushint 14 // 14
+    pushint 14
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:38
     // assert arr[-1] == 9
-    intc_1 // 1
+    intc_0 // 1
     -
-    intc_0 // 8
+    intc_1 // 8
     *
     dig 1
     swap
     extract_uint64
-    pushint 9 // 9
+    pushint 9
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:40
     // arr.append(UInt64(44))
-    pushint 44 // 44
+    pushint 44
     itob
     concat // on error: max array length exceeded
     // tests/artifacts/Arrays/uint64.py:41
     // assert arr.length == 15
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     dup
-    pushint 15 // 15
+    pushint 15
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:42
     // assert arr[-1] == 44
-    intc_1 // 1
+    intc_0 // 1
     -
-    intc_0 // 8
+    intc_1 // 8
     *
     dig 1
     swap
     extract_uint64
-    pushint 44 // 44
+    pushint 44
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:272
     // arr.append(UInt64(99))
-    pushint 99 // 99
+    pushint 99
     itob
     concat // on error: max array length exceeded
     // tests/artifacts/Arrays/uint64.py:273
     // arr2.append(UInt64(100))
-    pushint 100 // 100
+    pushint 100
     itob
     concat // on error: max array length exceeded
     // tests/artifacts/Arrays/uint64.py:44
@@ -600,7 +598,7 @@ test_array_after_for@4:
     dup
     intc_2 // 0
     extract_uint64
-    pushint 2 // 2
+    pushint 2
     +
     itob
     replace2 0 // on error: index access is out of bounds
@@ -611,10 +609,10 @@ test_array_after_for@4:
     // assert arr.length == 17
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     dup
-    pushint 17 // 17
+    pushint 17
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:46
@@ -622,33 +620,35 @@ test_array_after_for@4:
     dig 1
     intc_2 // 0
     extract_uint64
-    pushint 44 // 44
+    pushint 44
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:47
     // assert arr[-2] == 99
     dup
-    pushint 2 // 2
+    pushint 2
     -
-    intc_0 // 8
+    intc_1 // 8
     *
     dig 2
     swap
     extract_uint64
-    pushint 99 // 99
+    pushint 99
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:48
     // assert arr[-1] == 100
-    intc_1 // 1
+    intc_0 // 1
     -
-    intc_0 // 8
+    intc_1 // 8
     *
     extract_uint64
-    pushint 100 // 100
+    pushint 100
     ==
+    assert
     // tests/artifacts/Arrays/uint64.py:14
     // @arc4.abimethod()
+    intc_0 // 1
     return
 
 
@@ -663,19 +663,15 @@ test_array_extend:
     // tests/artifacts/Arrays/uint64.py:53
     // add_x(arr, UInt64(1))
     dup
-    intc_1 // 1
+    intc_0 // 1
     callsub add_x
-    // tests/artifacts/Arrays/uint64.py:57
-    // arr2.append(UInt64(3))
-    bytec_1 // 0x000000000000000100000000000000020000000000000003
-    pop
     // tests/artifacts/Arrays/uint64.py:59
     // arr.extend(arr2)
     dup
     loads
     // tests/artifacts/Arrays/uint64.py:57
     // arr2.append(UInt64(3))
-    bytec_1 // 0x000000000000000100000000000000020000000000000003
+    pushbytes 0x000000000000000100000000000000020000000000000003
     // tests/artifacts/Arrays/uint64.py:59
     // arr.extend(arr2)
     concat // on error: max array length exceeded
@@ -685,12 +681,14 @@ test_array_extend:
     // tests/artifacts/Arrays/uint64.py:60
     // assert arr.length == 4
     len
-    intc_0 // 8
+    intc_1 // 8
     /
-    pushint 4 // 4
+    pushint 4
     ==
+    assert
     // tests/artifacts/Arrays/uint64.py:50
     // @arc4.abimethod()
+    intc_0 // 1
     return
 
 
@@ -705,23 +703,23 @@ test_array_multiple_append:
     // tests/artifacts/Arrays/uint64.py:65
     // add_x(arr, UInt64(1))
     dup
-    intc_1 // 1
+    intc_0 // 1
     callsub add_x
     // tests/artifacts/Arrays/uint64.py:66
     // arr.append(UInt64(1))
     dup
     loads
-    intc_1 // 1
+    intc_0 // 1
     itob
     concat // on error: max array length exceeded
     // tests/artifacts/Arrays/uint64.py:67
     // arr.append(UInt64(2))
-    pushint 2 // 2
+    pushint 2
     itob
     concat // on error: max array length exceeded
     // tests/artifacts/Arrays/uint64.py:68
     // arr.append(UInt64(3))
-    pushint 3 // 3
+    pushint 3
     itob
     concat // on error: max array length exceeded
     swap
@@ -730,12 +728,14 @@ test_array_multiple_append:
     // tests/artifacts/Arrays/uint64.py:69
     // assert arr.length == 4
     len
-    intc_0 // 8
+    intc_1 // 8
     /
-    pushint 4 // 4
+    pushint 4
     ==
+    assert
     // tests/artifacts/Arrays/uint64.py:62
     // @arc4.abimethod()
+    intc_0 // 1
     return
 
 
@@ -765,7 +765,7 @@ test_array_too_long_for_header@2:
     bury 3
     // tests/artifacts/Arrays/uint64.py:78
     // for i in urange(512):
-    intc_1 // 1
+    intc_0 // 1
     +
     bury 1
     b test_array_too_long_for_header@2
@@ -776,7 +776,7 @@ test_array_too_long_after_for@5:
     // assert array.length == 512, "array is expected length"
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     intc 4 // 512
     ==
@@ -789,7 +789,7 @@ test_array_too_long_after_for@5:
     pop
     // tests/artifacts/Arrays/uint64.py:75
     // @arc4.abimethod()
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
@@ -819,7 +819,7 @@ test_array_copy_and_extend_for_header@2:
     bury 3
     // tests/artifacts/Arrays/uint64.py:87
     // for i in urange(5):
-    intc_1 // 1
+    intc_0 // 1
     +
     bury 1
     b test_array_copy_and_extend_for_header@2
@@ -836,17 +836,17 @@ test_array_copy_and_extend_after_for@5:
     // assert array.length == 6
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     dup
-    pushint 6 // 6
+    pushint 6
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:93
     // assert array[-1] == 5, "expected 5"
-    intc_1 // 1
+    intc_0 // 1
     -
-    intc_0 // 8
+    intc_1 // 8
     *
     dig 1
     swap
@@ -859,7 +859,7 @@ test_array_copy_and_extend_after_for@5:
     // assert array2.length == 5
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     dup
     intc_3 // 5
@@ -867,14 +867,14 @@ test_array_copy_and_extend_after_for@5:
     assert
     // tests/artifacts/Arrays/uint64.py:96
     // assert array2[-1] == 4, "expected 4"
-    intc_1 // 1
+    intc_0 // 1
     -
-    intc_0 // 8
+    intc_1 // 8
     *
     dig 1
     swap
     extract_uint64
-    pushint 4 // 4
+    pushint 4
     ==
     assert // expected 4
     // tests/artifacts/Arrays/uint64.py:98
@@ -884,58 +884,58 @@ test_array_copy_and_extend_after_for@5:
     // assert array.length == 11
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     dup
-    pushint 11 // 11
+    pushint 11
     ==
     assert
     uncover 2
     // tests/artifacts/Arrays/uint64.py:100
     // assert array2.length == 5
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     intc_3 // 5
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:101
     // assert array[-1] == 4, "expected 4"
-    intc_1 // 1
+    intc_0 // 1
     -
-    intc_0 // 8
+    intc_1 // 8
     *
     dig 1
     swap
     extract_uint64
-    pushint 4 // 4
+    pushint 4
     ==
     assert // expected 4
     // tests/artifacts/Arrays/uint64.py:102
     // assert array[4] == 4, "expected 4"
     dup
-    pushint 32 // 32
+    pushint 32
     extract_uint64
-    pushint 4 // 4
+    pushint 4
     ==
     assert // expected 4
     // tests/artifacts/Arrays/uint64.py:103
     // assert array[5] == 5, "expected 4"
     dup
-    pushint 40 // 40
+    pushint 40
     extract_uint64
     intc_3 // 5
     ==
     assert // expected 4
     // tests/artifacts/Arrays/uint64.py:104
     // assert array[6] == 0, "expected 4"
-    pushint 48 // 48
+    pushint 48
     extract_uint64
     !
     assert // expected 4
     // tests/artifacts/Arrays/uint64.py:84
     // @arc4.abimethod()
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
@@ -946,7 +946,7 @@ test_array_evaluation_order:
     callsub _puya_lib.mem.new_slot
     // tests/artifacts/Arrays/uint64.py:109
     // arr.append(UInt64(3))
-    pushint 3 // 3
+    pushint 3
     itob
     dig 1
     swap
@@ -969,9 +969,9 @@ test_array_evaluation_order:
     loads
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
-    pushint 6 // 6
+    pushint 6
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:112
@@ -979,46 +979,46 @@ test_array_evaluation_order:
     dup
     intc_2 // 0
     extract_uint64
-    pushint 3 // 3
+    pushint 3
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:113
     // assert arr[1] == 1
     dup
-    intc_0 // 8
+    intc_1 // 8
     extract_uint64
-    intc_1 // 1
+    intc_0 // 1
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:114
     // assert arr[2] == 2
     dup
-    pushint 16 // 16
+    pushint 16
     extract_uint64
-    pushint 2 // 2
+    pushint 2
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:115
     // assert arr[3] == 3
     dup
-    pushint 24 // 24
+    pushint 24
     extract_uint64
-    pushint 3 // 3
+    pushint 3
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:116
     // assert arr[4] == 1
     dup
-    pushint 32 // 32
+    pushint 32
     extract_uint64
-    intc_1 // 1
+    intc_0 // 1
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:117
     // assert arr[5] == 2
-    pushint 40 // 40
+    pushint 40
     extract_uint64
-    pushint 2 // 2
+    pushint 2
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:119
@@ -1028,13 +1028,13 @@ test_array_evaluation_order:
     loads
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
-    intc_1 // 1
+    intc_0 // 1
     -
-    intc_0 // 8
+    intc_1 // 8
     *
-    intc_0 // 8
+    intc_1 // 8
     extract3 // on error: index access is out of bounds
     dig 1
     callsub append_length_and_return
@@ -1044,7 +1044,7 @@ test_array_evaluation_order:
     dig 2
     loads
     swap
-    intc_0 // 8
+    intc_1 // 8
     *
     uncover 2
     replace3 // on error: index access is out of bounds
@@ -1055,35 +1055,37 @@ test_array_evaluation_order:
     // assert arr.length == 8
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
-    intc_0 // 8
+    intc_1 // 8
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:121
     // assert arr[6] == 6
     dup
-    pushint 48 // 48
+    pushint 48
     extract_uint64
-    pushint 6 // 6
+    pushint 6
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:122
     // assert arr[7] == 7
     dup
-    pushint 56 // 56
+    pushint 56
     extract_uint64
-    pushint 7 // 7
+    pushint 7
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:123
     // assert arr[3] == 6
-    pushint 24 // 24
+    pushint 24
     extract_uint64
-    pushint 6 // 6
+    pushint 6
     ==
+    assert
     // tests/artifacts/Arrays/uint64.py:106
     // @arc4.abimethod()
+    intc_0 // 1
     return
 
 
@@ -1094,7 +1096,7 @@ test_array_assignment_maximum_cursage:
     callsub _puya_lib.mem.new_slot
     // tests/artifacts/Arrays/uint64.py:128
     // arr.append(UInt64(3))
-    pushint 3 // 3
+    pushint 3
     itob
     dig 1
     swap
@@ -1103,7 +1105,7 @@ test_array_assignment_maximum_cursage:
     // append_length_and_return(arr)[0] = UInt64(42)
     dup
     callsub append_length_and_return
-    pushint 42 // 42
+    pushint 42
     itob
     dig 1
     loads
@@ -1115,9 +1117,9 @@ test_array_assignment_maximum_cursage:
     loads
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
-    pushint 2 // 2
+    pushint 2
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:131
@@ -1125,17 +1127,19 @@ test_array_assignment_maximum_cursage:
     dup
     intc_2 // 0
     extract_uint64
-    pushint 42 // 42
+    pushint 42
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:132
     // assert arr[1] == 1
-    intc_0 // 8
+    intc_1 // 8
     extract_uint64
-    intc_1 // 1
+    intc_0 // 1
     ==
+    assert
     // tests/artifacts/Arrays/uint64.py:125
     // @arc4.abimethod()
+    intc_0 // 1
     return
 
 
@@ -1164,12 +1168,12 @@ test_allocations_for_header@2:
     stores
     // tests/artifacts/Arrays/uint64.py:138
     // add_x(alloc_test, UInt64(1))
-    intc_1 // 1
+    intc_0 // 1
     callsub add_x
     // tests/artifacts/Arrays/uint64.py:136
     // for _i in urange(num):
     dup
-    intc_1 // 1
+    intc_0 // 1
     +
     bury 1
     b test_allocations_for_header@2
@@ -1177,7 +1181,7 @@ test_allocations_for_header@2:
 test_allocations_after_for@5:
     // tests/artifacts/Arrays/uint64.py:134
     // @arc4.abimethod()
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
@@ -1210,7 +1214,7 @@ test_iteration_for_header@2:
     bury 3
     // tests/artifacts/Arrays/uint64.py:143
     // for val in urange(5):
-    intc_1 // 1
+    intc_0 // 1
     +
     bury 1
     b test_iteration_for_header@2
@@ -1220,7 +1224,7 @@ test_iteration_after_for@5:
     // tests/artifacts/Arrays/uint64.py:145
     // assert arr.length == 5, "expected array of length 5"
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     dup
     bury 10
@@ -1246,7 +1250,7 @@ test_iteration_for_header@6:
     dig 5
     dup
     cover 2
-    intc_0 // 8
+    intc_1 // 8
     *
     extract_uint64
     // tests/artifacts/Arrays/uint64.py:150
@@ -1256,7 +1260,7 @@ test_iteration_for_header@6:
     >=
     assert // array is not sorted
     swap
-    intc_1 // 1
+    intc_0 // 1
     +
     bury 6
     bury 4
@@ -1268,7 +1272,7 @@ test_iteration_after_for@9:
     // # enumerate
     // for idx, value in uenumerate(arr):
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     bury 8
     intc_2 // 0
@@ -1286,7 +1290,7 @@ test_iteration_for_header@10:
     dig 6
     dup
     cover 2
-    intc_0 // 8
+    intc_1 // 8
     *
     extract_uint64
     // tests/artifacts/Arrays/uint64.py:155
@@ -1294,7 +1298,7 @@ test_iteration_for_header@10:
     dig 1
     ==
     assert // incorrect array value
-    intc_1 // 1
+    intc_0 // 1
     +
     bury 6
     b test_iteration_for_header@10
@@ -1305,7 +1309,7 @@ test_iteration_after_for@13:
     // # reverse
     // for value in reversed(arr):
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     bury 3
 
@@ -1316,13 +1320,13 @@ test_iteration_for_header@14:
     dig 2
     bz test_iteration_after_for@17
     dig 2
-    intc_1 // 1
+    intc_0 // 1
     -
     dup
     bury 4
     dig 2
     swap
-    intc_0 // 8
+    intc_1 // 8
     *
     extract_uint64
     // tests/artifacts/Arrays/uint64.py:159
@@ -1368,7 +1372,7 @@ test_iteration_for_header@18:
     uncover 2
     intc_2 // 0
     extract_uint16
-    intc_1 // 1
+    intc_0 // 1
     +
     itob
     extract 6 2
@@ -1382,7 +1386,7 @@ test_iteration_for_header@18:
     bury 11
     // tests/artifacts/Arrays/uint64.py:164
     // for i in urange(5):
-    intc_1 // 1
+    intc_0 // 1
     +
     bury 7
     b test_iteration_for_header@18
@@ -1396,7 +1400,7 @@ test_iteration_after_for@21:
     dup
     extract 2 0
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     itob
     extract 6 2
@@ -1406,37 +1410,39 @@ test_iteration_after_for@21:
     dup
     intc_2 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 10 // 10
+    pushint 10
     ==
     assert
     // tests/artifacts/Arrays/uint64.py:169
     // assert combined_arr[0] == 0
     dup
     extract 2 8
-    bytec_2 // 0x0000000000000000
+    bytec_1 // 0x0000000000000000
     b==
     assert
     // tests/artifacts/Arrays/uint64.py:170
     // assert combined_arr[4] == 4
     dup
     extract 34 8
-    bytec_3 // 0x0000000000000004
+    bytec_2 // 0x0000000000000004
     b==
     assert
     // tests/artifacts/Arrays/uint64.py:171
     // assert combined_arr[5] == 0
     dup
     extract 42 8
-    bytec_2 // 0x0000000000000000
+    bytec_1 // 0x0000000000000000
     b==
     assert
     // tests/artifacts/Arrays/uint64.py:172
     // assert combined_arr[9] == 4
     extract 74 8
-    bytec_3 // 0x0000000000000004
+    bytec_2 // 0x0000000000000004
     b==
+    assert
     // tests/artifacts/Arrays/uint64.py:140
     // @arc4.abimethod()
+    intc_0 // 1
     return
 
 
@@ -1460,7 +1466,7 @@ test_quicksort_for_header@2:
     // tests/artifacts/Arrays/uint64.py:178
     // for b in Txn.sender.bytes:
     dup
-    pushint 32 // 32
+    pushint 32
     <
     bz test_quicksort_after_for@5
     // tests/artifacts/Arrays/uint64.py:179
@@ -1477,7 +1483,7 @@ test_quicksort_for_header@2:
     itob
     concat // on error: max array length exceeded
     stores
-    intc_1 // 1
+    intc_0 // 1
     +
     bury 1
     b test_quicksort_for_header@2
@@ -1489,16 +1495,16 @@ test_quicksort_after_for@5:
     dup
     loads
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     dup
-    pushint 32 // 32
+    pushint 32
     ==
     assert // expected array of length 32
     // tests/artifacts/Arrays/uint64.py:182-183
     // # sort the array
     // quicksort_window(rnd, UInt64(0), rnd.length - 1)
-    intc_1 // 1
+    intc_0 // 1
     -
     dig 1
     intc_2 // 0
@@ -1513,7 +1519,7 @@ test_quicksort_after_for@5:
     // for value in rnd:
     loads
     len
-    intc_0 // 8
+    intc_1 // 8
     /
     bury 6
     intc_2 // 0
@@ -1531,7 +1537,7 @@ test_quicksort_for_header@6:
     dig 5
     dup
     cover 2
-    intc_0 // 8
+    intc_1 // 8
     *
     extract_uint64
     // tests/artifacts/Arrays/uint64.py:188
@@ -1541,7 +1547,7 @@ test_quicksort_for_header@6:
     >=
     assert // array is not sorted
     swap
-    intc_1 // 1
+    intc_0 // 1
     +
     bury 6
     bury 4
@@ -1550,7 +1556,7 @@ test_quicksort_for_header@6:
 test_quicksort_after_for@9:
     // tests/artifacts/Arrays/uint64.py:174
     // @arc4.abimethod()
-    intc_1 // 1
+    intc_0 // 1
     return
 
 
@@ -1565,16 +1571,16 @@ test_unobserved_write:
     loads
     dup
     len
-    intc_0 // 8
+    intc_1 // 8
     /
-    intc_1 // 1
+    intc_0 // 1
     -
     // tests/artifacts/Arrays/uint64.py:195
     // arr[last] = UInt64(0)  # write
     intc_2 // 0
     itob
     swap
-    intc_0 // 8
+    intc_1 // 8
     *
     uncover 2
     dig 1
@@ -1589,7 +1595,7 @@ test_unobserved_write:
     callsub assert_last_is_zero
     // tests/artifacts/Arrays/uint64.py:197
     // arr[last] = UInt64(1)  # write
-    intc_1 // 1
+    intc_0 // 1
     itob
     dig 2
     loads
@@ -1603,10 +1609,12 @@ test_unobserved_write:
     // assert arr[last] == 1
     swap
     extract_uint64
-    intc_1 // 1
+    intc_0 // 1
     ==
+    assert
     // tests/artifacts/Arrays/uint64.py:191
     // @arc4.abimethod()
+    intc_0 // 1
     return
 
 
@@ -1615,7 +1623,7 @@ _puya_lib.mem.new_slot:
     load 0
     bitlen
     load 0
-    pushint 256 // 256
+    pushint 256
     dig 2
     -
     intc_2 // 0

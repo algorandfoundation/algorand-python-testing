@@ -11,7 +11,7 @@ main:
     pushbytes "global_uint64"
     // tests/artifacts/StateOps/contract.py:430
     // UInt64(2),
-    pushint 2 // 2
+    pushint 2
     // tests/artifacts/StateOps/contract.py:429-432
     // self.global_uint64 = GlobalState(
     //     UInt64(2),
@@ -33,7 +33,7 @@ main:
     // tests/artifacts/StateOps/contract.py:437
     // self.global_uint64_explicit = algopy.UInt64(2)
     pushbytes "global_uint64_explicit"
-    pushint 2 // 2
+    pushint 2
     app_global_put
     // tests/artifacts/StateOps/contract.py:438
     // self.global_bytes_explicit = algopy.Bytes(b"dummy_bytes")
@@ -70,6 +70,4 @@ main_after_if_else@2:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    pushint 1 // 1
     return

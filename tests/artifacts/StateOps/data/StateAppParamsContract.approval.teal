@@ -11,7 +11,7 @@ main:
     bz main___algopy_default_create@16
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0xb9d13c1b 0xe5c3c889 0xee4e7b2a 0x7fa234cb 0x19f77439 0x92c572aa 0xae9c6efb 0xe36ed705 0x8c66a842 // method "verify_app_params_get_approval_program(uint64)byte[]", method "verify_app_params_get_clear_state_program(uint64)byte[]", method "verify_app_params_get_global_num_uint(uint64)uint64", method "verify_app_params_get_global_num_byte_slice(uint64)uint64", method "verify_app_params_get_local_num_uint(uint64)uint64", method "verify_app_params_get_local_num_byte_slice(uint64)uint64", method "verify_app_params_get_extra_program_pages(uint64)uint64", method "verify_app_params_get_creator(uint64)address", method "verify_app_params_get_address(uint64)address"
@@ -25,8 +25,6 @@ main___algopy_default_create@16:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    intc_0 // 1
     return
 
 

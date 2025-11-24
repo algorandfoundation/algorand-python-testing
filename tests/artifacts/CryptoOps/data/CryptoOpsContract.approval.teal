@@ -11,7 +11,7 @@ main:
     bz main___algopy_default_create@20
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0x3456c4c3 0xe8442b84 0x65f567aa 0x258455b1 0x35af0f38 0x6582c997 0x6298ffbb 0x3885b54f 0x2164e0bf 0x755b79a5 0xf06bb077 0x133f8ccc 0x2f7c68a9 // method "verify_sha256(byte[],uint64)byte[]", method "verify_sha3_256(byte[],uint64)byte[]", method "verify_keccak_256(byte[],uint64)byte[]", method "verify_sha512_256(byte[],uint64)byte[]", method "verify_ed25519verify(byte[],byte[],byte[])bool", method "verify_ed25519verify_bare(byte[],byte[],byte[])bool", method "verify_ecdsa_verify_k1(byte[],byte[],byte[],byte[],byte[])bool", method "verify_ecdsa_verify_r1(byte[],byte[],byte[],byte[],byte[])bool", method "verify_ecdsa_recover_k1(byte[],uint64,byte[],byte[])(byte[],byte[])", method "verify_ecdsa_recover_r1(byte[],uint64,byte[],byte[])(byte[],byte[])", method "verify_ecdsa_decompress_k1(byte[])(byte[],byte[])", method "verify_ecdsa_decompress_r1(byte[])(byte[],byte[])", method "verify_vrf_verify(byte[],byte[],byte[])(byte[],bool)"
@@ -25,8 +25,6 @@ main___algopy_default_create@20:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    intc_1 // 1
     return
 
 
@@ -34,7 +32,7 @@ main___algopy_default_create@20:
 ensure_budget:
     proto 2 0
     frame_dig -2
-    pushint 10 // 10
+    pushint 10
     +
 
 ensure_budget_while_top@1:
@@ -188,7 +186,7 @@ verify_ed25519verify:
     extract 2 0
     // tests/artifacts/CryptoOps/contract.py:31
     // ensure_budget(1900, OpUpFeeSource.GroupCredit)
-    pushint 1900 // 1900
+    pushint 1900
     intc_0 // 0
     callsub ensure_budget
     // tests/artifacts/CryptoOps/contract.py:32
@@ -222,7 +220,7 @@ verify_ed25519verify_bare:
     extract 2 0
     // tests/artifacts/CryptoOps/contract.py:37
     // ensure_budget(1900, OpUpFeeSource.GroupCredit)
-    pushint 1900 // 1900
+    pushint 1900
     intc_0 // 0
     callsub ensure_budget
     // tests/artifacts/CryptoOps/contract.py:38
@@ -436,7 +434,7 @@ verify_ecdsa_decompress_k1:
     extract 2 0
     // tests/artifacts/CryptoOps/contract.py:72
     // ensure_budget(700, OpUpFeeSource.GroupCredit)
-    pushint 700 // 700
+    pushint 700
     intc_0 // 0
     callsub ensure_budget
     // tests/artifacts/CryptoOps/contract.py:73
@@ -486,7 +484,7 @@ verify_ecdsa_decompress_r1:
     extract 2 0
     // tests/artifacts/CryptoOps/contract.py:77
     // ensure_budget(700, OpUpFeeSource.GroupCredit)
-    pushint 700 // 700
+    pushint 700
     intc_0 // 0
     callsub ensure_budget
     // tests/artifacts/CryptoOps/contract.py:78
@@ -540,7 +538,7 @@ verify_vrf_verify:
     extract 2 0
     // tests/artifacts/CryptoOps/contract.py:82
     // ensure_budget(5700, OpUpFeeSource.GroupCredit)
-    pushint 5700 // 5700
+    pushint 5700
     intc_0 // 0
     callsub ensure_budget
     // tests/artifacts/CryptoOps/contract.py:83

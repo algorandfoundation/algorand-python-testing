@@ -11,7 +11,7 @@ main:
     bz main___algopy_default_create@19
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0xf05da7a4 0xc0e9c315 0xd8528273 0xf4468ad9 0x229d12f7 0xdf534f7b 0xe050b5a9 0x8b2a2d58 0xee15c4f7 0x157544ff 0x10492c07 0x5229fa37 // method "verify_asset_params_get_total(uint64)uint64", method "verify_asset_params_get_decimals(uint64)uint64", method "verify_asset_params_get_default_frozen(uint64)bool", method "verify_asset_params_get_unit_name(uint64)byte[]", method "verify_asset_params_get_name(uint64)byte[]", method "verify_asset_params_get_url(uint64)byte[]", method "verify_asset_params_get_metadata_hash(uint64)byte[]", method "verify_asset_params_get_manager(uint64)address", method "verify_asset_params_get_reserve(uint64)address", method "verify_asset_params_get_freeze(uint64)address", method "verify_asset_params_get_clawback(uint64)address", method "verify_asset_params_get_creator(uint64)address"
@@ -25,8 +25,6 @@ main___algopy_default_create@19:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    intc_0 // 1
     return
 
 
@@ -133,7 +131,7 @@ verify_asset_params_get_default_frozen:
     // tests/artifacts/StateOps/contract.py:191
     // @arc4.abimethod()
     pushbytes 0x00
-    pushint 0 // 0
+    pushint 0
     uncover 2
     setbit
     bytec_0 // 0x151f7c75

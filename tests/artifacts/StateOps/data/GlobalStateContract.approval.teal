@@ -110,7 +110,7 @@ main_after_if_else@2:
     bz main___algopy_default_create@39
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0x1cc966ee 0x2367cd4b 0x69128e90 0x68d590e2 0x44ef0681 0x1cd294ec 0xaac8ecb1 0x166c6afd 0x3cc3bb7b 0x9a6946ad 0xded75033 0x66279e93 0x096e927b 0x97531fbc 0x6ea3f996 0xa7f4f402 0xaaddcc4c 0x5ec3116d 0x20f56eee 0x1c149a43 0xa575ac7d 0x87f0869b 0x461afc6d 0x048116ea 0x30e34a93 0xd2e646ef 0xe674a270 0xa87e540d 0x720a3ca0 0x257708f7 // method "get_implicit_key_arc4_uint()uint64", method "get_implicit_key_arc4_string()string", method "get_implicit_key_arc4_byte()byte", method "get_implicit_key_arc4_bool()bool", method "get_implicit_key_arc4_address()address", method "get_implicit_key_arc4_uint128()uint128", method "get_implicit_key_arc4_dynamic_bytes()byte[]", method "get_implicit_key_tuple()(uint64,byte[],bool)", method "get_arc4_uint()uint64", method "get_arc4_string()string", method "get_arc4_byte()byte", method "get_arc4_bool()bool", method "get_arc4_address()address", method "get_arc4_uint128()uint128", method "get_arc4_dynamic_bytes()byte[]", method "set_implicit_key_arc4_uint(uint64)void", method "set_implicit_key_arc4_string(string)void", method "set_implicit_key_arc4_byte(byte)void", method "set_implicit_key_arc4_bool(bool)void", method "set_implicit_key_arc4_address(address)void", method "set_implicit_key_arc4_uint128(uint128)void", method "set_implicit_key_arc4_dynamic_bytes(byte[])void", method "set_implicit_key_tuple((uint64,byte[],bool))void", method "set_arc4_uint(uint64)void", method "set_arc4_string(string)void", method "set_arc4_byte(byte)void", method "set_arc4_bool(bool)void", method "set_arc4_address(address)void", method "set_arc4_uint128(uint128)void", method "set_arc4_dynamic_bytes(byte[])void"
@@ -124,8 +124,6 @@ main___algopy_default_create@39:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    intc_0 // 1
     return
 
 

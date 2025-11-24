@@ -11,7 +11,7 @@ main:
     bz main___algopy_default_create@57
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0x96f14116 0xed666096 0x2ca0352b 0x85907d40 0x2cbec45b 0x07666fd9 0x370babd3 0x2b6b3ef0 0x339da97c 0x7898ed97 0x1f130cec 0xc748664e 0x7a460cb1 0xdcab1f01 0x97d9064d 0xce06c2a0 0xdcdbcee0 0x77a4b68d 0x4f540626 0x095aed41 0xe3b7e918 0x55337008 0x9bb1cd66 0x81484d9d 0x9a03df10 0xd3f0e44b 0x982db233 0xaffbdf0e 0x288af76e 0x8bd84a04 0x302b8a0a 0x337ae20b 0x6e259270 0x79e35f77 0x0f1574fe 0xb2cb13be 0xd059eea7 0x4cc4c157 0x3d17ac6e 0xf7f3d5fc 0xf8c8f8d5 0x43f7162a 0x42e09075 0xd956f575 0x6c0160df 0xa890150b 0x0b2f4c3f 0x9db9d327 0xe4d950a1 0xb605e80c // method "verify_uintn_uintn_eq(byte[],byte[])bool", method "verify_biguintn_uintn_eq(byte[],byte[])bool", method "verify_uintn_biguintn_eq(byte[],byte[])bool", method "verify_biguintn_biguintn_eq(byte[],byte[])bool", method "verify_uintn_uintn_ne(byte[],byte[])bool", method "verify_biguintn_uintn_ne(byte[],byte[])bool", method "verify_uintn_biguintn_ne(byte[],byte[])bool", method "verify_biguintn_biguintn_ne(byte[],byte[])bool", method "verify_uintn_uintn_lt(byte[],byte[])bool", method "verify_biguintn_uintn_lt(byte[],byte[])bool", method "verify_uintn_biguintn_lt(byte[],byte[])bool", method "verify_biguintn_biguintn_lt(byte[],byte[])bool", method "verify_uintn_uintn_le(byte[],byte[])bool", method "verify_biguintn_uintn_le(byte[],byte[])bool", method "verify_uintn_biguintn_le(byte[],byte[])bool", method "verify_biguintn_biguintn_le(byte[],byte[])bool", method "verify_uintn_uintn_gt(byte[],byte[])bool", method "verify_biguintn_uintn_gt(byte[],byte[])bool", method "verify_uintn_biguintn_gt(byte[],byte[])bool", method "verify_biguintn_biguintn_gt(byte[],byte[])bool", method "verify_uintn_uintn_ge(byte[],byte[])bool", method "verify_biguintn_uintn_ge(byte[],byte[])bool", method "verify_uintn_biguintn_ge(byte[],byte[])bool", method "verify_biguintn_biguintn_ge(byte[],byte[])bool", method "verify_uintn_init(byte[])uint32", method "verify_biguintn_init(byte[])uint256", method "verify_uintn_from_bytes(byte[])uint32", method "verify_biguintn_from_bytes(byte[])uint256", method "verify_uintn_from_log(byte[])uint32", method "verify_biguintn_from_log(byte[])uint256", method "verify_biguintn_as_uint64(byte[])uint64", method "verify_biguintn_as_biguint(byte[])uint512", method "verify_uintn64_as_uint64(byte[])uint64", method "verify_uintn64_as_biguint(byte[])uint512", method "verify_ufixednxm_bytes(ufixed32x8)byte[]", method "verify_bigufixednxm_bytes(ufixed256x16)byte[]", method "verify_ufixednxm_from_bytes(byte[])ufixed32x8", method "verify_bigufixednxm_from_bytes(byte[])ufixed256x16", method "verify_ufixednxm_from_log(byte[])ufixed32x8", method "verify_bigufixednxm_from_log(byte[])ufixed256x16", method "verify_string_init(string)string", method "verify_string_add(string,string)string", method "verify_string_eq(string,string)bool", method "verify_string_bytes(string)byte[]", method "verify_string_from_bytes(byte[])string", method "verify_string_from_log(byte[])string", method "verify_bool_bytes(bool)byte[]", method "verify_bool_from_bytes(byte[])bool", method "verify_bool_from_log(byte[])bool", method "verify_emit(string,uint512,uint64,byte[],uint64,bool,byte[],string,uint64,uint256,ufixed32x8,ufixed256x16,bool,byte[],byte[],byte[])void"
@@ -25,8 +25,6 @@ main___algopy_default_create@57:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    intc_0 // 1
     return
 
 
@@ -1060,10 +1058,10 @@ verify_uintn_init:
     // return arc4.UInt32(a_biguint)
     dup
     len
-    pushint 4 // 4
+    pushint 4
     <=
     assert // overflow
-    pushint 4 // 4
+    pushint 4
     bzero
     b|
     // tests/artifacts/Arc4PrimitiveOps/contract.py:151
@@ -1086,10 +1084,10 @@ verify_biguintn_init:
     // return arc4.UInt256(a_biguint)
     dup
     len
-    pushint 32 // 32
+    pushint 32
     <=
     assert // overflow
-    pushint 32 // 32
+    pushint 32
     bzero
     b|
     // tests/artifacts/Arc4PrimitiveOps/contract.py:156
@@ -1188,10 +1186,10 @@ verify_biguintn_as_uint64:
     // return arc4.UInt256(a_biguint).as_uint64()
     dup
     len
-    pushint 32 // 32
+    pushint 32
     <=
     assert // overflow
-    pushint 32 // 32
+    pushint 32
     bzero
     b|
     dup
@@ -1225,10 +1223,10 @@ verify_biguintn_as_biguint:
     // return arc4.UInt256(a_biguint).as_biguint()
     dup
     len
-    pushint 32 // 32
+    pushint 32
     <=
     assert // overflow
-    pushint 32 // 32
+    pushint 32
     bzero
     b|
     // tests/artifacts/Arc4PrimitiveOps/contract.py:182
@@ -1637,13 +1635,13 @@ verify_emit:
     intc_3 // 0
     extract_uint16
     dig 1
-    pushint 2 // 2
+    pushint 2
     extract_uint16
     substring3
     extract 2 0
     txna ApplicationArgs 15
     dup
-    pushint 2 // 2
+    pushint 2
     extract_uint16
     dig 1
     len
@@ -1666,7 +1664,7 @@ verify_emit:
     concat
     dig 2
     len
-    pushint 84 // 84
+    pushint 84
     dig 1
     +
     itob
@@ -1704,7 +1702,7 @@ verify_emit:
     // )
     dig 16
     len
-    pushint 173 // 173
+    pushint 173
     +
     pushbytes 0x00ad
     uncover 17

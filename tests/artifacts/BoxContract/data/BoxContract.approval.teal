@@ -11,7 +11,7 @@ main:
     bz main___algopy_default_create@34
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0xf26c6d42 0xef186cf7 0x7d37296e 0xf13dd937 0x33325d3d 0xa6174812 0xfabcb885 0xd566c632 0x04ef4971 0x23ecb32c 0x0199408d 0x772059ca 0x01263df6 0xeef75816 0x996497ae 0x6cec72ff 0x6f9d1075 0x59ef3760 0xaa666b96 0xdfbdd636 0xb532913a 0xc29f1669 0x9c888c09 0xe6f68506 0x8ee2c364 // method "store_enums()void", method "read_enums()(uint64,uint64)", method "set_boxes(uint64,byte[],string)void", method "boxes_exist()(bool,bool,bool,bool)", method "check_keys()void", method "read_boxes()(uint64,byte[],string,uint64)", method "indirect_extract_and_replace()void", method "delete_boxes()void", method "slice_box()void", method "arc4_box()void", method "create_many_ints()void", method "set_many_ints(uint64,uint64)void", method "sum_many_ints()uint64", method "test_box_ref()void", method "set_nested_struct((uint64,(uint64,uint64[][],uint64),(uint64,uint64[][],uint64)[],uint64))void", method "nested_write(uint64,uint64)void", method "nested_read(uint64,uint64,uint64)uint64", method "create_bools()void", method "set_bool(uint64,bool)void", method "sum_bools(uint64)uint64", method "box_map_test()void", method "box_map_set(uint64,string)void", method "box_map_get(uint64)string", method "box_map_del(uint64)void", method "box_map_exists(uint64)bool"
@@ -23,7 +23,7 @@ main_create_bools_route@23:
     // tests/artifacts/BoxContract/contract.py:281
     // self.too_many_bools.create()
     bytec 8 // "too_many_bools"
-    pushint 4125 // 4125
+    pushint 4125
     box_create
     pop
     // tests/artifacts/BoxContract/contract.py:279
@@ -35,7 +35,7 @@ main_create_many_ints_route@16:
     // tests/artifacts/BoxContract/contract.py:181
     // self.many_ints.create()
     bytec 9 // "many_ints"
-    pushint 4104 // 4104
+    pushint 4104
     box_create
     pop
     // tests/artifacts/BoxContract/contract.py:179
@@ -47,7 +47,7 @@ main_arc4_box_route@15:
     // tests/artifacts/BoxContract/contract.py:171-172
     // box_d = Box(StaticInts, key=Bytes(b"d"))
     // box_d.value = StaticInts(arc4.UInt8(0), arc4.UInt8(1), arc4.UInt8(2), arc4.UInt8(3))
-    pushbytess 0x64 0x00010203 // 0x64, 0x00010203
+    pushbytess 0x64 0x00010203
     // tests/artifacts/BoxContract/contract.py:172
     // box_d.value = StaticInts(arc4.UInt8(0), arc4.UInt8(1), arc4.UInt8(2), arc4.UInt8(3))
     box_put
@@ -68,8 +68,6 @@ main___algopy_default_create@34:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    intc_0 // 1
     return
 
 
@@ -178,12 +176,12 @@ set_boxes:
     // tests/artifacts/BoxContract/contract.py:91
     // self.box_large.create()
     bytec_3 // "box_large"
-    pushint 6160 // 6160
+    pushint 6160
     box_create
     pop
     // tests/artifacts/BoxContract/contract.py:92
     // self.box_large.value.e = UInt64(42)
-    pushint 42 // 42
+    pushint 42
     itob
     bytec_3 // "box_large"
     intc 4 // 4096
@@ -201,7 +199,7 @@ set_boxes:
     box_get
     assert // check self.box_a exists
     btoi
-    pushint 3 // 3
+    pushint 3
     +
     itob
     bytec 5 // "box_a"
@@ -395,21 +393,21 @@ set_boxes:
     assert
     // tests/artifacts/BoxContract/contract.py:116
     // assert self.box_d.value[:5] == b.native[:5]
-    pushint 5 // 5
+    pushint 5
     dig 2
     <
     dig 2
-    pushint 5 // 5
+    pushint 5
     uncover 2
     select
     bytec 6 // "box_d"
     intc_2 // 0
     uncover 2
     box_extract
-    pushint 5 // 5
+    pushint 5
     dig 2
     >=
-    pushint 5 // 5
+    pushint 5
     dig 3
     uncover 2
     select
@@ -450,10 +448,12 @@ set_boxes:
     bytec_3 // "box_large"
     box_len
     pop
-    pushint 6160 // 6160
+    pushint 6160
     ==
+    assert
     // tests/artifacts/BoxContract/contract.py:85
     // @arc4.abimethod
+    intc_0 // 1
     return
 
 
@@ -488,7 +488,7 @@ boxes_exist:
     intc_1 // 2
     uncover 2
     setbit
-    pushint 3 // 3
+    pushint 3
     uncover 2
     setbit
     bytec 4 // 0x151f7c75
@@ -548,7 +548,7 @@ read_boxes:
     concat
     dig 1
     len
-    pushint 20 // 20
+    pushint 20
     +
     itob
     extract 6 2
@@ -624,11 +624,11 @@ delete_boxes:
     box_get
     swap
     btoi
-    pushint 42 // 42
+    pushint 42
     dig 1
     dig 3
     select
-    pushint 42 // 42
+    pushint 42
     ==
     assert
     // tests/artifacts/BoxContract/contract.py:153
@@ -699,11 +699,11 @@ slice_box:
     intc_2 // 0
     dig 2
     select
-    pushint 7 // 7
+    pushint 7
     dig 2
     <
     uncover 2
-    pushint 7 // 7
+    pushint 7
     uncover 2
     select
     dig 1
@@ -738,11 +738,11 @@ slice_box:
     intc_1 // 2
     uncover 2
     select
-    pushint 10 // 10
+    pushint 10
     dig 2
     <
     uncover 2
-    pushint 10 // 10
+    pushint 10
     uncover 2
     select
     dig 1
@@ -752,8 +752,10 @@ slice_box:
     box_extract
     pushbytes 0x48656c6c6f
     ==
+    assert
     // tests/artifacts/BoxContract/contract.py:160
     // @arc4.abimethod
+    intc_0 // 1
     return
 
 
@@ -785,7 +787,7 @@ sum_many_ints:
     dup
 
 sum_many_ints_while_top@7:
-    pushint 10510 // 10510
+    pushint 10510
     global OpcodeBudget
     >
     bz sum_many_ints_after_while@12
@@ -821,7 +823,7 @@ sum_many_ints_for_header@2:
     // tests/artifacts/BoxContract/contract.py:191
     // for val in self.many_ints.value:
     dig 1
-    pushint 513 // 513
+    pushint 513
     <
     bz sum_many_ints_after_for@5
     dig 1
@@ -874,7 +876,7 @@ test_box_ref:
     // tests/artifacts/BoxContract/contract.py:207-208
     // # create
     // assert box_ref.create(size=UInt64(32))
-    pushint 32 // 32
+    pushint 32
     box_create
     assert
     // tests/artifacts/BoxContract/contract.py:211-212
@@ -897,7 +899,7 @@ test_box_ref:
     bytec_2 // "blob"
     // tests/artifacts/BoxContract/contract.py:216
     // box_ref.resize(8000)
-    pushint 8000 // 8000
+    pushint 8000
     box_resize
     // tests/artifacts/BoxContract/contract.py:204
     // box_ref = Box(Bytes, key=String("blob"))
@@ -913,7 +915,7 @@ test_box_ref:
     bytec_2 // "blob"
     // tests/artifacts/BoxContract/contract.py:218
     // box_ref.replace(64, value_3)
-    pushint 64 // 64
+    pushint 64
     // tests/artifacts/BoxContract/contract.py:214
     // value_3 = Bytes(b"hello")
     bytec 12 // 0x68656c6c6f
@@ -926,7 +928,7 @@ test_box_ref:
     // tests/artifacts/BoxContract/contract.py:219
     // prefix = box_ref.extract(0, 32 * 2 + value_3.length)
     intc_2 // 0
-    pushint 69 // 69
+    pushint 69
     box_extract
     // tests/artifacts/BoxContract/contract.py:220
     // assert prefix == app_address + sender_bytes + value_3
@@ -1004,14 +1006,14 @@ test_box_ref:
     pop
     // tests/artifacts/BoxContract/contract.py:235
     // assert box_ref.length == 64
-    pushint 64 // 64
+    pushint 64
     ==
     assert
     // tests/artifacts/BoxContract/contract.py:238-239
     // # instance box ref
     // self.box_ref.create(size=UInt64(32))
     bytec 16 // "box_ref"
-    pushint 32 // 32
+    pushint 32
     box_create
     pop
     // tests/artifacts/BoxContract/contract.py:241
@@ -1112,7 +1114,7 @@ nested_write:
     bytec_0 // "box"
     // tests/artifacts/BoxContract/contract.py:261
     // box.value.nested.b = value + 1
-    pushint 4110 // 4110
+    pushint 4110
     uncover 2
     box_replace
     // tests/artifacts/BoxContract/contract.py:262
@@ -1126,7 +1128,7 @@ nested_write:
     bytec_0 // "box"
     // tests/artifacts/BoxContract/contract.py:262
     // box.value.nested.inner.arr_arr[index][index] = value + 2
-    pushint 4136 // 4136
+    pushint 4136
     intc_1 // 2
     box_extract
     btoi
@@ -1181,7 +1183,7 @@ nested_write:
     // tests/artifacts/BoxContract/contract.py:263
     // box.value.nested.inner.c = value + 3
     dig 2
-    pushint 3 // 3
+    pushint 3
     +
     itob
     // tests/artifacts/BoxContract/contract.py:259
@@ -1189,13 +1191,13 @@ nested_write:
     bytec_0 // "box"
     // tests/artifacts/BoxContract/contract.py:263
     // box.value.nested.inner.c = value + 3
-    pushint 4118 // 4118
+    pushint 4118
     uncover 2
     box_replace
     // tests/artifacts/BoxContract/contract.py:264
     // box.value.nested.inner.d = value + 4
     dig 2
-    pushint 4 // 4
+    pushint 4
     +
     itob
     // tests/artifacts/BoxContract/contract.py:259
@@ -1203,13 +1205,13 @@ nested_write:
     bytec_0 // "box"
     // tests/artifacts/BoxContract/contract.py:264
     // box.value.nested.inner.d = value + 4
-    pushint 4128 // 4128
+    pushint 4128
     uncover 2
     box_replace
     // tests/artifacts/BoxContract/contract.py:265
     // box.value.nested.woah[index].arr_arr[index][index] = value + 5
     uncover 2
-    pushint 5 // 5
+    pushint 5
     +
     itob
     // tests/artifacts/BoxContract/contract.py:259
@@ -1217,7 +1219,7 @@ nested_write:
     bytec_0 // "box"
     // tests/artifacts/BoxContract/contract.py:265
     // box.value.nested.woah[index].arr_arr[index][index] = value + 5
-    pushint 4108 // 4108
+    pushint 4108
     intc_1 // 2
     box_extract
     btoi
@@ -1250,7 +1252,7 @@ nested_write:
     box_extract
     btoi
     +
-    pushint 18 // 18
+    pushint 18
     +
     // tests/artifacts/BoxContract/contract.py:259
     // box = Box(LargeNestedStruct, key="box")
@@ -1333,7 +1335,7 @@ nested_read:
     bytec_0 // "box"
     // tests/artifacts/BoxContract/contract.py:271
     // b = box.value.nested.b
-    pushint 4110 // 4110
+    pushint 4110
     intc_3 // 8
     box_extract
     btoi
@@ -1342,7 +1344,7 @@ nested_read:
     bytec_0 // "box"
     // tests/artifacts/BoxContract/contract.py:272
     // arr_arr = box.value.nested.inner.arr_arr[i1][i2]
-    pushint 4136 // 4136
+    pushint 4136
     intc_1 // 2
     box_extract
     btoi
@@ -1398,7 +1400,7 @@ nested_read:
     bytec_0 // "box"
     // tests/artifacts/BoxContract/contract.py:273
     // c = box.value.nested.inner.c
-    pushint 4118 // 4118
+    pushint 4118
     intc_3 // 8
     box_extract
     btoi
@@ -1407,7 +1409,7 @@ nested_read:
     bytec_0 // "box"
     // tests/artifacts/BoxContract/contract.py:274
     // d = box.value.nested.inner.d
-    pushint 4128 // 4128
+    pushint 4128
     intc_3 // 8
     box_extract
     btoi
@@ -1416,7 +1418,7 @@ nested_read:
     bytec_0 // "box"
     // tests/artifacts/BoxContract/contract.py:275
     // woah_arr_arr = box.value.nested.woah[i1].arr_arr[i2][i3]
-    pushint 4108 // 4108
+    pushint 4108
     intc_1 // 2
     box_extract
     btoi
@@ -1449,7 +1451,7 @@ nested_read:
     box_extract
     btoi
     +
-    pushint 18 // 18
+    pushint 18
     +
     // tests/artifacts/BoxContract/contract.py:269
     // box = Box(LargeNestedStruct, key="box")
@@ -1588,7 +1590,7 @@ sum_bools_for_header@2:
     // tests/artifacts/BoxContract/contract.py:290
     // for value in self.too_many_bools.value:
     dup
-    pushint 33000 // 33000
+    pushint 33000
     <
     bz sum_bools_after_for@9
     dupn 2
@@ -1661,7 +1663,7 @@ box_map_test:
     // assert self.box_map[key_0].bytes.length == value.bytes.length
     box_len
     pop
-    pushint 6 // 6
+    pushint 6
     ==
     assert
     // tests/artifacts/BoxContract/contract.py:300

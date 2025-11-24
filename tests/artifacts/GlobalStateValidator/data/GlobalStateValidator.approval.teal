@@ -20,7 +20,7 @@ main_validate_g_args_route@3:
     !
     txn ApplicationID
     &&
-    assert // OnCompletion must be NoOp && can only call when not creating
+    assert
     b validate_g_args
 
 main___algopy_default_create@5:
@@ -29,8 +29,6 @@ main___algopy_default_create@5:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    pushint 1 // 1
     return
 
 
@@ -65,7 +63,7 @@ validate_g_args:
     pushint 6 // appl
     ==
     assert // transaction type is appl
-    pushint 1 // 1
+    pushint 1
     gtxnsas ApplicationArgs
     dig 1
     ==
@@ -73,7 +71,7 @@ validate_g_args:
     // tests/artifacts/GlobalStateValidator/contract.py:11
     // assert gtxn.Transaction(Txn.group_index).app_args(1) == arg1.bytes
     txn GroupIndex
-    pushint 1 // 1
+    pushint 1
     gtxnsas ApplicationArgs
     dig 1
     ==
@@ -89,6 +87,8 @@ validate_g_args:
     // assert op.Txn.application_args(1) == arg1.bytes
     txna ApplicationArgs 1
     ==
+    assert
     // tests/artifacts/GlobalStateValidator/contract.py:5
     // @arc4.abimethod
+    pushint 1
     return

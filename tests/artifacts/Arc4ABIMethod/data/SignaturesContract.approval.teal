@@ -9,7 +9,7 @@ main:
     // class SignaturesContract(ARC4Contract):
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     bz main_create_NoOp@13
     pushbytess 0xe18922d8 0x3b05cf17 0x0658dcc3 0x5b6447de 0x061f4e77 0xeaa89139 0x510e72a4 0xd6c2ac7f 0x48142d5e // method "sink(string,uint8[])void", method "alias(string,uint8[])void", method "with_txn(string,pay,uint8[])void", method "with_asset(string,asset,uint8[])void", method "with_app(string,application,uint64,uint8[])void", method "with_acc(string,account,uint8[])void", method "complex_sig(((uint64,string),(uint64,string),uint128,uint128),txn,account,uint8[])((uint64,string),((uint64,string),(uint64,string),uint128,uint128))", method "echo_resource_by_index(asset,application,account)(uint64,uint64,address)", method "echo_resource_by_value(uint64,uint64,address)(uint64,uint64,address)"
@@ -83,8 +83,10 @@ sink:
     // assert arr
     bytec_0 // 0x0000
     !=
+    assert
     // tests/artifacts/Arc4ABIMethod/contract.py:36
     // @arc4.abimethod(validate_encoding="unsafe_disabled")
+    intc_0 // 1
     return
 
 
@@ -103,8 +105,10 @@ sink2:
     // assert arr
     bytec_0 // 0x0000
     !=
+    assert
     // tests/artifacts/Arc4ABIMethod/contract.py:41
     // @arc4.abimethod(name="alias")
+    intc_0 // 1
     return
 
 
@@ -150,8 +154,10 @@ with_txn:
     gtxns Amount
     intc_3 // 123
     ==
+    assert
     // tests/artifacts/Arc4ABIMethod/contract.py:46
     // @arc4.abimethod
+    intc_0 // 1
     return
 
 
@@ -187,8 +193,10 @@ with_asset:
     // assert Txn.assets(0) == asset
     txna Assets 0
     ==
+    assert
     // tests/artifacts/Arc4ABIMethod/contract.py:54
     // @arc4.abimethod(resource_encoding="index")
+    intc_0 // 1
     return
 
 
@@ -262,8 +270,10 @@ with_app:
     // assert Txn.applications(1) == app
     txna Applications 1
     ==
+    assert
     // tests/artifacts/Arc4ABIMethod/contract.py:61
     // @arc4.abimethod(resource_encoding="index")
+    intc_0 // 1
     return
 
 
@@ -295,7 +305,7 @@ with_acc:
     dig 1
     acct_params_get AcctMinBalance
     assert // account funded
-    pushint 1234 // 1234
+    pushint 1234
     +
     ==
     assert
@@ -309,8 +319,10 @@ with_acc:
     // assert Txn.accounts(1) == acc
     txna Accounts 1
     ==
+    assert
     // tests/artifacts/Arc4ABIMethod/contract.py:75
     // @arc4.abimethod(resource_encoding="index")
+    intc_0 // 1
     return
 
 
@@ -331,7 +343,7 @@ complex_sig:
     dup
     intc_1 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 2 // 2
+    pushint 2
     +
     dig 1
     len
@@ -340,7 +352,7 @@ complex_sig:
     // tests/artifacts/Arc4ABIMethod/contract.py:88
     // assert Txn.num_app_args == 4
     txn NumAppArgs
-    pushint 4 // 4
+    pushint 4
     ==
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:89-90
@@ -350,7 +362,7 @@ complex_sig:
     intc_1 // 0
     extract_uint16
     dig 4
-    pushint 2 // 2
+    pushint 2
     extract_uint16
     dig 5
     uncover 2
@@ -366,7 +378,7 @@ complex_sig:
     // assert struct1.another_struct.one == 1
     // assert struct1.another_struct.two == "2"
     dup
-    pushint 8 // 8
+    pushint 8
     extract_uint16
     dig 1
     len
@@ -396,7 +408,7 @@ complex_sig:
     // assert struct1.another_struct_alias.one == 1
     // assert struct1.another_struct_alias.two == "2"
     dup
-    pushint 8 // 8
+    pushint 8
     extract_uint16
     dig 1
     len
@@ -447,7 +459,7 @@ complex_sig:
     uncover 4
     acct_params_get AcctMinBalance
     assert // account funded
-    pushint 1234 // 1234
+    pushint 1234
     +
     ==
     assert
@@ -460,7 +472,7 @@ complex_sig:
     assert
     // tests/artifacts/Arc4ABIMethod/contract.py:83
     // @arc4.abimethod(resource_encoding="index")
-    pushint 4 // 4
+    pushint 4
     +
     itob
     extract 6 2
@@ -558,7 +570,7 @@ echo_resource_by_value:
     // acc.validate()
     dup
     len
-    pushint 32 // 32
+    pushint 32
     ==
     assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // tests/artifacts/Arc4ABIMethod/contract.py:128

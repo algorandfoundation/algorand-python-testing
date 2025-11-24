@@ -11,7 +11,7 @@ main:
     bz main___algopy_default_create@9
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0xbe56499c 0xac8aab42 // method "test_falcon_verify()void", method "test_reject_version()void"
@@ -25,8 +25,6 @@ main___algopy_default_create@9:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    intc_0 // 1
     return
 
 
@@ -34,15 +32,17 @@ main___algopy_default_create@9:
 test_falcon_verify:
     // tests/artifacts/AVM12/contract.py:7
     // assert not op.falcon_verify(b"", b"", op.bzero(1793))
-    pushint 1793 // 1793
+    pushint 1793
     bzero
     pushbytes 0x
     dup
     uncover 2
     falcon_verify
     !
+    assert
     // tests/artifacts/AVM12/contract.py:5
     // @arc4.abimethod
+    intc_0 // 1
     return
 
 
@@ -53,7 +53,7 @@ test_reject_version:
     itxn_begin
     bytec_0 // base64(DIEBQw==)
     itxn_field ClearStateProgramPages
-    pushbytes base64(DDEbQQAagASg6BhyNhoAjgEAAQAxGYEEEjEYEERCAAsxGRQxGBQQRIEBQzFEgQESRIEBQw==)
+    pushbytes base64(DDEbQQAagASg6BhyNhoAjgEAAQAxGYEEEjEYEERCAAgxGRQxGBQQQzFEgQESRIEBQw==)
     itxn_field ApprovalProgramPages
     intc_1 // appl
     itxn_field TypeEnum
@@ -77,7 +77,7 @@ test_reject_version:
     // ContractV0.update, app_id=app, reject_version=1, compiled=compile_contract(ContractV1)
     bytec_0 // base64(DIEBQw==)
     itxn_field ClearStateProgramPages
-    pushbytes base64(DDEbQQAagAQkN408NhoAjgEAAQAxGYEFEjEYEERCAAsxGRQxGBQQRIEBQzFEgQISRIEBQw==)
+    pushbytes base64(DDEbQQAagAQkN408NhoAjgEAAQAxGYEFEjEYEERCAAgxGRQxGBQQQzFEgQISRIEBQw==)
     itxn_field ApprovalProgramPages
     // tests/artifacts/AVM12/contract.py:15-17
     // arc4.arc4_update(
@@ -124,7 +124,7 @@ test_reject_version:
     itxn_begin
     // tests/artifacts/AVM12/contract.py:28
     // reject_version=2,
-    pushint 2 // 2
+    pushint 2
     itxn_field RejectVersion
     itxn_field ApplicationID
     // tests/artifacts/AVM12/contract.py:26

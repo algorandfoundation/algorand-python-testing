@@ -20,7 +20,7 @@ main_after_if_else@2:
     bz main_bare_routing@12
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0x526e8bbf 0x95fef13d 0x0c29444b // method "append()void", method "modify()void", method "get()(uint64,string)[]"
@@ -39,7 +39,7 @@ main_opt_in@14:
     // tests/artifacts/StateMutations/statemutations.py:31
     // @arc4.baremethod(allow_actions=["OptIn"])
     txn ApplicationID
-    assert // can only call when not creating
+    assert
     // tests/artifacts/StateMutations/statemutations.py:33
     // self.glob_assign.value = MyArray()
     bytec_3 // "glob_assign"
@@ -98,8 +98,6 @@ main_opt_in@14:
 main___algopy_default_create@13:
     txn ApplicationID
     !
-    assert // can only call when creating
-    intc_1 // 1
     return
 
 

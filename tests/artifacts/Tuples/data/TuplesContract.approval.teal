@@ -19,10 +19,10 @@ main_test_tuple_with_primitive_type_route@3:
     !
     txn ApplicationID
     &&
-    assert // OnCompletion must be NoOp && can only call when not creating
+    assert
     pushbytes 0x151f7c75000000000000000080
     log
-    pushint 1 // 1
+    pushint 1
     return
 
 main___algopy_default_create@5:
@@ -31,6 +31,4 @@ main___algopy_default_create@5:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    pushint 1 // 1
     return

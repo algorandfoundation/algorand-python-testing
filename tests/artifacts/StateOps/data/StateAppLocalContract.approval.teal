@@ -18,7 +18,7 @@ main_switch_case_next@6:
     // class StateAppLocalContract(ARC4Contract):
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0xa88302fe 0x49b7ddf9 0xc078bead 0xa52f992b 0x8c56ad90 0x4c7ad823 0xcaa7b864 0x24f9f085 // method "verify_get_bytes(address,byte[])byte[]", method "verify_get_uint64(address,byte[])uint64", method "verify_get_ex_bytes(address,uint64,byte[])byte[]", method "verify_get_ex_uint64(address,uint64,byte[])uint64", method "verify_delete(address,byte[])void", method "verify_exists(address,byte[])bool", method "verify_put_uint64(address,byte[],uint64)void", method "verify_put_bytes(address,byte[],byte[])void"
@@ -34,7 +34,7 @@ main_opt_in_route@5:
     ==
     txn ApplicationID
     &&
-    assert // OnCompletion must be OptIn && can only call when not creating
+    assert
     b opt_in
 
 main___algopy_default_create@19:
@@ -43,8 +43,6 @@ main___algopy_default_create@19:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    intc_0 // 1
     return
 
 
@@ -53,13 +51,13 @@ opt_in:
     // tests/artifacts/StateOps/contract.py:386
     // self.local_bytes[Global.creator_address] = Bytes(b"dummy_bytes")
     global CreatorAddress
-    pushbytess "local_bytes" 0x64756d6d795f6279746573 // "local_bytes", 0x64756d6d795f6279746573
+    pushbytess "local_bytes" 0x64756d6d795f6279746573
     app_local_put
     // tests/artifacts/StateOps/contract.py:387
     // self.local_uint64[Global.creator_address] = UInt64(999)
     global CreatorAddress
     pushbytes "local_uint64"
-    pushint 999 // 999
+    pushint 999
     app_local_put
     // tests/artifacts/StateOps/contract.py:384
     // @arc4.abimethod(allow_actions=["OptIn"])
