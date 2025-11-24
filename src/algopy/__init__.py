@@ -1,3 +1,4 @@
+# ruff: noqa: I001
 from _algopy_testing.compiled import (
     CompiledContract,
     CompiledLogicSig,
@@ -33,6 +34,9 @@ from _algopy_testing.state import Box, BoxMap, BoxRef, GlobalState, LocalState
 from _algopy_testing.utilities import OpUpFeeSource, ensure_budget, log, size_of
 
 from . import arc4, gtxn, itxn, op
+from _algopy_testing.decorators.arc4 import (
+    abimethod as public,
+)
 
 __all__ = [
     "ARC4Contract",
@@ -76,6 +80,7 @@ __all__ = [
     "log",
     "logicsig",
     "op",
+    "public",
     "size_of",
     "subroutine",
     "uenumerate",

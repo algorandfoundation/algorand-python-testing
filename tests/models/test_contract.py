@@ -11,7 +11,6 @@ if typing.TYPE_CHECKING:
 
 
 class ContractTxnInit(algopy.Contract):
-
     def __init__(self) -> None:
         self.arg1 = algopy.Txn.app_args(0) if algopy.Txn.num_app_args else algopy.Bytes()
         self.creator = algopy.Txn.sender
@@ -32,14 +31,13 @@ class ContractARC4Create(
         local_uints=7,
     ),
 ):
-
     def __init__(self) -> None:
         self.creator = algopy.Txn.sender
         self._name = algopy.String("name")
         self._scratch_slots = algopy.UInt64()
         self._state_totals = algopy.UInt64()
 
-    @algopy.arc4.abimethod(create="require")
+    @algopy.public(create="require")
     def create(self, val: algopy.UInt64) -> None:
         self.arg1 = val
         assert algopy.Global.current_application_id.global_num_bytes == 4

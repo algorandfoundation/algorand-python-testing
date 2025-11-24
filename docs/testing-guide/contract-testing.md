@@ -1,6 +1,6 @@
 # Smart Contract Testing
 
-This guide provides an overview of how to test smart contracts using the Algorand Python SDK (`algopy`). It covers the basics of testing `ARC4Contract` and `Contract` classes, focusing on the `abimethod` and `baremethod` decorators.
+This guide provides an overview of how to test smart contracts using the Algorand Python SDK (`algopy`). It covers the basics of testing `ARC4Contract` and `Contract` classes, focusing on the `baremethod`, `abimethod` and `public` (an alias of `abimethod`) decorators.
 
 ![](https://mermaid.ink/img/pako:eNqVkrFugzAQhl_Fujnp1ImhEiJrJNREWeoOV9sNVsFG9iEVBd69R5w0JE2llsk2n7-7_-AAymsDGewDtpXYrqQT_GyKFwl5vfcBnRZlT5V3IjYYSCjvKKAiCa-JzXfrObyzgTqsxRpVZZ25YOX2nnRrIomCneZzpszLkllktu0f8ratrUKyjFsXCZ1K2gTH7i01_8dGUjOT_55YeLdUFVr3zRunf5b6R5hZoFnBq9cX72_Br_Cj8bl4vJCHaVucvowYxHk5Xg_sfPkY6SbbphDL5dMgQZu29n0U5DMJwzTVGyApySKZKFSNMXKVxPJYYAGNCQ1azX_VYboqgSrTcAcZLzWGDwnSjcxhR37TOwUZhc4sIPhuX0H2jnXkXddqrrCyyKNpTqfjF5m74B8?type=png)
 
@@ -24,7 +24,7 @@ context = ctx_manager.__enter__()
 
 Subclasses of `algopy.ARC4Contract` are **required** to be instantiated with an active test context. As part of instantiation, the test context will automatically create a matching `algopy.Application` object instance.
 
-Within the class implementation, methods decorated with `algopy.arc4.abimethod` and `algopy.arc4.baremethod` will automatically assemble an `algopy.gtxn.ApplicationCallTransaction` to emulate the AVM application call. This behaviour can be overridden by setting the transaction group manually as part of test setup; this is done via implicit invocation of the `algopy_testing.context.any_application()` _value generator_ (refer to the [API](../api.md) for more details).
+Within the class implementation, methods decorated with `algopy.arc4.abimethod` (or its alias, `algopy.public`) and `algopy.arc4.baremethod` will automatically assemble an `algopy.gtxn.ApplicationCallTransaction` to emulate the AVM application call. This behaviour can be overridden by setting the transaction group manually as part of test setup; this is done via implicit invocation of the `algopy_testing.context.any_application()` _value generator_ (refer to the [API](../api.md) for more details).
 
 ```{testcode}
 class SimpleVotingContract(algopy.ARC4Contract):
@@ -42,14 +42,14 @@ class SimpleVotingContract(algopy.ARC4Contract):
         self.topic.value = initial_topic
         self.votes.value = algopy.UInt64(0)
 
-    @algopy.arc4.abimethod
+    @algopy.public
     def vote(self) -> algopy.UInt64:
         assert self.voted[algopy.Txn.sender] == algopy.UInt64(0), "Account has already voted"
         self.votes.value += algopy.UInt64(1)
         self.voted[algopy.Txn.sender] = algopy.UInt64(1)
         return self.votes.value
 
-    @algopy.arc4.abimethod(readonly=True)
+    @algopy.public(readonly=True)
     def get_votes(self) -> algopy.UInt64:
         return self.votes.value
 
@@ -74,7 +74,7 @@ assert contract.topic.value == initial_topic
 assert contract.votes.value == algopy.UInt64(0)
 
 # Act - Vote
-# The method `.vote()` is decorated with `algopy.arc4.abimethod`, which means it will assemble a transaction to emulate the AVM application call
+# The method `.vote()` is decorated with `algopy.public`, an alias of `algopy.arc4.abimethod`, which means it will assemble a transaction to emulate the AVM application call
 result = contract.vote()
 
 # Assert - you can access the corresponding auto generated application call transaction via test context

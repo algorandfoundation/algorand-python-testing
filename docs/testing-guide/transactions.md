@@ -143,7 +143,7 @@ When testing smart contracts, to stay consistent with AVM, the framework _does n
 
 ```{testcode}
 class MyContract(algopy.ARC4Contract):
-    @algopy.arc4.abimethod
+    @algopy.public
     def pay_via_itxn(self, asset: algopy.Asset) -> None:
         algopy.itxn.Payment(
             receiver=algopy.Txn.sender,
@@ -180,7 +180,7 @@ first_payment_txn = first_itxn_group.payment(0)
 
 In this example, we define a contract method `pay_via_itxn` that creates and submits an inner payment transaction. The test context automatically captures and stores the inner transactions submitted by the contract method.
 
-Note that we don't need to wrap the execution in a `create_group` context manager because the method is decorated with `@algopy.arc4.abimethod`, which automatically creates a transaction group for the method. The `create_group` context manager is only needed when you want to create more complex transaction groups or patch transaction fields for various transaction-related opcodes in AVM.
+Note that we don't need to wrap the execution in a `create_group` context manager because the method is decorated with `@algopy.public`, an alias of `@algopy.arc4.abimethod`, which automatically creates a transaction group for the method. The `create_group` context manager is only needed when you want to create more complex transaction groups or patch transaction fields for various transaction-related opcodes in AVM.
 
 To access the submitted inner transactions:
 

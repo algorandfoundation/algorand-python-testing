@@ -61,5 +61,5 @@ For a full list of all public `algopy` types and their corresponding implementat
 
 ## Data Validation
 
-Algorand Python and the puya compiler have functionality to perform validation of transaction inputs via the `--validate-abi-args`, `--validate-abi-return` CLI arguments, `arc4.abimethod(validate_encoding=...)` decorator and `.validate()` methods. 
-The Algorand Python Testing library does *NOT* implement this validation behaviour, as you should test invalid inputs using an integrated test against a real Algorand network. 
+Algorand Python and the puya compiler have functionality to perform validation of transaction inputs via the `--validate-abi-args`, `--validate-abi-return` CLI arguments, `arc4.abimethod(validate_encoding=...)` decorator (or its alias, `algopy.public`) and `.validate()` methods.
+The Algorand Python Testing library does _NOT_ implement this validation behaviour, as you should test invalid inputs using an integrated test against a real Algorand network.
