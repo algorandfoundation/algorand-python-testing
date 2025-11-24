@@ -23,6 +23,8 @@ from _algopy_testing.utils import generate_random_int
 if typing.TYPE_CHECKING:
     import algopy
 
+_TBytesLength = typing.TypeVar("_TBytesLength", bound=int)
+
 
 class AVMValueGenerator:
     """Factory for generating test data for AVM abstractions (uint64, bytes, string,
@@ -197,6 +199,19 @@ class AVMValueGenerator:
         """
         length = length or MAX_BYTES_SIZE
         return _algopy_testing.Bytes(secrets.token_bytes(length))
+
+    def fixed_bytes(
+        self, fixed_bytes_type: type[algopy.FixedBytes[_TBytesLength]]
+    ) -> algopy.FixedBytes[_TBytesLength]:
+        """Generate a random fixed byte sequence of a specified length.
+
+        :param fixed_bytes_type: The FixedBytes type with length parameter (e.g.,
+            FixedBytes[typing.Literal[10]]).
+        :returns: The randomly generated fixed byte sequence.
+        """
+        # Extract the length from the type parameter
+        length = fixed_bytes_type._length
+        return fixed_bytes_type(secrets.token_bytes(length))
 
 
 def _get_app_id(app: algopy.Application | algopy.UInt64 | int) -> int:

@@ -12,7 +12,7 @@ main:
     assert
     txn ApplicationID
     bz main_create_NoOp@13
-    pushbytess 0xe18922d8 0x3b05cf17 0x0658dcc3 0x5b6447de 0x061f4e77 0xeaa89139 0x510e72a4 0xd6c2ac7f 0x48142d5e // method "sink(string,uint8[])void", method "alias(string,uint8[])void", method "with_txn(string,pay,uint8[])void", method "with_asset(string,asset,uint8[])void", method "with_app(string,application,uint64,uint8[])void", method "with_acc(string,account,uint8[])void", method "complex_sig(((uint64,string),(uint64,string),uint128,uint128),txn,account,uint8[])((uint64,string),((uint64,string),(uint64,string),uint128,uint128))", method "echo_resource_by_index(asset,application,account)(uint64,uint64,address)", method "echo_resource_by_value(uint64,uint64,address)(uint64,uint64,address)"
+    pushbytess 0x2e01781e 0x3b05cf17 0x0658dcc3 0x5b6447de 0x061f4e77 0xeaa89139 0x510e72a4 0xd6c2ac7f 0x48142d5e // method "sink(string,uint8[],byte[4])void", method "alias(string,uint8[])void", method "with_txn(string,pay,uint8[])void", method "with_asset(string,asset,uint8[])void", method "with_app(string,application,uint64,uint8[])void", method "with_acc(string,account,uint8[])void", method "complex_sig(((uint64,string),(uint64,string),uint128,uint128),txn,account,uint8[])((uint64,string),((uint64,string),(uint64,string),uint128,uint128))", method "echo_resource_by_index(asset,application,account)(uint64,uint64,address)", method "echo_resource_by_value(uint64,uint64,address)(uint64,uint64,address)"
     txna ApplicationArgs 0
     match sink sink2 with_txn with_asset with_app with_acc complex_sig echo_resource_by_index echo_resource_by_value
     err
@@ -74,12 +74,12 @@ sink:
     // @arc4.abimethod(validate_encoding="unsafe_disabled")
     txna ApplicationArgs 2
     txna ApplicationArgs 1
-    // tests/artifacts/Arc4ABIMethod/contract.py:38
+    // tests/artifacts/Arc4ABIMethod/contract.py:40
     // assert value
     bytec_0 // 0x0000
     !=
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:39
+    // tests/artifacts/Arc4ABIMethod/contract.py:41
     // assert arr
     bytec_0 // 0x0000
     !=
@@ -92,21 +92,21 @@ sink:
 
 // tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.sink2[routing]() -> void:
 sink2:
-    // tests/artifacts/Arc4ABIMethod/contract.py:41
+    // tests/artifacts/Arc4ABIMethod/contract.py:44
     // @arc4.abimethod(name="alias")
     txna ApplicationArgs 2
     txna ApplicationArgs 1
-    // tests/artifacts/Arc4ABIMethod/contract.py:43
+    // tests/artifacts/Arc4ABIMethod/contract.py:46
     // assert value
     bytec_0 // 0x0000
     !=
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:44
+    // tests/artifacts/Arc4ABIMethod/contract.py:47
     // assert arr
     bytec_0 // 0x0000
     !=
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:41
+    // tests/artifacts/Arc4ABIMethod/contract.py:44
     // @arc4.abimethod(name="alias")
     intc_0 // 1
     return
@@ -114,7 +114,7 @@ sink2:
 
 // tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.with_txn[routing]() -> void:
 with_txn:
-    // tests/artifacts/Arc4ABIMethod/contract.py:46
+    // tests/artifacts/Arc4ABIMethod/contract.py:49
     // @arc4.abimethod
     txna ApplicationArgs 1
     txn GroupIndex
@@ -126,36 +126,36 @@ with_txn:
     ==
     assert // transaction type is pay
     txna ApplicationArgs 2
-    // tests/artifacts/Arc4ABIMethod/contract.py:48
+    // tests/artifacts/Arc4ABIMethod/contract.py:51
     // assert value
     uncover 2
     bytec_0 // 0x0000
     !=
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:49
+    // tests/artifacts/Arc4ABIMethod/contract.py:52
     // assert arr
     bytec_0 // 0x0000
     !=
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:50
+    // tests/artifacts/Arc4ABIMethod/contract.py:53
     // assert pay.group_index == 0
     dup
     gtxns GroupIndex
     !
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:51
+    // tests/artifacts/Arc4ABIMethod/contract.py:54
     // assert Txn.group_index == 1
     txn GroupIndex
     intc_0 // 1
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:52
+    // tests/artifacts/Arc4ABIMethod/contract.py:55
     // assert pay.amount == 123
     gtxns Amount
     intc_3 // 123
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:46
+    // tests/artifacts/Arc4ABIMethod/contract.py:49
     // @arc4.abimethod
     intc_0 // 1
     return
@@ -163,25 +163,25 @@ with_txn:
 
 // tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.with_asset[routing]() -> void:
 with_asset:
-    // tests/artifacts/Arc4ABIMethod/contract.py:54
+    // tests/artifacts/Arc4ABIMethod/contract.py:57
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
     txnas Assets
     txna ApplicationArgs 3
-    // tests/artifacts/Arc4ABIMethod/contract.py:56
+    // tests/artifacts/Arc4ABIMethod/contract.py:59
     // assert value
     uncover 2
     bytec_0 // 0x0000
     !=
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:57
+    // tests/artifacts/Arc4ABIMethod/contract.py:60
     // assert arr
     bytec_0 // 0x0000
     !=
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:58
+    // tests/artifacts/Arc4ABIMethod/contract.py:61
     // assert asset.total == 123
     dup
     asset_params_get AssetTotal
@@ -189,12 +189,12 @@ with_asset:
     intc_3 // 123
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:59
+    // tests/artifacts/Arc4ABIMethod/contract.py:62
     // assert Txn.assets(0) == asset
     txna Assets 0
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:54
+    // tests/artifacts/Arc4ABIMethod/contract.py:57
     // @arc4.abimethod(resource_encoding="index")
     intc_0 // 1
     return
@@ -202,7 +202,7 @@ with_asset:
 
 // tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.with_app[routing]() -> void:
 with_app:
-    // tests/artifacts/Arc4ABIMethod/contract.py:61
+    // tests/artifacts/Arc4ABIMethod/contract.py:64
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     txna ApplicationArgs 2
@@ -210,24 +210,24 @@ with_app:
     txnas Applications
     txna ApplicationArgs 3
     txna ApplicationArgs 4
-    // tests/artifacts/Arc4ABIMethod/contract.py:65
+    // tests/artifacts/Arc4ABIMethod/contract.py:68
     // assert value
     uncover 3
     bytec_0 // 0x0000
     !=
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:66
+    // tests/artifacts/Arc4ABIMethod/contract.py:69
     // assert arr
     bytec_0 // 0x0000
     !=
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:67
+    // tests/artifacts/Arc4ABIMethod/contract.py:70
     // assert app.id == app_id, "expected app id to match provided app id"
     dig 1
     itob
     b==
     assert // expected app id to match provided app id
-    // tests/artifacts/Arc4ABIMethod/contract.py:68
+    // tests/artifacts/Arc4ABIMethod/contract.py:71
     // assert app.creator == op.Global.creator_address, "expected other app to have same creator"
     dup
     app_params_get AppCreator
@@ -235,7 +235,7 @@ with_app:
     global CreatorAddress
     ==
     assert // expected other app to have same creator
-    // tests/artifacts/Arc4ABIMethod/contract.py:69
+    // tests/artifacts/Arc4ABIMethod/contract.py:72
     // app_txn = gtxn.ApplicationCallTransaction(0)
     intc_1 // 0
     gtxns TypeEnum
@@ -243,35 +243,35 @@ with_app:
     ==
     assert // transaction type is appl
     intc_1 // 0
-    // tests/artifacts/Arc4ABIMethod/contract.py:70
+    // tests/artifacts/Arc4ABIMethod/contract.py:73
     // assert app_txn.apps(0) == op.Global.current_application_id
     dup
     gtxnsas Applications
     global CurrentApplicationID
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:71
+    // tests/artifacts/Arc4ABIMethod/contract.py:74
     // assert Txn.applications(0) == op.Global.current_application_id
     txna Applications 0
     global CurrentApplicationID
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:69
+    // tests/artifacts/Arc4ABIMethod/contract.py:72
     // app_txn = gtxn.ApplicationCallTransaction(0)
     intc_1 // 0
-    // tests/artifacts/Arc4ABIMethod/contract.py:72
+    // tests/artifacts/Arc4ABIMethod/contract.py:75
     // assert app_txn.apps(1) == app
     intc_0 // 1
     gtxnsas Applications
     dig 1
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:73
+    // tests/artifacts/Arc4ABIMethod/contract.py:76
     // assert Txn.applications(1) == app
     txna Applications 1
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:61
+    // tests/artifacts/Arc4ABIMethod/contract.py:64
     // @arc4.abimethod(resource_encoding="index")
     intc_0 // 1
     return
@@ -279,25 +279,25 @@ with_app:
 
 // tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.with_acc[routing]() -> void:
 with_acc:
-    // tests/artifacts/Arc4ABIMethod/contract.py:75
+    // tests/artifacts/Arc4ABIMethod/contract.py:78
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
     txnas Accounts
     txna ApplicationArgs 3
-    // tests/artifacts/Arc4ABIMethod/contract.py:77
+    // tests/artifacts/Arc4ABIMethod/contract.py:80
     // assert value
     uncover 2
     bytec_0 // 0x0000
     !=
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:78
+    // tests/artifacts/Arc4ABIMethod/contract.py:81
     // assert arr
     bytec_0 // 0x0000
     !=
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:79
+    // tests/artifacts/Arc4ABIMethod/contract.py:82
     // assert acc.balance == acc.min_balance + 1234
     dup
     acct_params_get AcctBalance
@@ -309,18 +309,18 @@ with_acc:
     +
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:80
+    // tests/artifacts/Arc4ABIMethod/contract.py:83
     // assert Txn.accounts(0) == Txn.sender
     txna Accounts 0
     txn Sender
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:81
+    // tests/artifacts/Arc4ABIMethod/contract.py:84
     // assert Txn.accounts(1) == acc
     txna Accounts 1
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:75
+    // tests/artifacts/Arc4ABIMethod/contract.py:78
     // @arc4.abimethod(resource_encoding="index")
     intc_0 // 1
     return
@@ -328,7 +328,7 @@ with_acc:
 
 // tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.complex_sig[routing]() -> void:
 complex_sig:
-    // tests/artifacts/Arc4ABIMethod/contract.py:83
+    // tests/artifacts/Arc4ABIMethod/contract.py:86
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     txn GroupIndex
@@ -338,7 +338,7 @@ complex_sig:
     btoi
     txnas Accounts
     txna ApplicationArgs 3
-    // tests/artifacts/Arc4ABIMethod/contract.py:87
+    // tests/artifacts/Arc4ABIMethod/contract.py:90
     // five.validate()
     dup
     intc_1 // 0
@@ -349,13 +349,13 @@ complex_sig:
     len
     ==
     assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
-    // tests/artifacts/Arc4ABIMethod/contract.py:88
+    // tests/artifacts/Arc4ABIMethod/contract.py:91
     // assert Txn.num_app_args == 4
     txn NumAppArgs
     pushint 4
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:89-90
+    // tests/artifacts/Arc4ABIMethod/contract.py:92-93
     // # struct
     // assert struct1.another_struct.one == 1
     dig 3
@@ -373,7 +373,7 @@ complex_sig:
     bytec_2 // 0x0000000000000001
     b==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:89-91
+    // tests/artifacts/Arc4ABIMethod/contract.py:92-94
     // # struct
     // assert struct1.another_struct.one == 1
     // assert struct1.another_struct.two == "2"
@@ -386,12 +386,12 @@ complex_sig:
     uncover 2
     dig 2
     substring3
-    // tests/artifacts/Arc4ABIMethod/contract.py:91
+    // tests/artifacts/Arc4ABIMethod/contract.py:94
     // assert struct1.another_struct.two == "2"
     bytec_3 // 0x000132
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:92
+    // tests/artifacts/Arc4ABIMethod/contract.py:95
     // assert struct1.another_struct_alias.one == 1
     dig 6
     len
@@ -404,7 +404,7 @@ complex_sig:
     bytec_2 // 0x0000000000000001
     b==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:92-93
+    // tests/artifacts/Arc4ABIMethod/contract.py:95-96
     // assert struct1.another_struct_alias.one == 1
     // assert struct1.another_struct_alias.two == "2"
     dup
@@ -413,28 +413,28 @@ complex_sig:
     dig 1
     len
     substring3
-    // tests/artifacts/Arc4ABIMethod/contract.py:91
+    // tests/artifacts/Arc4ABIMethod/contract.py:94
     // assert struct1.another_struct.two == "2"
     bytec_3 // 0x000132
-    // tests/artifacts/Arc4ABIMethod/contract.py:93
+    // tests/artifacts/Arc4ABIMethod/contract.py:96
     // assert struct1.another_struct_alias.two == "2"
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:94
+    // tests/artifacts/Arc4ABIMethod/contract.py:97
     // assert struct1.three == 3
     dig 5
     extract 4 16
     pushbytes 0x00000000000000000000000000000003
     b==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:95
+    // tests/artifacts/Arc4ABIMethod/contract.py:98
     // assert struct1.four == 4
     dig 5
     extract 20 16
     pushbytes 0x00000000000000000000000000000004
     b==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:97-98
+    // tests/artifacts/Arc4ABIMethod/contract.py:100-101
     // # txn
     // assert txn.group_index == Txn.group_index - 1
     uncover 4
@@ -444,14 +444,14 @@ complex_sig:
     -
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:100-101
+    // tests/artifacts/Arc4ABIMethod/contract.py:103-104
     // # acc
     // assert Txn.application_args(2) == arc4.UInt8(1).bytes  # acc array ref
     txna ApplicationArgs 2
     pushbytes 0x01
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:102
+    // tests/artifacts/Arc4ABIMethod/contract.py:105
     // assert acc.balance == acc.min_balance + 1234
     dig 3
     acct_params_get AcctBalance
@@ -463,14 +463,14 @@ complex_sig:
     +
     ==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:103
+    // tests/artifacts/Arc4ABIMethod/contract.py:106
     // assert five[0] == 5
     uncover 2
     extract 2 1
     pushbytes 0x05
     b==
     assert
-    // tests/artifacts/Arc4ABIMethod/contract.py:83
+    // tests/artifacts/Arc4ABIMethod/contract.py:86
     // @arc4.abimethod(resource_encoding="index")
     pushint 4
     +
@@ -493,7 +493,7 @@ complex_sig:
 
 // tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.echo_resource_by_index[routing]() -> void:
 echo_resource_by_index:
-    // tests/artifacts/Arc4ABIMethod/contract.py:107-109
+    // tests/artifacts/Arc4ABIMethod/contract.py:110-112
     // @arc4.abimethod(
     //     resource_encoding="index",
     // )
@@ -506,37 +506,37 @@ echo_resource_by_index:
     txna ApplicationArgs 3
     btoi
     txnas Accounts
-    // tests/artifacts/Arc4ABIMethod/contract.py:113
+    // tests/artifacts/Arc4ABIMethod/contract.py:116
     // asset_idx = op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/Arc4ABIMethod/contract.py:114
+    // tests/artifacts/Arc4ABIMethod/contract.py:117
     // assert asset == Txn.assets(asset_idx), "expected asset to be passed by index"
     txnas Assets
     dig 3
     ==
     assert // expected asset to be passed by index
-    // tests/artifacts/Arc4ABIMethod/contract.py:115
+    // tests/artifacts/Arc4ABIMethod/contract.py:118
     // app_idx = op.btoi(Txn.application_args(2))
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/Arc4ABIMethod/contract.py:116
+    // tests/artifacts/Arc4ABIMethod/contract.py:119
     // assert app == Txn.applications(app_idx), "expected application to be passed by index"
     txnas Applications
     dig 2
     ==
     assert // expected application to be passed by index
-    // tests/artifacts/Arc4ABIMethod/contract.py:117
+    // tests/artifacts/Arc4ABIMethod/contract.py:120
     // acc_idx = op.btoi(Txn.application_args(3))
     txna ApplicationArgs 3
     btoi
-    // tests/artifacts/Arc4ABIMethod/contract.py:118
+    // tests/artifacts/Arc4ABIMethod/contract.py:121
     // assert acc == Txn.accounts(acc_idx), "expected account to be passed by index"
     txnas Accounts
     dig 1
     ==
     assert // expected account to be passed by index
-    // tests/artifacts/Arc4ABIMethod/contract.py:107-109
+    // tests/artifacts/Arc4ABIMethod/contract.py:110-112
     // @arc4.abimethod(
     //     resource_encoding="index",
     // )
@@ -557,7 +557,7 @@ echo_resource_by_index:
 
 // tests.artifacts.Arc4ABIMethod.contract.SignaturesContract.echo_resource_by_value[routing]() -> void:
 echo_resource_by_value:
-    // tests/artifacts/Arc4ABIMethod/contract.py:121-123
+    // tests/artifacts/Arc4ABIMethod/contract.py:124-126
     // @arc4.abimethod(
     //     resource_encoding="value",
     // )
@@ -566,42 +566,42 @@ echo_resource_by_value:
     txna ApplicationArgs 2
     btoi
     txna ApplicationArgs 3
-    // tests/artifacts/Arc4ABIMethod/contract.py:127
+    // tests/artifacts/Arc4ABIMethod/contract.py:130
     // acc.validate()
     dup
     len
     pushint 32
     ==
     assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
-    // tests/artifacts/Arc4ABIMethod/contract.py:128
+    // tests/artifacts/Arc4ABIMethod/contract.py:131
     // asset_id = op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/Arc4ABIMethod/contract.py:129
+    // tests/artifacts/Arc4ABIMethod/contract.py:132
     // assert asset.id == asset_id, "expected asset to be passed by value"
     dig 3
     ==
     assert // expected asset to be passed by value
-    // tests/artifacts/Arc4ABIMethod/contract.py:130
+    // tests/artifacts/Arc4ABIMethod/contract.py:133
     // app_id = op.btoi(Txn.application_args(2))
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/Arc4ABIMethod/contract.py:131
+    // tests/artifacts/Arc4ABIMethod/contract.py:134
     // assert app.id == app_id, "expected application to be passed by value"
     dig 2
     ==
     assert // expected application to be passed by value
-    // tests/artifacts/Arc4ABIMethod/contract.py:133
+    // tests/artifacts/Arc4ABIMethod/contract.py:136
     // assert acc.bytes == address, "expected account to be passed by value"
     dup
-    // tests/artifacts/Arc4ABIMethod/contract.py:132
+    // tests/artifacts/Arc4ABIMethod/contract.py:135
     // address = Txn.application_args(3)
     txna ApplicationArgs 3
-    // tests/artifacts/Arc4ABIMethod/contract.py:133
+    // tests/artifacts/Arc4ABIMethod/contract.py:136
     // assert acc.bytes == address, "expected account to be passed by value"
     ==
     assert // expected account to be passed by value
-    // tests/artifacts/Arc4ABIMethod/contract.py:121-123
+    // tests/artifacts/Arc4ABIMethod/contract.py:124-126
     // @arc4.abimethod(
     //     resource_encoding="value",
     // )

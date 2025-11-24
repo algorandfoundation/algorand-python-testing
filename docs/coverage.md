@@ -3,7 +3,7 @@
 See which `algorand-python` stubs are implemented by the `algorand-python-testing` library. See the [Concepts](testing-guide/concepts.md#types-of-algopy-stub-implementations) section for more details on the implementation categories. Refer to the [`algorand-python` stubs API](api.md) for the full list of stubs for which the `algorand-python-testing` library provides implementations referenced in the table below.
 
 | Name                                        | Implementation type |
-|---------------------------------------------|---------------------|
+| ------------------------------------------- | ------------------- |
 | algopy.Account                              | Emulated            |
 | algopy.Application                          | Emulated            |
 | algopy.Asset                                | Emulated            |
@@ -18,6 +18,7 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | algopy.CompiledLogicSig                     | Mockable            |
 | algopy.Contract                             | Emulated            |
 | algopy.FixedArray                           | Native              |
+| algopy.FixedBytes                           | Native              |
 | algopy.Global                               | Emulated            |
 | algopy.GlobalState                          | Emulated            |
 | algopy.ImmutableArray                       | Native              |

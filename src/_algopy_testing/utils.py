@@ -103,6 +103,8 @@ def as_bytes(value: object, *, max_size: int = MAX_BYTES_SIZE) -> bytes:
             pass
         case _algopy_testing.Bytes(value=bytes_value):
             pass
+        case _algopy_testing.FixedBytes(value=bytes_value):
+            pass
         case _:
             raise TypeError(f"value must be a bytes or Bytes type, not {type(value).__name__!r}")
     if len(bytes_value) > max_size:

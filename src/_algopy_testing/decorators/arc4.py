@@ -12,7 +12,7 @@ import _algopy_testing
 from _algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM, ARC4_RETURN_PREFIX
 from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.enums import OnCompleteAction
-from _algopy_testing.primitives import BigUInt, Bytes, String, UInt64
+from _algopy_testing.primitives import BigUInt, Bytes, FixedBytes, String, UInt64
 
 _P = typing.ParamSpec("_P")
 _R = typing.TypeVar("_R")
@@ -418,6 +418,8 @@ def _type_to_arc4(  # noqa: PLR0912 PLR0911
         return "uint512"
     if issubclass(annotation, Bytes):
         return "byte[]"
+    if issubclass(annotation, FixedBytes):
+        return f"byte[{annotation._length}]"
     if issubclass(annotation, bool):
         return "bool"
     raise TypeError(f"type not a valid ARC4 type: {annotation}")

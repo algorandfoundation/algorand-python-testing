@@ -50,6 +50,22 @@ random_bytes = context.any.bytes()
 random_bytes = context.any.bytes(length=32)
 ```
 
+## FixedBytes
+
+```{testcode}
+import typing
+
+# Direct instantiation
+bytes_value = algopy.FixedBytes[typing.Literal[16]](b"Hello, Algorand!")
+
+
+# Instantiate test context
+...
+
+# Generate random byte sequences of length 32
+random_bytes = context.any.fixed_bytes(algopy.FixedBytes[typing.Literal[32]])
+```
+
 ## String
 
 ```{testcode}
