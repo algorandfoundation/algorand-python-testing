@@ -8,7 +8,6 @@ from algopy import (
     Txn,
     UInt64,
     op,
-    subroutine,
 )
 
 VOTE_PRICE = 10_000
@@ -24,11 +23,9 @@ class VotingContract(Contract):
         )
         self.voted = LocalState(UInt64, key="voted", description="Tracks if an account has voted")
 
-    @subroutine
     def set_topic(self, topic: Bytes) -> None:
         self.topic.value = topic
 
-    @subroutine
     def vote(self, voter: Account) -> bool:
         assert op.Global.group_size == UInt64(2)
         assert op.GTxn.amount(1) == UInt64(VOTE_PRICE)
@@ -40,7 +37,6 @@ class VotingContract(Contract):
         self.voted[voter] = UInt64(1)
         return True
 
-    @subroutine
     def get_votes(self) -> UInt64:
         return self.votes.value
 

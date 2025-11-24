@@ -104,11 +104,10 @@ main:
 
 // tests.artifacts.Contains.contract.MyContract.is_in_tuple_1(x: uint64, y.0: uint64, y.1: uint64, y.2: bytes) -> uint64:
 is_in_tuple_1:
-    // tests/artifacts/Contains/contract.py:42-43
-    // @subroutine
+    // tests/artifacts/Contains/contract.py:42
     // def is_in_tuple_1(self, x: UInt64, y: tuple[UInt64, UInt64, Bytes]) -> bool:
     proto 4 1
-    // tests/artifacts/Contains/contract.py:44
+    // tests/artifacts/Contains/contract.py:43
     // return x in y
     frame_dig -4
     frame_dig -3
@@ -121,24 +120,23 @@ is_in_tuple_1:
 
 is_in_tuple_1_bool_true@2:
     intc_1 // 1
-    // tests/artifacts/Contains/contract.py:44
+    // tests/artifacts/Contains/contract.py:43
     // return x in y
     retsub
 
 is_in_tuple_1_bool_false@3:
     intc_0 // 0
-    // tests/artifacts/Contains/contract.py:44
+    // tests/artifacts/Contains/contract.py:43
     // return x in y
     retsub
 
 
 // tests.artifacts.Contains.contract.MyContract.is_in_tuple_2(x: bytes, y.0: bytes, y.1: uint64, y.2: bytes) -> uint64:
 is_in_tuple_2:
-    // tests/artifacts/Contains/contract.py:46-47
-    // @subroutine
+    // tests/artifacts/Contains/contract.py:45
     // def is_in_tuple_2(self, x: Bytes, y: tuple[Bytes, UInt64, Bytes]) -> bool:
     proto 4 1
-    // tests/artifacts/Contains/contract.py:48
+    // tests/artifacts/Contains/contract.py:46
     // return x in y
     frame_dig -4
     frame_dig -3
@@ -151,24 +149,23 @@ is_in_tuple_2:
 
 is_in_tuple_2_bool_true@2:
     intc_1 // 1
-    // tests/artifacts/Contains/contract.py:48
+    // tests/artifacts/Contains/contract.py:46
     // return x in y
     retsub
 
 is_in_tuple_2_bool_false@3:
     intc_0 // 0
-    // tests/artifacts/Contains/contract.py:48
+    // tests/artifacts/Contains/contract.py:46
     // return x in y
     retsub
 
 
 // tests.artifacts.Contains.contract.MyContract.is_in_tuple_3(x: bytes, y.0: bytes, y.1: bytes) -> uint64:
 is_in_tuple_3:
-    // tests/artifacts/Contains/contract.py:50-51
-    // @subroutine
+    // tests/artifacts/Contains/contract.py:48
     // def is_in_tuple_3(self, x: BigUInt, y: tuple[BigUInt, BigUInt]) -> bool:
     proto 3 1
-    // tests/artifacts/Contains/contract.py:52
+    // tests/artifacts/Contains/contract.py:49
     // return x in y
     frame_dig -3
     frame_dig -2
@@ -181,12 +178,12 @@ is_in_tuple_3:
 
 is_in_tuple_3_bool_true@2:
     intc_1 // 1
-    // tests/artifacts/Contains/contract.py:52
+    // tests/artifacts/Contains/contract.py:49
     // return x in y
     retsub
 
 is_in_tuple_3_bool_false@3:
     intc_0 // 0
-    // tests/artifacts/Contains/contract.py:52
+    // tests/artifacts/Contains/contract.py:49
     // return x in y
     retsub

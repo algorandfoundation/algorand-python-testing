@@ -9,7 +9,6 @@ from algopy import (
     gtxn,
     itxn,
     op,
-    subroutine,
 )
 from algopy.arc4 import abimethod
 
@@ -32,7 +31,6 @@ class DigitalMarketplace(ARC4Contract):
     def __init__(self) -> None:
         self.listings = BoxMap(ListingKey, ListingValue)
 
-    @subroutine
     def listings_box_mbr(self) -> UInt64:
         return (
             2_500
@@ -55,7 +53,6 @@ class DigitalMarketplace(ARC4Contract):
             * 400
         )
 
-    @subroutine
     def quantity_price(self, quantity: UInt64, price: UInt64, asset_decimals: UInt64) -> UInt64:
         amount_not_scaled_high, amount_not_scaled_low = op.mulw(price, quantity)
         scaling_factor_high, scaling_factor_low = op.expw(10, asset_decimals)
