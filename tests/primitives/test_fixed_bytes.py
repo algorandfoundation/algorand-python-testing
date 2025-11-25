@@ -54,7 +54,8 @@ def test_fixed_bytes_init_wrong_length(value: bytes | Bytes, message: str) -> No
 )
 def test_fixed_bytes_bool(
     value: FixedBytes,  # type: ignore[type-arg]
-    expected: bool,  # noqa: FBT001
+    *,
+    expected: bool,
 ) -> None:
     assert bool(value) == expected
 
@@ -594,6 +595,21 @@ def test_fixed_bytes_contains_edge_cases() -> None:
     # Not present
     assert b"x" not in fb
     assert b"testing" not in fb  # longer than haystack
+
+
+def test_in_place_addition() -> None:
+    """Test that in-place addition is not supported."""
+    a = FixedBytes[typing.Literal[4]](b"test")
+    b = FixedBytes[typing.Literal[4]](b"data")
+
+    with pytest.raises(TypeError, match="FixedBytes does not support in-place addition"):
+        a += b
+
+    with pytest.raises(TypeError, match="FixedBytes does not support in-place addition"):
+        a += b"hello"
+
+    with pytest.raises(TypeError, match="FixedBytes does not support in-place addition"):
+        a += Bytes(b"hello")
 
 
 def test_augmented_assignment() -> None:
