@@ -42,11 +42,7 @@ def deserialize(typ: type[_TValue], value: SerializableValue) -> _TValue:
         if isinstance(value, bytes):
             raise TypeError("expected int, received bytes")
         return typ.from_int(value)  # type: ignore[return-value]
-    elif issubclass(typ, BytesBacked):
-        if isinstance(value, int):
-            raise TypeError("expected bytes, received int")
-        return typ.from_bytes(Bytes(value))  # type: ignore[return-value]
-    elif issubclass(typ, Serializable):
+    elif issubclass(typ, BytesBacked | Serializable):
         if isinstance(value, int):
             raise TypeError("expected bytes, received int")
         return typ.from_bytes(value)  # type: ignore[return-value]
@@ -70,6 +66,7 @@ def cast_from_bytes(typ: type[_TValue], value: bytes) -> _TValue:
         serialized = as_int64(serialized)
     else:
         serialized = value
+
     return deserialize(typ, serialized)
 
 

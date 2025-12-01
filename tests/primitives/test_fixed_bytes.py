@@ -2,10 +2,12 @@ import base64
 import typing
 
 import pytest
+from _algopy_testing import algopy_testing_context
 from _algopy_testing.constants import MAX_BYTES_SIZE
 from _algopy_testing.primitives.bytes import Bytes
 from _algopy_testing.primitives.fixed_bytes import FixedBytes
 from _algopy_testing.primitives.uint64 import UInt64
+from _algopy_testing.state.box import Box
 
 from tests.util import int_to_bytes
 
@@ -230,9 +232,6 @@ def test_fixed_bytes_from_bytes() -> None:
     assert fb32 == b"\x0f" * 4096
     assert len(fb32) == 32
     assert fb32.length == 32
-
-    with pytest.raises(ValueError, match="expected value length <= 4096, got: 4097"):
-        FixedBytes[typing.Literal[64]].from_bytes(b"\x0f" * 4097)
 
 
 def test_fixed_bytes_from_bytes_with_bytes_object() -> None:
@@ -680,3 +679,17 @@ def test_contains_literal_bytes() -> None:
     assert b"\xcd\x12" in x
 
     assert (b"\xcd\x12" not in x) == False  # noqa: E712
+
+
+def test_big_fixed_bytes_in_box() -> None:
+    with algopy_testing_context() as ctx:  # noqa: SIM117
+        with ctx.txn.create_group([ctx.any.txn.application_call()]):
+            big_box = Box(FixedBytes[typing.Literal[5000]], key=b"big")
+            big_box.create()
+            assert big_box.value[4999] == b"\x00"
+
+            big_box.replace(4999, b"\xff")
+            assert big_box.value[4999] == b"\xff"
+
+            big_box.splice(4990, 10, b"\x7f" * 10)
+            assert big_box.value[4990:] == b"\x7f" * 10

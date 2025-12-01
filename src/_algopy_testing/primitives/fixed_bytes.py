@@ -279,7 +279,7 @@ class FixedBytes(
     @classmethod
     def from_bytes(cls, value: Bytes | bytes) -> typing.Self:
         """Construct an instance from the underlying bytes (no validation)"""
-        bytes_value = as_bytes(value)
+        bytes_value = value.value if isinstance(value, Bytes) else value
         c = cls._ensure_class_with_length(bytes_value)
         result = c()
         result.value = bytes_value
