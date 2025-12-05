@@ -20,6 +20,7 @@ from _algopy_testing.primitives.array import (
 )
 from _algopy_testing.primitives.biguint import BigUInt
 from _algopy_testing.primitives.bytes import Bytes
+from _algopy_testing.primitives.fixed_bytes import FixedBytes
 from _algopy_testing.primitives.string import String
 from _algopy_testing.primitives.uint64 import UInt64
 from _algopy_testing.state.box import Box
@@ -387,7 +388,7 @@ class Swapped2(Struct):
     b: Array[UInt64]
 
 
-def test_arrays_and_struct_in_boxes(context: AlgopyTestContext) -> None:  # noqa: ARG001
+def test_arrays_and_struct_in_boxes(context: AlgopyTestContext) -> None:  # noqa: ARG001, PLR0915
     # Array
     arr1 = Array([UInt64(1), UInt64(2), UInt64(3)])
     arr2 = Array([UInt64(4), UInt64(5), UInt64(6)])
@@ -459,6 +460,19 @@ def test_arrays_and_struct_in_boxes(context: AlgopyTestContext) -> None:  # noqa
 
     box5.value.a[1] = UInt64(20)
     assert list(box5.value.a) == [UInt64(1), UInt64(20), UInt64(3)]
+
+    # FixedBytes in FixedArray
+    box6 = Box(
+        FixedArray[FixedBytes[typing.Literal[1024]], typing.Literal[10]], key=b"test_array_6"
+    )
+    box6.value = FixedArray(
+        [FixedBytes[typing.Literal[1024]].from_hex(f"0{x}" * 1024) for x in range(10)]
+    )
+    assert box6.length == 10 * 1024
+    assert box6.value[0].bytes == b"\x00" * 1024
+    assert box6.value[9].bytes == b"\x09" * 1024
+    box6.value[1] = FixedBytes[typing.Literal[1024]].from_hex("11" * 1024)
+    assert box6.value[1].bytes == b"\x11" * 1024
 
 
 def test_box() -> None:

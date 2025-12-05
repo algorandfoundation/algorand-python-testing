@@ -4,7 +4,7 @@ from collections.abc import Generator
 
 import algopy
 import pytest
-from _algopy_testing import AlgopyTestContext, algopy_testing_context, arc4
+from _algopy_testing import AlgopyTestContext, FixedBytes, algopy_testing_context, arc4
 from _algopy_testing.constants import MAX_UINT64, MAX_UINT512
 from _algopy_testing.utilities.log import log
 
@@ -33,6 +33,7 @@ def test_log(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
     )
     m = arc4.DynamicArray(arc4.UInt16(1), arc4.UInt16(2), arc4.UInt16(3))
     n = arc4.Tuple((arc4.UInt32(1), arc4.UInt64(2), arc4.String("hello")))
+    o = FixedBytes[typing.Literal[5]](b"hello")
 
     avm_result_ = get_avm_result(
         "verify_log",
@@ -49,19 +50,20 @@ def test_log(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
         k=k.bytes.value,
         m=m.bytes.value,
         n=n.bytes.value,
+        o=o.bytes.value,
     )
     assert isinstance(avm_result_, list)
     avm_result = [base64.b64decode(b) for b in avm_result_]
 
     with context.txn.create_group([context.any.txn.payment()]):  # noqa: SIM117
         with pytest.raises(RuntimeError, match="Can only add logs to ApplicationCallTransaction!"):
-            log(a, b, c, d, e, f, g, h, i, j, k, m, n, sep=b"-")
+            log(a, b, c, d, e, f, g, h, i, j, k, m, n, o, sep=b"-")
 
     dummy_app = context.any.application()
     with context.txn.create_group(
         [context.any.txn.application_call(app_id=dummy_app)], active_txn_index=0
     ):
-        log(a, b, c, d, e, f, g, h, i, j, k, m, n, sep=b"-")
+        log(a, b, c, d, e, f, g, h, i, j, k, m, n, o, sep=b"-")
 
     last_txn = context.txn.last_active
     arc4_result = [last_txn.logs(i) for i in range(last_txn.num_logs)]

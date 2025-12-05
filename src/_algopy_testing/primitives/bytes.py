@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
+    from _algopy_testing.primitives.fixed_bytes import FixedBytes
+
 
 from itertools import zip_longest
 
@@ -27,7 +29,7 @@ class Bytes:
         check_type(value, bytes)
         self.value = as_bytes(value)
 
-    def __contains__(self, item: Bytes | bytes) -> bool:
+    def __contains__(self, item: Bytes | FixedBytes | bytes) -> bool:  # type: ignore[type-arg]
         item_bytes = as_bytes(item)
         return item_bytes in self.value
 
@@ -43,11 +45,8 @@ class Bytes:
     def __add__(self, other: Bytes | bytes) -> Bytes:
         """Concatenate Bytes with another Bytes or bytes literal e.g. `Bytes(b"Hello ")
         + b"World"`."""
-        if isinstance(other, Bytes):
-            return _checked_result(self.value + other.value, "+")
-        else:
-            result = self.value + as_bytes(other)
-            return _checked_result(result, "+")
+        result = self.value + as_bytes(other)
+        return _checked_result(result, "+")
 
     def __radd__(self, other: bytes) -> Bytes:
         """Concatenate Bytes with another Bytes or bytes literal e.g. `b"Hello " +
@@ -70,7 +69,7 @@ class Bytes:
         self, index: UInt64 | int | slice
     ) -> Bytes:  # maps to substring/substring3 if slice, extract/extract3 otherwise?
         """Returns a Bytes containing a single byte if indexed with UInt64 or int
-        otherwise the substring o bytes described by the slice."""
+        otherwise the substring of bytes described by the slice."""
         if isinstance(index, slice):
             return Bytes(self.value[index])
         else:
@@ -181,7 +180,7 @@ def _checked_result(result: bytes, op: str) -> Bytes:
     """Ensures `result` is a valid Bytes value.
 
     Raises:
-        ArithmeticError: If `result` of `op` is out of bounds
+        OverflowError: If `result` of `op` is out of bounds
     """
     if len(result) > MAX_BYTES_SIZE:
         raise OverflowError(f"{op} overflows")

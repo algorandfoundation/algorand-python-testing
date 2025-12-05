@@ -1,3 +1,4 @@
+import typing
 from collections.abc import Iterator
 
 import algopy
@@ -7,7 +8,9 @@ from _algopy_testing import algopy_testing_context
 from _algopy_testing.constants import MAX_BYTES_SIZE, MAX_UINT64
 from _algopy_testing.context import AlgopyTestContext
 from _algopy_testing.primitives.bytes import Bytes
+from _algopy_testing.primitives.fixed_bytes import FixedBytes
 from _algopy_testing.primitives.string import String
+from _algopy_testing.utils import get_type_generic_from_int_literal
 
 
 @pytest.fixture()
@@ -20,8 +23,10 @@ def assert_value_in_range(value: int | object, min_val: int, max_val: int) -> No
     assert min_val <= value <= max_val  # type: ignore[operator]
 
 
-def assert_length(value: bytes | str | String | Bytes, expected_length: int) -> None:
-    if isinstance(value, bytes | Bytes):
+def assert_length(
+    value: bytes | str | String | Bytes | FixedBytes[typing.Any], expected_length: int
+) -> None:
+    if isinstance(value, bytes | Bytes | FixedBytes):
         assert len(value) == expected_length
     else:
         assert len(str(value)) == expected_length
@@ -58,6 +63,14 @@ def test_avm_bytes_generator(context: AlgopyTestContext, length: int | None) -> 
     value = context.any.bytes(length) if length else context.any.bytes()
     assert isinstance(value, algopy.Bytes)
     assert_length(value, length or MAX_BYTES_SIZE)
+
+
+@pytest.mark.parametrize("length", [0, 10, MAX_BYTES_SIZE])
+def test_avm_fixed_bytes_generator(context: AlgopyTestContext, length: int) -> None:
+    length_t = get_type_generic_from_int_literal(length)
+    value = context.any.fixed_bytes(FixedBytes[length_t])  # type: ignore[valid-type]
+    assert isinstance(value, algopy.FixedBytes)
+    assert_length(value, length)
 
 
 @pytest.mark.parametrize("length", [None, 10, MAX_BYTES_SIZE])

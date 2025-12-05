@@ -19,7 +19,7 @@ main_opt_in_dummy_asset_route@3:
     !
     txn ApplicationID
     &&
-    assert // OnCompletion must be NoOp && can only call when not creating
+    assert
     b opt_in_dummy_asset
 
 main___algopy_default_create@5:
@@ -28,8 +28,6 @@ main___algopy_default_create@5:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    pushint 1 // 1
     return
 
 
@@ -56,7 +54,7 @@ opt_in_dummy_asset:
     // itxn.AssetTransfer(
     pushint 4 // axfer
     itxn_field TypeEnum
-    pushint 0 // 0
+    pushint 0
     itxn_field Fee
     // tests/artifacts/Arc4InnerTxns/contract.py:7-11
     // # Submit opt-in transaction: 0 asset transfer to self
@@ -67,5 +65,5 @@ opt_in_dummy_asset:
     itxn_submit
     // tests/artifacts/Arc4InnerTxns/contract.py:5
     // @arc4.abimethod
-    pushint 1 // 1
+    pushint 1
     return

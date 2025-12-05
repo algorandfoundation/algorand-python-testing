@@ -8,6 +8,7 @@ from algopy import (
     Asset,
     Bytes,
     FixedArray,
+    FixedBytes,
     ImmutableArray,
     ImmutableFixedArray,
     String,
@@ -32,6 +33,7 @@ class Swapped(Struct):
     c: tuple[UInt64, bool, bool]
     d: FixedArray[bool, typing.Literal[10]]
     e: tuple[UInt64, ImmutableFixedArray[UInt64, typing.Literal[3]]]
+    f: FixedBytes[typing.Literal[5]]
 
 
 class WhatsMySize(typing.NamedTuple):
@@ -69,8 +71,8 @@ def test_size_of() -> None:
     assert size_of(arc4.Tuple[arc4.UInt64, arc4.Bool, arc4.Bool] == 9)
     assert size_of(MyTuple) == 9
     assert size_of(SwappedArc4) == 52
-    assert size_of(Swapped) == 52
-    assert size_of(WhatsMySize) == 113
+    assert size_of(Swapped) == 57
+    assert size_of(WhatsMySize) == 118
     assert size_of(arc4.StaticArray[arc4.Byte, typing.Literal[7]]) == 7
     assert size_of(arc4.StaticArray(arc4.Byte(), arc4.Byte())) == 2
     assert size_of(FixedArray[bool, typing.Literal[10]]) == 2

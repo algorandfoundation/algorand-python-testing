@@ -19,7 +19,7 @@ main_some_value_route@3:
     !
     txn ApplicationID
     &&
-    assert // OnCompletion must be NoOp && can only call when not creating
+    assert
     b some_value
 
 main___algopy_default_create@5:
@@ -28,8 +28,6 @@ main___algopy_default_create@5:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    pushint 1 // 1
     return
 
 
@@ -39,7 +37,7 @@ some_value:
     // return Global.group_size * (Txn.group_index + 1)
     global GroupSize
     txn GroupIndex
-    pushint 1 // 1
+    pushint 1
     +
     *
     // tests/artifacts/CreatedAppAsset/other.py:5
@@ -49,5 +47,5 @@ some_value:
     swap
     concat
     log
-    pushint 1 // 1
+    pushint 1
     return

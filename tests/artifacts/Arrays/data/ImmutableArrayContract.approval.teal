@@ -11,7 +11,7 @@ main:
     bz main___algopy_default_create@31
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0x44d42f99 0xb7eaa60b 0x743d70ed 0x1c7e0494 0xa2d5860b 0xe05fc564 0x1e092b83 0x01310262 0xc8654a98 0x89d196f8 0x6cb7c991 0x9898bf02 0xf6b61ee8 0x60b86a7b 0x73ad283f 0x529dfae9 0x206d514f 0xe06465e2 0xec0300a2 0xecdf14af 0x511aca64 0x29852e4f 0x6d4aa358 0xb7cb96bd // method "test_uint64_array()void", method "test_biguint_array()void", method "test_bool_array(uint64)void", method "test_fixed_size_tuple_array()void", method "test_fixed_size_named_tuple_array()void", method "test_dynamic_sized_tuple_array()void", method "test_dynamic_sized_named_tuple_array()void", method "test_implicit_conversion_log(uint64[])void", method "test_implicit_conversion_emit(uint64[])void", method "test_nested_array(uint64,uint64[][])uint64[]", method "test_bit_packed_tuples()void", method "sum_uints_and_lengths_and_trues(uint64[],bool[],(uint64,bool,bool)[],(uint64,string)[])(uint64,uint64,uint64,uint64)", method "test_uint64_return(uint64)uint64[]", method "test_bool_return(uint64)bool[]", method "test_tuple_return(uint64)(uint64,bool,bool)[]", method "test_dynamic_tuple_return(uint64)(uint64,string)[]", method "test_convert_to_array_and_back((uint64,bool,bool)[],uint64)(uint64,bool,bool)[]", method "test_concat_with_arc4_tuple((uint64,uint64))uint64[]", method "test_concat_with_native_tuple((uint64,uint64))uint64[]", method "test_dynamic_concat_with_arc4_tuple((string,string))string[]", method "test_dynamic_concat_with_native_tuple((string,string))string[]", method "test_concat_immutable_dynamic((uint64,string)[],(uint64,string)[])(uint64,string)[]", method "test_immutable_arc4((uint64,uint64)[])(uint64,uint64)[]", method "test_imm_fixed_arr()(uint64,uint64)[3]"
@@ -25,8 +25,6 @@ main___algopy_default_create@31:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    intc_1 // 1
     return
 
 
@@ -148,13 +146,13 @@ dynamic_array_concat_bits:
     replace2 0
     cover 2
     swap
-    pushint 7 // 7
+    pushint 7
     +
     intc_3 // 8
     /
     dup
     uncover 2
-    pushint 7 // 7
+    pushint 7
     +
     intc_3 // 8
     /
@@ -175,7 +173,7 @@ dynamic_array_concat_bits_after_if_else@2:
     intc_0 // 0
     frame_bury 0
     frame_dig 3
-    pushint 16 // 16
+    pushint 16
     +
     dup
     frame_bury 2
@@ -397,7 +395,7 @@ sum_imm_fixed_for_header@1:
     // tests/artifacts/Arrays/immutable.py:573
     // for item in arr:
     frame_dig 1
-    pushint 3 // 3
+    pushint 3
     <
     bz sum_imm_fixed_after_for@4
     // tests/artifacts/Arrays/immutable.py:573-574
@@ -405,11 +403,11 @@ sum_imm_fixed_for_header@1:
     //     total += item.foo
     frame_dig 1
     dup
-    pushint 16 // 16
+    pushint 16
     *
     frame_dig -1
     swap
-    pushint 16 // 16
+    pushint 16
     extract3 // on error: index access is out of bounds
     // tests/artifacts/Arrays/immutable.py:574
     // total += item.foo
@@ -537,7 +535,7 @@ test_uint64_array:
     pushbytes 0x0001000000000000002a
     // tests/artifacts/Arrays/immutable.py:103
     // arr = add_x(arr, UInt64(5))
-    pushint 5 // 5
+    pushint 5
     callsub add_x
     // tests/artifacts/Arrays/immutable.py:104
     // assert arr.length == 6
@@ -545,7 +543,7 @@ test_uint64_array:
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
     dup
-    pushint 6 // 6
+    pushint 6
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:105
@@ -559,12 +557,12 @@ test_uint64_array:
     intc_3 // 8
     *
     extract_uint64
-    pushint 4 // 4
+    pushint 4
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:107
     // arr = arr.append(UInt64(43))
-    pushint 43 // 43
+    pushint 43
     itob
     uncover 2
     swap
@@ -581,7 +579,7 @@ test_uint64_array:
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
     dup
-    pushint 7 // 7
+    pushint 7
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:109
@@ -594,14 +592,14 @@ test_uint64_array:
     intc_3 // 8
     *
     extract_uint64
-    pushint 43 // 43
+    pushint 43
     ==
     assert
     intc_2 // 2
     // tests/artifacts/Arrays/immutable.py:110
     // assert arr[0] == 42
     extract_uint64
-    pushint 42 // 42
+    pushint 42
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:596
@@ -614,7 +612,7 @@ test_uint64_array_for_header@2:
     dup
     // tests/artifacts/Arrays/immutable.py:112
     // arr = pop_x(arr, UInt64(3))
-    pushint 3 // 3
+    pushint 3
     // tests/artifacts/Arrays/immutable.py:596
     // for _i in urange(x):
     <
@@ -642,7 +640,7 @@ test_uint64_array_after_for@4:
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
     dup
-    pushint 4 // 4
+    pushint 4
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:114
@@ -660,7 +658,7 @@ test_uint64_array_after_for@4:
     assert
     // tests/artifacts/Arrays/immutable.py:116
     // arr = add_x(arr, UInt64(10))
-    pushint 10 // 10
+    pushint 10
     callsub add_x
     // tests/artifacts/Arrays/immutable.py:117
     // assert arr.length == 14
@@ -668,7 +666,7 @@ test_uint64_array_after_for@4:
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
     dup
-    pushint 14 // 14
+    pushint 14
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:118
@@ -682,12 +680,12 @@ test_uint64_array_after_for@4:
     intc_3 // 8
     *
     extract_uint64
-    pushint 9 // 9
+    pushint 9
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:120
     // arr = arr.append(UInt64(44))
-    pushint 44 // 44
+    pushint 44
     itob
     uncover 2
     swap
@@ -704,7 +702,7 @@ test_uint64_array_after_for@4:
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
     dup
-    pushint 15 // 15
+    pushint 15
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:122
@@ -717,12 +715,12 @@ test_uint64_array_after_for@4:
     intc_3 // 8
     *
     extract_uint64
-    pushint 44 // 44
+    pushint 44
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:124
     // arr = arr.replace(2, UInt64(23))
-    pushint 23 // 23
+    pushint 23
     itob
     replace2 18 // on error: index access is out of bounds
     // tests/artifacts/Arrays/immutable.py:125
@@ -730,15 +728,15 @@ test_uint64_array_after_for@4:
     dup
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 15 // 15
+    pushint 15
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:126
     // assert arr[2] == 23
     dup
-    pushint 18 // 18
+    pushint 18
     extract_uint64
-    pushint 23 // 23
+    pushint 23
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:128
@@ -760,7 +758,7 @@ test_biguint_array:
     intc_1 // 1
     -
     itob
-    pushint 64 // 64
+    pushint 64
     bzero
     dup
     cover 2
@@ -790,9 +788,9 @@ test_biguint_array:
     swap
     extract 2 0
     swap
-    pushint 64 // 64
+    pushint 64
     *
-    pushint 64 // 64
+    pushint 64
     extract3 // on error: index access is out of bounds
     bytec_0 // 0x
     b==
@@ -807,7 +805,7 @@ test_biguint_array_for_header@2:
     dup
     // tests/artifacts/Arrays/immutable.py:139
     // arr = add_xb(arr, UInt64(5))
-    pushint 5 // 5
+    pushint 5
     // tests/artifacts/Arrays/immutable.py:603
     // for i in urange(x):
     <
@@ -846,7 +844,7 @@ test_biguint_array_after_for@4:
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
     dup
-    pushint 6 // 6
+    pushint 6
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:141
@@ -857,9 +855,9 @@ test_biguint_array_after_for@4:
     dig 2
     extract 2 0
     swap
-    pushint 64 // 64
+    pushint 64
     *
-    pushint 64 // 64
+    pushint 64
     extract3 // on error: index access is out of bounds
     pushbytes 0x04
     b==
@@ -873,7 +871,7 @@ test_biguint_array_after_for@4:
     b-
     dup
     len
-    pushint 64 // 64
+    pushint 64
     <=
     assert // overflow
     dig 5
@@ -893,7 +891,7 @@ test_biguint_array_after_for@4:
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
     dup
-    pushint 7 // 7
+    pushint 7
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:145
@@ -904,9 +902,9 @@ test_biguint_array_after_for@4:
     dig 2
     extract 2 0
     swap
-    pushint 64 // 64
+    pushint 64
     *
-    pushint 64 // 64
+    pushint 64
     extract3 // on error: index access is out of bounds
     pushbytes 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe
     b==
@@ -945,9 +943,9 @@ test_biguint_array_after_for@4:
     dig 1
     extract 2 0
     swap
-    pushint 64 // 64
+    pushint 64
     *
-    pushint 64 // 64
+    pushint 64
     extract3 // on error: index access is out of bounds
     bytec 5 // 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
     b==
@@ -1039,7 +1037,7 @@ test_bool_array_after_for@5:
     dig 3
     assert // index access is out of bounds
     dig 1
-    pushint 16 // 16
+    pushint 16
     getbit
     !
     assert // expected element 0 to be False
@@ -1058,7 +1056,7 @@ test_bool_array_after_if_else@7:
     <
     assert // index access is out of bounds
     dig 1
-    pushint 17 // 17
+    pushint 17
     getbit
     !
     assert // expected element 1 to be False
@@ -1077,7 +1075,7 @@ test_bool_array_after_if_else@9:
     <
     assert // index access is out of bounds
     dig 1
-    pushint 18 // 18
+    pushint 18
     getbit
     assert // expected element 2 to be True
 
@@ -1085,7 +1083,7 @@ test_bool_array_after_if_else@11:
     // tests/artifacts/Arrays/immutable.py:172
     // if length > 3:
     dig 2
-    pushint 3 // 3
+    pushint 3
     >
     bz test_bool_array_after_if_else@13
     // tests/artifacts/Arrays/immutable.py:173
@@ -1097,7 +1095,7 @@ test_bool_array_after_if_else@11:
     dig 5
     <
     assert // index access is out of bounds
-    pushint 16 // 16
+    pushint 16
     +
     dig 2
     swap
@@ -1125,12 +1123,12 @@ test_bool_array_after_if_else@13:
     swap
     replace2 0
     dig 1
-    pushint 16 // 16
+    pushint 16
     +
     intc_0 // 0
     setbit
     swap
-    pushint 7 // 7
+    pushint 7
     +
     intc_3 // 8
     /
@@ -1169,7 +1167,7 @@ test_fixed_size_tuple_array_for_header@2:
     // tests/artifacts/Arrays/immutable.py:185
     // for i in urange(5):
     dup
-    pushint 5 // 5
+    pushint 5
     <
     bz test_fixed_size_tuple_array_after_for@5
     // tests/artifacts/Arrays/immutable.py:186
@@ -1209,7 +1207,7 @@ test_fixed_size_tuple_array_after_for@5:
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
     dup
-    pushint 5 // 5
+    pushint 5
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:189
@@ -1237,9 +1235,9 @@ test_fixed_size_tuple_array_after_for@5:
     swap
     intc_1 // 1
     -
-    pushint 16 // 16
+    pushint 16
     *
-    pushint 16 // 16
+    pushint 16
     extract3 // on error: index access is out of bounds
     dup
     intc_0 // 0
@@ -1248,16 +1246,16 @@ test_fixed_size_tuple_array_after_for@5:
     intc_3 // 8
     extract_uint64
     swap
-    pushint 5 // 5
+    pushint 5
     ==
     swap
-    pushint 6 // 6
+    pushint 6
     ==
     &&
     assert
     // tests/artifacts/Arrays/immutable.py:192
     // arr = arr.pop()
-    pushint 16 // 16
+    pushint 16
     callsub dynamic_array_pop_fixed_size
     bury 1
     // tests/artifacts/Arrays/immutable.py:193
@@ -1266,7 +1264,7 @@ test_fixed_size_tuple_array_after_for@5:
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
     dup
-    pushint 4 // 4
+    pushint 4
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:194
@@ -1294,9 +1292,9 @@ test_fixed_size_tuple_array_after_for@5:
     swap
     intc_1 // 1
     -
-    pushint 16 // 16
+    pushint 16
     *
-    pushint 16 // 16
+    pushint 16
     extract3 // on error: index access is out of bounds
     dup
     intc_0 // 0
@@ -1305,10 +1303,10 @@ test_fixed_size_tuple_array_after_for@5:
     intc_3 // 8
     extract_uint64
     swap
-    pushint 4 // 4
+    pushint 4
     ==
     swap
-    pushint 5 // 5
+    pushint 5
     ==
     &&
     assert
@@ -1336,7 +1334,7 @@ test_fixed_size_named_tuple_array_for_header@2:
     // tests/artifacts/Arrays/immutable.py:203
     // for i in urange(5):
     dup
-    pushint 5 // 5
+    pushint 5
     <
     bz test_fixed_size_named_tuple_array_after_for@5
     // tests/artifacts/Arrays/immutable.py:204
@@ -1346,7 +1344,7 @@ test_fixed_size_named_tuple_array_for_header@2:
     %
     !
     dig 1
-    pushint 3 // 3
+    pushint 3
     *
     intc_2 // 2
     %
@@ -1388,7 +1386,7 @@ test_fixed_size_named_tuple_array_after_for@5:
     dup
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 5 // 5
+    pushint 5
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:207
@@ -1399,10 +1397,10 @@ test_fixed_size_named_tuple_array_after_for@5:
     intc_0 // 0
     extract_uint64
     dig 1
-    pushint 64 // 64
+    pushint 64
     getbit
     uncover 2
-    pushint 65 // 65
+    pushint 65
     getbit
     // tests/artifacts/Arrays/immutable.py:208
     // assert foo == 0
@@ -1441,7 +1439,7 @@ test_dynamic_sized_tuple_array_for_header@2:
     // tests/artifacts/Arrays/immutable.py:218
     // for i in urange(5):
     dup
-    pushint 5 // 5
+    pushint 5
     <
     bz test_dynamic_sized_tuple_array_after_for@5
     // tests/artifacts/Arrays/immutable.py:219
@@ -1489,7 +1487,7 @@ test_dynamic_sized_tuple_array_after_for@5:
     extract_uint16 // on error: invalid array length header
     dup
     bury 4
-    pushint 5 // 5
+    pushint 5
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:222
@@ -1501,7 +1499,7 @@ test_dynamic_sized_tuple_array_for_header@6:
     // tests/artifacts/Arrays/immutable.py:222
     // for i in urange(5):
     dup
-    pushint 5 // 5
+    pushint 5
     <
     bz test_dynamic_sized_tuple_array_after_for@9
     // tests/artifacts/Arrays/immutable.py:223
@@ -1573,7 +1571,7 @@ test_dynamic_sized_tuple_array_after_for@9:
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
     dup
-    pushint 4 // 4
+    pushint 4
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:228
@@ -1658,9 +1656,9 @@ test_dynamic_sized_tuple_array_after_for@9:
     substring3
     extract 2 0
     swap
-    pushint 4 // 4
+    pushint 4
     ==
-    pushint 3 // 3
+    pushint 3
     bzero
     uncover 2
     ==
@@ -1691,7 +1689,7 @@ test_dynamic_sized_named_tuple_array_for_header@2:
     // tests/artifacts/Arrays/immutable.py:237
     // for i in urange(5):
     dup
-    pushint 5 // 5
+    pushint 5
     <
     bz test_dynamic_sized_named_tuple_array_after_for@5
     // tests/artifacts/Arrays/immutable.py:238
@@ -1739,7 +1737,7 @@ test_dynamic_sized_named_tuple_array_after_for@5:
     extract_uint16 // on error: invalid array length header
     dup
     bury 4
-    pushint 5 // 5
+    pushint 5
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:241
@@ -1751,7 +1749,7 @@ test_dynamic_sized_named_tuple_array_for_header@6:
     // tests/artifacts/Arrays/immutable.py:241
     // for i in urange(5):
     dup
-    pushint 5 // 5
+    pushint 5
     <
     bz test_dynamic_sized_named_tuple_array_after_for@9
     // tests/artifacts/Arrays/immutable.py:242
@@ -1823,7 +1821,7 @@ test_dynamic_sized_named_tuple_array_after_for@9:
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
     dup
-    pushint 4 // 4
+    pushint 4
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:247
@@ -1907,7 +1905,7 @@ test_dynamic_sized_named_tuple_array_after_for@9:
     substring3
     extract 2 0
     swap
-    pushint 4 // 4
+    pushint 4
     ==
     swap
     pushbytes "   "
@@ -2177,7 +2175,7 @@ test_bit_packed_tuples_for_header@2:
     // tests/artifacts/Arrays/immutable.py:288
     // for i in urange(5):
     dup
-    pushint 5 // 5
+    pushint 5
     <
     bz test_bit_packed_tuples_after_for@5
     // tests/artifacts/Arrays/immutable.py:289
@@ -2221,22 +2219,22 @@ test_bit_packed_tuples_for_header@2:
     // tests/artifacts/Arrays/immutable.py:297
     // d=i == 3,
     dig 3
-    pushint 3 // 3
+    pushint 3
     ==
     // tests/artifacts/Arrays/immutable.py:298
     // e=i == 4,
     dig 4
-    pushint 4 // 4
+    pushint 4
     ==
     // tests/artifacts/Arrays/immutable.py:299
     // f=i == 5,
     dig 5
-    pushint 5 // 5
+    pushint 5
     ==
     // tests/artifacts/Arrays/immutable.py:300
     // g=i == 6,
     dig 6
-    pushint 6 // 6
+    pushint 6
     ==
     // tests/artifacts/Arrays/immutable.py:290-302
     // arr7 = arr7.append(
@@ -2258,16 +2256,16 @@ test_bit_packed_tuples_for_header@2:
     intc_2 // 2
     uncover 7
     setbit
-    pushint 3 // 3
+    pushint 3
     uncover 6
     setbit
-    pushint 4 // 4
+    pushint 4
     uncover 5
     setbit
-    pushint 5 // 5
+    pushint 5
     uncover 4
     setbit
-    pushint 6 // 6
+    pushint 6
     uncover 3
     setbit
     dup2
@@ -2293,7 +2291,7 @@ test_bit_packed_tuples_for_header@2:
     // tests/artifacts/Arrays/immutable.py:314
     // h=i == 7,
     dig 4
-    pushint 7 // 7
+    pushint 7
     ==
     // tests/artifacts/Arrays/immutable.py:303-316
     // arr8 = arr8.append(
@@ -2311,7 +2309,7 @@ test_bit_packed_tuples_for_header@2:
     //     )
     // )
     uncover 2
-    pushint 7 // 7
+    pushint 7
     uncover 2
     setbit
     uncover 2
@@ -2384,7 +2382,7 @@ test_bit_packed_tuples_after_for@5:
     dup
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 5 // 5
+    pushint 5
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:334
@@ -2393,7 +2391,7 @@ test_bit_packed_tuples_after_for@5:
     dup
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 5 // 5
+    pushint 5
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:335
@@ -2402,7 +2400,7 @@ test_bit_packed_tuples_after_for@5:
     dup
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 5 // 5
+    pushint 5
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:336
@@ -2411,7 +2409,7 @@ test_bit_packed_tuples_after_for@5:
     dup
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 5 // 5
+    pushint 5
     ==
     assert
     // tests/artifacts/Arrays/immutable.py:337
@@ -2506,7 +2504,7 @@ sum_uints_and_lengths_and_trues_for_header@6:
     <
     bz sum_uints_and_lengths_and_trues_after_for@11
     dig 12
-    pushint 16 // 16
+    pushint 16
     +
     dig 9
     swap
@@ -2548,18 +2546,18 @@ sum_uints_and_lengths_and_trues_for_header@12:
     dig 7
     extract 2 0
     dig 12
-    pushint 9 // 9
+    pushint 9
     *
-    pushint 9 // 9
+    pushint 9
     extract3 // on error: index access is out of bounds
     dup
     intc_0 // 0
     extract_uint64
     dig 1
-    pushint 64 // 64
+    pushint 64
     getbit
     uncover 2
-    pushint 65 // 65
+    pushint 65
     getbit
     bury 13
     // tests/artifacts/Arrays/immutable.py:357
@@ -2835,7 +2833,7 @@ test_tuple_return_for_header@2:
     %
     !
     dig 1
-    pushint 3 // 3
+    pushint 3
     %
     !
     dig 2
@@ -2977,7 +2975,7 @@ test_convert_to_array_and_back_for_header@2:
     %
     !
     dig 1
-    pushint 3 // 3
+    pushint 3
     %
     !
     dig 4
@@ -3009,7 +3007,7 @@ test_convert_to_array_and_back_after_for@5:
     // return mutable.freeze()
     dup
     len
-    pushint 9 // 9
+    pushint 9
     /
     itob
     extract 6 2
@@ -3205,7 +3203,7 @@ test_immutable_arc4:
     dig 1
     extract 2 16
     swap
-    pushint 16 // 16
+    pushint 16
     *
     intc_2 // 2
     +
@@ -3226,7 +3224,7 @@ test_imm_fixed_arr:
     bytec_0 // ""
     // tests/artifacts/Arrays/immutable.py:453
     // arr1 = zero_bytes(NativeStruct3)
-    pushint 48 // 48
+    pushint 48
     bzero
     dup
     // tests/artifacts/Arrays/immutable.py:454
@@ -3265,13 +3263,13 @@ test_imm_fixed_arr_for_header@2:
     // tests/artifacts/Arrays/immutable.py:460
     // for i in urange(3):
     dup
-    pushint 3 // 3
+    pushint 3
     <
     bz test_imm_fixed_arr_after_for@5
     // tests/artifacts/Arrays/immutable.py:461
     // arr1 = arr1.replace(i, struct12)
     dupn 2
-    pushint 16 // 16
+    pushint 16
     *
     dig 5
     swap
@@ -3299,16 +3297,16 @@ test_imm_fixed_arr_for_header@6:
     // tests/artifacts/Arrays/immutable.py:465
     // for struct_it in arr1:
     dig 4
-    pushint 3 // 3
+    pushint 3
     <
     bz test_imm_fixed_arr_after_for@9
     dig 4
     dup
-    pushint 16 // 16
+    pushint 16
     *
     dig 5
     swap
-    pushint 16 // 16
+    pushint 16
     extract3 // on error: index access is out of bounds
     // tests/artifacts/Arrays/immutable.py:466
     // assert struct_it == struct12, "expected items on iteration to be the same"
@@ -3332,7 +3330,7 @@ test_imm_fixed_arr_after_for@9:
     // assert sum_imm_fixed(mut_arr.freeze()) == 15, "expected sum to be 15"
     dup
     callsub sum_imm_fixed
-    pushint 15 // 15
+    pushint 15
     ==
     assert // expected sum to be 15
     // tests/artifacts/Arrays/immutable.py:474
@@ -3342,7 +3340,7 @@ test_imm_fixed_arr_after_for@9:
     // tests/artifacts/Arrays/immutable.py:475
     // assert sum_imm_fixed(mut_arr.freeze()) == 10, "expected sum to be 10"
     callsub sum_imm_fixed
-    pushint 10 // 10
+    pushint 10
     ==
     assert // expected sum to be 10
     // tests/artifacts/Arrays/immutable.py:477

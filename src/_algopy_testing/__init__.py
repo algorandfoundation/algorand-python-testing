@@ -19,7 +19,7 @@ from _algopy_testing.models import (
     uenumerate,
     urange,
 )
-from _algopy_testing.primitives import BigUInt, Bytes, String, UInt64
+from _algopy_testing.primitives import BigUInt, Bytes, FixedBytes, String, UInt64
 from _algopy_testing.state import Box, BoxMap, BoxRef, GlobalState, LocalState
 from _algopy_testing.value_generators.arc4 import ARC4ValueGenerator
 from _algopy_testing.value_generators.avm import AVMValueGenerator
@@ -39,6 +39,7 @@ __all__ = [
     "BoxRef",
     "Bytes",
     "Contract",
+    "FixedBytes",
     "GlobalState",
     "ITxnGroupLoader",
     "ITxnLoader",

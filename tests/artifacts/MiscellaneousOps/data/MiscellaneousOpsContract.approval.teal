@@ -11,7 +11,7 @@ main:
     bz main___algopy_default_create@44
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0x45847eea 0xf57aceb5 0x7d631730 0xa1b24441 0xcd7be1ac 0x7cfda64b 0x54a910d9 0xc46568de 0x7a46a6ae 0x04372209 0x7e5f6d72 0x24ebcf84 0x9c0b3397 0x0ad40da4 0x95178870 0xdeedc99b 0xab2150bb 0x02a54017 0x3db66b41 0x6e3ff38c 0x8f3b9f18 0x16166f9a 0x2f472065 0xd5a739c3 0x61f3b3e1 0x56cf368b 0x919ffbd2 0xaae8b697 0x847422b1 0xd5260327 0x114c8c6d 0x39e9e62a 0xd6a4c05e 0x1ef8151a 0x66dd7f96 0x4d9eceb2 0x19ba70ee // method "verify_addw(uint64,uint64)(uint64,uint64)", method "verify_base64_decode_standard(byte[])byte[]", method "verify_base64_decode_url(byte[])byte[]", method "verify_bytes_bitlen(byte[],uint64)uint64", method "verify_uint64_bitlen(uint64)uint64", method "verify_bsqrt(byte[])byte[]", method "verify_btoi(byte[])uint64", method "verify_bzero(uint64)byte[]", method "verify_concat(byte[],byte[],uint64,uint64)byte[]", method "verify_divmodw(uint64,uint64,uint64,uint64)(uint64,uint64,uint64,uint64)", method "verify_divw(uint64,uint64,uint64)uint64", method "verify_err()void", method "verify_exp(uint64,uint64)uint64", method "verify_expw(uint64,uint64)(uint64,uint64)", method "verify_extract(byte[],uint64,uint64)byte[]", method "verify_extract_from_2(byte[])byte[]", method "verify_extract_uint16(byte[],uint64)uint64", method "verify_extract_uint32(byte[],uint64)uint64", method "verify_extract_uint64(byte[],uint64)uint64", method "verify_getbit_bytes(byte[],uint64)bool", method "verify_getbit_uint64(uint64,uint64)bool", method "verify_getbyte(byte[],uint64)uint64", method "verify_itob(uint64)byte[]", method "verify_mulw(uint64,uint64)(uint64,uint64)", method "verify_replace(byte[],uint64,byte[])byte[]", method "verify_select_bytes(byte[],byte[],uint64)byte[]", method "verify_select_uint64(uint64,uint64,uint64)uint64", method "verify_setbit_bytes(byte[],uint64,bool)byte[]", method "verify_setbit_uint64(uint64,uint64,bool)uint64", method "verify_setbyte(byte[],uint64,uint64)byte[]", method "verify_shl(uint64,uint64)uint64", method "verify_shr(uint64,uint64)uint64", method "verify_sqrt(uint64)uint64", method "verify_substring(byte[],uint64,uint64)byte[]", method "verify_json_ref_string(byte[],byte[])byte[]", method "verify_json_ref_uint64(byte[],byte[])uint64", method "verify_json_ref_object(byte[],byte[])byte[]"
@@ -30,8 +30,6 @@ main___algopy_default_create@44:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    intc_0 // 1
     return
 
 
@@ -478,7 +476,7 @@ verify_extract_uint64:
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    pushint 8 // 8
+    pushint 8
     extract3
     bytec_0 // 0x151f7c75
     swap

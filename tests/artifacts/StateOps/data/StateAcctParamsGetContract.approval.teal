@@ -11,7 +11,7 @@ main:
     bz main___algopy_default_create@22
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0x5f5b43e4 0x73dc93c7 0x5626dfeb 0xdc8a25bf 0x198ebd8c 0x2301ab26 0x9f68fca6 0xa975c2d1 0xd1e04801 0xb6966be5 0x195d5418 0x6adae3f1 0xdf8cfee5 0x6ad70d21 0x1735fd22 // method "verify_acct_balance(account)uint64", method "verify_acct_min_balance(account)uint64", method "verify_acct_auth_addr(account)address", method "verify_acct_total_num_uint(account)uint64", method "verify_acct_total_num_byte_slice(account)uint64", method "verify_acct_total_extra_app_pages(account)uint64", method "verify_acct_total_apps_created(account)uint64", method "verify_acct_total_apps_opted_in(account)uint64", method "verify_acct_total_assets_created(account)uint64", method "verify_acct_total_assets(account)uint64", method "verify_acct_total_boxes(account)uint64", method "verify_acct_total_box_bytes(account)uint64", method "verify_acct_incentive_eligible(account)bool", method "verify_acct_last_heartbeat(account)uint64", method "verify_acct_last_proposed(account)uint64"
@@ -25,8 +25,6 @@ main___algopy_default_create@22:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    intc_0 // 1
     return
 
 
@@ -577,7 +575,7 @@ verify_acct_incentive_eligible:
     // tests/artifacts/StateOps/contract.py:137
     // @arc4.abimethod(resource_encoding="index")
     pushbytes 0x00
-    pushint 0 // 0
+    pushint 0
     uncover 2
     setbit
     bytec_0 // 0x151f7c75
