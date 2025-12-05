@@ -1,4 +1,10 @@
 # CHANGELOG
+## v1.2.0-beta.1 (2025-12-05)
+
+### Features
+
+* add fixed size variant of bytes as a separate `FixedBytes` type ([`9a2ab8e`](https://github.com/algorandfoundation/algorand-python-testing/commit/9a2ab8e3f94e9e7a2a416a94a54cf51b57599089))
+
 ## v1.1.0 (2025-10-20)
 
 ## v1.1.0-beta.1 (2025-10-20)
