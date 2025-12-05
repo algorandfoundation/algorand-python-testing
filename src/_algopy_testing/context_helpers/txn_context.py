@@ -326,19 +326,19 @@ class TransactionGroup:
         except ValueError:
             raise ValueError("Transaction is not part of this group") from None
 
-    def _begin_itxn_group(self) -> None:
+    def _begin_itxn_group(self, itxn: InnerTransaction | None = None) -> None:
         if self._constructing_itxn_group:
             raise RuntimeError("itxn begin without itxn submit")
 
         if self.active_txn.on_completion == OnCompleteAction.ClearState:
             raise RuntimeError("Cannot begin inner transaction group in a clear state call")
 
-        self._constructing_itxn_group.append(InnerTransaction())
+        self._constructing_itxn_group.append(itxn or InnerTransaction())
 
-    def _append_itxn_group(self) -> None:
+    def _append_itxn_group(self, itxn: InnerTransaction | None = None) -> None:
         if not self._constructing_itxn_group:
             raise RuntimeError("itxn next without itxn begin")
-        self._constructing_itxn_group.append(InnerTransaction())
+        self._constructing_itxn_group.append(itxn or InnerTransaction())
 
     def _submit_itxn_group(self) -> None:
         if not self._constructing_itxn_group:
