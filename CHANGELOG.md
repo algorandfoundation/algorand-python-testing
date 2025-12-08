@@ -1,4 +1,10 @@
 # CHANGELOG
+## v1.2.0-beta.3 (2025-12-08)
+
+### Features
+
+* add stage and submit_staged functions to support submitting dynamic number of inner transactions in a group ([`84ad031`](https://github.com/algorandfoundation/algorand-python-testing/commit/84ad03166442dadc10c7c1fe70e4cd07a63600cc))
+
 ## v1.2.0-beta.2 (2025-12-08)
 
 ### Features
