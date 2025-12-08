@@ -96,6 +96,7 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | algopy.itxn.KeyRegistrationInnerTransaction | Emulated            |
 | algopy.itxn.Payment                         | Emulated            |
 | algopy.itxn.PaymentInnerTransaction         | Emulated            |
+| algopy.itxn.submit_staged                   | Emulated            |
 | algopy.itxn.submit_txns                     | Emulated            |
 | algopy.op.Base64                            | Native              |
 | algopy.op.EC                                | Native              |

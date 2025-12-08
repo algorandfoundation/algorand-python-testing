@@ -33,6 +33,7 @@ __all__ = [
     "KeyRegistrationInnerTransaction",
     "Payment",
     "PaymentInnerTransaction",
+    "submit_staged",
     "submit_txns",
 ]
 
@@ -113,6 +114,12 @@ class _BaseInnerTransactionFields(typing.Protocol[_TResult_co]):
         _narrow_covariant_types(fields)
         self.fields.update(fields)
 
+    def stage(self, *, begin_group: bool = False) -> None:
+        if begin_group:
+            lazy_context.active_group._begin_itxn_group(self)  # type: ignore[arg-type]
+        else:
+            lazy_context.active_group._append_itxn_group(self)  # type: ignore[arg-type]
+
     def submit(self) -> _TResult_co:
         result = _get_itxn_result(self)
         lazy_context.active_group._add_itxn_group([result])  # type: ignore[list-item]
@@ -168,6 +175,10 @@ def submit_txns(
     lazy_context.active_group._add_itxn_group(results)  # type: ignore[arg-type]
 
     return results
+
+
+def submit_staged() -> None:
+    lazy_context.active_group._submit_itxn_group()
 
 
 def _get_itxn_result(

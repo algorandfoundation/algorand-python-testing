@@ -190,6 +190,75 @@ To access the submitted inner transactions:
 
 These methods provide type validation and will raise an error if the requested transaction type doesn't match the actual type of the inner transaction.
 
+### Submitting a group with dynamic number of inner transactions
+
+`algorand-python` supports composing inner transaction groups with a dynamic number of transactions. To use this feature, call the `.stage()` method on inner transaction classes to queue transactions, then call `algopy.itxn.submit_staged()` to submit all staged transactions as a group.
+
+The following example demonstrates how to test this functionality using the `algorand-python-testing` package.
+
+```{testcode}
+from algopy import Application, ARC4Contract, Array, Global, arc4, gtxn, itxn, TransactionType, Txn, UInt64, urange
+
+class DynamicItxnGroup(ARC4Contract):
+    @arc4.abimethod
+    def distribute(
+        self, addresses: Array[arc4.Address], funds: gtxn.PaymentTransaction, verifier: Application
+    ) -> None:
+        assert funds.receiver == Global.current_application_address, "Funds must be sent to app"
+
+        assert addresses.length, "must provide some accounts"
+
+        share = funds.amount // addresses.length
+
+        itxn.Payment(amount=share, receiver=addresses[0].native).stage(begin_group=True)
+
+        for i in urange(1, addresses.length):
+            addr = addresses[i]
+            itxn.Payment(amount=share, receiver=addr.native).stage()
+
+        itxn.ApplicationCall(
+            app_id=verifier.id, app_args=(arc4.arc4_signature("verify()void"),)
+        ).stage()
+
+        itxn.AssetConfig(asset_name="abc").stage()
+
+        itxn.submit_staged()
+
+class VerifierContract(ARC4Contract):
+    @arc4.abimethod
+    def verify(self) -> None:
+        for i in urange(Txn.group_index):
+            txn = gtxn.Transaction(i)
+            assert txn.type == TransactionType.Payment, "Txn must be pay"
+
+
+# create contract instaces
+verifier = VerifierContract()
+dynamic_itxn_group = DynamicItxnGroup()
+
+# get application id for contract instances
+verifier_app = context.ledger.get_app(verifier)
+dynamic_itxn_group_app = context.ledger.get_app(dynamic_itxn_group)
+
+# create test accounts to distribute funds to and initial fund
+addresses = Array([arc4.Address(context.any.account()) for _ in range(3)])
+payment = context.any.txn.payment(
+    amount=UInt64(9),
+    receiver=dynamic_itxn_group_app.address,
+)
+
+# call contract method which creates inner transactions according to number of addresses passed in
+dynamic_itxn_group.distribute(addresses, payment, verifier_app)
+
+# get inner transaction group to assert the details
+itxns = context.txn.last_group.get_itxn_group(-1)
+assert len(itxns) == 5
+for i in range(3):
+    assert itxns.payment(i).amount == 3
+assert itxns.application_call(3).app_id == verifier_app
+assert itxns.asset_config(4).asset_name == b"abc"
+```
+
 ## References
 
 -   [API](../api.md) for more details on the test context manager and inner transactions related methods that perform implicit inner transaction type validation.

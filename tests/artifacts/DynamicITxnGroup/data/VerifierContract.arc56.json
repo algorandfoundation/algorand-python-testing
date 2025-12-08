@@ -1,0 +1,90 @@
+{
+    "name": "VerifierContract",
+    "structs": {},
+    "methods": [
+        {
+            "name": "verify",
+            "args": [],
+            "returns": {
+                "type": "void"
+            },
+            "actions": {
+                "create": [],
+                "call": [
+                    "NoOp"
+                ]
+            },
+            "readonly": false,
+            "events": [],
+            "recommendations": {}
+        }
+    ],
+    "arcs": [
+        22,
+        28
+    ],
+    "networks": {},
+    "state": {
+        "schema": {
+            "global": {
+                "ints": 0,
+                "bytes": 0
+            },
+            "local": {
+                "ints": 0,
+                "bytes": 0
+            }
+        },
+        "keys": {
+            "global": {},
+            "local": {},
+            "box": {}
+        },
+        "maps": {
+            "global": {},
+            "local": {},
+            "box": {}
+        }
+    },
+    "bareActions": {
+        "create": [
+            "NoOp"
+        ],
+        "call": []
+    },
+    "sourceInfo": {
+        "approval": {
+            "sourceInfo": [
+                {
+                    "pc": [
+                        56
+                    ],
+                    "errorMessage": "Txn must be pay"
+                }
+            ],
+            "pcOffsetMethod": "none"
+        },
+        "clear": {
+            "sourceInfo": [],
+            "pcOffsetMethod": "none"
+        }
+    },
+    "source": {
+        "approval": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBhbGdvcHkuYXJjNC5BUkM0Q29udHJhY3QuYXBwcm92YWxfcHJvZ3JhbSgpIC0+IHVpbnQ2NDoKbWFpbjoKICAgIC8vIHRlc3RzL2FydGlmYWN0cy9keW5hbWljX2l0eG5fZ3JvdXAvdmVyaWZpZXIucHk6MTEKICAgIC8vIGNsYXNzIFZlcmlmaWVyQ29udHJhY3QoQVJDNENvbnRyYWN0KToKICAgIHR4biBOdW1BcHBBcmdzCiAgICBieiBtYWluX19fYWxnb3B5X2RlZmF1bHRfY3JlYXRlQDUKICAgIHB1c2hieXRlcyAweDY1YTlhZWNjIC8vIG1ldGhvZCAidmVyaWZ5KCl2b2lkIgogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMAogICAgbWF0Y2ggbWFpbl92ZXJpZnlfcm91dGVAMwogICAgZXJyCgptYWluX3ZlcmlmeV9yb3V0ZUAzOgogICAgLy8gdGVzdHMvYXJ0aWZhY3RzL2R5bmFtaWNfaXR4bl9ncm91cC92ZXJpZmllci5weToxMgogICAgLy8gQGFyYzQuYWJpbWV0aG9kCiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgJiYKICAgIGFzc2VydAogICAgYiB2ZXJpZnkKCm1haW5fX19hbGdvcHlfZGVmYXVsdF9jcmVhdGVANToKICAgIHR4biBPbkNvbXBsZXRpb24KICAgICEKICAgIHR4biBBcHBsaWNhdGlvbklECiAgICAhCiAgICAmJgogICAgcmV0dXJuCgoKLy8gdGVzdHMuYXJ0aWZhY3RzLmR5bmFtaWNfaXR4bl9ncm91cC52ZXJpZmllci5WZXJpZmllckNvbnRyYWN0LnZlcmlmeVtyb3V0aW5nXSgpIC0+IHZvaWQ6CnZlcmlmeToKICAgIC8vIHRlc3RzL2FydGlmYWN0cy9keW5hbWljX2l0eG5fZ3JvdXAvdmVyaWZpZXIucHk6MTQKICAgIC8vIGZvciBpIGluIHVyYW5nZShUeG4uZ3JvdXBfaW5kZXgpOgogICAgdHhuIEdyb3VwSW5kZXgKICAgIHB1c2hpbnQgMAoKdmVyaWZ5X2Zvcl9oZWFkZXJAMjoKICAgIC8vIHRlc3RzL2FydGlmYWN0cy9keW5hbWljX2l0eG5fZ3JvdXAvdmVyaWZpZXIucHk6MTQKICAgIC8vIGZvciBpIGluIHVyYW5nZShUeG4uZ3JvdXBfaW5kZXgpOgogICAgZHVwCiAgICBkaWcgMgogICAgPAogICAgYnogdmVyaWZ5X2FmdGVyX2ZvckA1CiAgICAvLyB0ZXN0cy9hcnRpZmFjdHMvZHluYW1pY19pdHhuX2dyb3VwL3ZlcmlmaWVyLnB5OjE2CiAgICAvLyBhc3NlcnQgdHhuLnR5cGUgPT0gVHJhbnNhY3Rpb25UeXBlLlBheW1lbnQsICJUeG4gbXVzdCBiZSBwYXkiCiAgICBkdXBuIDIKICAgIGd0eG5zIFR5cGVFbnVtCiAgICBwdXNoaW50IDEgLy8gcGF5CiAgICA9PQogICAgYXNzZXJ0IC8vIFR4biBtdXN0IGJlIHBheQogICAgLy8gdGVzdHMvYXJ0aWZhY3RzL2R5bmFtaWNfaXR4bl9ncm91cC92ZXJpZmllci5weToxNAogICAgLy8gZm9yIGkgaW4gdXJhbmdlKFR4bi5ncm91cF9pbmRleCk6CiAgICBwdXNoaW50IDEKICAgICsKICAgIGJ1cnkgMQogICAgYiB2ZXJpZnlfZm9yX2hlYWRlckAyCgp2ZXJpZnlfYWZ0ZXJfZm9yQDU6CiAgICAvLyB0ZXN0cy9hcnRpZmFjdHMvZHluYW1pY19pdHhuX2dyb3VwL3ZlcmlmaWVyLnB5OjEyCiAgICAvLyBAYXJjNC5hYmltZXRob2QKICAgIHB1c2hpbnQgMQogICAgcmV0dXJuCg==",
+        "clear": "I3ByYWdtYSB2ZXJzaW9uIDExCiNwcmFnbWEgdHlwZXRyYWNrIGZhbHNlCgovLyBhbGdvcHkuYXJjNC5BUkM0Q29udHJhY3QuY2xlYXJfc3RhdGVfcHJvZ3JhbSgpIC0+IHVpbnQ2NDoKbWFpbjoKICAgIHB1c2hpbnQgMQogICAgcmV0dXJuCg=="
+    },
+    "byteCode": {
+        "approval": "CzEbQQAYgARlqa7MNhoAjgEAAQAxGRQxGBBEQgAIMRkUMRgUEEMxFoEASUsCDEEAEEcCOBCBARJEgQEIRQFC/+mBAUM=",
+        "clear": "C4EBQw=="
+    },
+    "compilerInfo": {
+        "compiler": "puya",
+        "compilerVersion": {
+            "major": 5,
+            "minor": 5,
+            "patch": 0
+        }
+    },
+    "events": [],
+    "templateVariables": {}
+}
