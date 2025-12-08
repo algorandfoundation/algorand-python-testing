@@ -1,4 +1,10 @@
 # CHANGELOG
+## v1.2.0-beta.2 (2025-12-08)
+
+### Features
+
+* add algopy.public alias for algopy.arc4.abimethod decorator ([`32a2787`](https://github.com/algorandfoundation/algorand-python-testing/commit/32a27877a30f03e5330aa1bdb7a4fadbea543529))
+
 ## v1.2.0-beta.1 (2025-12-05)
 
 ### Features
