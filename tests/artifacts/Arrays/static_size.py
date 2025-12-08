@@ -122,7 +122,6 @@ class StaticSizeContract(arc4.ARC4Contract):
 
         return total
 
-    @subroutine
     def xtra(self) -> Xtra:
         self.count += 1
         return Xtra(

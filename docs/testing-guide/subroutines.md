@@ -18,6 +18,8 @@ context = ctx_manager.__enter__()
 
 The `@algopy.subroutine` decorator exposes contract methods for isolated testing within the Algorand Python Testing framework. This enables focused validation of core business logic without the overhead of full application deployment and execution.
 
+`@algopy.subroutine` decorator is optional for the methods in a contract which are not callable externally.
+
 ## Usage
 
 1. Decorate internal methods with `@algopy.subroutine`:
@@ -26,7 +28,7 @@ The `@algopy.subroutine` decorator exposes contract methods for isolated testing
 from algopy import subroutine, UInt64
 
 class MyContract:
-    @subroutine
+    @subroutine # optional
     def calculate_value(self, input: UInt64) -> UInt64:
         return input * UInt64(2)
 ```

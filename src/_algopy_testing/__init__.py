@@ -1,3 +1,4 @@
+# ruff: noqa: I001
 from _algopy_testing import arc4, gtxn, itxn
 from _algopy_testing.context import AlgopyTestContext
 from _algopy_testing.context_helpers.context_storage import algopy_testing_context
@@ -24,6 +25,9 @@ from _algopy_testing.state import Box, BoxMap, BoxRef, GlobalState, LocalState
 from _algopy_testing.value_generators.arc4 import ARC4ValueGenerator
 from _algopy_testing.value_generators.avm import AVMValueGenerator
 from _algopy_testing.value_generators.txn import TxnValueGenerator
+from _algopy_testing.decorators.arc4 import (
+    abimethod as public,
+)
 
 __all__ = [
     "ARC4Contract",
@@ -60,6 +64,7 @@ __all__ = [
     "gtxn",
     "itxn",
     "logicsig",
+    "public",
     "subroutine",
     "uenumerate",
     "urange",

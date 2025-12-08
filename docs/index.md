@@ -62,7 +62,7 @@ class VotingContract(algopy.ARC4Contract):
         )
         self.voted = algopy.LocalState(algopy.UInt64, key="voted", description="Tracks if an account has voted")
 
-    @arc4.abimethod
+    @algopy.public
     def set_topic(self, topic: arc4.String) -> None:
         self.topic.value = topic.bytes
 
@@ -79,7 +79,7 @@ class VotingContract(algopy.ARC4Contract):
         self.voted[algopy.Txn.sender] = algopy.UInt64(1)
         return arc4.Bool(True)
 
-    @arc4.abimethod(readonly=True)
+    @algopy.public(readonly=True)
     def get_votes(self) -> arc4.UInt64:
         return arc4.UInt64(self.votes.value)
 
@@ -141,9 +141,9 @@ This example demonstrates key aspects of testing with `algorand-python-testing` 
 1. ARC4 Contract Features:
 
     - Use of `algopy.ARC4Contract` as the base class for the contract.
-    - ABI methods defined using the `@arc4.abimethod` decorator.
+    - ABI methods defined using the `@arc4.abimethod`, or its alias `@algopy.public`, decorator.
     - Use of ARC4-specific types like `arc4.String`, `arc4.Bool`, and `arc4.UInt64`.
-    - Readonly method annotation with `@arc4.abimethod(readonly=True)`.
+    - Readonly method annotation with `@arc4.abimethod(readonly=True)` or `@algopy.public(readonly=True)` .
 
 2. Testing ARC4 Contracts:
 

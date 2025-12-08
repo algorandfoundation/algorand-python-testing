@@ -39,19 +39,15 @@ class MyContract(Contract):
     def clear_state_program(self) -> UInt64:
         return UInt64(1)
 
-    @subroutine
     def is_in_tuple_1(self, x: UInt64, y: tuple[UInt64, UInt64, Bytes]) -> bool:
         return x in y
 
-    @subroutine
     def is_in_tuple_2(self, x: Bytes, y: tuple[Bytes, UInt64, Bytes]) -> bool:
         return x in y
 
-    @subroutine
     def is_in_tuple_3(self, x: BigUInt, y: tuple[BigUInt, BigUInt]) -> bool:
         return x in y
 
-    @subroutine
     def test_string_types(self) -> None:
         assert foo_string() in (foo_string(), baz_string()), "foo in (foo, baz)"
         assert foo_string() not in (bar_string(), baz_string()), "foo not in (bar, baz)"
@@ -83,7 +79,6 @@ class MyContract(Contract):
             Bytes(b"bar"),
         ), "b'foo' not in (foo, foo, b'bar')"
 
-    @subroutine
     def test_numeric_types(self) -> None:
         assert one_u64() in (one_u64(), two_u64()), "1 in (1, 2)"
         assert one_u64() not in (UInt64(3), two_u64()), "1 not in (3, 2)"

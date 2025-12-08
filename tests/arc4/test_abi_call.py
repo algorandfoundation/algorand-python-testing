@@ -4,12 +4,12 @@ from collections.abc import Generator
 import pytest
 from _algopy_testing import AlgopyTestContext, algopy_testing_context
 from _algopy_testing.itxn import ApplicationCallInnerTransaction
-from algopy import ARC4Contract, arc4
+from algopy import ARC4Contract, arc4, public
 from pytest_mock import MockerFixture
 
 
 class Logger(ARC4Contract):
-    @arc4.abimethod
+    @public
     def echo(self, value: arc4.String) -> arc4.String:
         return "echo: " + value
 

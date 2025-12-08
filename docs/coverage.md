@@ -40,6 +40,7 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | algopy.ensure_budget                        | Emulated            |
 | algopy.log                                  | Emulated            |
 | algopy.logicsig                             | Emulated            |
+| algopy.public                               | Emulated            |
 | algopy.size_of                              | Emulated            |
 | algopy.subroutine                           | Native              |
 | algopy.uenumerate                           | Native              |
