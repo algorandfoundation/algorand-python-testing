@@ -1,13 +1,13 @@
 import copy
 import typing
 
-import algosdk
 import pytest
 from _algopy_testing import Bytes, arc4
+from algokit_utils.applications import abi
 
 from tests.util import int_to_bytes
 
-_abi_dynamic_bytes_type = algosdk.abi.ABIType.from_string("byte[]")
+_abi_dynamic_bytes_type = abi.ABIType.from_string("byte[]")
 _abi_int_array_values = [0, 1, 8, 16, 32, 64, 128, 255, 20, 30, 40, 50, 111]
 _abi_bytes_value = b"".join([int_to_bytes(value) for value in _abi_int_array_values])
 

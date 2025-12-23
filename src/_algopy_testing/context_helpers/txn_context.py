@@ -4,7 +4,7 @@ import contextlib
 import time
 import typing
 
-import algosdk
+from algokit_utils.transactions import MAX_TRANSACTION_GROUP_SIZE
 
 from _algopy_testing import gtxn
 from _algopy_testing.decorators.arc4 import (
@@ -229,9 +229,9 @@ class TransactionGroup:
         if not all(isinstance(txn, gtxn.TransactionBase) for txn in txns):
             raise ValueError("All transactions must be instances of TransactionBase")
 
-        if len(txns) > algosdk.constants.TX_GROUP_LIMIT:
+        if len(txns) > MAX_TRANSACTION_GROUP_SIZE:
             raise ValueError(
-                f"Transaction group can have at most {algosdk.constants.TX_GROUP_LIMIT} "
+                f"Transaction group can have at most {MAX_TRANSACTION_GROUP_SIZE} "
                 "transactions, as per AVM limits."
             )
 

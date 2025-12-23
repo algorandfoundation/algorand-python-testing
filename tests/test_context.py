@@ -2,7 +2,6 @@ import typing
 from contextlib import ExitStack
 
 import algopy.itxn
-import algosdk
 import pytest
 from _algopy_testing import algopy_testing_context, arc4
 from _algopy_testing.constants import MAX_UINT8, MAX_UINT16, MAX_UINT32, MAX_UINT64, MAX_UINT512
@@ -10,6 +9,7 @@ from _algopy_testing.context import AlgopyTestContext
 from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.context_helpers.txn_context import TransactionGroup
 from _algopy_testing.itxn import PaymentInnerTransaction
+from _algopy_testing.utils import generate_random_account
 from algopy import Bytes, TransactionType, UInt64
 
 from tests.artifacts.Arc4InnerTxns.contract import Arc4InnerTxnsContract
@@ -36,7 +36,7 @@ def test_patch_global_fields() -> None:
 
 def test_account_management() -> None:
     with algopy_testing_context() as context:
-        address: str = algosdk.account.generate_account()[1]
+        address: str = generate_random_account().addr
         account = context.any.account(address=address, balance=UInt64(1000))
         assert context.ledger.get_account(account.public_key).balance == 1000
 

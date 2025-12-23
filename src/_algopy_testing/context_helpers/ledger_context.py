@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 from collections import defaultdict
 
-import algosdk.constants
+from algokit_utils.common import ZERO_ADDRESS
 
 from _algopy_testing.constants import MAX_BOX_SIZE
 from _algopy_testing.models.account import Account
@@ -374,9 +374,9 @@ class LedgerContext:
         timestamp: algopy.UInt64 | int,
         bonus: algopy.UInt64 | int = 0,
         branch: algopy.Bytes | bytes = b"",
-        fee_sink: algopy.Account | str = algosdk.constants.ZERO_ADDRESS,
+        fee_sink: algopy.Account | str = ZERO_ADDRESS,
         fees_collected: algopy.UInt64 | int = 0,
-        proposer: algopy.Account | str = algosdk.constants.ZERO_ADDRESS,
+        proposer: algopy.Account | str = ZERO_ADDRESS,
         proposer_payout: algopy.UInt64 | int = 0,
         protocol: algopy.Bytes | bytes = b"",
         txn_counter: algopy.UInt64 | int = 0,

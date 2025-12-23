@@ -1,8 +1,8 @@
 import typing
 
-import algosdk
 import pytest
 from _algopy_testing.constants import MAX_UINT512
+from algokit_utils.applications import abi
 from algopy import ImmutableArray, String, UInt64, arc4
 from algopy_testing import AlgopyTestContext, algopy_testing_context
 
@@ -275,4 +275,4 @@ def test_nested_immutable(context: AlgopyTestContext) -> None:  # noqa: ARG001
 
 
 def _get_arc4_bytes(arc4_type: str, value: object) -> bytes:
-    return algosdk.abi.ABIType.from_string(arc4_type).encode(value)
+    return abi.ABIType.from_string(arc4_type).encode(value)

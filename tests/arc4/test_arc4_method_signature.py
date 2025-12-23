@@ -5,9 +5,9 @@ from pathlib import Path
 import _algopy_testing
 import algokit_utils
 import algopy
-import algosdk
 import pytest
 from algokit_utils import AlgoAmount, AlgorandClient, AssetCreateParams, PaymentParams
+from algokit_utils.applications.abi import Arc56Method
 from algopy import arc4
 
 from tests.artifacts.Arc4ABIMethod.contract import (
@@ -80,7 +80,7 @@ def test_app_args_is_correct_with_simple_args(
     txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
-        algosdk.abi.Method.from_signature("sink(string,uint8[],byte[4])void").get_selector(),
+        Arc56Method.from_signature("sink(string,uint8[],byte[4])void").get_selector(),
         b"\x00\x05hello",
         b"\x00\x02\x01\x02",
         b"test",
@@ -106,7 +106,7 @@ def test_app_args_is_correct_with_alias(
     txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
-        algosdk.abi.Method.from_signature("alias(string,uint8[])void").get_selector(),
+        Arc56Method.from_signature("alias(string,uint8[])void").get_selector(),
         b"\x00\x05hello",
         b"\x00\x02\x01\x02",
     ]
@@ -147,7 +147,7 @@ def test_app_args_is_correct_with_txn(
     txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(3)]
     assert app_args == [
-        algosdk.abi.Method.from_signature("with_txn(string,pay,uint8[])void").get_selector(),
+        Arc56Method.from_signature("with_txn(string,pay,uint8[])void").get_selector(),
         b"\x00\x05hello",
         b"\x00\x02\x01\x02",
     ]
@@ -183,7 +183,7 @@ def test_app_args_is_correct_with_asset(
     txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
-        algosdk.abi.Method.from_signature("with_asset(string,asset,uint8[])void").get_selector(),
+        Arc56Method.from_signature("with_asset(string,asset,uint8[])void").get_selector(),
         b"\x00\x05hello",
         b"\x00",
         b"\x00\x02\x01\x02",
@@ -217,7 +217,7 @@ def test_app_args_is_correct_with_account(
     txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
-        algosdk.abi.Method.from_signature("with_acc(string,account,uint8[])void").get_selector(),
+        Arc56Method.from_signature("with_acc(string,account,uint8[])void").get_selector(),
         b"\x00\x05hello",
         b"\x01",
         b"\x00\x02\x01\x02",
@@ -256,7 +256,7 @@ def test_app_args_is_correct_with_application(
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     app_foreign_apps = [txn.apps(i).id for i in range(int(txn.num_apps))]
     assert app_args == [
-        algosdk.abi.Method.from_signature(
+        Arc56Method.from_signature(
             "with_app(string,application,uint64,uint8[])void"
         ).get_selector(),
         b"\x00\x05hello",
@@ -296,7 +296,7 @@ def test_app_args_is_correct_with_complex(
     txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
-        algosdk.abi.Method.from_signature(
+        Arc56Method.from_signature(
             "complex_sig(((uint64,string),(uint64,string),uint128,uint128),txn,account,uint8[])((uint64,string),((uint64,string),(uint64,string),uint128,uint128))"
         ).get_selector(),
         b"\x00$\x001\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x01\x00\n\x00\x012\x00\x00\x00\x00\x00\x00\x00\x01\x00\n\x00\x012",
@@ -356,7 +356,7 @@ def test_prepare_txns_with_complex(
     txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
-        algosdk.abi.Method.from_signature(
+        Arc56Method.from_signature(
             "complex_sig(((uint64,string),(uint64,string),uint128,uint128),txn,account,uint8[])((uint64,string),((uint64,string),(uint64,string),uint128,uint128))"
         ).get_selector(),
         b"\x00$\x001\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x01\x00\n\x00\x012\x00\x00\x00\x00\x00\x00\x00\x01\x00\n\x00\x012",
@@ -404,7 +404,7 @@ def test_app_args_is_correct_with_index_resource_encoding(  # noqa: PLR0913
     txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
-        algosdk.abi.Method.from_signature(
+        Arc56Method.from_signature(
             "echo_resource_by_index(asset,application,account)(uint64,uint64,address)"
         ).get_selector(),
         b"\x00",
@@ -455,7 +455,7 @@ def test_app_args_is_correct_with_value_resource_encoding(  # noqa: PLR0913
     txn = context.txn.last_active
     app_args = [txn.app_args(i) for i in range(int(txn.num_app_args))]
     assert app_args == [
-        algosdk.abi.Method.from_signature(
+        Arc56Method.from_signature(
             "echo_resource_by_value(uint64,uint64,address)(uint64,uint64,address)"
         ).get_selector(),
         asa_id.to_bytes(length=8),  # asset id as bytes

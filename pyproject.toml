@@ -21,13 +21,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    # ==========================================================================
-    # Below is used for implementing algopy crypto ops matching AVM.
-    # Versions pinned for compatibility with py-algorand-sdk pre reqs
-    # https://github.com/algorand/py-algorand-sdk/blob/master/setup.py
-    # ==========================================================================
     "pycryptodomex>=3.6.0,<4",
-    "pynacl>=1.4.0,<2",
     "ecdsa>=0.17.0",
     "coincurve>=19.0.1",
     "algorand-python>=3",
@@ -55,7 +49,6 @@ dependencies = [
     "pytest>=7.4",
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
-    "py-algorand-sdk>=2.4.0",
     "pytest-cov>=4.1.0",
     "prettytable>=3.9.0",
     "mypy==1.19.1",
@@ -130,7 +123,6 @@ dependencies = [
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
     "pytest-cov>=4.1.0",
-    "py-algorand-sdk>=2.4.0",
     "puyapy>=5.7.1",
 ]
 
@@ -156,7 +148,6 @@ dependencies = [
     "sphinx-mermaid",
     "ipykernel",
     "pytest",
-    "py-algorand-sdk",
 ]
 # environment has algopy_testing included as an editable dependency
 # however it also includes the package dependencies
@@ -185,7 +176,6 @@ dependencies = [
     "pytest>=7.4",
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
-    "py-algorand-sdk>=2.4.0",
     "pytest-cov>=4.1.0",
     "mypy==1.19.1",
 ]
@@ -314,9 +304,6 @@ builtins-ignorelist = ["id"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-untyped_calls_exclude = [
-    "algosdk",
-]
 files = ["src", "tests", "examples"]
 exclude = ["tests/artifacts"]
 

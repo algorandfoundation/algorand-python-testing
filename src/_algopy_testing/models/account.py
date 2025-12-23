@@ -3,7 +3,7 @@ from __future__ import annotations
 import dataclasses
 import typing
 
-import algosdk
+from algokit_utils.common import ZERO_ADDRESS, address_from_public_key, public_key_from_address
 
 from _algopy_testing.constants import DEFAULT_ACCOUNT_MIN_BALANCE
 from _algopy_testing.primitives import Bytes, UInt64
@@ -79,12 +79,12 @@ class AccountContextData:
 
 
 class Account(BytesBacked):
-    def __init__(self, value: str | Bytes = algosdk.constants.ZERO_ADDRESS, /):
+    def __init__(self, value: str | Bytes = ZERO_ADDRESS, /):
         if not isinstance(value, str | Bytes):
             raise TypeError("Invalid value for Account")
 
         self._public_key: bytes = (
-            algosdk.encoding.decode_address(value) if isinstance(value, str) else value.value
+            public_key_from_address(value) if isinstance(value, str) else value.value
         )
 
     @property
@@ -126,7 +126,7 @@ class Account(BytesBacked):
 
     @property
     def public_key(self) -> str:
-        return algosdk.encoding.encode_address(self._public_key)  # type: ignore[no-any-return]
+        return address_from_public_key(self._public_key)
 
     def validate(self) -> None:
         pass
@@ -151,9 +151,7 @@ class Account(BytesBacked):
             return NotImplemented
 
     def __bool__(self) -> bool:
-        return bool(self._public_key) and self._public_key != algosdk.encoding.decode_address(
-            algosdk.constants.ZERO_ADDRESS
-        )
+        return bool(self._public_key) and self._public_key != public_key_from_address(ZERO_ADDRESS)
 
     def __hash__(self) -> int:
         return hash(self._public_key)

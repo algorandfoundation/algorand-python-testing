@@ -5,18 +5,20 @@ from pathlib import Path
 
 import _algopy_testing
 import algopy
-import algosdk
 import coincurve
 import ecdsa  # type: ignore  # noqa: PGH003
 import ecdsa.util  # type: ignore  # noqa: PGH003
 import nacl.signing
 import pytest
+from _algopy_testing.utils import generate_random_account
 from algokit_utils import (
     AlgoAmount,
     AlgorandClient,
     AppClientMethodCallParams,
     LogicError,
+    LogicSigAccount,
 )
+from algokit_utils.common import MIN_TXN_FEE, ZERO_ADDRESS, public_key_from_address
 from algopy import op
 from algopy_testing import AlgopyTestContext, algopy_testing_context, arc4_prefix
 from Cryptodome.Hash import keccak
@@ -240,9 +242,9 @@ def test_ed25519verify(
         message = b"Test message for ed25519 verification"
 
         # Generate key pair and sign the message
-        private_key, public_key = algosdk.account.generate_account()
-        public_key = algosdk.encoding.decode_address(public_key)
-        signature = algosdk.logic.teal_sign_from_program(private_key, message, approval)
+        acc = generate_random_account()
+        public_key = public_key_from_address(acc.addr)
+        signature = acc.program_data_signer(LogicSigAccount(logic=approval), message)
 
         # Verify the signature using AVM and local op
         avm_result = get_crypto_ops_avm_result(
@@ -440,10 +442,10 @@ def test_asset_holding_get(
         ("verify_asset_params_get_name", b"TEST"),
         ("verify_asset_params_get_url", b"https://algorand.co"),
         ("verify_asset_params_get_metadata_hash", b"test" + b" " * 28),
-        ("verify_asset_params_get_manager", algosdk.constants.ZERO_ADDRESS),
-        ("verify_asset_params_get_reserve", algosdk.constants.ZERO_ADDRESS),
-        ("verify_asset_params_get_freeze", algosdk.constants.ZERO_ADDRESS),
-        ("verify_asset_params_get_clawback", algosdk.constants.ZERO_ADDRESS),
+        ("verify_asset_params_get_manager", ZERO_ADDRESS),
+        ("verify_asset_params_get_reserve", ZERO_ADDRESS),
+        ("verify_asset_params_get_freeze", ZERO_ADDRESS),
+        ("verify_asset_params_get_clawback", ZERO_ADDRESS),
         ("verify_asset_params_get_creator", "creator"),
     ],
 )
@@ -553,7 +555,7 @@ def test_app_params_get(
     [
         ("verify_acct_balance", INITIAL_BALANCE_MICRO_ALGOS + 100_000),
         ("verify_acct_min_balance", 100_000),
-        ("verify_acct_auth_addr", algosdk.constants.ZERO_ADDRESS),
+        ("verify_acct_auth_addr", ZERO_ADDRESS),
         ("verify_acct_total_num_uint", 0),
         ("verify_acct_total_num_byte_slice", 0),
         ("verify_acct_total_extra_app_pages", 0),
@@ -585,7 +587,7 @@ def test_acct_params_get(
         address=dummy_account.addr,
         balance=algopy.UInt64(INITIAL_BALANCE_MICRO_ALGOS + 100_000),
         min_balance=algopy.UInt64(100_000),
-        auth_address=algopy.Account(algosdk.constants.ZERO_ADDRESS),
+        auth_address=algopy.Account(ZERO_ADDRESS),
         total_num_uint=algopy.UInt64(0),
         total_num_byte_slice=algopy.UInt64(0),
         total_extra_app_pages=algopy.UInt64(0),
@@ -681,7 +683,7 @@ def test_app_local_ex_get(
     assert mock_secondary_app.local_num_uint == 1
     assert mock_secondary_app.local_num_bytes == 2
 
-    with contextlib.suppress(algosdk.error.AlgodHTTPError):
+    with contextlib.suppress(ValueError):
         get_state_app_local_ex_avm_result.client.send.opt_in(
             AppClientMethodCallParams(method="opt_in", note=secrets.token_bytes(8))
         )
@@ -715,7 +717,7 @@ def test_app_local_ex_get_arc4(
     assert mock_secondary_app.local_num_uint == 1
     assert mock_secondary_app.local_num_bytes == 2
 
-    with contextlib.suppress(algosdk.error.AlgodHTTPError, Exception):
+    with contextlib.suppress(ValueError):
         get_state_app_local_ex_avm_result.client.send.opt_in(
             AppClientMethodCallParams(method="opt_in", note=secrets.token_bytes(8))
         )
@@ -904,7 +906,7 @@ def test_itxn_ops(context: AlgopyTestContext) -> None:
     ]
     assert approval_pages == [appl_itxn.approval_program]
     assert appl_itxn.on_completion == algopy.OnCompleteAction.DeleteApplication
-    assert appl_itxn.fee == algopy.UInt64(algosdk.constants.MIN_TXN_FEE)
+    assert appl_itxn.fee == algopy.UInt64(MIN_TXN_FEE)
     assert appl_itxn.sender == context.ledger.get_app(contract).address
     # NOTE: would implementing emulation for this behavior be useful
     # in unit testing context (vs integration tests)?
