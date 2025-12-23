@@ -9,7 +9,6 @@ import algosdk
 import pytest
 from algokit_utils import AlgoAmount, AlgorandClient, AssetCreateParams, PaymentParams
 from algopy import arc4
-from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from tests.artifacts.Arc4ABIMethod.contract import (
     AnotherStruct,
@@ -43,10 +42,8 @@ def funded_account(algorand: AlgorandClient, context: _algopy_testing.AlgopyTest
         min_spending_balance=algokit_utils.AlgoAmount(micro_algo=_FUNDED_ACCOUNT_SPENDING),
     )
     # ensure context has the same account with matching balance
-    context.any.account(
-        account.address, balance=algopy.Global.min_balance + _FUNDED_ACCOUNT_SPENDING
-    )
-    return account.address
+    context.any.account(account.addr, balance=algopy.Global.min_balance + _FUNDED_ACCOUNT_SPENDING)
+    return account.addr
 
 
 @pytest.fixture()
@@ -130,15 +127,13 @@ def test_app_args_is_correct_with_txn(
     get_avm_result(
         "with_txn",
         value="hello",
-        pay=TransactionWithSigner(
-            txn=algorand.create_transaction.payment(
-                PaymentParams(
-                    sender=localnet_creator_address,
-                    receiver=localnet_creator_address,
-                    amount=AlgoAmount(micro_algo=123),
-                )
-            ),
-            signer=algorand.account.get_signer(localnet_creator_address),
+        pay=algorand.create_transaction.payment(
+            PaymentParams(
+                sender=localnet_creator_address,
+                receiver=localnet_creator_address,
+                amount=AlgoAmount(micro_algo=123),
+                signer=algorand.account.get_signer(localnet_creator_address),
+            )
         ),
         arr=[1, 2],
     )
@@ -174,9 +169,7 @@ def test_app_args_is_correct_with_asset(
             sender=localnet_creator_address,
             total=123,
         )
-    ).confirmation[
-        "asset-index"
-    ]  # type: ignore[call-overload]
+    ).asset_id
 
     # act
     get_avm_result("with_asset", value="hello", asset=asa_id, arr=[1, 2])
@@ -343,15 +336,13 @@ def test_prepare_txns_with_complex(
     get_avm_result(
         "complex_sig",
         struct1=((1, "2"), (1, "2"), 3, 4),
-        txn=TransactionWithSigner(
-            txn=algorand.create_transaction.payment(
-                PaymentParams(
-                    sender=localnet_creator_address,
-                    receiver=localnet_creator_address,
-                    amount=AlgoAmount(micro_algo=123),
-                )
+        txn=algorand.create_transaction.payment(
+            PaymentParams(
+                sender=localnet_creator_address,
+                receiver=localnet_creator_address,
+                amount=AlgoAmount(micro_algo=123),
+                signer=algorand.account.get_signer(localnet_creator_address),
             ),
-            signer=algorand.account.get_signer(localnet_creator_address),
         ),
         acc=funded_account,
         five=[5],
@@ -394,9 +385,7 @@ def test_app_args_is_correct_with_index_resource_encoding(  # noqa: PLR0913
             sender=localnet_creator_address,
             total=123,
         )
-    ).confirmation[
-        "asset-index"
-    ]  # type: ignore[call-overload]
+    ).asset_id
 
     # act
     contract.echo_resource_by_index(
@@ -424,7 +413,7 @@ def test_app_args_is_correct_with_index_resource_encoding(  # noqa: PLR0913
     ]
     assert app_args[0] == arc4.arc4_signature(SignaturesContract.echo_resource_by_index)
 
-    assert result == [asa_id, other_app_id, funded_account]
+    assert result == (asa_id, other_app_id, funded_account)
 
 
 def test_app_args_is_correct_with_value_resource_encoding(  # noqa: PLR0913
@@ -444,9 +433,7 @@ def test_app_args_is_correct_with_value_resource_encoding(  # noqa: PLR0913
             sender=localnet_creator_address,
             total=123,
         )
-    ).confirmation[
-        "asset-index"
-    ]  # type: ignore[call-overload]
+    ).asset_id
 
     asset = context.any.asset(asset_id=asa_id, total=algopy.UInt64(123))
     app = context.ledger.get_app(other_app_id)
@@ -477,4 +464,4 @@ def test_app_args_is_correct_with_value_resource_encoding(  # noqa: PLR0913
     ]
     assert app_args[0] == arc4.arc4_signature(SignaturesContract.echo_resource_by_value)
 
-    assert result == [asset.id, app.id, acc]
+    assert result == (asset.id, app.id, acc)

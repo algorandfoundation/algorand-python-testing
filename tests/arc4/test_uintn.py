@@ -12,7 +12,7 @@ from tests.util import int_to_bytes
 
 
 def _invalid_bytes_length_error(length: int) -> str:
-    return f"value string must be in bytes and correspond to a uint{length}"
+    return f"expected {length // 8} bytes for uint{length}"
 
 
 @pytest.mark.parametrize(
