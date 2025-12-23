@@ -30,7 +30,8 @@ dependencies = [
     "pynacl>=1.4.0,<2",
     "ecdsa>=0.17.0",
     "coincurve>=19.0.1",
-    "algorand-python>=3", 
+    "algorand-python>=3",
+    "algokit-utils>=5.0.0a5",
 ]
 
 [project.urls]
@@ -55,7 +56,6 @@ dependencies = [
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
     "py-algorand-sdk>=2.4.0",
-    "algokit-utils>=4.0.0",
     "pytest-cov>=4.1.0",
     "prettytable>=3.9.0",
     "mypy==1.19.1",
@@ -131,7 +131,6 @@ dependencies = [
     "pytest-xdist[psutil]>=3.3",
     "pytest-cov>=4.1.0",
     "py-algorand-sdk>=2.4.0",
-    "algokit-utils>=4.0.0",
     "puyapy>=5.7.1",
 ]
 
@@ -183,12 +182,10 @@ post-install-commands = [
   "hatch run examples:reload_algopy_testing",
 ]
 dependencies = [
-    "algorand-python>=3",
     "pytest>=7.4",
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
     "py-algorand-sdk>=2.4.0",
-    "algokit-utils>=4.0.0",
     "pytest-cov>=4.1.0",
     "mypy==1.19.1",
 ]
@@ -276,7 +273,7 @@ ignore = [
     "RET503",  # false negatives when involving typing.Never, covered by mypy anyway
     "RET504",
     "RET505",  # stylistic choices for readability
-    "S101",    # allow asserts    
+    "S101",    # allow asserts
     "C901",    # allow >10 args in a method
     "N805",    # allow using `cls` as a firstparameter name
 ]

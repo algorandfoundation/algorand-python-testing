@@ -1,4 +1,5 @@
 import typing
+from decimal import Decimal
 
 import algokit_utils
 import pytest
@@ -11,7 +12,7 @@ from tests.util import int_to_bytes
 
 
 def _invalid_bytes_length_error(length: int) -> str:
-    return f"value string must be in bytes and correspond to a ufixed{length}"
+    return f"expected {length // 8} bytes for uint{length}"
 
 
 @pytest.mark.parametrize(
@@ -71,7 +72,7 @@ def test_bigufixednxm_bytes(get_avm_result: AVMInvoker, value: str) -> None:
 def test_ufixednxm_from_bytes(get_avm_result: AVMInvoker, value: bytes) -> None:
     avm_result = get_avm_result("verify_ufixednxm_from_bytes", a=value)
     result = arc4.UFixedNxM[typing.Literal[32], typing.Literal[8]].from_bytes(value)
-    assert avm_result == int.from_bytes(result.bytes.value)
+    assert avm_result == int_to_decimal(int.from_bytes(result.bytes.value), 32, 8)
 
 
 @pytest.mark.parametrize(
@@ -103,7 +104,8 @@ def test_ufixednxm_from_bytes_invalid_length(get_avm_result: AVMInvoker, value: 
 def test_bigufixednxm_from_bytes(get_avm_result: AVMInvoker, value: bytes) -> None:
     avm_result = get_avm_result("verify_bigufixednxm_from_bytes", a=value)
     result = arc4.BigUFixedNxM[typing.Literal[256], typing.Literal[16]].from_bytes(value)
-    assert avm_result == int.from_bytes(result.bytes.value)
+
+    assert avm_result == int_to_decimal(int.from_bytes(result.bytes.value), 256, 16)
 
 
 @pytest.mark.parametrize(
@@ -137,8 +139,8 @@ def test_ufixednxm_from_log(get_avm_result: AVMInvoker, value: bytes, expected: 
     result = arc4.UFixedNxM[typing.Literal[32], typing.Literal[8]].from_log(
         Bytes(ARC4_RETURN_PREFIX + value)
     )
-    assert avm_result == expected
-    assert avm_result == int.from_bytes(result.bytes.value)
+    assert avm_result == int_to_decimal(expected, 32, 8)
+    assert avm_result == int_to_decimal(int.from_bytes(result.bytes.value), 32, 8)
 
 
 @pytest.mark.parametrize(
@@ -192,8 +194,8 @@ def test_bigufixednxm_from_log(get_avm_result: AVMInvoker, value: bytes, expecte
     result = arc4.BigUFixedNxM[typing.Literal[256], typing.Literal[16]].from_log(
         Bytes(ARC4_RETURN_PREFIX + value)
     )
-    assert avm_result == expected
-    assert avm_result == int.from_bytes(result.bytes.value)
+    assert avm_result == int_to_decimal(expected, 256, 16)
+    assert avm_result == int_to_decimal(int.from_bytes(result.bytes.value), 256, 16)
 
 
 @pytest.mark.parametrize(
@@ -231,3 +233,9 @@ def test_bigufixednxm_from_log_invalid_length(get_avm_result: AVMInvoker, value:
         Bytes(ARC4_RETURN_PREFIX + value)
     )
     assert result.bytes == value
+
+
+def int_to_decimal(value: int, n: int, m: int) -> Decimal:
+    s = str(value)
+    d = n - m
+    return Decimal(f"{('0' * d + s[:-m])[-d:]}.{('0' * m + s[-m:])[-m:]}")

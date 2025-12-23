@@ -331,7 +331,7 @@ def test_verify_ecdsa_recover_k1(
         d=d,
         static_fee=AlgoAmount(micro_algo=5000),
     )
-    assert isinstance(result, list)
+    assert isinstance(result, tuple)
     result_x, result_y = bytes(result[0]), bytes(result[1])
 
     assert result_x == expected_x, "X coordinate mismatch"
@@ -355,7 +355,7 @@ def test_verify_ecdsa_decompress_k1(
         a=pk.format(compressed=True),
         static_fee=AlgoAmount(micro_algo=3000),
     )
-    assert isinstance(result, list)
+    assert isinstance(result, tuple)
     result_x, result_y = bytes(result[0]), bytes(result[1])
 
     assert result_x == pk.point()[0].to_bytes(32, byteorder="big"), "X coordinate mismatch"
@@ -399,7 +399,7 @@ def test_asset_holding_get(
     dummy_account_a = algorand.account.localnet_dispenser()
     expected_balance = 100
     dummy_asset = generate_test_asset(
-        algod_client=algorand.client.algod,
+        algorand=algorand,
         total=expected_balance,
         sender=dummy_account_a,
         decimals=0,
@@ -408,13 +408,13 @@ def test_asset_holding_get(
 
     avm_asset_balance = get_state_asset_holding_avm_result(
         "verify_asset_holding_get",
-        a=dummy_account_a.address,
+        a=dummy_account_a.addr,
         b=dummy_asset,
         static_fee=AlgoAmount(micro_algo=1000),
     )
     avm_frozen_balance = get_state_asset_holding_avm_result(
         "verify_asset_frozen_get",
-        a=dummy_account_a.address,
+        a=dummy_account_a.addr,
         b=dummy_asset,
         static_fee=AlgoAmount(micro_algo=1000),
     )
@@ -455,7 +455,7 @@ def test_asset_params_get(
     expected_value: object,
 ) -> None:
     dummy_account = algorand.account.localnet_dispenser()
-    creator = dummy_account.address
+    creator = dummy_account.addr
     metadata_hash = b"test" + b" " * 28
 
     mock_asset = context.any.asset(
@@ -469,7 +469,7 @@ def test_asset_params_get(
     )
 
     dummy_asset = generate_test_asset(
-        algod_client=algorand.client.algod,
+        algorand=algorand,
         total=100,
         sender=dummy_account,
         decimals=0,
@@ -528,7 +528,7 @@ def test_app_params_get(
             local_num_uint=algopy.UInt64(0),
             local_num_bytes=algopy.UInt64(0),
             extra_program_pages=algopy.UInt64(0),
-            creator=algopy.Account(algorand.account.localnet_dispenser().address),
+            creator=algopy.Account(algorand.account.localnet_dispenser().addr),
         )
 
         contract = StateAppParamsContract()
@@ -582,7 +582,7 @@ def test_acct_params_get(
     )
 
     mock_account = context.any.account(
-        address=dummy_account.address,
+        address=dummy_account.addr,
         balance=algopy.UInt64(INITIAL_BALANCE_MICRO_ALGOS + 100_000),
         min_balance=algopy.UInt64(100_000),
         auth_address=algopy.Account(algosdk.constants.ZERO_ADDRESS),
@@ -600,7 +600,7 @@ def test_acct_params_get(
     mock_contract = StateAcctParamsGetContract()
 
     avm_result = get_state_acct_params_avm_result(
-        method_name, a=dummy_account.address, static_fee=AlgoAmount(micro_algo=1000)
+        method_name, a=dummy_account.addr, static_fee=AlgoAmount(micro_algo=1000)
     )
     with context.txn.create_group(
         active_txn_overrides={"fee": algopy.UInt64(1000), "sender": mock_account}
@@ -818,7 +818,7 @@ def test_app_global_ex_get(
     mock_result = contract.verify_get_ex_bytes(
         a=mock_secondary_app, b=algopy.Bytes(b"global_bytes_explicit")
     )
-    assert avm_result[0] == list(mock_result[0].value)  # type: ignore[index]
+    assert avm_result[0] == mock_result[0].value  # type: ignore[index]
     assert avm_result[1] == mock_result[1]  # type: ignore[index]
 
 
@@ -849,7 +849,7 @@ def test_app_global_ex_get_arc4(
     mock_result = contract.verify_get_ex_bytes(
         a=mock_secondary_app, b=algopy.Bytes(b"global_arc4_bytes_explicit")
     )
-    assert avm_result[0] == list(mock_result[0].value)  # type: ignore[index]
+    assert avm_result[0] == mock_result[0].value  # type: ignore[index]
     assert avm_result[1] == mock_result[1]  # type: ignore[index]
 
 

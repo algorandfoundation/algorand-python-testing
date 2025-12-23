@@ -1,4 +1,3 @@
-import base64
 import typing
 from collections.abc import Generator
 
@@ -35,7 +34,7 @@ def test_log(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
     n = arc4.Tuple((arc4.UInt32(1), arc4.UInt64(2), arc4.String("hello")))
     o = FixedBytes[typing.Literal[5]](b"hello")
 
-    avm_result_ = get_avm_result(
+    avm_result = get_avm_result(
         "verify_log",
         a=a.value,
         b=b.value,
@@ -52,8 +51,7 @@ def test_log(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
         n=n.bytes.value,
         o=o.bytes.value,
     )
-    assert isinstance(avm_result_, list)
-    avm_result = [base64.b64decode(b) for b in avm_result_]
+    assert isinstance(avm_result, list)
 
     with context.txn.create_group([context.any.txn.payment()]):  # noqa: SIM117
         with pytest.raises(RuntimeError, match="Can only add logs to ApplicationCallTransaction!"):
