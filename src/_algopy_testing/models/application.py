@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-import algosdk.logic
+from algokit_utils.common import get_application_address
 
 from _algopy_testing.primitives import UInt64
 from _algopy_testing.protocols import UInt64Backed
@@ -63,7 +63,7 @@ class Application(UInt64Backed):
     def address(self) -> algopy.Account:
         from _algopy_testing.models import Account
 
-        address = algosdk.logic.get_application_address(self._id)
+        address = get_application_address(self._id)
         return Account(address)
 
     @property

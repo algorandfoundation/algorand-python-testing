@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import typing
 
-import algosdk
-
 from _algopy_testing.context_helpers import LedgerContext, TransactionContext
+from _algopy_testing.utils import generate_random_account
 from _algopy_testing.value_generators import AlgopyValueGenerator
 
 if typing.TYPE_CHECKING:
@@ -33,9 +32,7 @@ class AlgopyTestContext:
     ) -> None:
         import algopy
 
-        self._default_sender = algopy.Account(
-            default_sender or algosdk.account.generate_account()[1]
-        )
+        self._default_sender = algopy.Account(default_sender or generate_random_account().addr)
         self._template_vars: dict[str, typing.Any] = template_vars or {}
 
         self._active_lsig_args: Sequence[algopy.Bytes] = ()

@@ -28,3 +28,5 @@ ALWAYS_APPROVE_TEAL_PROGRAM = (
     b"\x09"  # pragma version 9
     b"\x81\x01"  # pushint 1
 )
+
+LOGIC_DATA_PREFIX = b"ProgData"

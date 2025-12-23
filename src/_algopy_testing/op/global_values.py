@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing
 from typing import TypedDict, TypeVar
 
-import algosdk
+from algokit_utils.common import ZERO_ADDRESS, get_application_address
 
 from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.models import Account
@@ -45,7 +45,7 @@ class _Global:
 
     @property
     def current_application_address(self) -> algopy.Account:
-        app_address = algosdk.logic.get_application_address(int(self.current_application_id.id))
+        app_address = get_application_address(int(self.current_application_id.id))
         return Account(app_address)
 
     @property
@@ -58,7 +58,7 @@ class _Global:
 
     @property
     def caller_application_address(self) -> algopy.Account:
-        app_address = algosdk.logic.get_application_address(int(self.caller_application_id))
+        app_address = get_application_address(int(self.caller_application_id))
         return Account(app_address)
 
     @property
@@ -104,7 +104,7 @@ class _Global:
         try:
             return self._fields["zero_address"]
         except KeyError:
-            return Account(algosdk.constants.ZERO_ADDRESS)
+            return Account(ZERO_ADDRESS)
 
     def __getattr__(self, name: str) -> typing.Any:
         try:

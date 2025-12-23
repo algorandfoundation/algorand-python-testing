@@ -6,7 +6,7 @@ import inspect
 import types
 import typing
 
-import algosdk
+from algokit_utils.applications.abi import Arc56Method
 
 import _algopy_testing
 from _algopy_testing.constants import ALWAYS_APPROVE_TEAL_PROGRAM, ARC4_RETURN_PREFIX
@@ -217,7 +217,7 @@ def create_abimethod_txns(
     contract_app = lazy_context.ledger.get_app(app_id)
     txn_fields = get_active_txn_fields(contract_app, allow_actions)
 
-    method = algosdk.abi.Method.from_signature(arc4_signature)
+    method = Arc56Method.from_signature(arc4_signature)
     method_selector = Bytes(method.get_selector())
     txn_arrays = _extract_arrays_from_args(
         args,
@@ -337,18 +337,11 @@ def _generate_arc4_signature_from_fn(
     fn: typing.Callable[_P, _R], arc4_name: str, resource_encoding: _ResourceEncoding
 ) -> str:
     annotations = inspect.get_annotations(fn, eval_str=True).copy()
-    returns = algosdk.abi.Returns(
-        _type_to_arc4(annotations.pop("return"), resource_encoding, "output")
-    )
-    method = algosdk.abi.Method(
-        name=arc4_name,
-        args=[
-            algosdk.abi.Argument(_type_to_arc4(a, resource_encoding, "input"))
-            for a in annotations.values()
-        ],
-        returns=returns,
-    )
-    return method.get_signature()
+    returns = _type_to_arc4(annotations.pop("return"), resource_encoding, "output")
+
+    args = ",".join([_type_to_arc4(a, resource_encoding, "input") for a in annotations.values()])
+
+    return f"{arc4_name}({args}){returns}"
 
 
 def _type_to_arc4(  # noqa: PLR0912 PLR0911

@@ -5,7 +5,9 @@ import types
 import typing
 from typing import TYPE_CHECKING
 
-import algosdk
+from algokit_utils import AddressWithSigners, AlgorandClient, ClientManager
+from algokit_utils.accounts import AccountManager
+from algokit_utils.common import MIN_TXN_FEE, ZERO_ADDRESS, public_key_from_address
 
 import _algopy_testing
 from _algopy_testing.constants import (
@@ -58,6 +60,14 @@ def generate_random_int(min_value: int, max_value: int) -> int:
 
 def generate_random_bytes32() -> bytes:
     return secrets.token_bytes(32)
+
+
+def generate_random_account() -> AddressWithSigners:
+    """Generate a new random Algorand account and return its address."""
+    configs = ClientManager.get_config_from_environment_or_localnet()
+    client_manager = ClientManager(configs, AlgorandClient(configs))
+    acc = AccountManager(client_manager).random()
+    return acc
 
 
 def as_int(value: object, *, max: int | None) -> int:  # noqa: A002
@@ -157,17 +167,24 @@ def check_type(value: object, typ: type | types.UnionType) -> None:
 
 
 def assert_address_is_valid(address: str) -> None:
-    assert algosdk.encoding.is_valid_address(address), "Invalid Algorand address supplied!"
+    def is_valid_algorand_address(address: str) -> bool:
+        try:
+            public_key_from_address(address)
+        except:  # noqa: E722
+            return False
+        return True
+
+    assert is_valid_algorand_address(address), "Invalid Algorand address supplied!"
 
 
 def get_default_global_fields() -> GlobalFields:
     import algopy
 
     return {
-        "min_txn_fee": algopy.UInt64(algosdk.constants.MIN_TXN_FEE),
+        "min_txn_fee": algopy.UInt64(MIN_TXN_FEE),
         "min_balance": algopy.UInt64(DEFAULT_ACCOUNT_MIN_BALANCE),
         "max_txn_life": algopy.UInt64(DEFAULT_MAX_TXN_LIFE),
-        "zero_address": algopy.Account(algosdk.constants.ZERO_ADDRESS),
+        "zero_address": algopy.Account(ZERO_ADDRESS),
         "caller_application_id": algopy.UInt64(),
         "asset_create_min_balance": algopy.UInt64(DEFAULT_ASSET_CREATE_MIN_BALANCE),
         "asset_opt_in_min_balance": algopy.UInt64(DEFAULT_ASSET_OPT_IN_MIN_BALANCE),

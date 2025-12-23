@@ -3,12 +3,12 @@ from __future__ import annotations
 import enum
 import hashlib
 import typing
-from collections.abc import Sequence
 
-import algosdk
 import coincurve
 import nacl.exceptions
 import nacl.signing
+from algokit_utils.common import public_key_from_address
+from algokit_utils.transact import LogicSigAccount
 from Cryptodome.Hash import SHA512, keccak
 from ecdsa import (  # type: ignore  # noqa: PGH003
     BadSignatureError,
@@ -17,10 +17,14 @@ from ecdsa import (  # type: ignore  # noqa: PGH003
     VerifyingKey,
 )
 
+from _algopy_testing.constants import LOGIC_DATA_PREFIX
 from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.enums import OnCompleteAction
 from _algopy_testing.primitives import Bytes, UInt64
 from _algopy_testing.utils import as_bytes, raise_mocked_function_error
+
+if typing.TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 class ECDSA(enum.Enum):
@@ -76,7 +80,7 @@ def ed25519verify(a: Bytes | bytes, b: Bytes | bytes, c: Bytes | bytes, /) -> bo
     txn = lazy_context.active_group.active_txn
 
     program_pages = typing.cast(
-        Sequence[Bytes],
+        "Sequence[Bytes]",
         (
             txn.fields["clear_state_program"]
             if txn.on_completion == OnCompleteAction.ClearState
@@ -85,9 +89,9 @@ def ed25519verify(a: Bytes | bytes, b: Bytes | bytes, c: Bytes | bytes, /) -> bo
     )
     program_bytes = b"".join(map(as_bytes, program_pages))
 
-    decoded_address = algosdk.encoding.decode_address(algosdk.logic.address(program_bytes))
+    decoded_address = public_key_from_address(LogicSigAccount(logic=program_bytes).address)
     address_bytes = as_bytes(decoded_address)
-    a = algosdk.constants.logic_data_prefix + address_bytes + a
+    a = LOGIC_DATA_PREFIX + address_bytes + a
     return ed25519verify_bare(a, b, c)
 
 
@@ -195,7 +199,6 @@ class EC(enum.StrEnum):
 
 
 class _MockedMember:
-
     def __set_name__(self, owner: type, name: str) -> None:
         self.name = f"{owner.__name__}.{name}"
 

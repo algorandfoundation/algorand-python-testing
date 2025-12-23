@@ -2,7 +2,6 @@ import typing
 from collections.abc import Iterator
 
 import algopy
-import algosdk
 import pytest
 from _algopy_testing import algopy_testing_context
 from _algopy_testing.constants import MAX_BYTES_SIZE, MAX_UINT64
@@ -10,7 +9,7 @@ from _algopy_testing.context import AlgopyTestContext
 from _algopy_testing.primitives.bytes import Bytes
 from _algopy_testing.primitives.fixed_bytes import FixedBytes
 from _algopy_testing.primitives.string import String
-from _algopy_testing.utils import get_type_generic_from_int_literal
+from _algopy_testing.utils import generate_random_account, get_type_generic_from_int_literal
 
 
 @pytest.fixture()
@@ -87,7 +86,7 @@ def test_avm_account_generator(context: AlgopyTestContext) -> None:
     assert context.ledger.account_is_funded(account.public_key)
 
     # unfunded
-    custom_address = algosdk.account.generate_account()[1]
+    custom_address = generate_random_account().addr
     account = context.any.account(address=custom_address)
     assert isinstance(account, algopy.Account)
     assert account.public_key == custom_address

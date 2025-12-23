@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from algosdk import constants
+from algokit_utils.transact import TransactionType as BaseTransactionType
 
 from _algopy_testing.primitives import UInt64
 
@@ -73,17 +73,17 @@ class TransactionType(_EnumLike):
     def txn_name(self) -> str:
         match self:
             case self.Payment:
-                return constants.PAYMENT_TXN
+                return BaseTransactionType.Payment.value
             case self.KeyRegistration:
-                return constants.KEYREG_TXN
+                return BaseTransactionType.KeyRegistration.value
             case self.AssetConfig:
-                return constants.ASSETCONFIG_TXN
+                return BaseTransactionType.AssetConfig.value
             case self.AssetTransfer:
-                return constants.ASSETTRANSFER_TXN
+                return BaseTransactionType.AssetTransfer.value
             case self.AssetFreeze:
-                return constants.ASSETFREEZE_TXN
+                return BaseTransactionType.AssetFreeze.value
             case self.ApplicationCall:
-                return constants.APPCALL_TXN
+                return BaseTransactionType.AppCall.value
             case _:
                 raise ValueError("unexpected transaction type")
 

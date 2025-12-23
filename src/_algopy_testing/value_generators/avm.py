@@ -5,7 +5,7 @@ import string
 import typing
 from collections import ChainMap
 
-import algosdk
+from algokit_utils.common import ZERO_ADDRESS
 
 import _algopy_testing
 from _algopy_testing.constants import (
@@ -18,7 +18,7 @@ from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.models.account import AccountFields
 from _algopy_testing.models.application import ApplicationContextData, ApplicationFields
 from _algopy_testing.models.asset import AssetFields
-from _algopy_testing.utils import generate_random_int
+from _algopy_testing.utils import generate_random_account, generate_random_int
 
 if typing.TYPE_CHECKING:
     import algopy
@@ -92,7 +92,7 @@ class AVMValueGenerator:
                 raise AttributeError(f"Invalid field '{key}' for Account")
 
         ledger = lazy_context.ledger
-        new_account_address = address or algosdk.account.generate_account()[1]
+        new_account_address = address or generate_random_account().addr
         new_account = algopy.Account(new_account_address)
         # defaultdict of account_data ensures we get a new initialized account
         account_data = lazy_context.get_account_data(new_account_address)
@@ -129,11 +129,11 @@ class AVMValueGenerator:
             "name": lazy_context.any.bytes(32),
             "url": lazy_context.any.bytes(10),
             "metadata_hash": lazy_context.any.bytes(32),
-            "manager": algopy.Account(algosdk.constants.ZERO_ADDRESS),
-            "freeze": algopy.Account(algosdk.constants.ZERO_ADDRESS),
-            "clawback": algopy.Account(algosdk.constants.ZERO_ADDRESS),
+            "manager": algopy.Account(ZERO_ADDRESS),
+            "freeze": algopy.Account(ZERO_ADDRESS),
+            "clawback": algopy.Account(ZERO_ADDRESS),
             "creator": lazy_context.value.default_sender,
-            "reserve": algopy.Account(algosdk.constants.ZERO_ADDRESS),
+            "reserve": algopy.Account(ZERO_ADDRESS),
         }
         merged_fields = dict(ChainMap(asset_fields, default_asset_fields))  # type: ignore[arg-type]
         lazy_context.ledger._asset_data[int(new_asset.id)] = AssetFields(**merged_fields)  # type: ignore[typeddict-item]

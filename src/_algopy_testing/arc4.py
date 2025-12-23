@@ -6,7 +6,7 @@ import functools
 import types
 import typing
 
-import algosdk
+from algokit_utils.common import ZERO_ADDRESS, public_key_from_address
 from Cryptodome.Hash import SHA512
 from typing_extensions import deprecated
 
@@ -751,11 +751,11 @@ class _AddressTypeInfo(_StaticArrayTypeInfo):
 class Address(StaticArray[Byte, typing.Literal[32]]):
     _type_info = _AddressTypeInfo()
 
-    def __init__(self, value: Account | str | algopy.Bytes = algosdk.constants.ZERO_ADDRESS):
+    def __init__(self, value: Account | str | algopy.Bytes = ZERO_ADDRESS):
         super().__init__()
         if isinstance(value, str):
             try:
-                bytes_value = algosdk.encoding.decode_address(value)
+                bytes_value = public_key_from_address(value)
             except Exception as e:
                 raise ValueError(f"cannot encode the following address: {value!r}") from e
         elif isinstance(value, Account):
@@ -773,7 +773,7 @@ class Address(StaticArray[Byte, typing.Literal[32]]):
 
     def __bool__(self) -> bool:
         # """Returns `True` if not equal to the zero address"""
-        zero_bytes: bytes = algosdk.encoding.decode_address(algosdk.constants.ZERO_ADDRESS)
+        zero_bytes: bytes = public_key_from_address(ZERO_ADDRESS)
         return self.bytes != zero_bytes
 
     def __eq__(self, other: Address | Account | str) -> bool:  # type: ignore[override]
@@ -782,7 +782,7 @@ class Address(StaticArray[Byte, typing.Literal[32]]):
         if isinstance(other, Address | Account):
             return self.bytes == other.bytes
         elif isinstance(other, str):
-            other_bytes: bytes = algosdk.encoding.decode_address(other)
+            other_bytes: bytes = public_key_from_address(other)
             return self.bytes == other_bytes
         else:
             return NotImplemented
