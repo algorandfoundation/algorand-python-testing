@@ -1,7 +1,6 @@
 from collections.abc import Generator
 
 import algopy
-import algosdk
 import pytest
 from algopy_testing import AlgopyTestContext, algopy_testing_context
 
@@ -21,8 +20,8 @@ def test_seller_receives_payment(context: AlgopyTestContext) -> None:
             context.any.txn.payment(
                 fee=algopy.UInt64(500),
                 first_valid=algopy.UInt64(1000),
-                close_remainder_to=algopy.Account(algosdk.constants.ZERO_ADDRESS),
-                rekey_to=algopy.Account(algosdk.constants.ZERO_ADDRESS),
+                close_remainder_to=algopy.Account(),
+                rekey_to=algopy.Account(),
                 receiver=algopy.Account(
                     "6ZHGHH5Z5CTPCF5WCESXMGRSVK7QJETR63M3NY5FJCUYDHO57VTCMJOBGY"
                 ),

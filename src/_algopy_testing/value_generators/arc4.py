@@ -4,11 +4,9 @@ import secrets
 import string
 import typing
 
-import algosdk
-
 from _algopy_testing import arc4
 from _algopy_testing.constants import MAX_UINT8, MAX_UINT16, MAX_UINT32, MAX_UINT64, MAX_UINT512
-from _algopy_testing.utils import generate_random_int
+from _algopy_testing.utils import generate_random_account, generate_random_int
 
 if typing.TYPE_CHECKING:
     import algopy
@@ -23,7 +21,8 @@ class ARC4ValueGenerator:
         :returns: A new, random Algorand address.
         """
 
-        return arc4.Address(algosdk.account.generate_account()[1])
+        address = generate_random_account().addr
+        return arc4.Address(address)
 
     def uint8(self, min_value: int = 0, max_value: int = MAX_UINT8) -> algopy.arc4.UInt8:
         """Generate a random UInt8 within the specified range.

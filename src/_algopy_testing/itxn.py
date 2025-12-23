@@ -4,7 +4,7 @@ import logging
 import typing
 from copy import deepcopy
 
-import algosdk
+from algokit_utils.transactions import MAX_TRANSACTION_GROUP_SIZE
 
 from _algopy_testing.context_helpers import lazy_context
 from _algopy_testing.enums import TransactionType
@@ -168,7 +168,7 @@ class ApplicationCall(_BaseInnerTransactionFields[ApplicationCallInnerTransactio
 def submit_txns(
     *transactions: _BaseInnerTransactionFields[_TResult_co],
 ) -> tuple[_BaseInnerTransactionResult, ...]:
-    if len(transactions) > algosdk.constants.TX_GROUP_LIMIT:
+    if len(transactions) > MAX_TRANSACTION_GROUP_SIZE:
         raise ValueError("Cannot submit more than 16 inner transactions at once")
 
     results = tuple(_get_itxn_result(tx) for tx in transactions)

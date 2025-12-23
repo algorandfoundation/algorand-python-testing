@@ -1,7 +1,6 @@
 from collections.abc import Generator
 
 import algopy
-import algosdk
 import pytest
 from algopy_testing import AlgopyTestContext, algopy_testing_context
 
@@ -81,8 +80,8 @@ def test_claim_poa(
     opt_in_txn = context.any.txn.asset_transfer(
         sender=context.default_sender,
         asset_receiver=context.default_sender,
-        asset_close_to=algopy.Account(algosdk.constants.ZERO_ADDRESS),
-        rekey_to=algopy.Account(algosdk.constants.ZERO_ADDRESS),
+        asset_close_to=algopy.Account(),
+        rekey_to=algopy.Account(),
         xfer_asset=dummy_poa,
         fee=algopy.UInt64(0),
         asset_amount=algopy.UInt64(0),

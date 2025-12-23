@@ -5,7 +5,7 @@ import pytest
 from _algopy_testing import arc4
 from _algopy_testing.primitives import BigUInt, String, UInt64
 from _algopy_testing.primitives.array import FixedArray, ImmutableFixedArray
-from algosdk import abi
+from algokit_utils.applications import abi
 
 from tests.util import int_to_bytes
 

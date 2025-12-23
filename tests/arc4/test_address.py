@@ -1,10 +1,11 @@
 import _algopy_testing.primitives as algopy
-import algosdk
 import pytest
 from _algopy_testing import arc4
 from _algopy_testing.models import Account
+from algokit_utils import ABIType
+from algokit_utils.common import ZERO_ADDRESS, address_from_public_key
 
-_abi_address_type = algosdk.abi.ABIType.from_string("address")
+_abi_address_type = ABIType.from_string("address")
 
 _test_values = [
     b"\x00" * 32,
@@ -29,7 +30,7 @@ def test_bytes_from_bytes(value: bytes) -> None:
     _test_values,
 )
 def test_bytes_from_str(value: bytes) -> None:
-    str_value = algosdk.encoding.encode_address(value)
+    str_value = address_from_public_key(value)
     abi_result = _abi_address_type.encode(str_value)
     arc4_result = arc4.Address(str_value).bytes
     assert abi_result == arc4_result
@@ -51,9 +52,9 @@ def test_bytes_from_account(value: bytes) -> None:
     _test_values,
 )
 def test_bool_from_bytes(value: bytes) -> None:
-    str_value = algosdk.encoding.encode_address(value)
+    str_value = address_from_public_key(value)
     arc4_result = bool(arc4.Address(algopy.Bytes(value)))
-    assert arc4_result == (str_value != algosdk.constants.ZERO_ADDRESS)
+    assert arc4_result == (str_value != ZERO_ADDRESS)
 
 
 @pytest.mark.parametrize(
@@ -61,9 +62,9 @@ def test_bool_from_bytes(value: bytes) -> None:
     _test_values,
 )
 def test_bool_from_str(value: bytes) -> None:
-    str_value = algosdk.encoding.encode_address(value)
+    str_value = address_from_public_key(value)
     arc4_result = bool(arc4.Address(str_value))
-    assert arc4_result == (str_value != algosdk.constants.ZERO_ADDRESS)
+    assert arc4_result == (str_value != ZERO_ADDRESS)
 
 
 @pytest.mark.parametrize(
@@ -71,10 +72,10 @@ def test_bool_from_str(value: bytes) -> None:
     _test_values,
 )
 def test_bool_from_account(value: bytes) -> None:
-    str_value = algosdk.encoding.encode_address(value)
+    str_value = address_from_public_key(value)
     account = Account(algopy.Bytes(value))
     arc4_result = bool(arc4.Address(account))
-    assert arc4_result == (str_value != algosdk.constants.ZERO_ADDRESS)
+    assert arc4_result == (str_value != ZERO_ADDRESS)
 
 
 @pytest.mark.parametrize(
@@ -94,7 +95,7 @@ def test_copy_from_bytes(value: bytes) -> None:
     _test_values,
 )
 def test_copy_from_str(value: bytes) -> None:
-    str_value = algosdk.encoding.encode_address(value)
+    str_value = address_from_public_key(value)
     abi_result = _abi_address_type.encode(str_value)
     arc4_value = arc4.Address(str_value)
     copy = arc4_value.copy()
@@ -133,7 +134,7 @@ def test_get_item_from_bytes(value: bytes) -> None:
 )
 def test_get_item_from_str(value: bytes) -> None:
     input_bytes = algopy.Bytes(value)
-    str_value = algosdk.encoding.encode_address(value)
+    str_value = address_from_public_key(value)
     arc4_value = arc4.Address(str_value)
     for idx, x in enumerate(arc4_value):
         assert x.bytes == input_bytes[idx].value
@@ -159,7 +160,7 @@ def test_get_item_from_account(value: bytes) -> None:
 )
 def test_comparison_with_self_from_bytes(value: bytes) -> None:
     arc4_value = arc4.Address(algopy.Bytes(value))
-    str_value = algosdk.encoding.encode_address(value)
+    str_value = address_from_public_key(value)
     assert arc4_value == str_value
 
     account = Account(algopy.Bytes(value))
@@ -173,7 +174,7 @@ def test_comparison_with_self_from_bytes(value: bytes) -> None:
     _test_values,
 )
 def test_comparison_with_self_from_str(value: bytes) -> None:
-    str_value = algosdk.encoding.encode_address(value)
+    str_value = address_from_public_key(value)
     arc4_value = arc4.Address(str_value)
     assert arc4_value == str_value
 
@@ -192,7 +193,7 @@ def test_comparison_with_self_from_account(value: bytes) -> None:
     arc4_value = arc4.Address(account)
     assert arc4_value == account
 
-    str_value = algosdk.encoding.encode_address(value)
+    str_value = address_from_public_key(value)
     assert arc4_value == str_value
 
     assert arc4_value == arc4.Address(algopy.Bytes(value))
@@ -205,7 +206,7 @@ def test_comparison_with_self_from_account(value: bytes) -> None:
 def test_comparison_with_other_from_bytes(value: bytes, other: bytes) -> None:
     arc4_value = arc4.Address(algopy.Bytes(value))
 
-    other_str_value = algosdk.encoding.encode_address(other)
+    other_str_value = address_from_public_key(other)
     assert arc4_value != other_str_value
 
     other_account = Account(algopy.Bytes(other))
@@ -219,10 +220,10 @@ def test_comparison_with_other_from_bytes(value: bytes, other: bytes) -> None:
     zip(_test_values, reversed(_test_values), strict=False),
 )
 def test_comparison_with_other_from_str(value: bytes, other: bytes) -> None:
-    str_value = algosdk.encoding.encode_address(value)
+    str_value = address_from_public_key(value)
     arc4_value = arc4.Address(str_value)
 
-    other_str_value = algosdk.encoding.encode_address(other)
+    other_str_value = address_from_public_key(other)
     assert arc4_value != other_str_value
 
     other_account = Account(algopy.Bytes(other))
@@ -239,7 +240,7 @@ def test_comparison_with_other_from_account(value: bytes, other: bytes) -> None:
     account = Account(algopy.Bytes(value))
     arc4_value = arc4.Address(account)
 
-    other_str_value = algosdk.encoding.encode_address(other)
+    other_str_value = address_from_public_key(other)
     assert arc4_value != other_str_value
 
     other_account = Account(algopy.Bytes(other))

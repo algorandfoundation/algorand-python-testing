@@ -2,8 +2,8 @@ import typing
 
 import pytest
 from _algopy_testing import arc4
+from algokit_utils.applications import abi
 from algopy_testing import AlgopyTestContext, algopy_testing_context
-from algosdk import abi
 
 from tests.artifacts.Tuples.contract import TuplesContract
 from tests.util import int_to_bytes
