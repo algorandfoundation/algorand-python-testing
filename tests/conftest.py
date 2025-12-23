@@ -16,7 +16,7 @@ def algorand() -> AlgorandClient:
 
 @pytest.fixture()
 def localnet_creator_address(algorand: AlgorandClient) -> str:
-    return algorand.account.localnet_dispenser().address
+    return algorand.account.localnet_dispenser().addr
 
 
 @pytest.fixture()

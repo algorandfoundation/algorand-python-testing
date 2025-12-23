@@ -4,8 +4,8 @@ import secrets
 import typing
 from pathlib import Path
 
-import algosdk
 from algokit_utils import (
+    AddressWithSigners,
     AlgorandClient,
     AppClient,
     AppClientMethodCallParams,
@@ -13,9 +13,9 @@ from algokit_utils import (
     AppFactoryCreateMethodCallParams,
     AppFactoryCreateParams,
     AppFactoryParams,
-    SigningAccount,
+    AssetCreateParams,
 )
-from algosdk.v2client.algod import AlgodClient
+from algokit_utils.transact import OnApplicationComplete
 
 INITIAL_BALANCE_MICRO_ALGOS = int(20e6)
 
@@ -31,7 +31,7 @@ class AVMInvoker:
     def __call__(
         self,
         method: str,
-        on_complete: algosdk.transaction.OnComplete = algosdk.transaction.OnComplete.NoOpOC,
+        on_complete: OnApplicationComplete | None = None,
         *,
         return_raw: bool = False,
         **kwargs: typing.Any,
@@ -53,13 +53,12 @@ class AVMInvoker:
         if return_raw and response.returns and len(response.returns) > 0:
             return response.returns[0].raw_value
         result = response.abi_return
-        if result is None and response.returns and len(response.returns) > 0:
-            assert response.returns[0].tx_info
-            return response.returns[0].tx_info.get("logs", None)
+        if result is None and response.confirmations and len(response.confirmations) > 0:
+            return response.confirmations[0].logs
         if isinstance(result, list) and all(
             isinstance(i, int) and i >= 0 and i <= 255 for i in result
         ):
-            return bytes(result)  # type: ignore[arg-type]
+            return bytes(result)
         return result
 
 
@@ -73,7 +72,7 @@ def create_avm_invoker(app_spec: Path, algorand: AlgorandClient) -> AVMInvoker:
         AppFactoryParams(
             algorand=algorand,
             app_spec=app_spec.read_text(),
-            default_sender=dispenser.address,
+            default_sender=dispenser.addr,
         ),
     )
     try:
@@ -90,8 +89,8 @@ def create_avm_invoker(app_spec: Path, algorand: AlgorandClient) -> AVMInvoker:
 
 def generate_test_asset(  # noqa: PLR0913
     *,
-    algod_client: AlgodClient,
-    sender: SigningAccount,
+    algorand: AlgorandClient,
+    sender: AddressWithSigners,
     total: int | None = None,
     decimals: int = 0,
     default_frozen: bool = False,
@@ -116,33 +115,24 @@ def generate_test_asset(  # noqa: PLR0913
             f"${math.floor(random.random() * 100) + 1}_${total}"
         )
 
-    params = algod_client.suggested_params()
-
-    txn = algosdk.transaction.AssetConfigTxn(
-        sender=sender.address,
-        sp=params,
-        total=total * 10**decimals,
-        decimals=decimals,
-        default_frozen=default_frozen,
-        unit_name=unit_name,
-        asset_name=asset_name,
-        manager=manager,
-        reserve=reserve,
-        freeze=freeze,
-        clawback=clawback,
-        url=url,
-        metadata_hash=metadata_hash,
-        note=note or _random_note(),
-        lease=lease,
-        strict_empty_address_check=False,
-        rekey_to=rekey_to,
-    )  # type: ignore[no-untyped-call, unused-ignore]
-
-    signed_transaction = txn.sign(sender.private_key)  # type: ignore[no-untyped-call, unused-ignore]
-    algod_client.send_transaction(signed_transaction)
-    ptx = algod_client.pending_transaction_info(txn.get_txid())  # type: ignore[no-untyped-call, unused-ignore]
-
-    if isinstance(ptx, dict) and "asset-index" in ptx and isinstance(ptx["asset-index"], int):
-        return ptx["asset-index"]
-    else:
-        raise ValueError("Unexpected response from pending_transaction_info")
+    result = algorand.send.asset_create(
+        AssetCreateParams(
+            sender=sender.addr,
+            total=total * 10**decimals,
+            decimals=decimals,
+            default_frozen=default_frozen,
+            unit_name=unit_name,
+            asset_name=asset_name,
+            manager=manager,
+            reserve=reserve,
+            freeze=freeze,
+            clawback=clawback,
+            url=url,
+            metadata_hash=metadata_hash,
+            note=note or _random_note(),
+            lease=lease,
+            rekey_to=rekey_to,
+            signer=sender.signer,
+        )
+    )
+    return result.asset_id

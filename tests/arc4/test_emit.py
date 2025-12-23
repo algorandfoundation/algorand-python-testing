@@ -1,4 +1,3 @@
-import base64
 import typing
 from collections.abc import Generator
 
@@ -83,7 +82,7 @@ def test_emit(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
             arc4.DynamicArray(arc4.UInt16(1), arc4.UInt16(2), arc4.UInt16(3)),
             arc4.Tuple((arc4.UInt32(1), arc4.UInt64(2), arc4.String("hello"))),
         )
-        avm_result_ = get_avm_result(
+        avm_result = get_avm_result(
             "verify_emit",
             a=_test_data.a.value,
             b=_test_data.b,
@@ -102,8 +101,7 @@ def test_emit(get_avm_result: AVMInvoker, context: AlgopyTestContext) -> None:
             s=_test_data_arc4.s.bytes.value,
             t=_test_data_arc4.t.bytes.value,
         )
-        assert isinstance(avm_result_, list)
-        avm_result = [base64.b64decode(b) for b in avm_result_]
+        assert isinstance(avm_result, list)
 
         arc4.emit(_test_data_arc4)
         arc4.emit(
