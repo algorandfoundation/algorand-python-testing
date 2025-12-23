@@ -310,6 +310,7 @@ exclude = ["tests/artifacts"]
 [[tool.mypy.overrides]]
 module = [
   "tests.artifacts.*",
+  "rich.*",
 ]
 follow_imports = "skip"
 
