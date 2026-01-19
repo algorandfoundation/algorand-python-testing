@@ -145,7 +145,7 @@ def _get_tuple_serializer(item_types: tuple[type, ...]) -> _Serializer[typing.An
         return tuple(result)
 
     return _Serializer(
-        arc4_type=arc4.Tuple[*(s.arc4_type for s in serializers)],  # type: ignore[misc]
+        arc4_type=arc4.Tuple[*(s.arc4_type for s in serializers)],  # type: ignore[misc,arg-type]
         native_to_arc4=lambda t: arc4.Tuple(_items_to_arc4(t)),
         arc4_to_native=lambda t: _items_to_native(t),
     )
@@ -190,7 +190,7 @@ def type_of(value: object) -> type:
     if it is a generic type."""
     # get fully parametrized tuples
     if isinstance(value, tuple) and type(value) is tuple:
-        return tuple[*(type_of(i) for i in value)]  # type: ignore[misc, no-any-return]
+        return tuple[*(type_of(i) for i in value)]  # type: ignore[misc,return-value]
     else:
         return type(value)
 

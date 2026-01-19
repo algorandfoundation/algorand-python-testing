@@ -1136,12 +1136,11 @@ verify_uintn_from_log:
     // tests/artifacts/Arc4PrimitiveOps/contract.py:171
     // return arc4.UInt32.from_log(a)
     dup
-    extract 6 0
-    swap
     extract 2 4
     bytec_0 // 0x151f7c75
     ==
     assert // application log value is not the result of an ABI return
+    extract 6 0
     // tests/artifacts/Arc4PrimitiveOps/contract.py:169
     // @arc4.abimethod()
     bytec_0 // 0x151f7c75
@@ -1160,12 +1159,11 @@ verify_biguintn_from_log:
     // tests/artifacts/Arc4PrimitiveOps/contract.py:175
     // return arc4.UInt256.from_log(a)
     dup
-    extract 6 0
-    swap
     extract 2 4
     bytec_0 // 0x151f7c75
     ==
     assert // application log value is not the result of an ABI return
+    extract 6 0
     // tests/artifacts/Arc4PrimitiveOps/contract.py:173
     // @arc4.abimethod()
     bytec_0 // 0x151f7c75
@@ -1381,12 +1379,11 @@ verify_ufixednxm_from_log:
     // tests/artifacts/Arc4PrimitiveOps/contract.py:225
     // return arc4.UFixedNxM[typing.Literal[32], typing.Literal[8]].from_log(a)
     dup
-    extract 6 0
-    swap
     extract 2 4
     bytec_0 // 0x151f7c75
     ==
     assert // application log value is not the result of an ABI return
+    extract 6 0
     // tests/artifacts/Arc4PrimitiveOps/contract.py:221
     // @arc4.abimethod()
     bytec_0 // 0x151f7c75
@@ -1405,12 +1402,11 @@ verify_bigufixednxm_from_log:
     // tests/artifacts/Arc4PrimitiveOps/contract.py:231
     // return arc4.BigUFixedNxM[typing.Literal[256], typing.Literal[16]].from_log(a)
     dup
-    extract 6 0
-    swap
     extract 2 4
     bytec_0 // 0x151f7c75
     ==
     assert // application log value is not the result of an ABI return
+    extract 6 0
     // tests/artifacts/Arc4PrimitiveOps/contract.py:227
     // @arc4.abimethod()
     bytec_0 // 0x151f7c75
@@ -1538,12 +1534,11 @@ verify_string_from_log:
     // tests/artifacts/Arc4PrimitiveOps/contract.py:258
     // return arc4.String.from_log(a)
     dup
-    extract 6 0
-    swap
     extract 2 4
     bytec_0 // 0x151f7c75
     ==
     assert // application log value is not the result of an ABI return
+    extract 6 0
     // tests/artifacts/Arc4PrimitiveOps/contract.py:256
     // @arc4.abimethod()
     bytec_0 // 0x151f7c75
@@ -1595,12 +1590,11 @@ verify_bool_from_log:
     // tests/artifacts/Arc4PrimitiveOps/contract.py:270
     // return arc4.Bool.from_log(a)
     dup
-    extract 6 0
-    swap
     extract 2 4
     bytec_0 // 0x151f7c75
     ==
     assert // application log value is not the result of an ABI return
+    extract 6 0
     // tests/artifacts/Arc4PrimitiveOps/contract.py:268
     // @arc4.abimethod()
     bytec_0 // 0x151f7c75

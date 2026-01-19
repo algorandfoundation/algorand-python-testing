@@ -75,7 +75,7 @@ class AccountContextData:
 
     opted_assets: dict[int, AssetHolding] = dataclasses.field(default_factory=dict)
     opted_apps: dict[int, algopy.Application] = dataclasses.field(default_factory=dict)
-    fields: AccountFields = dataclasses.field(default_factory=AccountFields)  # type: ignore[arg-type]
+    fields: AccountFields = dataclasses.field(default_factory=AccountFields)
 
 
 class Account(BytesBacked):

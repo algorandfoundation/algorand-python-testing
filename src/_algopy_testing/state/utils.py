@@ -37,15 +37,15 @@ def deserialize(typ: type[_TValue], value: SerializableValue) -> _TValue:
     elif issubclass(typ, bool):
         return value != 0  # type: ignore[return-value]
     elif issubclass(typ, UInt64 | Bytes):
-        return typ(value)  # type: ignore[arg-type, return-value]
+        return typ(value)  # type: ignore[arg-type]
     elif issubclass(typ, UInt64Backed):
         if isinstance(value, bytes):
             raise TypeError("expected int, received bytes")
-        return typ.from_int(value)  # type: ignore[return-value]
+        return typ.from_int(value)
     elif issubclass(typ, BytesBacked | Serializable):
         if isinstance(value, int):
             raise TypeError("expected bytes, received int")
-        return typ.from_bytes(value)  # type: ignore[return-value]
+        return typ.from_bytes(value)
     else:
         raise TypeError(f"Unsupported type: {typ}")
 

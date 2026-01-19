@@ -531,7 +531,7 @@ class Struct(Serializable, MutableBytes):
 
     def __init_subclass__(cls, *args: typing.Any, **kwargs: dict[str, typing.Any]) -> None:
         # make implementation not frozen, so we can conditionally control behaviour
-        dataclasses.dataclass(cls, *args, **{**kwargs, "frozen": False})
+        dataclasses.dataclass(cls, *args, **{**kwargs, "frozen": False})  # type: ignore[call-overload]
         frozen = kwargs.get("frozen", False)
         cls._field_names = [
             f.name for f in dataclasses.fields(typing.cast("type[DataclassInstance]", cls))

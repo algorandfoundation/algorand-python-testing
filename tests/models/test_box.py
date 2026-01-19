@@ -479,7 +479,7 @@ def test_box() -> None:
     with algopy_testing_context():
         contract = BoxContract()
 
-        (a_exist, b_exist, c_exist, large_exist) = contract.boxes_exist()
+        a_exist, b_exist, c_exist, large_exist = contract.boxes_exist()
         assert not a_exist
         assert not b_exist
         assert not c_exist
@@ -487,7 +487,7 @@ def test_box() -> None:
 
         contract.set_boxes(a=UInt64(56), b=arc4.DynamicBytes(b"Hello"), c=arc4.String("World"))
 
-        (a_exist, b_exist, c_exist, large_exist) = contract.boxes_exist()
+        a_exist, b_exist, c_exist, large_exist = contract.boxes_exist()
         assert a_exist
         assert b_exist
         assert c_exist
@@ -495,7 +495,7 @@ def test_box() -> None:
 
         contract.check_keys()
 
-        (a, b, c, large) = contract.read_boxes()
+        a, b, c, large = contract.read_boxes()
 
         assert (a, b, c, large) == (59, b"Hello", "World", 42)
 
@@ -503,7 +503,7 @@ def test_box() -> None:
 
         contract.delete_boxes()
 
-        (a_exist, b_exist, c_exist, large_exist) = contract.boxes_exist()
+        a_exist, b_exist, c_exist, large_exist = contract.boxes_exist()
 
         assert not a_exist
         assert not b_exist

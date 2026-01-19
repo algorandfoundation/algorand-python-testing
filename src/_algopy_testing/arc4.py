@@ -1154,17 +1154,17 @@ class _StructMeta(type):
 
 def _tuple_type_from_struct(struct: type[Struct]) -> type[Tuple]:  # type: ignore[type-arg]
     field_types = [f.type for f in struct._type_info.fields]
-    return parameterize_type(Tuple, *field_types)
+    return parameterize_type(Tuple, *field_types)  # type: ignore[arg-type]
 
 
-class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):  # type: ignore[misc]
+class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):
     """Base class for ARC4 Struct types."""
 
     _type_info: typing.ClassVar[_StructTypeInfo]  # type: ignore[misc]
 
     def __init_subclass__(cls, *args: typing.Any, **kwargs: dict[str, typing.Any]) -> None:
         # make implementation not frozen, so we can conditionally control behaviour
-        dataclasses.dataclass(cls, *args, **{**kwargs, "frozen": False})
+        dataclasses.dataclass(cls, *args, **{**kwargs, "frozen": False})  # type: ignore[call-overload]
         frozen = kwargs.get("frozen", False)
         assert isinstance(frozen, bool)
         cls._type_info = _StructTypeInfo(cls, frozen=frozen)
