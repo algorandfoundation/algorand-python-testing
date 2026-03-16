@@ -5,7 +5,7 @@
 main:
     intcblock 1 0 32 6
     bytecblock 0x65a9aecc "abc"
-    // tests/artifacts/dynamic_itxn_group/contract.py:13
+    // tests/artifacts/DynamicITxnGroup/contract.py:13
     // class DynamicItxnGroup(ARC4Contract):
     txn NumAppArgs
     bz main___algopy_default_create@9
@@ -28,9 +28,9 @@ main___algopy_default_create@9:
     return
 
 
-// tests.artifacts.dynamic_itxn_group.contract.DynamicItxnGroup.test_firstly[routing]() -> void:
+// tests.artifacts.DynamicITxnGroup.contract.DynamicItxnGroup.test_firstly[routing]() -> void:
 test_firstly:
-    // tests/artifacts/dynamic_itxn_group/contract.py:14
+    // tests/artifacts/DynamicITxnGroup/contract.py:14
     // @arc4.abimethod
     txna ApplicationArgs 1
     txn GroupIndex
@@ -44,14 +44,14 @@ test_firstly:
     txna ApplicationArgs 2
     btoi
     cover 2
-    // tests/artifacts/dynamic_itxn_group/contract.py:18
+    // tests/artifacts/DynamicITxnGroup/contract.py:18
     // assert funds.receiver == Global.current_application_address, "Funds must be sent to app"
     dup
     gtxns Receiver
     global CurrentApplicationAddress
     ==
     assert // Funds must be sent to app
-    // tests/artifacts/dynamic_itxn_group/contract.py:20
+    // tests/artifacts/DynamicITxnGroup/contract.py:20
     // assert addresses.length, "must provide some accounts"
     dig 1
     intc_1 // 0
@@ -60,7 +60,7 @@ test_firstly:
     cover 3
     dup
     assert // must provide some accounts
-    // tests/artifacts/dynamic_itxn_group/contract.py:22
+    // tests/artifacts/DynamicITxnGroup/contract.py:22
     // share = funds.amount // addresses.length
     swap
     gtxns Amount
@@ -68,7 +68,7 @@ test_firstly:
     /
     dup
     cover 2
-    // tests/artifacts/dynamic_itxn_group/contract.py:24
+    // tests/artifacts/DynamicITxnGroup/contract.py:24
     // itxn.Payment(amount=share, receiver=addresses[0].native).stage(begin_group=True)
     itxn_begin
     dig 1
@@ -82,18 +82,18 @@ test_firstly:
     itxn_field TypeEnum
     intc_1 // 0
     itxn_field Fee
-    // tests/artifacts/dynamic_itxn_group/contract.py:26
+    // tests/artifacts/DynamicITxnGroup/contract.py:26
     // for i in urange(1, addresses.length):
     intc_0 // 1
 
 test_firstly_for_header@2:
-    // tests/artifacts/dynamic_itxn_group/contract.py:26
+    // tests/artifacts/DynamicITxnGroup/contract.py:26
     // for i in urange(1, addresses.length):
     dup
     dig 4
     <
     bz test_firstly_after_for@5
-    // tests/artifacts/dynamic_itxn_group/contract.py:27
+    // tests/artifacts/DynamicITxnGroup/contract.py:27
     // addr = addresses[i]
     dupn 2
     intc_2 // 32
@@ -102,7 +102,7 @@ test_firstly_for_header@2:
     swap
     intc_2 // 32
     extract3 // on error: index access is out of bounds
-    // tests/artifacts/dynamic_itxn_group/contract.py:28
+    // tests/artifacts/DynamicITxnGroup/contract.py:28
     // itxn.Payment(amount=share, receiver=addr.native).stage()
     itxn_next
     itxn_field Receiver
@@ -112,7 +112,7 @@ test_firstly_for_header@2:
     itxn_field TypeEnum
     intc_1 // 0
     itxn_field Fee
-    // tests/artifacts/dynamic_itxn_group/contract.py:26
+    // tests/artifacts/DynamicITxnGroup/contract.py:26
     // for i in urange(1, addresses.length):
     intc_0 // 1
     +
@@ -120,24 +120,24 @@ test_firstly_for_header@2:
     b test_firstly_for_header@2
 
 test_firstly_after_for@5:
-    // tests/artifacts/dynamic_itxn_group/contract.py:30-32
+    // tests/artifacts/DynamicITxnGroup/contract.py:30-32
     // itxn.ApplicationCall(
     //     app_id=verifier.id, app_args=(arc4.arc4_signature("verify()void"),)
     // ).stage()
     itxn_next
-    // tests/artifacts/dynamic_itxn_group/contract.py:31
+    // tests/artifacts/DynamicITxnGroup/contract.py:31
     // app_id=verifier.id, app_args=(arc4.arc4_signature("verify()void"),)
     bytec_0 // method "verify()void"
     itxn_field ApplicationArgs
     dig 4
     itxn_field ApplicationID
-    // tests/artifacts/dynamic_itxn_group/contract.py:30
+    // tests/artifacts/DynamicITxnGroup/contract.py:30
     // itxn.ApplicationCall(
     intc_3 // appl
     itxn_field TypeEnum
     intc_1 // 0
     itxn_field Fee
-    // tests/artifacts/dynamic_itxn_group/contract.py:34
+    // tests/artifacts/DynamicITxnGroup/contract.py:34
     // itxn.AssetConfig(asset_name="abc").stage()
     itxn_next
     bytec_1 // "abc"
@@ -146,19 +146,19 @@ test_firstly_after_for@5:
     itxn_field TypeEnum
     intc_1 // 0
     itxn_field Fee
-    // tests/artifacts/dynamic_itxn_group/contract.py:36
+    // tests/artifacts/DynamicITxnGroup/contract.py:36
     // itxn.submit_staged()
     itxn_submit
-    // tests/artifacts/dynamic_itxn_group/contract.py:14
+    // tests/artifacts/DynamicITxnGroup/contract.py:14
     // @arc4.abimethod
     intc_0 // 1
     return
 
 
-// tests.artifacts.dynamic_itxn_group.contract.DynamicItxnGroup.test_looply[routing]() -> void:
+// tests.artifacts.DynamicITxnGroup.contract.DynamicItxnGroup.test_looply[routing]() -> void:
 test_looply:
     intc_1 // 0
-    // tests/artifacts/dynamic_itxn_group/contract.py:38
+    // tests/artifacts/DynamicITxnGroup/contract.py:38
     // @arc4.abimethod
     txna ApplicationArgs 1
     dup
@@ -173,14 +173,14 @@ test_looply:
     txna ApplicationArgs 2
     btoi
     cover 2
-    // tests/artifacts/dynamic_itxn_group/contract.py:45
+    // tests/artifacts/DynamicITxnGroup/contract.py:45
     // assert funds.receiver == Global.current_application_address, "Funds must be sent to app"
     dup
     gtxns Receiver
     global CurrentApplicationAddress
     ==
     assert // Funds must be sent to app
-    // tests/artifacts/dynamic_itxn_group/contract.py:47
+    // tests/artifacts/DynamicITxnGroup/contract.py:47
     // assert addresses.length, "must provide some accounts"
     swap
     intc_1 // 0
@@ -189,19 +189,19 @@ test_looply:
     cover 2
     dup
     assert // must provide some accounts
-    // tests/artifacts/dynamic_itxn_group/contract.py:49
+    // tests/artifacts/DynamicITxnGroup/contract.py:49
     // share = funds.amount // addresses.length
     swap
     gtxns Amount
     swap
     /
-    // tests/artifacts/dynamic_itxn_group/contract.py:51
+    // tests/artifacts/DynamicITxnGroup/contract.py:51
     // is_first = True
     intc_0 // 1
     intc_1 // 0
 
 test_looply_for_header@2:
-    // tests/artifacts/dynamic_itxn_group/contract.py:52
+    // tests/artifacts/DynamicITxnGroup/contract.py:52
     // for addr in addresses:
     dup
     dig 4
@@ -215,7 +215,7 @@ test_looply_for_header@2:
     intc_2 // 32
     extract3 // on error: index access is out of bounds
     bury 7
-    // tests/artifacts/dynamic_itxn_group/contract.py:54
+    // tests/artifacts/DynamicITxnGroup/contract.py:54
     // my_txn.stage(begin_group=is_first)
     dig 1
     bz test_looply_itxn_next@5
@@ -226,13 +226,13 @@ test_looply_after_itxn_begin_next@6:
     itxn_field Receiver
     dig 2
     itxn_field Amount
-    // tests/artifacts/dynamic_itxn_group/contract.py:53
+    // tests/artifacts/DynamicITxnGroup/contract.py:53
     // my_txn = itxn.Payment(amount=share, receiver=addr.native)
     intc_0 // pay
     itxn_field TypeEnum
     intc_1 // 0
     itxn_field Fee
-    // tests/artifacts/dynamic_itxn_group/contract.py:55
+    // tests/artifacts/DynamicITxnGroup/contract.py:55
     // is_first = False
     intc_1 // 0
     bury 2
@@ -243,30 +243,30 @@ test_looply_after_itxn_begin_next@6:
     b test_looply_for_header@2
 
 test_looply_itxn_next@5:
-    // tests/artifacts/dynamic_itxn_group/contract.py:54
+    // tests/artifacts/DynamicITxnGroup/contract.py:54
     // my_txn.stage(begin_group=is_first)
     itxn_next
     b test_looply_after_itxn_begin_next@6
 
 test_looply_after_for@8:
-    // tests/artifacts/dynamic_itxn_group/contract.py:57-59
+    // tests/artifacts/DynamicITxnGroup/contract.py:57-59
     // itxn.ApplicationCall(
     //     app_id=verifier.id, app_args=(arc4.arc4_signature("verify()void"),)
     // ).stage()
     itxn_next
-    // tests/artifacts/dynamic_itxn_group/contract.py:58
+    // tests/artifacts/DynamicITxnGroup/contract.py:58
     // app_id=verifier.id, app_args=(arc4.arc4_signature("verify()void"),)
     bytec_0 // method "verify()void"
     itxn_field ApplicationArgs
     dig 4
     itxn_field ApplicationID
-    // tests/artifacts/dynamic_itxn_group/contract.py:57
+    // tests/artifacts/DynamicITxnGroup/contract.py:57
     // itxn.ApplicationCall(
     intc_3 // appl
     itxn_field TypeEnum
     intc_1 // 0
     itxn_field Fee
-    // tests/artifacts/dynamic_itxn_group/contract.py:61
+    // tests/artifacts/DynamicITxnGroup/contract.py:61
     // itxn.AssetConfig(asset_name="abc").stage()
     itxn_next
     bytec_1 // "abc"
@@ -275,10 +275,10 @@ test_looply_after_for@8:
     itxn_field TypeEnum
     intc_1 // 0
     itxn_field Fee
-    // tests/artifacts/dynamic_itxn_group/contract.py:63
+    // tests/artifacts/DynamicITxnGroup/contract.py:63
     // itxn.submit_staged()
     itxn_submit
-    // tests/artifacts/dynamic_itxn_group/contract.py:38
+    // tests/artifacts/DynamicITxnGroup/contract.py:38
     // @arc4.abimethod
     intc_0 // 1
     return

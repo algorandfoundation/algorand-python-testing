@@ -48,7 +48,7 @@ class ITxnLoader:
     def _get_itxn(self, txn_type: type[_T]) -> _T:
         if (
             not isinstance(self._inner_txn, txn_type)
-            and getattr(self._inner_txn, "type", None) != self._TXN_TYPE_MAP[txn_type]
+            and getattr(self._inner_txn, "type", None) != self._TXN_TYPE_MAP[txn_type]  # type: ignore[index]
         ):
             raise TypeError(f"transaction is not of type {txn_type.__name__}!")
         return self._inner_txn  # type: ignore[return-value]

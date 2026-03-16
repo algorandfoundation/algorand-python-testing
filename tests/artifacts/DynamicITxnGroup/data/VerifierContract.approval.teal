@@ -3,7 +3,7 @@
 
 // algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
-    // tests/artifacts/dynamic_itxn_group/verifier.py:11
+    // tests/artifacts/DynamicITxnGroup/verifier.py:11
     // class VerifierContract(ARC4Contract):
     txn NumAppArgs
     bz main___algopy_default_create@5
@@ -13,7 +13,7 @@ main:
     err
 
 main_verify_route@3:
-    // tests/artifacts/dynamic_itxn_group/verifier.py:12
+    // tests/artifacts/DynamicITxnGroup/verifier.py:12
     // @arc4.abimethod
     txn OnCompletion
     !
@@ -31,28 +31,28 @@ main___algopy_default_create@5:
     return
 
 
-// tests.artifacts.dynamic_itxn_group.verifier.VerifierContract.verify[routing]() -> void:
+// tests.artifacts.DynamicITxnGroup.verifier.VerifierContract.verify[routing]() -> void:
 verify:
-    // tests/artifacts/dynamic_itxn_group/verifier.py:14
+    // tests/artifacts/DynamicITxnGroup/verifier.py:14
     // for i in urange(Txn.group_index):
     txn GroupIndex
     pushint 0
 
 verify_for_header@2:
-    // tests/artifacts/dynamic_itxn_group/verifier.py:14
+    // tests/artifacts/DynamicITxnGroup/verifier.py:14
     // for i in urange(Txn.group_index):
     dup
     dig 2
     <
     bz verify_after_for@5
-    // tests/artifacts/dynamic_itxn_group/verifier.py:16
+    // tests/artifacts/DynamicITxnGroup/verifier.py:16
     // assert txn.type == TransactionType.Payment, "Txn must be pay"
     dupn 2
     gtxns TypeEnum
     pushint 1 // pay
     ==
     assert // Txn must be pay
-    // tests/artifacts/dynamic_itxn_group/verifier.py:14
+    // tests/artifacts/DynamicITxnGroup/verifier.py:14
     // for i in urange(Txn.group_index):
     pushint 1
     +
@@ -60,7 +60,7 @@ verify_for_header@2:
     b verify_for_header@2
 
 verify_after_for@5:
-    // tests/artifacts/dynamic_itxn_group/verifier.py:12
+    // tests/artifacts/DynamicITxnGroup/verifier.py:12
     // @arc4.abimethod
     pushint 1
     return
