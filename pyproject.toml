@@ -25,7 +25,7 @@ dependencies = [
     "ecdsa>=0.17.0",
     "coincurve>=19.0.1",
     "algorand-python>=3",
-    "algokit-utils>=5.0.0a5",
+    "algokit-utils>=5.0.0a20",
 ]
 
 [project.urls]
