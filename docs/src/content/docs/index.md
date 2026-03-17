@@ -1,4 +1,7 @@
-# Algorand Python Testing
+---
+title: Algorand Python Testing
+description: Offline unit testing toolkit for Algorand Python smart contracts.
+---
 
 [![docs-repository](https://img.shields.io/badge/url-repository-74dfdc?logo=github&style=flat.svg)](https://github.com/algorandfoundation/algorand-python-testing/)
 [![learn-AlgoKit](https://img.shields.io/badge/learn-AlgoKit-74dfdc?logo=algorand&mac=flat.svg)](https://developer.algorand.org/algokit/)
@@ -48,7 +51,7 @@ Let's write a simple contract and test it using the `algorand-python-testing` fr
 
 #### Contract Definition
 
-```{testcode}
+```python
 import algopy
 from algopy import arc4
 
@@ -89,7 +92,7 @@ class VotingContract(algopy.ARC4Contract):
 
 #### Test Definition
 
-```{testcode}
+```python
 from collections.abc import Generator
 import pytest
 from algopy_testing import AlgopyTestContext, algopy_testing_context
@@ -125,9 +128,7 @@ with algopy_testing_context() as context:
     print(f"Current votes: {votes.native}")
 ```
 
-```{testoutput}
-:hide:
-
+```text
 Vote result: True
 Total votes: 1
 Voter ... voted: 1
@@ -166,17 +167,8 @@ This example demonstrates key aspects of testing with `algorand-python-testing` 
 
 To dig deeper into the capabilities of `algorand-python-testing`, continue with the following sections.
 
-```{toctree}
----
-maxdepth: 2
-caption: Contents
-hidden: true
----
-
-testing-guide/index
-examples
-coverage
-faq
-api
-algopy
-```
+- [Testing Guide](/algorand-python-testing/testing-guide/)
+- [Examples](/algorand-python-testing/examples/)
+- [Coverage](/algorand-python-testing/coverage/)
+- [FAQ](/algorand-python-testing/faq/)
+- [API Reference](/algorand-python-testing/api/)

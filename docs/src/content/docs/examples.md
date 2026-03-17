@@ -1,6 +1,11 @@
-# Examples
+---
+title: Examples
+description: Below is a showcase of various examples of unit testing real and sample Algorand Python smart contracts using `algorand-python-testing`.
+---
 
 Below is a showcase of various examples of unit testing real and sample Algorand Python smart contracts using `algorand-python-testing`.
+
+Detailed per-example pages are generated from the repository `examples/` folders and available in this section's sidebar.
 
 | Contract Name       | Test File                                                                                                                                 | Key Features Demonstrated                                                                                                                                                                                        | Test versions of Algopy Abstractions used                                                           |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |

@@ -1,6 +1,9 @@
-# Coverage
+---
+title: Coverage
+description: Coverage of algorand-python stubs implemented by algorand-python-testing.
+---
 
-See which `algorand-python` stubs are implemented by the `algorand-python-testing` library. See the [Concepts](testing-guide/concepts.md#types-of-algopy-stub-implementations) section for more details on the implementation categories. Refer to the [`algorand-python` stubs API](api.md) for the full list of stubs for which the `algorand-python-testing` library provides implementations referenced in the table below.
+See which `algorand-python` stubs are implemented by the `algorand-python-testing` library. See the [Concepts](/algorand-python-testing/testing-guide/concepts/#types-of-algopy-stub-implementations) section for more details on the implementation categories. Refer to the [`algorand-python` stubs API](/algorand-python-testing/api/) for the full list of stubs for which the `algorand-python-testing` library provides implementations referenced in the table below.
 
 | Name                                        | Implementation type |
 | ------------------------------------------- | ------------------- |
