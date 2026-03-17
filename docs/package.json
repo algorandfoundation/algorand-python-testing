@@ -1,0 +1,29 @@
+{
+  "name": "@algorandfoundation/algorand-python-testing-docs",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "packageManager": "pnpm@10.30.3",
+  "scripts": {
+    "generate:examples": "tsx scripts/generate-examples-mdx.ts",
+    "predev": "tsx scripts/generate-examples-mdx.ts",
+    "build": "astro build",
+    "prebuild": "tsx scripts/generate-examples-mdx.ts",
+    "dev": "astro dev",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.37.6",
+    "astro": "^5.6.1",
+    "remark-github-alerts": "^0.1.1",
+    "sharp": "^0.34.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.15",
+    "tsx": "^4.21.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
