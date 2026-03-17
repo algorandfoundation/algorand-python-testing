@@ -1,8 +1,11 @@
-# Subroutines
+---
+title: Subroutines
+description: Subroutines allow direct testing of internal contract logic without full application calls.
+---
 
 Subroutines allow direct testing of internal contract logic without full application calls.
 
-```{testsetup}
+```python
 import algopy
 import algopy_testing
 from algopy_testing import algopy_testing_context
@@ -24,7 +27,7 @@ The `@algopy.subroutine` decorator exposes contract methods for isolated testing
 
 1. Decorate internal methods with `@algopy.subroutine`:
 
-```{testcode}
+```python
 from algopy import subroutine, UInt64
 
 class MyContract:
@@ -35,7 +38,7 @@ class MyContract:
 
 2. Test the subroutine directly:
 
-```{testcode}
+```python
 def test_calculate_value(context: algopy_testing.AlgopyTestContext):
     contract = MyContract()
     result = contract.calculate_value(UInt64(5))
@@ -57,8 +60,8 @@ def test_calculate_value(context: algopy_testing.AlgopyTestContext):
 
 ## Example
 
-For a complete example, see the `simple_voting` contract in the [examples](../examples.md) section.
+For a complete example, see the `simple_voting` contract in the [examples](/algorand-python-testing/examples/) section.
 
-```{testcleanup}
+```python
 ctx_manager.__exit__(None, None, None)
 ```

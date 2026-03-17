@@ -1,27 +1,14 @@
-# Testing Guide
+---
+title: Testing Guide
+description: The Algorand Python Testing framework provides powerful tools for testing Algorand Python smart contracts within a Python interpreter. This guide covers the main features and concepts of the framework, helping you write effective tests for your Algorand applications.
+---
 
 The Algorand Python Testing framework provides powerful tools for testing Algorand Python smart contracts within a Python interpreter. This guide covers the main features and concepts of the framework, helping you write effective tests for your Algorand applications.
 
-```{note}
-For all code examples in the _Testing Guide_ section, assume `context` is an instance of `AlgopyTestContext` obtained using the `algopy_testing_context()` context manager. All subsequent code is executed within this context.
-```
+> [!NOTE]
+> For all code examples in the _Testing Guide_ section, assume `context` is an instance of `AlgopyTestContext` obtained using the `algopy_testing_context()` context manager. All subsequent code is executed within this context.
 
-```{mermaid}
-graph TD
-    subgraph GA["Your Development Environment"]
-        A["algopy (type stubs)"]
-        B["algopy_testing (testing framework)<br>(You are here 📍)"]
-        C["puya (compiler)"]
-    end
-
-    subgraph GB["Your Algorand Project"]
-        D[Your Algorand Python contract]
-    end
-
-    D -->|type hints inferred from| A
-    D -->|compiled using| C
-    D -->|tested via| B
-```
+![Txn value generator diagram](/algorand-python-testing/images/txn-value-generator.svg)
 
 > _High-level overview of the relationship between your smart contracts project, Algorand Python Testing framework, Algorand Python type stubs, and the compiler_
 
@@ -47,21 +34,3 @@ Key features of the framework include:
 -   Opcode Simulation: Implementations of AVM opcodes for accurate smart contract behaviour testing
 
 The framework is designed to work seamlessly with Algorand Python smart contracts, allowing developers to write comprehensive unit tests that closely mimic the behaviour of contracts on the Algorand blockchain.
-
-## Table of Contents
-
-```{toctree}
----
-maxdepth: 3
----
-
-concepts
-avm-types
-arc4-types
-transactions
-contract-testing
-signature-testing
-state-management
-subroutines
-opcodes
-```

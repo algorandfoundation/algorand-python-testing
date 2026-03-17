@@ -1,8 +1,11 @@
-# Transactions
+---
+title: Transactions
+description: The testing framework follows the Transaction definitions described in [`algorand-python` docs](https://algorandfoundation.github.io/puya/lg-transactions.html). This section focuses on _value generators_ and interactions with inner transactions, it also explains how the framework identifies _active_ transaction group during contract method/subroutine/logicsig invocation.
+---
 
 The testing framework follows the Transaction definitions described in [`algorand-python` docs](https://algorandfoundation.github.io/puya/lg-transactions.html). This section focuses on _value generators_ and interactions with inner transactions, it also explains how the framework identifies _active_ transaction group during contract method/subroutine/logicsig invocation.
 
-```{testsetup}
+```python
 import algopy
 import algopy_testing
 from algopy_testing import algopy_testing_context
@@ -16,20 +19,11 @@ context = ctx_manager.__enter__()
 
 ## Group Transactions
 
-Refers to test implementation of transaction stubs available under `algopy.gtxn.*` namespace. Available under [`algopy.TxnValueGenerator`](#_algopy_testing.value_generators.txn.TxnValueGenerator) instance accessible via `context.any.txn` property:
+Refers to test implementation of transaction stubs available under `algopy.gtxn.*` namespace. Available under [`algopy.TxnValueGenerator`](/algorand-python-testing/api/algopy_testing/value_generators/txn/) instance accessible via `context.any.txn` property:
 
-```{mermaid}
-graph TD
-    A[TxnValueGenerator] --> B[payment]
-    A --> C[asset_transfer]
-    A --> D[application_call]
-    A --> E[asset_config]
-    A --> F[key_registration]
-    A --> G[asset_freeze]
-    A --> H[transaction]
-```
+![Txn value generator diagram](/algorand-python-testing/images/txn-value-generator.svg)
 
-```{testcode}
+```python
 ... # instantiate test context
 
 # Generate a random payment transaction
@@ -107,9 +101,9 @@ generic_txn = context.any.txn.transaction(
 
 When a smart contract instance (application) is interacted with on the Algorand network, it must be performed in relation to a specific transaction or transaction group where one or many transactions are application calls to target smart contract instances.
 
-To emulate this behaviour, the `create_group` context manager is available on [`algopy.TransactionContext`](#_algopy_testing.context_helpers.txn_context.TransactionContext) instance that allows setting temporary transaction fields within a specific scope, passing in emulated transaction objects and identifying the active transaction index within the transaction group
+To emulate this behaviour, the `create_group` context manager is available on [`algopy.TransactionContext`](/algorand-python-testing/api/algopy_testing/context_helpers/txn_context/) instance that allows setting temporary transaction fields within a specific scope, passing in emulated transaction objects and identifying the active transaction index within the transaction group
 
-```{testcode}
+```python
 import algopy
 from algopy_testing import AlgopyTestContext, algopy_testing_context
 
@@ -141,7 +135,7 @@ Inner transactions are AVM transactions that are signed and executed by AVM appl
 
 When testing smart contracts, to stay consistent with AVM, the framework _does not allow you to submit inner transactions outside of contract/subroutine invocation_, but you can interact with and manage inner transactions using the test context manager as follows:
 
-```{testcode}
+```python
 class MyContract(algopy.ARC4Contract):
     @algopy.public
     def pay_via_itxn(self, asset: algopy.Asset) -> None:
@@ -196,7 +190,7 @@ These methods provide type validation and will raise an error if the requested t
 
 The following example demonstrates how to test this functionality using the `algorand-python-testing` package.
 
-```{testcode}
+```python
 from algopy import Application, ARC4Contract, Array, Global, arc4, gtxn, itxn, TransactionType, Txn, UInt64, urange
 
 class DynamicItxnGroup(ARC4Contract):
@@ -261,9 +255,9 @@ assert itxns.asset_config(4).asset_name == b"abc"
 
 ## References
 
--   [API](../api.md) for more details on the test context manager and inner transactions related methods that perform implicit inner transaction type validation.
--   [Examples](../examples.md) for more examples of smart contracts and associated tests that interact with inner transactions.
+-   [API](/algorand-python-testing/api/) for more details on the test context manager and inner transactions related methods that perform implicit inner transaction type validation.
+-   [Examples](/algorand-python-testing/examples/) for more examples of smart contracts and associated tests that interact with inner transactions.
 
-```{testcleanup}
+```python
 ctx_manager.__exit__(None, None, None)
 ```

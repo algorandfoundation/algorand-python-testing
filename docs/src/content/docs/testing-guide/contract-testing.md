@@ -1,14 +1,16 @@
-# Smart Contract Testing
+---
+title: Smart Contract Testing
+description: This guide provides an overview of how to test smart contracts using the Algorand Python SDK (`algopy`). It covers the basics of testing `ARC4Contract` and `Contract` classes, focusing on the `baremethod`, `abimethod` and `public` (an alias of `abimethod`) decorators.
+---
 
 This guide provides an overview of how to test smart contracts using the Algorand Python SDK (`algopy`). It covers the basics of testing `ARC4Contract` and `Contract` classes, focusing on the `baremethod`, `abimethod` and `public` (an alias of `abimethod`) decorators.
 
 ![](https://mermaid.ink/img/pako:eNqVkrFugzAQhl_Fujnp1ImhEiJrJNREWeoOV9sNVsFG9iEVBd69R5w0JE2llsk2n7-7_-AAymsDGewDtpXYrqQT_GyKFwl5vfcBnRZlT5V3IjYYSCjvKKAiCa-JzXfrObyzgTqsxRpVZZ25YOX2nnRrIomCneZzpszLkllktu0f8ratrUKyjFsXCZ1K2gTH7i01_8dGUjOT_55YeLdUFVr3zRunf5b6R5hZoFnBq9cX72_Br_Cj8bl4vJCHaVucvowYxHk5Xg_sfPkY6SbbphDL5dMgQZu29n0U5DMJwzTVGyApySKZKFSNMXKVxPJYYAGNCQ1azX_VYboqgSrTcAcZLzWGDwnSjcxhR37TOwUZhc4sIPhuX0H2jnXkXddqrrCyyKNpTqfjF5m74B8?type=png)
 
-```{note}
-The code snippets showcasing the contract testing capabilities are using [pytest](https://docs.pytest.org/en/latest/) as the test framework. However, note that the `algorand-python-testing` package can be used with any other test framework that supports Python. `pytest` is used for demonstration purposes in this documentation.
-```
+> [!NOTE]
+> The code snippets showcasing the contract testing capabilities are using [pytest](https://docs.pytest.org/en/latest/) as the test framework. However, note that the `algorand-python-testing` package can be used with any other test framework that supports Python. `pytest` is used for demonstration purposes in this documentation.
 
-```{testsetup}
+```python
 import algopy
 import algopy_testing
 from algopy_testing import algopy_testing_context
@@ -24,9 +26,9 @@ context = ctx_manager.__enter__()
 
 Subclasses of `algopy.ARC4Contract` are **required** to be instantiated with an active test context. As part of instantiation, the test context will automatically create a matching `algopy.Application` object instance.
 
-Within the class implementation, methods decorated with `algopy.arc4.abimethod` (or its alias, `algopy.public`) and `algopy.arc4.baremethod` will automatically assemble an `algopy.gtxn.ApplicationCallTransaction` to emulate the AVM application call. This behaviour can be overridden by setting the transaction group manually as part of test setup; this is done via implicit invocation of the `algopy_testing.context.any_application()` _value generator_ (refer to the [API](../api.md) for more details).
+Within the class implementation, methods decorated with `algopy.arc4.abimethod` (or its alias, `algopy.public`) and `algopy.arc4.baremethod` will automatically assemble an `algopy.gtxn.ApplicationCallTransaction` to emulate the AVM application call. This behaviour can be overridden by setting the transaction group manually as part of test setup; this is done via implicit invocation of the `algopy_testing.context.any_application()` _value generator_ (refer to the [API](/algorand-python-testing/api/) for more details).
 
-```{testcode}
+```python
 class SimpleVotingContract(algopy.ARC4Contract):
     def __init__(self) -> None:
         self.topic = algopy.GlobalState(algopy.Bytes(b"default_topic"), key="topic", description="Voting topic")
@@ -99,10 +101,9 @@ votes = contract.get_votes()
 
 # Assert - Check votes
 assert votes == algopy.UInt64(0)
-
 ```
 
-For more examples of tests using `algopy.ARC4Contract`, see the [examples](../examples.md) section.
+For more examples of tests using `algopy.ARC4Contract`, see the [examples](/algorand-python-testing/examples/) section.
 
 ## `algopy.Contract`
 
@@ -112,7 +113,7 @@ Unlike `algopy.ARC4Contract`, `algopy.Contract` requires manual setup of the tra
 
 Here's an updated example demonstrating how to test a `Contract` class:
 
-```{testcode}
+```python
 import algopy
 import pytest
 from algopy_testing import AlgopyTestContext, algopy_testing_context
@@ -220,6 +221,6 @@ def test_deferred_call(context):
 
 A deferred application call prepares the application call transaction without immediately executing it. The call can be executed later by invoking the `.submit()` method on the deferred application call instance. As demonstrated in the example, you can also include the deferred call in a transaction group creation context manager to execute it as part of a larger transaction group. When `.submit()` is called, only the specific method passed to `defer_app_call()` will be executed.
 
-```{testcleanup}
+```python
 ctx_manager.__exit__(None, None, None)
 ```

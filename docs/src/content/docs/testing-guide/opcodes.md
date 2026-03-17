@@ -1,10 +1,13 @@
-# AVM Opcodes
+---
+title: AVM Opcodes
+description: Overview of key opcodes and opcode types in algorand-python-testing.
+---
 
-The [coverage](../coverage.md) file provides a comprehensive list of all opcodes and their respective types, categorized as _Mockable_, _Emulated_, or _Native_ within the `algorand-python-testing` package. This section highlights a **subset** of opcodes and types that typically require interaction with the test context manager.
+The [coverage](/algorand-python-testing/coverage/) file provides a comprehensive list of all opcodes and their respective types, categorized as _Mockable_, _Emulated_, or _Native_ within the `algorand-python-testing` package. This section highlights a **subset** of opcodes and types that typically require interaction with the test context manager.
 
 `Native` opcodes are assumed to function as they do in the Algorand Virtual Machine, given their stateless nature. If you encounter issues with any `Native` opcodes, please raise an issue in the [`algorand-python-testing` repo](https://github.com/algorandfoundation/algorand-python-testing/issues/new/choose) or contribute a PR following the [Contributing](https://github.com/algorandfoundation/algorand-python-testing/blob/main/CONTRIBUTING.md) guide.
 
-```{testsetup}
+```python
 import algopy
 from algopy_testing import algopy_testing_context
 
@@ -27,7 +30,7 @@ The following opcodes are demonstrated:
 -   `op.keccak256`
 -   `op.ecdsa_verify`
 
-```{testcode}
+```python
 from algopy import op
 
 # SHA256 hash
@@ -57,7 +60,7 @@ The following opcodes are demonstrated:
 -   `op.getbit`
 -   `op.setbit_uint64`
 
-```{testcode}
+```python
 from algopy import op
 
 # Addition with carry
@@ -70,7 +73,7 @@ is_bit_set = op.getbit(value, 3)
 new_value = op.setbit_uint64(value, 2, 1)
 ```
 
-For a comprehensive list of all opcodes and types, refer to the [coverage](../coverage.md) page.
+For a comprehensive list of all opcodes and types, refer to the [coverage](/algorand-python-testing/coverage/) page.
 
 ## Emulated Types Requiring Transaction Context
 
@@ -78,7 +81,7 @@ These types necessitate interaction with the transaction context:
 
 ### algopy.op.Global
 
-```{testcode}
+```python
 from algopy import op
 
 class MyContract(algopy.ARC4Contract):
@@ -100,7 +103,7 @@ assert result == algopy.UInt64(101000)
 
 ### algopy.op.Txn
 
-```{testcode}
+```python
 from algopy import op
 
 class MyContract(algopy.ARC4Contract):
@@ -119,7 +122,7 @@ assert result == custom_sender
 
 ### algopy.op.AssetHoldingGet
 
-```{testcode}
+```python
 from algopy import op
 
 class AssetContract(algopy.ARC4Contract):
@@ -139,7 +142,7 @@ assert result == algopy.UInt64(5000)
 
 ### algopy.op.AppGlobal
 
-```{testcode}
+```python
 from algopy import op
 
 class StateContract(algopy.ARC4Contract):
@@ -160,7 +163,7 @@ assert stored_value == 42
 
 ### algopy.op.Block
 
-```{testcode}
+```python
 from algopy import op
 
 class BlockInfoContract(algopy.ARC4Contract):
@@ -178,7 +181,7 @@ assert seed == algopy.op.itob(123456)
 
 ### algopy.op.AcctParamsGet
 
-```{testcode}
+```python
 from algopy import op
 
 class AccountParamsContract(algopy.ARC4Contract):
@@ -198,7 +201,7 @@ assert balance == algopy.UInt64(1000000)
 
 ### algopy.op.AppParamsGet
 
-```{testcode}
+```python
 class AppParamsContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
     def get_app_creator(self, app_id: algopy.Application) -> algopy.arc4.Address:
@@ -216,7 +219,7 @@ assert creator == context.default_sender
 
 ### algopy.op.AssetParamsGet
 
-```{testcode}
+```python
 from algopy import op
 
 class AssetParamsContract(algopy.ARC4Contract):
@@ -236,7 +239,7 @@ assert total == algopy.UInt64(1000000)
 
 ### algopy.op.Box
 
-```{testcode}
+```python
 from algopy import op
 
 class BoxStorageContract(algopy.ARC4Contract):
@@ -263,7 +266,7 @@ These opcodes are mockable in `algorand-python-testing`, allowing for controlled
 
 ### algopy.compile_contract
 
-```{testcode}
+```python
 from unittest.mock import patch, MagicMock
 import algopy
 
@@ -290,7 +293,7 @@ with patch('algopy.compile_contract', return_value=mocked_response):
 
 ### algopy.arc4.abi_call
 
-```{testcode}
+```python
 import unittest
 from unittest.mock import patch, MagicMock
 import algopy
@@ -323,7 +326,7 @@ assert result == 11
 
 ### algopy.op.vrf_verify
 
-```{testcode}
+```python
 from unittest.mock import patch, MagicMock
 import algopy
 
@@ -349,7 +352,7 @@ test_mock_vrf_verify()
 
 ### algopy.op.EllipticCurve
 
-```{testcode}
+```python
 from unittest.mock import patch, MagicMock
 import algopy
 
@@ -379,6 +382,6 @@ Mocking these opcodes allows you to:
 2. Test edge cases and error conditions.
 3. Isolate contract logic from external dependencies.
 
-```{testcleanup}
+```python
 ctx_manager.__exit__(None, None, None)
 ```

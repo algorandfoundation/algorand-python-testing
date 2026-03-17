@@ -1,16 +1,17 @@
-# ARC4 Types
+---
+title: ARC4 Types
+description: These types are available under the `algopy.arc4` namespace. Refer to the [ARC4 specification](https://dev.algorand.co/arc-standards/arc-0004/) for more details on the spec.
+---
 
 These types are available under the `algopy.arc4` namespace. Refer to the [ARC4 specification](https://dev.algorand.co/arc-standards/arc-0004/) for more details on the spec.
 
-```{hint}
-The test context manager provides _value generators_ for ARC4 types. To access the _value generators_, use `{context_instance}.any.arc4` property. See more examples below.
-```
+> [!TIP]
+> The test context manager provides _value generators_ for ARC4 types. To access the _value generators_, use `{context_instance}.any.arc4` property. See more examples below.
 
-```{note}
-For all `algopy.arc4` types with and without respective _value generator_, instantiation can be performed directly. If you have a suggestion for a new _value generator_ implementation, please open an issue in the [`algorand-python-testing`](https://github.com/algorandfoundation/algorand-python-testing) repository or contribute by following the [contribution guide](https://github.com/algorandfoundation/algorand-python-testing/blob/main/CONTRIBUTING.md).
-```
+> [!NOTE]
+> For all `algopy.arc4` types with and without respective _value generator_, instantiation can be performed directly. If you have a suggestion for a new _value generator_ implementation, please open an issue in the [`algorand-python-testing`](https://github.com/algorandfoundation/algorand-python-testing) repository or contribute by following the [contribution guide](https://github.com/algorandfoundation/algorand-python-testing/blob/main/CONTRIBUTING.md).
 
-```{testsetup}
+```python
 import algopy
 from algopy_testing import algopy_testing_context
 
@@ -23,7 +24,7 @@ context = ctx_manager.__enter__()
 
 ## Unsigned Integers
 
-```{testcode}
+```python
 from algopy import arc4
 
 # Integer types
@@ -54,7 +55,7 @@ biguint512_custom = context.any.arc4.biguint512(min_value=1000000000000000000000
 
 ## Address
 
-```{testcode}
+```python
 from algopy import arc4
 
 # Address type
@@ -69,7 +70,7 @@ native = random_address.native
 
 ## Dynamic Bytes
 
-```{testcode}
+```python
 from algopy import arc4
 
 # Dynamic byte string
@@ -81,7 +82,7 @@ random_dynamic_bytes = context.any.arc4.dynamic_bytes(n=123) # n is the number o
 
 ## String
 
-```{testcode}
+```python
 from algopy import arc4
 
 # UTF-8 encoded string
@@ -91,6 +92,6 @@ string_value = arc4.String("Hello, Algorand!")
 random_string = context.any.arc4.string(n=12) # n is the number of bits in the ARC4 string
 ```
 
-```{testcleanup}
+```python
 ctx_manager.__exit__(None, None, None)
 ```

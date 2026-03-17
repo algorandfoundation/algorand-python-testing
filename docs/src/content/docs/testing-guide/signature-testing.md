@@ -1,8 +1,11 @@
-# Smart Signature Testing
+---
+title: Smart Signature Testing
+description: Test Algorand smart signatures (LogicSigs) with ease using the Algorand Python Testing framework.
+---
 
 Test Algorand smart signatures (LogicSigs) with ease using the Algorand Python Testing framework.
 
-```{testsetup}
+```python
 import algopy
 from algopy_testing import algopy_testing_context
 
@@ -17,7 +20,7 @@ context = ctx_manager.__enter__()
 
 Use the `@logicsig` decorator to create a LogicSig:
 
-```{testcode}
+```python
 from algopy import logicsig, Account, Txn, Global, UInt64, Bytes
 
 @logicsig
@@ -30,7 +33,7 @@ def hashed_time_locked_lsig() -> bool:
 
 Use `AlgopyTestContext.execute_logicsig()` to run and verify LogicSigs:
 
-```{testcode}
+```python
 with context.txn.create_group([
     context.any.txn.payment(),
 ]):
@@ -48,13 +51,13 @@ assert result is True
 
 Provide arguments to LogicSigs using `execute_logicsig()`:
 
-```{testcode}
+```python
 result = context.execute_logicsig(hashed_time_locked_lsig, algopy.Bytes(b"secret"))
 ```
 
 Access arguments in the LogicSig with `algopy.op.arg()` opcode:
 
-```{testcode}
+```python
 @logicsig
 def hashed_time_locked_lsig() -> bool:
     secret = algopy.op.arg(0)
@@ -66,8 +69,8 @@ secret = algopy.Bytes(b"secret")
 assert context.execute_logicsig(hashed_time_locked_lsig, secret)
 ```
 
-For more details on available operations, see the [coverage](../coverage.md).
+For more details on available operations, see the [coverage](/algorand-python-testing/coverage/).
 
-```{testcleanup}
+```python
 ctx_manager.__exit__(None, None, None)
 ```
