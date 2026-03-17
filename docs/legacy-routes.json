@@ -1,0 +1,21 @@
+{
+  "basePath": "/algorand-python-testing/",
+  "routes": [
+    { "from": "examples.html", "to": "examples/" },
+    { "from": "coverage.html", "to": "coverage/" },
+    { "from": "faq.html", "to": "faq/" },
+    { "from": "api.html", "to": "api/" }
+  ],
+  "families": [
+    {
+      "fromPrefix": "testing-guide/",
+      "toPrefix": "testing-guide/",
+      "fromExtension": ".html"
+    },
+    {
+      "fromPrefix": "apidocs/",
+      "toPrefix": "api/",
+      "fromExtension": ".html"
+    }
+  ]
+}

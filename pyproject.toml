@@ -140,28 +140,20 @@ type = "virtual"
 python = "3.12"
 dependencies = [
     "sphinx>=7.2.6",
-    "furo>=2024.1.29",
     "myst-parser>=2.0.0",
     "sphinx-autodoc2>=0.5.0",
-    "sphinx-copybutton>=0.5.2",
-    "sphinx-autobuild>=2024.4.16",
-    "sphinx-mermaid",
-    "ipykernel",
-    "pytest",
-]
-# environment has algopy_testing included as an editable dependency
-# however it also includes the package dependencies
-# the stubs can't be in the same as the project when it is editable
-# so explicitly remove them
-post-install-commands = [
-  "hatch run docs:pip uninstall -y algorand-python",
+    "sphinx-markdown-builder>=0.6.8",
 ]
 
 [tool.hatch.envs.docs.scripts]
-test = "sphinx-build -b doctest docs docs/_build -W --keep-going -n -E"
-clear = "rm -rf docs/_build"
-build = "hatch run docs:clear && sphinx-build docs docs/_build -W --keep-going -n -E"
-dev = "hatch run docs:test  && sphinx-autobuild docs docs/_build"
+api = "python docs/api_build.py"
+clear = "rm -rf docs/dist docs/.tmp docs/src/content/docs/api docs/src/content/docs/examples"
+build = [
+  "hatch run docs:api",
+  "pnpm --dir docs run build",
+  "node docs/scripts/generate-legacy-redirects.mjs",
+]
+dev = "hatch run docs:api && pnpm --dir docs run dev"
 
 # Examples environment
 [tool.hatch.envs.examples]
