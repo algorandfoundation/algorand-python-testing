@@ -1,0 +1,5 @@
+.astro/
+dist/
+node_modules/
+src/content/docs/api/
+src/content/docs/examples/

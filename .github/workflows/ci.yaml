@@ -22,6 +22,19 @@ jobs:
       - name: Install hatch
         run: pip install hatch
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: docs/package.json
+
+      - name: Install docs dependencies
+        run: pnpm install --frozen-lockfile --dir docs
+
       - name: Start LocalNet
         run: pipx install algokit && algokit localnet start
 
@@ -37,8 +50,8 @@ jobs:
       - name: Check wheels can be built
         run: hatch build
 
-      - name: Check doctests
-        run: hatch run docs:test
+      - name: Build docs
+        run: hatch run docs:build
 
   test-python-matrix:
     runs-on: "ubuntu-latest"

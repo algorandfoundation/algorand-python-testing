@@ -1,0 +1,33 @@
+/* Improve readability for generated API reference tables and signatures. */
+:root {
+  --api-border-color: color-mix(in srgb, var(--sl-color-gray-3) 60%, transparent);
+}
+
+.sl-markdown-content .api .sig,
+.sl-markdown-content .api .descname,
+.sl-markdown-content .api .property {
+  font-family: var(--sl-font-mono);
+}
+
+.sl-markdown-content .api dl {
+  margin-top: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.sl-markdown-content .api dt {
+  border-left: 3px solid var(--sl-color-accent-high);
+  padding-left: 0.75rem;
+}
+
+.sl-markdown-content table.docutils {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sl-markdown-content table.docutils th,
+.sl-markdown-content table.docutils td {
+  border: 1px solid var(--api-border-color);
+  padding: 0.5rem 0.75rem;
+  vertical-align: top;
+}

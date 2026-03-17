@@ -18,3 +18,6 @@ coverage.xml
 
 .cursorignore
 *.puya.map
+
+# AI Agents
+.codex

@@ -1,0 +1,42 @@
+[
+  { "label": "Home", "link": "/" },
+  {
+    "label": "Guides",
+    "items": [
+      { "slug": "testing-guide" },
+      { "slug": "testing-guide/concepts" },
+      { "slug": "testing-guide/avm-types" },
+      { "slug": "testing-guide/arc4-types" },
+      { "slug": "testing-guide/transactions" },
+      { "slug": "testing-guide/contract-testing" },
+      { "slug": "testing-guide/signature-testing" },
+      { "slug": "testing-guide/state-management" },
+      { "slug": "testing-guide/subroutines" },
+      { "slug": "testing-guide/opcodes" }
+    ]
+  },
+  {
+    "label": "Resources",
+    "items": [
+      { "slug": "coverage" },
+      { "slug": "faq" },
+      { "slug": "algopy" }
+    ]
+  },
+  {
+    "label": "API Reference",
+    "collapsed": true,
+    "items": [
+      { "slug": "api" },
+      { "label": "Package", "autogenerate": { "directory": "api/algopy_testing" } }
+    ]
+  },
+  {
+    "label": "Examples",
+    "collapsed": true,
+    "items": [
+      { "slug": "examples" },
+      { "label": "Catalog", "autogenerate": { "directory": "examples" } }
+    ]
+  }
+]
