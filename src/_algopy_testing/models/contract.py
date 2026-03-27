@@ -159,6 +159,10 @@ class Contract(metaclass=_ContractMeta):
                 state.app_id = _get_self_or_active_app_id(self)
                 if not state._key:
                     state.set_key(name_bytes)
+            case _algopy_testing.GlobalMap() as global_map:
+                global_map.app_id = _get_self_or_active_app_id(self)
+                if global_map._key_prefix is None:
+                    global_map._key_prefix = name_bytes
             case _algopy_testing.LocalState() as state:
                 state.app_id = _get_self_or_active_app_id(self)
                 if not state._key:
@@ -200,12 +204,12 @@ def _get_state_totals(contract: Contract, cls_state_totals: StateTotals) -> _Sta
     from _algopy_testing.protocols import UInt64Backed
 
     global_bytes = global_uints = local_bytes = local_uints = 0
-    for type_ in get_global_states(contract).values():
+    for type_ in get_global_states(contract):
         if isinstance(type_, type) and issubclass(type_, UInt64 | UInt64Backed | bool):
             global_uints += 1
         else:
             global_bytes += 1
-    for type_ in get_local_states(contract).values():
+    for type_ in get_local_states(contract):
         if isinstance(type_, type) and issubclass(type_, UInt64 | UInt64Backed | bool):
             local_uints += 1
         else:
@@ -236,19 +240,17 @@ def _has_create_methods(contract_cls: _ContractMeta) -> bool:
     return False
 
 
-def get_local_states(contract: Contract) -> dict[bytes, type]:
-    local_states = {
-        attribute._key.value: attribute.type_
-        for _, attribute in vars(contract).items()
+def get_local_states(contract: Contract) -> list[type]:
+    return [
+        attribute.type_
+        for attribute in vars(contract).values()
         if isinstance(attribute, _algopy_testing.LocalState)
-    }
-
-    return local_states
+    ]
 
 
-def get_global_states(contract: Contract) -> dict[bytes, type]:
-    global_states = {}
-    for key, attribute in vars(contract).items():
+def get_global_states(contract: Contract) -> list[type]:
+    global_states: list[type] = []
+    for attribute in vars(contract).values():
         if isinstance(
             attribute,
             _algopy_testing.LocalState
@@ -258,8 +260,10 @@ def get_global_states(contract: Contract) -> dict[bytes, type]:
         ) or callable(attribute):
             continue
         if isinstance(attribute, _algopy_testing.GlobalState):
-            global_states[attribute.key.value] = attribute.type_
+            global_states.append(attribute.type_)
+        elif isinstance(attribute, _algopy_testing.GlobalMap):
+            global_states.append(attribute.value_type)
         elif isinstance(attribute, UInt64Backed | BytesBacked | UInt64 | Bytes | bool):
-            global_states[key.encode()] = type(attribute)
+            global_states.append(type(attribute))
 
     return global_states
