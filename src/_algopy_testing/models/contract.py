@@ -167,6 +167,10 @@ class Contract(metaclass=_ContractMeta):
                 state.app_id = _get_self_or_active_app_id(self)
                 if not state._key:
                     state._key = name_bytes
+            case _algopy_testing.LocalMap() as local_map:
+                local_map.app_id = _get_self_or_active_app_id(self)
+                if local_map._key_prefix is None:
+                    local_map._key_prefix = name_bytes
             case _algopy_testing.BoxMap() as box_map if box_map._key_prefix is None:
                 box_map._key_prefix = name_bytes
             case Bytes() | UInt64() | BytesBacked() | Serializable() | UInt64Backed() | bool():
@@ -241,11 +245,13 @@ def _has_create_methods(contract_cls: _ContractMeta) -> bool:
 
 
 def get_local_states(contract: Contract) -> list[type]:
-    return [
-        attribute.type_
-        for attribute in vars(contract).values()
-        if isinstance(attribute, _algopy_testing.LocalState)
-    ]
+    local_states: list[type] = []
+    for attribute in vars(contract).values():
+        if isinstance(attribute, _algopy_testing.LocalState):
+            local_states.append(attribute.type_)
+        elif isinstance(attribute, _algopy_testing.LocalMap):
+            local_states.append(attribute.value_type)
+    return local_states
 
 
 def get_global_states(contract: Contract) -> list[type]:
@@ -254,6 +260,7 @@ def get_global_states(contract: Contract) -> list[type]:
         if isinstance(
             attribute,
             _algopy_testing.LocalState
+            | _algopy_testing.LocalMap
             | _algopy_testing.Box
             | _algopy_testing.BoxMap
             | _algopy_testing.BoxRef,

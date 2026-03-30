@@ -2,9 +2,14 @@ from __future__ import annotations
 
 import typing
 
+from _algopy_testing.context_helpers import lazy_context
+from _algopy_testing.models import Account
 from _algopy_testing.primitives.bytes import Bytes
 from _algopy_testing.primitives.uint64 import UInt64
 from _algopy_testing.protocols import BytesBacked, Serializable, UInt64Backed
+
+if typing.TYPE_CHECKING:
+    import algopy
 from _algopy_testing.serialize import (
     deserialize_from_bytes,
     serialize_to_bytes,
@@ -76,3 +81,10 @@ def cast_to_bytes(value: _TValue) -> bytes:
     if isinstance(serialized, int):
         serialized = serialized.to_bytes(length=8)
     return serialized
+
+
+def get_account(account_or_index: algopy.Account | algopy.UInt64 | int) -> algopy.Account:
+    if isinstance(account_or_index, Account):
+        return account_or_index
+    txn = lazy_context.active_group.active_txn
+    return txn.accounts(account_or_index)
