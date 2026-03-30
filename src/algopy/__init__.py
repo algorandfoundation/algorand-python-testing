@@ -30,7 +30,7 @@ from _algopy_testing.primitives import (
     zero_bytes,
 )
 from _algopy_testing.protocols import BytesBacked
-from _algopy_testing.state import Box, BoxMap, BoxRef, GlobalMap, GlobalState, LocalState
+from _algopy_testing.state import Box, BoxMap, BoxRef, GlobalMap, GlobalState, LocalMap, LocalState
 from _algopy_testing.utilities import OpUpFeeSource, ensure_budget, log, size_of
 
 from . import arc4, gtxn, itxn, op
@@ -60,6 +60,7 @@ __all__ = [
     "GlobalState",
     "ImmutableArray",
     "ImmutableFixedArray",
+    "LocalMap",
     "LocalState",
     "LogicSig",
     "OnCompleteAction",

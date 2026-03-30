@@ -10,6 +10,7 @@ from _algopy_testing.enums import TransactionType
 from _algopy_testing.models import Account, Application, Asset
 from _algopy_testing.primitives.bytes import Bytes
 from _algopy_testing.primitives.uint64 import UInt64
+from _algopy_testing.state.utils import get_account
 from _algopy_testing.utils import (
     raise_mocked_function_error,
     resolve_app_index,
@@ -28,13 +29,6 @@ def _get_app(app: algopy.Application | algopy.UInt64 | int) -> Application:
     if isinstance(app, Application):
         return app
     return lazy_context.ledger.get_app(resolve_app_index(app))
-
-
-def _get_account(acc: algopy.Account | algopy.UInt64 | int) -> Account:
-    if isinstance(acc, Account):
-        return acc
-    txn = lazy_context.active_group.active_txn
-    return txn.accounts(acc)
 
 
 def _get_asset(asset: algopy.Asset | algopy.UInt64 | int) -> Asset:
@@ -88,12 +82,12 @@ def gaid(a: algopy.UInt64 | int, /) -> algopy.UInt64:
 
 
 def balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
-    account = _get_account(a)
+    account = get_account(a)
     return account.balance
 
 
 def min_balance(a: algopy.Account | algopy.UInt64 | int, /) -> algopy.UInt64:
-    account = _get_account(a)
+    account = get_account(a)
     return account.min_balance
 
 
@@ -104,7 +98,7 @@ def exit(_a: UInt64 | int, /) -> typing.Never:  # noqa: A001
 def app_opted_in(
     a: algopy.Account | algopy.UInt64 | int, b: algopy.Application | algopy.UInt64 | int, /
 ) -> bool:
-    account = _get_account(a)
+    account = get_account(a)
     app = _get_app(b)
 
     return account.is_opted_in(app)
@@ -113,100 +107,100 @@ def app_opted_in(
 class AcctParamsGet:
     @staticmethod
     def acct_auth_addr(a: algopy.Account | algopy.UInt64 | int) -> tuple[algopy.Account, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.auth_address, account.balance != 0
 
     @staticmethod
     def acct_balance(a: algopy.Account | algopy.UInt64 | int) -> tuple[algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.balance, account.balance != 0
 
     @staticmethod
     def acct_min_balance(a: algopy.Account | algopy.UInt64 | int) -> tuple[algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.min_balance, account.balance != 0
 
     @staticmethod
     def acct_auth_address(a: algopy.Account | algopy.UInt64 | int) -> tuple[algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.auth_address, account.balance != 0
 
     @staticmethod
     def acct_total_num_uint(a: algopy.Account | algopy.UInt64 | int) -> tuple[algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.total_num_uint, account.balance != 0
 
     @staticmethod
     def acct_total_num_byte_slice(
         a: algopy.Account | algopy.UInt64 | int,
     ) -> tuple[algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.total_num_byte_slice, account.balance != 0
 
     @staticmethod
     def acct_total_extra_app_pages(
         a: algopy.Account | algopy.UInt64 | int,
     ) -> tuple[algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.total_extra_app_pages, account.balance != 0
 
     @staticmethod
     def acct_total_apps_created(
         a: algopy.Account | algopy.UInt64 | int,
     ) -> tuple[algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.total_apps_created, account.balance != 0
 
     @staticmethod
     def acct_total_apps_opted_in(
         a: algopy.Account | algopy.UInt64 | int,
     ) -> tuple[algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.total_apps_opted_in, account.balance != 0
 
     @staticmethod
     def acct_total_assets_created(
         a: algopy.Account | algopy.UInt64 | int,
     ) -> tuple[algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.total_assets_created, account.balance != 0
 
     @staticmethod
     def acct_total_assets(a: algopy.Account | algopy.UInt64 | int) -> tuple[algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.total_assets, account.balance != 0
 
     @staticmethod
     def acct_total_boxes(a: algopy.Account | algopy.UInt64 | int) -> tuple[algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.total_boxes, account.balance != 0
 
     @staticmethod
     def acct_total_box_bytes(
         a: algopy.Account | algopy.UInt64 | int,
     ) -> tuple[algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.total_box_bytes, account.balance != 0
 
     @staticmethod
     def acct_incentive_eligible(
         a: algopy.Account | algopy.UInt64 | int,
     ) -> tuple[bool, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.incentive_eligible, account.balance != 0
 
     @staticmethod
     def acct_last_heartbeat(
         a: algopy.Account | algopy.UInt64 | int,
     ) -> tuple[algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.last_heartbeat, account.balance != 0
 
     @staticmethod
     def acct_last_proposed(
         a: algopy.Account | algopy.UInt64 | int,
     ) -> tuple[algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         return account.last_proposed, account.balance != 0
 
 
@@ -316,7 +310,7 @@ class _AssetHoldingGet:
         field: str,
     ) -> tuple[typing.Any, bool]:
         # Resolve account
-        account = _get_account(account_or_index)
+        account = get_account(account_or_index)
         try:
             asset = _get_asset(asset_or_index)
         except ValueError:
@@ -427,7 +421,7 @@ class _AppLocal:
         c: algopy.Bytes | bytes,
         /,
     ) -> tuple[algopy.Bytes | algopy.UInt64, bool]:
-        account = _get_account(a)
+        account = get_account(a)
         app = _get_app(b)
         key = _get_bytes(c)
         try:
@@ -444,7 +438,7 @@ class _AppLocal:
     get_ex_uint64 = get_ex_bytes
 
     def delete(self, a: algopy.Account | algopy.UInt64 | int, b: algopy.Bytes | bytes, /) -> None:
-        account = _get_account(a)
+        account = get_account(a)
         key = _get_bytes(b)
         lazy_context.ledger.set_local_state(lazy_context.active_app_id, account, key, None)
 
@@ -455,7 +449,7 @@ class _AppLocal:
         c: algopy.Bytes | algopy.UInt64 | bytes | int,
         /,
     ) -> None:
-        account = _get_account(a)
+        account = get_account(a)
         key = _get_bytes(b)
         value = c.value if isinstance(c, Bytes | UInt64) else c
         lazy_context.ledger.set_local_state(lazy_context.active_app_id, account, key, value)
