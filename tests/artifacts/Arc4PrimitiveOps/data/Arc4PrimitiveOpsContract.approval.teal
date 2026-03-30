@@ -1452,14 +1452,22 @@ verify_string_add:
     txna ApplicationArgs 2
     // tests/artifacts/Arc4PrimitiveOps/contract.py:240
     // result = a + b
-    extract 2 0
-    concat // on error: max array length exceeded
     dup
     extract 2 0
-    len
+    swap
+    intc_3 // 0
+    extract_uint16 // on error: invalid array length header
+    dig 2
+    intc_3 // 0
+    extract_uint16
+    +
     itob
-    extract 6 2
+    extract 6 0
+    uncover 2
+    swap
     replace2 0
+    swap
+    concat
     // tests/artifacts/Arc4PrimitiveOps/contract.py:238
     // @arc4.abimethod
     bytec_0 // 0x151f7c75

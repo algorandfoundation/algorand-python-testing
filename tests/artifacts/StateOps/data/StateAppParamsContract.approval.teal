@@ -5,7 +5,7 @@
 main:
     intcblock 1
     bytecblock 0x151f7c75
-    // tests/artifacts/StateOps/contract.py:272
+    // tests/artifacts/StateOps/contract.py:275
     // class StateAppParamsContract(ARC4Contract):
     txn NumAppArgs
     bz main___algopy_default_create@16
@@ -30,31 +30,31 @@ main___algopy_default_create@16:
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_approval_program[routing]() -> void:
 verify_app_params_get_approval_program:
-    // tests/artifacts/StateOps/contract.py:273
+    // tests/artifacts/StateOps/contract.py:276
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:275
+    // tests/artifacts/StateOps/contract.py:278
     // value, exists = op.AppParamsGet.app_approval_program(a)
     app_params_get AppApprovalProgram
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:276
+    // tests/artifacts/StateOps/contract.py:279
     // value_index, exists_index = op.AppParamsGet.app_approval_program(_get_1st_ref_index())
     app_params_get AppApprovalProgram
-    // tests/artifacts/StateOps/contract.py:277
+    // tests/artifacts/StateOps/contract.py:280
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:278
+    // tests/artifacts/StateOps/contract.py:281
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:273
+    // tests/artifacts/StateOps/contract.py:276
     // @arc4.abimethod()
     dup
     len
@@ -72,31 +72,31 @@ verify_app_params_get_approval_program:
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_clear_state_program[routing]() -> void:
 verify_app_params_get_clear_state_program:
-    // tests/artifacts/StateOps/contract.py:281
+    // tests/artifacts/StateOps/contract.py:284
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:283
+    // tests/artifacts/StateOps/contract.py:286
     // value, exists = op.AppParamsGet.app_clear_state_program(a)
     app_params_get AppClearStateProgram
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:284
+    // tests/artifacts/StateOps/contract.py:287
     // value_index, exists_index = op.AppParamsGet.app_clear_state_program(_get_1st_ref_index())
     app_params_get AppClearStateProgram
-    // tests/artifacts/StateOps/contract.py:285
+    // tests/artifacts/StateOps/contract.py:288
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:286
+    // tests/artifacts/StateOps/contract.py:289
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:281
+    // tests/artifacts/StateOps/contract.py:284
     // @arc4.abimethod()
     dup
     len
@@ -114,31 +114,31 @@ verify_app_params_get_clear_state_program:
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_global_num_uint[routing]() -> void:
 verify_app_params_get_global_num_uint:
-    // tests/artifacts/StateOps/contract.py:289
+    // tests/artifacts/StateOps/contract.py:292
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:291
+    // tests/artifacts/StateOps/contract.py:294
     // value, exists = op.AppParamsGet.app_global_num_uint(a)
     app_params_get AppGlobalNumUint
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:292
+    // tests/artifacts/StateOps/contract.py:295
     // value_index, exists_index = op.AppParamsGet.app_global_num_uint(_get_1st_ref_index())
     app_params_get AppGlobalNumUint
-    // tests/artifacts/StateOps/contract.py:293
+    // tests/artifacts/StateOps/contract.py:296
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:294
+    // tests/artifacts/StateOps/contract.py:297
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:289
+    // tests/artifacts/StateOps/contract.py:292
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -151,31 +151,31 @@ verify_app_params_get_global_num_uint:
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_global_num_byte_slice[routing]() -> void:
 verify_app_params_get_global_num_byte_slice:
-    // tests/artifacts/StateOps/contract.py:297
+    // tests/artifacts/StateOps/contract.py:300
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:299
+    // tests/artifacts/StateOps/contract.py:302
     // value, exists = op.AppParamsGet.app_global_num_byte_slice(a)
     app_params_get AppGlobalNumByteSlice
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:300
+    // tests/artifacts/StateOps/contract.py:303
     // value_index, exists_index = op.AppParamsGet.app_global_num_byte_slice(_get_1st_ref_index())
     app_params_get AppGlobalNumByteSlice
-    // tests/artifacts/StateOps/contract.py:301
+    // tests/artifacts/StateOps/contract.py:304
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:302
+    // tests/artifacts/StateOps/contract.py:305
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:297
+    // tests/artifacts/StateOps/contract.py:300
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -188,31 +188,31 @@ verify_app_params_get_global_num_byte_slice:
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_local_num_uint[routing]() -> void:
 verify_app_params_get_local_num_uint:
-    // tests/artifacts/StateOps/contract.py:305
+    // tests/artifacts/StateOps/contract.py:308
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:307
+    // tests/artifacts/StateOps/contract.py:310
     // value, exists = op.AppParamsGet.app_local_num_uint(a)
     app_params_get AppLocalNumUint
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:308
+    // tests/artifacts/StateOps/contract.py:311
     // value_index, exists_index = op.AppParamsGet.app_local_num_uint(_get_1st_ref_index())
     app_params_get AppLocalNumUint
-    // tests/artifacts/StateOps/contract.py:309
+    // tests/artifacts/StateOps/contract.py:312
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:310
+    // tests/artifacts/StateOps/contract.py:313
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:305
+    // tests/artifacts/StateOps/contract.py:308
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -225,31 +225,31 @@ verify_app_params_get_local_num_uint:
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_local_num_byte_slice[routing]() -> void:
 verify_app_params_get_local_num_byte_slice:
-    // tests/artifacts/StateOps/contract.py:313
+    // tests/artifacts/StateOps/contract.py:316
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:315
+    // tests/artifacts/StateOps/contract.py:318
     // value, exists = op.AppParamsGet.app_local_num_byte_slice(a)
     app_params_get AppLocalNumByteSlice
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:316
+    // tests/artifacts/StateOps/contract.py:319
     // value_index, exists_index = op.AppParamsGet.app_local_num_byte_slice(_get_1st_ref_index())
     app_params_get AppLocalNumByteSlice
-    // tests/artifacts/StateOps/contract.py:317
+    // tests/artifacts/StateOps/contract.py:320
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:318
+    // tests/artifacts/StateOps/contract.py:321
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:313
+    // tests/artifacts/StateOps/contract.py:316
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -262,31 +262,31 @@ verify_app_params_get_local_num_byte_slice:
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_extra_program_pages[routing]() -> void:
 verify_app_params_get_extra_program_pages:
-    // tests/artifacts/StateOps/contract.py:321
+    // tests/artifacts/StateOps/contract.py:324
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:323
+    // tests/artifacts/StateOps/contract.py:326
     // value, exists = op.AppParamsGet.app_extra_program_pages(a)
     app_params_get AppExtraProgramPages
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:324
+    // tests/artifacts/StateOps/contract.py:327
     // value_index, exists_index = op.AppParamsGet.app_extra_program_pages(_get_1st_ref_index())
     app_params_get AppExtraProgramPages
-    // tests/artifacts/StateOps/contract.py:325
+    // tests/artifacts/StateOps/contract.py:328
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:326
+    // tests/artifacts/StateOps/contract.py:329
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:321
+    // tests/artifacts/StateOps/contract.py:324
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -299,31 +299,31 @@ verify_app_params_get_extra_program_pages:
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_creator[routing]() -> void:
 verify_app_params_get_creator:
-    // tests/artifacts/StateOps/contract.py:329
+    // tests/artifacts/StateOps/contract.py:332
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:331
+    // tests/artifacts/StateOps/contract.py:334
     // value, exists = op.AppParamsGet.app_creator(a)
     app_params_get AppCreator
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:332
+    // tests/artifacts/StateOps/contract.py:335
     // value_index, exists_index = op.AppParamsGet.app_creator(_get_1st_ref_index())
     app_params_get AppCreator
-    // tests/artifacts/StateOps/contract.py:333
+    // tests/artifacts/StateOps/contract.py:336
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:334
+    // tests/artifacts/StateOps/contract.py:337
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:329
+    // tests/artifacts/StateOps/contract.py:332
     // @arc4.abimethod()
     bytec_0 // 0x151f7c75
     swap
@@ -335,31 +335,31 @@ verify_app_params_get_creator:
 
 // tests.artifacts.StateOps.contract.StateAppParamsContract.verify_app_params_get_address[routing]() -> void:
 verify_app_params_get_address:
-    // tests/artifacts/StateOps/contract.py:337
+    // tests/artifacts/StateOps/contract.py:340
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:339
+    // tests/artifacts/StateOps/contract.py:342
     // value, exists = op.AppParamsGet.app_address(a)
     app_params_get AppAddress
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:340
+    // tests/artifacts/StateOps/contract.py:343
     // value_index, exists_index = op.AppParamsGet.app_address(_get_1st_ref_index())
     app_params_get AppAddress
-    // tests/artifacts/StateOps/contract.py:341
+    // tests/artifacts/StateOps/contract.py:344
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:342
+    // tests/artifacts/StateOps/contract.py:345
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:337
+    // tests/artifacts/StateOps/contract.py:340
     // @arc4.abimethod()
     bytec_0 // 0x151f7c75
     swap

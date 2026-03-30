@@ -5,7 +5,7 @@
 main:
     intcblock 1
     bytecblock 0x151f7c75
-    // tests/artifacts/StateOps/contract.py:24
+    // tests/artifacts/StateOps/contract.py:27
     // class StateAcctParamsGetContract(ARC4Contract, avm_version=11):
     txn NumAppArgs
     bz main___algopy_default_create@22
@@ -30,33 +30,33 @@ main___algopy_default_create@22:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_balance[routing]() -> void:
 verify_acct_balance:
-    // tests/artifacts/StateOps/contract.py:25
+    // tests/artifacts/StateOps/contract.py:28
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:27
+    // tests/artifacts/StateOps/contract.py:30
     // value, funded = op.AcctParamsGet.acct_balance(a)
     dup
     acct_params_get AcctBalance
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:28
+    // tests/artifacts/StateOps/contract.py:31
     // value_index, funded_index = op.AcctParamsGet.acct_balance(_get_1st_ref_index())
     acct_params_get AcctBalance
-    // tests/artifacts/StateOps/contract.py:29
+    // tests/artifacts/StateOps/contract.py:32
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:30
+    // tests/artifacts/StateOps/contract.py:33
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:31
+    // tests/artifacts/StateOps/contract.py:34
     // assert value == a.balance, "expected Account balance to match"
     dig 1
     acct_params_get AcctBalance
@@ -64,26 +64,28 @@ verify_acct_balance:
     dig 1
     ==
     assert // expected Account balance to match
-    // tests/artifacts/StateOps/contract.py:32
+    // tests/artifacts/StateOps/contract.py:35
     // assert value == algopy.op.balance(a), "expected op.balance to match"
     swap
     balance
     dig 1
     ==
     assert // expected op.balance to match
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:33-35
-    // assert value == algopy.op.balance(
-    //     _get_1st_ref_index()
-    // ), "expected op.balance by index to match"
+    // tests/artifacts/StateOps/contract.py:36
+    // assert value == algopy.op.balance(_get_1st_ref_index()), (
     balance
     dig 1
     ==
+    // tests/artifacts/StateOps/contract.py:36-38
+    // assert value == algopy.op.balance(_get_1st_ref_index()), (
+    //     "expected op.balance by index to match"
+    // )
     assert // expected op.balance by index to match
-    // tests/artifacts/StateOps/contract.py:25
+    // tests/artifacts/StateOps/contract.py:28
     // @arc4.abimethod(resource_encoding="index")
     itob
     bytec_0 // 0x151f7c75
@@ -96,33 +98,33 @@ verify_acct_balance:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_min_balance[routing]() -> void:
 verify_acct_min_balance:
-    // tests/artifacts/StateOps/contract.py:38
+    // tests/artifacts/StateOps/contract.py:41
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:40
+    // tests/artifacts/StateOps/contract.py:43
     // value, funded = op.AcctParamsGet.acct_min_balance(a)
     dup
     acct_params_get AcctMinBalance
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:41
+    // tests/artifacts/StateOps/contract.py:44
     // value_index, funded_index = op.AcctParamsGet.acct_min_balance(_get_1st_ref_index())
     acct_params_get AcctMinBalance
-    // tests/artifacts/StateOps/contract.py:42
+    // tests/artifacts/StateOps/contract.py:45
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:43
+    // tests/artifacts/StateOps/contract.py:46
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:44
+    // tests/artifacts/StateOps/contract.py:47
     // assert value == a.min_balance, "expected Account min_balance to match"
     dig 1
     acct_params_get AcctMinBalance
@@ -130,26 +132,28 @@ verify_acct_min_balance:
     dig 1
     ==
     assert // expected Account min_balance to match
-    // tests/artifacts/StateOps/contract.py:45
+    // tests/artifacts/StateOps/contract.py:48
     // assert value == algopy.op.min_balance(a), "expected op.min_balance to match"
     swap
     min_balance
     dig 1
     ==
     assert // expected op.min_balance to match
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:46-48
-    // assert value == algopy.op.min_balance(
-    //     _get_1st_ref_index()
-    // ), "expected op.min_balance by index to match"
+    // tests/artifacts/StateOps/contract.py:49
+    // assert value == algopy.op.min_balance(_get_1st_ref_index()), (
     min_balance
     dig 1
     ==
+    // tests/artifacts/StateOps/contract.py:49-51
+    // assert value == algopy.op.min_balance(_get_1st_ref_index()), (
+    //     "expected op.min_balance by index to match"
+    // )
     assert // expected op.min_balance by index to match
-    // tests/artifacts/StateOps/contract.py:38
+    // tests/artifacts/StateOps/contract.py:41
     // @arc4.abimethod(resource_encoding="index")
     itob
     bytec_0 // 0x151f7c75
@@ -162,32 +166,32 @@ verify_acct_min_balance:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_auth_addr[routing]() -> void:
 verify_acct_auth_addr:
-    // tests/artifacts/StateOps/contract.py:51
+    // tests/artifacts/StateOps/contract.py:54
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:53
+    // tests/artifacts/StateOps/contract.py:56
     // value, funded = op.AcctParamsGet.acct_auth_addr(a)
     acct_params_get AcctAuthAddr
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:54
+    // tests/artifacts/StateOps/contract.py:57
     // value_index, funded_index = op.AcctParamsGet.acct_auth_addr(_get_1st_ref_index())
     acct_params_get AcctAuthAddr
-    // tests/artifacts/StateOps/contract.py:55
+    // tests/artifacts/StateOps/contract.py:58
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:56
+    // tests/artifacts/StateOps/contract.py:59
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:51
+    // tests/artifacts/StateOps/contract.py:54
     // @arc4.abimethod(resource_encoding="index")
     bytec_0 // 0x151f7c75
     swap
@@ -199,32 +203,32 @@ verify_acct_auth_addr:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_num_uint[routing]() -> void:
 verify_acct_total_num_uint:
-    // tests/artifacts/StateOps/contract.py:59
+    // tests/artifacts/StateOps/contract.py:62
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:61
+    // tests/artifacts/StateOps/contract.py:64
     // value, funded = op.AcctParamsGet.acct_total_num_uint(a)
     acct_params_get AcctTotalNumUint
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:62
+    // tests/artifacts/StateOps/contract.py:65
     // value_index, funded_index = op.AcctParamsGet.acct_total_num_uint(_get_1st_ref_index())
     acct_params_get AcctTotalNumUint
-    // tests/artifacts/StateOps/contract.py:63
+    // tests/artifacts/StateOps/contract.py:66
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:64
+    // tests/artifacts/StateOps/contract.py:67
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:59
+    // tests/artifacts/StateOps/contract.py:62
     // @arc4.abimethod(resource_encoding="index")
     itob
     bytec_0 // 0x151f7c75
@@ -237,34 +241,34 @@ verify_acct_total_num_uint:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_num_byte_slice[routing]() -> void:
 verify_acct_total_num_byte_slice:
-    // tests/artifacts/StateOps/contract.py:67
+    // tests/artifacts/StateOps/contract.py:70
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:69
+    // tests/artifacts/StateOps/contract.py:72
     // value, funded = op.AcctParamsGet.acct_total_num_byte_slice(a)
     acct_params_get AcctTotalNumByteSlice
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:70-72
+    // tests/artifacts/StateOps/contract.py:73-75
     // value_index, funded_index = op.AcctParamsGet.acct_total_num_byte_slice(
     //     _get_1st_ref_index()
     // )
     acct_params_get AcctTotalNumByteSlice
-    // tests/artifacts/StateOps/contract.py:73
+    // tests/artifacts/StateOps/contract.py:76
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:74
+    // tests/artifacts/StateOps/contract.py:77
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:67
+    // tests/artifacts/StateOps/contract.py:70
     // @arc4.abimethod(resource_encoding="index")
     itob
     bytec_0 // 0x151f7c75
@@ -277,34 +281,34 @@ verify_acct_total_num_byte_slice:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_extra_app_pages[routing]() -> void:
 verify_acct_total_extra_app_pages:
-    // tests/artifacts/StateOps/contract.py:77
+    // tests/artifacts/StateOps/contract.py:80
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:79
+    // tests/artifacts/StateOps/contract.py:82
     // value, funded = op.AcctParamsGet.acct_total_extra_app_pages(a)
     acct_params_get AcctTotalExtraAppPages
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:80-82
+    // tests/artifacts/StateOps/contract.py:83-85
     // value_index, funded_index = op.AcctParamsGet.acct_total_extra_app_pages(
     //     _get_1st_ref_index()
     // )
     acct_params_get AcctTotalExtraAppPages
-    // tests/artifacts/StateOps/contract.py:83
+    // tests/artifacts/StateOps/contract.py:86
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:84
+    // tests/artifacts/StateOps/contract.py:87
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:77
+    // tests/artifacts/StateOps/contract.py:80
     // @arc4.abimethod(resource_encoding="index")
     itob
     bytec_0 // 0x151f7c75
@@ -317,32 +321,32 @@ verify_acct_total_extra_app_pages:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_apps_created[routing]() -> void:
 verify_acct_total_apps_created:
-    // tests/artifacts/StateOps/contract.py:87
+    // tests/artifacts/StateOps/contract.py:90
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:89
+    // tests/artifacts/StateOps/contract.py:92
     // value, funded = op.AcctParamsGet.acct_total_apps_created(a)
     acct_params_get AcctTotalAppsCreated
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:90
+    // tests/artifacts/StateOps/contract.py:93
     // value_index, funded_index = op.AcctParamsGet.acct_total_apps_created(_get_1st_ref_index())
     acct_params_get AcctTotalAppsCreated
-    // tests/artifacts/StateOps/contract.py:91
+    // tests/artifacts/StateOps/contract.py:94
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:92
+    // tests/artifacts/StateOps/contract.py:95
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:87
+    // tests/artifacts/StateOps/contract.py:90
     // @arc4.abimethod(resource_encoding="index")
     itob
     bytec_0 // 0x151f7c75
@@ -355,32 +359,32 @@ verify_acct_total_apps_created:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_apps_opted_in[routing]() -> void:
 verify_acct_total_apps_opted_in:
-    // tests/artifacts/StateOps/contract.py:95
+    // tests/artifacts/StateOps/contract.py:98
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:97
+    // tests/artifacts/StateOps/contract.py:100
     // value, funded = op.AcctParamsGet.acct_total_apps_opted_in(a)
     acct_params_get AcctTotalAppsOptedIn
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:98
+    // tests/artifacts/StateOps/contract.py:101
     // value_index, funded_index = op.AcctParamsGet.acct_total_apps_opted_in(_get_1st_ref_index())
     acct_params_get AcctTotalAppsOptedIn
-    // tests/artifacts/StateOps/contract.py:99
+    // tests/artifacts/StateOps/contract.py:102
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:100
+    // tests/artifacts/StateOps/contract.py:103
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:95
+    // tests/artifacts/StateOps/contract.py:98
     // @arc4.abimethod(resource_encoding="index")
     itob
     bytec_0 // 0x151f7c75
@@ -393,34 +397,34 @@ verify_acct_total_apps_opted_in:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_assets_created[routing]() -> void:
 verify_acct_total_assets_created:
-    // tests/artifacts/StateOps/contract.py:103
+    // tests/artifacts/StateOps/contract.py:106
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:105
+    // tests/artifacts/StateOps/contract.py:108
     // value, funded = op.AcctParamsGet.acct_total_assets_created(a)
     acct_params_get AcctTotalAssetsCreated
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:106-108
+    // tests/artifacts/StateOps/contract.py:109-111
     // value_index, funded_index = op.AcctParamsGet.acct_total_assets_created(
     //     _get_1st_ref_index()
     // )
     acct_params_get AcctTotalAssetsCreated
-    // tests/artifacts/StateOps/contract.py:109
+    // tests/artifacts/StateOps/contract.py:112
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:110
+    // tests/artifacts/StateOps/contract.py:113
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:103
+    // tests/artifacts/StateOps/contract.py:106
     // @arc4.abimethod(resource_encoding="index")
     itob
     bytec_0 // 0x151f7c75
@@ -433,32 +437,32 @@ verify_acct_total_assets_created:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_assets[routing]() -> void:
 verify_acct_total_assets:
-    // tests/artifacts/StateOps/contract.py:113
+    // tests/artifacts/StateOps/contract.py:116
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:115
+    // tests/artifacts/StateOps/contract.py:118
     // value, funded = op.AcctParamsGet.acct_total_assets(a)
     acct_params_get AcctTotalAssets
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:116
+    // tests/artifacts/StateOps/contract.py:119
     // value_index, funded_index = op.AcctParamsGet.acct_total_assets(_get_1st_ref_index())
     acct_params_get AcctTotalAssets
-    // tests/artifacts/StateOps/contract.py:117
+    // tests/artifacts/StateOps/contract.py:120
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:118
+    // tests/artifacts/StateOps/contract.py:121
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:113
+    // tests/artifacts/StateOps/contract.py:116
     // @arc4.abimethod(resource_encoding="index")
     itob
     bytec_0 // 0x151f7c75
@@ -471,32 +475,32 @@ verify_acct_total_assets:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_boxes[routing]() -> void:
 verify_acct_total_boxes:
-    // tests/artifacts/StateOps/contract.py:121
+    // tests/artifacts/StateOps/contract.py:124
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:123
+    // tests/artifacts/StateOps/contract.py:126
     // value, funded = op.AcctParamsGet.acct_total_boxes(a)
     acct_params_get AcctTotalBoxes
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:124
+    // tests/artifacts/StateOps/contract.py:127
     // value_index, funded_index = op.AcctParamsGet.acct_total_boxes(_get_1st_ref_index())
     acct_params_get AcctTotalBoxes
-    // tests/artifacts/StateOps/contract.py:125
+    // tests/artifacts/StateOps/contract.py:128
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:126
+    // tests/artifacts/StateOps/contract.py:129
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:121
+    // tests/artifacts/StateOps/contract.py:124
     // @arc4.abimethod(resource_encoding="index")
     itob
     bytec_0 // 0x151f7c75
@@ -509,32 +513,32 @@ verify_acct_total_boxes:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_total_box_bytes[routing]() -> void:
 verify_acct_total_box_bytes:
-    // tests/artifacts/StateOps/contract.py:129
+    // tests/artifacts/StateOps/contract.py:132
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:131
+    // tests/artifacts/StateOps/contract.py:134
     // value, funded = op.AcctParamsGet.acct_total_box_bytes(a)
     acct_params_get AcctTotalBoxBytes
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:132
+    // tests/artifacts/StateOps/contract.py:135
     // value_index, funded_index = op.AcctParamsGet.acct_total_box_bytes(_get_1st_ref_index())
     acct_params_get AcctTotalBoxBytes
-    // tests/artifacts/StateOps/contract.py:133
+    // tests/artifacts/StateOps/contract.py:136
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:134
+    // tests/artifacts/StateOps/contract.py:137
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:129
+    // tests/artifacts/StateOps/contract.py:132
     // @arc4.abimethod(resource_encoding="index")
     itob
     bytec_0 // 0x151f7c75
@@ -547,32 +551,32 @@ verify_acct_total_box_bytes:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_incentive_eligible[routing]() -> void:
 verify_acct_incentive_eligible:
-    // tests/artifacts/StateOps/contract.py:137
+    // tests/artifacts/StateOps/contract.py:140
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:139
+    // tests/artifacts/StateOps/contract.py:142
     // value, funded = op.AcctParamsGet.acct_incentive_eligible(a)
     acct_params_get AcctIncentiveEligible
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:140
+    // tests/artifacts/StateOps/contract.py:143
     // value_index, funded_index = op.AcctParamsGet.acct_incentive_eligible(_get_1st_ref_index())
     acct_params_get AcctIncentiveEligible
-    // tests/artifacts/StateOps/contract.py:141
+    // tests/artifacts/StateOps/contract.py:144
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:142
+    // tests/artifacts/StateOps/contract.py:145
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:137
+    // tests/artifacts/StateOps/contract.py:140
     // @arc4.abimethod(resource_encoding="index")
     pushbytes 0x00
     pushint 0
@@ -588,32 +592,32 @@ verify_acct_incentive_eligible:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_last_heartbeat[routing]() -> void:
 verify_acct_last_heartbeat:
-    // tests/artifacts/StateOps/contract.py:145
+    // tests/artifacts/StateOps/contract.py:148
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:147
+    // tests/artifacts/StateOps/contract.py:150
     // value, funded = op.AcctParamsGet.acct_last_heartbeat(a)
     acct_params_get AcctLastHeartbeat
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:148
+    // tests/artifacts/StateOps/contract.py:151
     // value_index, funded_index = op.AcctParamsGet.acct_last_heartbeat(_get_1st_ref_index())
     acct_params_get AcctLastHeartbeat
-    // tests/artifacts/StateOps/contract.py:149
+    // tests/artifacts/StateOps/contract.py:152
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:150
+    // tests/artifacts/StateOps/contract.py:153
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:145
+    // tests/artifacts/StateOps/contract.py:148
     // @arc4.abimethod(resource_encoding="index")
     itob
     bytec_0 // 0x151f7c75
@@ -626,32 +630,32 @@ verify_acct_last_heartbeat:
 
 // tests.artifacts.StateOps.contract.StateAcctParamsGetContract.verify_acct_last_proposed[routing]() -> void:
 verify_acct_last_proposed:
-    // tests/artifacts/StateOps/contract.py:153
+    // tests/artifacts/StateOps/contract.py:156
     // @arc4.abimethod(resource_encoding="index")
     txna ApplicationArgs 1
     btoi
     txnas Accounts
-    // tests/artifacts/StateOps/contract.py:155
+    // tests/artifacts/StateOps/contract.py:158
     // value, funded = op.AcctParamsGet.acct_last_proposed(a)
     acct_params_get AcctLastProposed
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:156
+    // tests/artifacts/StateOps/contract.py:159
     // value_index, funded_index = op.AcctParamsGet.acct_last_proposed(_get_1st_ref_index())
     acct_params_get AcctLastProposed
-    // tests/artifacts/StateOps/contract.py:157
+    // tests/artifacts/StateOps/contract.py:160
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:158
+    // tests/artifacts/StateOps/contract.py:161
     // assert funded == funded_index, "expected funded by index to match"
     ==
     assert // expected funded by index to match
-    // tests/artifacts/StateOps/contract.py:153
+    // tests/artifacts/StateOps/contract.py:156
     // @arc4.abimethod(resource_encoding="index")
     itob
     bytec_0 // 0x151f7c75
