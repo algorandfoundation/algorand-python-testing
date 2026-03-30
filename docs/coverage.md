@@ -20,9 +20,11 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | algopy.FixedArray                           | Native              |
 | algopy.FixedBytes                           | Native              |
 | algopy.Global                               | Emulated            |
+| algopy.GlobalMap                            | Emulated            |
 | algopy.GlobalState                          | Emulated            |
 | algopy.ImmutableArray                       | Native              |
 | algopy.ImmutableFixedArray                  | Native              |
+| algopy.LocalMap                             | Emulated            |
 | algopy.LocalState                           | Emulated            |
 | algopy.LogicSig                             | Emulated            |
 | algopy.OnCompleteAction                     | Native              |
