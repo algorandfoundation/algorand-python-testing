@@ -5,7 +5,7 @@
 main:
     intcblock 1
     bytecblock 0x151f7c75
-    // tests/artifacts/StateOps/contract.py:174
+    // tests/artifacts/StateOps/contract.py:177
     // class StateAssetParamsContract(ARC4Contract):
     txn NumAppArgs
     bz main___algopy_default_create@19
@@ -30,31 +30,31 @@ main___algopy_default_create@19:
 
 // tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_total[routing]() -> void:
 verify_asset_params_get_total:
-    // tests/artifacts/StateOps/contract.py:175
+    // tests/artifacts/StateOps/contract.py:178
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:177
+    // tests/artifacts/StateOps/contract.py:180
     // value, exists = op.AssetParamsGet.asset_total(a)
     asset_params_get AssetTotal
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:178
+    // tests/artifacts/StateOps/contract.py:181
     // value_index, exists_index = op.AssetParamsGet.asset_total(_get_1st_ref_index())
     asset_params_get AssetTotal
-    // tests/artifacts/StateOps/contract.py:179
+    // tests/artifacts/StateOps/contract.py:182
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:180
+    // tests/artifacts/StateOps/contract.py:183
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:175
+    // tests/artifacts/StateOps/contract.py:178
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -67,31 +67,31 @@ verify_asset_params_get_total:
 
 // tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_decimals[routing]() -> void:
 verify_asset_params_get_decimals:
-    // tests/artifacts/StateOps/contract.py:183
+    // tests/artifacts/StateOps/contract.py:186
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:185
+    // tests/artifacts/StateOps/contract.py:188
     // value, exists = op.AssetParamsGet.asset_decimals(a)
     asset_params_get AssetDecimals
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:186
+    // tests/artifacts/StateOps/contract.py:189
     // value_index, exists_index = op.AssetParamsGet.asset_decimals(_get_1st_ref_index())
     asset_params_get AssetDecimals
-    // tests/artifacts/StateOps/contract.py:187
+    // tests/artifacts/StateOps/contract.py:190
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:188
+    // tests/artifacts/StateOps/contract.py:191
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:183
+    // tests/artifacts/StateOps/contract.py:186
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -104,31 +104,31 @@ verify_asset_params_get_decimals:
 
 // tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_default_frozen[routing]() -> void:
 verify_asset_params_get_default_frozen:
-    // tests/artifacts/StateOps/contract.py:191
+    // tests/artifacts/StateOps/contract.py:194
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:193
+    // tests/artifacts/StateOps/contract.py:196
     // value, exists = op.AssetParamsGet.asset_default_frozen(a)
     asset_params_get AssetDefaultFrozen
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:194
+    // tests/artifacts/StateOps/contract.py:197
     // value_index, exists_index = op.AssetParamsGet.asset_default_frozen(_get_1st_ref_index())
     asset_params_get AssetDefaultFrozen
-    // tests/artifacts/StateOps/contract.py:195
+    // tests/artifacts/StateOps/contract.py:198
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:196
+    // tests/artifacts/StateOps/contract.py:199
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:191
+    // tests/artifacts/StateOps/contract.py:194
     // @arc4.abimethod()
     pushbytes 0x00
     pushint 0
@@ -144,31 +144,31 @@ verify_asset_params_get_default_frozen:
 
 // tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_unit_name[routing]() -> void:
 verify_asset_params_get_unit_name:
-    // tests/artifacts/StateOps/contract.py:199
+    // tests/artifacts/StateOps/contract.py:202
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:201
+    // tests/artifacts/StateOps/contract.py:204
     // value, exists = op.AssetParamsGet.asset_unit_name(a)
     asset_params_get AssetUnitName
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:202
+    // tests/artifacts/StateOps/contract.py:205
     // value_index, exists_index = op.AssetParamsGet.asset_unit_name(_get_1st_ref_index())
     asset_params_get AssetUnitName
-    // tests/artifacts/StateOps/contract.py:203
+    // tests/artifacts/StateOps/contract.py:206
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:204
+    // tests/artifacts/StateOps/contract.py:207
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:199
+    // tests/artifacts/StateOps/contract.py:202
     // @arc4.abimethod()
     dup
     len
@@ -186,31 +186,31 @@ verify_asset_params_get_unit_name:
 
 // tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_name[routing]() -> void:
 verify_asset_params_get_name:
-    // tests/artifacts/StateOps/contract.py:207
+    // tests/artifacts/StateOps/contract.py:210
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:209
+    // tests/artifacts/StateOps/contract.py:212
     // value, exists = op.AssetParamsGet.asset_name(a)
     asset_params_get AssetName
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:210
+    // tests/artifacts/StateOps/contract.py:213
     // value_index, exists_index = op.AssetParamsGet.asset_name(_get_1st_ref_index())
     asset_params_get AssetName
-    // tests/artifacts/StateOps/contract.py:211
+    // tests/artifacts/StateOps/contract.py:214
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:212
+    // tests/artifacts/StateOps/contract.py:215
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:207
+    // tests/artifacts/StateOps/contract.py:210
     // @arc4.abimethod()
     dup
     len
@@ -228,31 +228,31 @@ verify_asset_params_get_name:
 
 // tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_url[routing]() -> void:
 verify_asset_params_get_url:
-    // tests/artifacts/StateOps/contract.py:215
+    // tests/artifacts/StateOps/contract.py:218
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:217
+    // tests/artifacts/StateOps/contract.py:220
     // value, exists = op.AssetParamsGet.asset_url(a)
     asset_params_get AssetURL
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:218
+    // tests/artifacts/StateOps/contract.py:221
     // value_index, exists_index = op.AssetParamsGet.asset_url(_get_1st_ref_index())
     asset_params_get AssetURL
-    // tests/artifacts/StateOps/contract.py:219
+    // tests/artifacts/StateOps/contract.py:222
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:220
+    // tests/artifacts/StateOps/contract.py:223
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:215
+    // tests/artifacts/StateOps/contract.py:218
     // @arc4.abimethod()
     dup
     len
@@ -270,31 +270,31 @@ verify_asset_params_get_url:
 
 // tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_metadata_hash[routing]() -> void:
 verify_asset_params_get_metadata_hash:
-    // tests/artifacts/StateOps/contract.py:223
+    // tests/artifacts/StateOps/contract.py:226
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:225
+    // tests/artifacts/StateOps/contract.py:228
     // value, exists = op.AssetParamsGet.asset_metadata_hash(a)
     asset_params_get AssetMetadataHash
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:226
+    // tests/artifacts/StateOps/contract.py:229
     // value_index, exists_index = op.AssetParamsGet.asset_metadata_hash(_get_1st_ref_index())
     asset_params_get AssetMetadataHash
-    // tests/artifacts/StateOps/contract.py:227
+    // tests/artifacts/StateOps/contract.py:230
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:228
+    // tests/artifacts/StateOps/contract.py:231
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:223
+    // tests/artifacts/StateOps/contract.py:226
     // @arc4.abimethod()
     dup
     len
@@ -312,31 +312,31 @@ verify_asset_params_get_metadata_hash:
 
 // tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_manager[routing]() -> void:
 verify_asset_params_get_manager:
-    // tests/artifacts/StateOps/contract.py:231
+    // tests/artifacts/StateOps/contract.py:234
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:233
+    // tests/artifacts/StateOps/contract.py:236
     // value, exists = op.AssetParamsGet.asset_manager(a)
     asset_params_get AssetManager
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:234
+    // tests/artifacts/StateOps/contract.py:237
     // value_index, exists_index = op.AssetParamsGet.asset_manager(_get_1st_ref_index())
     asset_params_get AssetManager
-    // tests/artifacts/StateOps/contract.py:235
+    // tests/artifacts/StateOps/contract.py:238
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:236
+    // tests/artifacts/StateOps/contract.py:239
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:231
+    // tests/artifacts/StateOps/contract.py:234
     // @arc4.abimethod()
     bytec_0 // 0x151f7c75
     swap
@@ -348,31 +348,31 @@ verify_asset_params_get_manager:
 
 // tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_reserve[routing]() -> void:
 verify_asset_params_get_reserve:
-    // tests/artifacts/StateOps/contract.py:239
+    // tests/artifacts/StateOps/contract.py:242
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:241
+    // tests/artifacts/StateOps/contract.py:244
     // value, exists = op.AssetParamsGet.asset_reserve(a)
     asset_params_get AssetReserve
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:242
+    // tests/artifacts/StateOps/contract.py:245
     // value_index, exists_index = op.AssetParamsGet.asset_reserve(_get_1st_ref_index())
     asset_params_get AssetReserve
-    // tests/artifacts/StateOps/contract.py:243
+    // tests/artifacts/StateOps/contract.py:246
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:244
+    // tests/artifacts/StateOps/contract.py:247
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:239
+    // tests/artifacts/StateOps/contract.py:242
     // @arc4.abimethod()
     bytec_0 // 0x151f7c75
     swap
@@ -384,31 +384,31 @@ verify_asset_params_get_reserve:
 
 // tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_freeze[routing]() -> void:
 verify_asset_params_get_freeze:
-    // tests/artifacts/StateOps/contract.py:247
+    // tests/artifacts/StateOps/contract.py:250
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:249
+    // tests/artifacts/StateOps/contract.py:252
     // value, exists = op.AssetParamsGet.asset_freeze(a)
     asset_params_get AssetFreeze
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:250
+    // tests/artifacts/StateOps/contract.py:253
     // value_index, exists_index = op.AssetParamsGet.asset_freeze(_get_1st_ref_index())
     asset_params_get AssetFreeze
-    // tests/artifacts/StateOps/contract.py:251
+    // tests/artifacts/StateOps/contract.py:254
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:252
+    // tests/artifacts/StateOps/contract.py:255
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:247
+    // tests/artifacts/StateOps/contract.py:250
     // @arc4.abimethod()
     bytec_0 // 0x151f7c75
     swap
@@ -420,31 +420,31 @@ verify_asset_params_get_freeze:
 
 // tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_clawback[routing]() -> void:
 verify_asset_params_get_clawback:
-    // tests/artifacts/StateOps/contract.py:255
+    // tests/artifacts/StateOps/contract.py:258
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:257
+    // tests/artifacts/StateOps/contract.py:260
     // value, exists = op.AssetParamsGet.asset_clawback(a)
     asset_params_get AssetClawback
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:258
+    // tests/artifacts/StateOps/contract.py:261
     // value_index, exists_index = op.AssetParamsGet.asset_clawback(_get_1st_ref_index())
     asset_params_get AssetClawback
-    // tests/artifacts/StateOps/contract.py:259
+    // tests/artifacts/StateOps/contract.py:262
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:260
+    // tests/artifacts/StateOps/contract.py:263
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:255
+    // tests/artifacts/StateOps/contract.py:258
     // @arc4.abimethod()
     bytec_0 // 0x151f7c75
     swap
@@ -456,31 +456,31 @@ verify_asset_params_get_clawback:
 
 // tests.artifacts.StateOps.contract.StateAssetParamsContract.verify_asset_params_get_creator[routing]() -> void:
 verify_asset_params_get_creator:
-    // tests/artifacts/StateOps/contract.py:263
+    // tests/artifacts/StateOps/contract.py:266
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:265
+    // tests/artifacts/StateOps/contract.py:268
     // value, exists = op.AssetParamsGet.asset_creator(a)
     asset_params_get AssetCreator
-    // tests/artifacts/StateOps/contract.py:21
+    // tests/artifacts/StateOps/contract.py:24
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:266
+    // tests/artifacts/StateOps/contract.py:269
     // value_index, exists_index = op.AssetParamsGet.asset_creator(_get_1st_ref_index())
     asset_params_get AssetCreator
-    // tests/artifacts/StateOps/contract.py:267
+    // tests/artifacts/StateOps/contract.py:270
     // assert value == value_index, "expected value by index to match"
     dig 3
     uncover 2
     ==
     assert // expected value by index to match
-    // tests/artifacts/StateOps/contract.py:268
+    // tests/artifacts/StateOps/contract.py:271
     // assert exists == exists_index, "expected exists by index to match"
     ==
     assert // expected exists by index to match
-    // tests/artifacts/StateOps/contract.py:263
+    // tests/artifacts/StateOps/contract.py:266
     // @arc4.abimethod()
     bytec_0 // 0x151f7c75
     swap

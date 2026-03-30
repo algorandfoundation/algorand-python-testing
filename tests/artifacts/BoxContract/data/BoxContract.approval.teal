@@ -186,7 +186,7 @@ set_boxes:
     bytec_3 // "box_large"
     intc 4 // 4096
     uncover 2
-    box_replace
+    box_replace // on error: index out of bounds
     // tests/artifacts/BoxContract/contract.py:93
     // self.box_large.replace(size_of(Bytes1024) * 4, arc4.UInt64(42).bytes)
     bytec_3 // "box_large"
@@ -531,7 +531,7 @@ read_boxes:
     bytec_3 // "box_large"
     intc 4 // 4096
     intc_3 // 8
-    box_extract
+    box_extract // on error: index out of bounds
     btoi
     // tests/artifacts/BoxContract/contract.py:132
     // @arc4.abimethod
@@ -578,7 +578,7 @@ indirect_extract_and_replace:
     // large.e += 1
     intc 4 // 4096
     intc_3 // 8
-    box_extract
+    box_extract // on error: index out of bounds
     // tests/artifacts/BoxContract/contract.py:144
     // large.e += 1
     btoi
@@ -588,13 +588,12 @@ indirect_extract_and_replace:
     // tests/artifacts/BoxContract/contract.py:145
     // self.box_large.value = large.copy()
     bytec_3 // "box_large"
-    // tests/artifacts/BoxContract/contract.py:143-145
-    // large = self.box_large.value.copy()
+    // tests/artifacts/BoxContract/contract.py:144-145
     // large.e += 1
     // self.box_large.value = large.copy()
     intc 4 // 4096
     uncover 2
-    box_replace
+    box_replace // on error: index out of bounds
     // tests/artifacts/BoxContract/contract.py:141
     // @arc4.abimethod()
     intc_0 // 1
@@ -737,7 +736,7 @@ set_many_ints:
     bytec 9 // "many_ints"
     swap
     uncover 2
-    box_replace
+    box_replace // on error: index out of bounds
     // tests/artifacts/BoxContract/contract.py:183
     // @arc4.abimethod()
     intc_0 // 1
@@ -796,7 +795,7 @@ sum_many_ints_for_header@2:
     bytec 9 // "many_ints"
     swap
     intc_3 // 8
-    box_extract
+    box_extract // on error: index out of bounds
     btoi
     // tests/artifacts/BoxContract/contract.py:192
     // total = total + val
@@ -1065,7 +1064,7 @@ nested_write:
     // box.value.nested.a = value
     intc 5 // 4098
     uncover 3
-    box_replace
+    box_replace // on error: index out of bounds
     // tests/artifacts/BoxContract/contract.py:261
     // box.value.nested.b = value + 1
     dup
@@ -1079,7 +1078,7 @@ nested_write:
     // box.value.nested.b = value + 1
     pushint 4110
     uncover 2
-    box_replace
+    box_replace // on error: index out of bounds
     // tests/artifacts/BoxContract/contract.py:262
     // box.value.nested.inner.arr_arr[index][index] = value + 2
     dup
@@ -1142,7 +1141,7 @@ nested_write:
     // box.value.nested.inner.arr_arr[index][index] = value + 2
     swap
     uncover 4
-    box_replace
+    box_replace // on error: index out of bounds
     // tests/artifacts/BoxContract/contract.py:263
     // box.value.nested.inner.c = value + 3
     dig 2
@@ -1156,7 +1155,7 @@ nested_write:
     // box.value.nested.inner.c = value + 3
     pushint 4118
     uncover 2
-    box_replace
+    box_replace // on error: index out of bounds
     // tests/artifacts/BoxContract/contract.py:264
     // box.value.nested.inner.d = value + 4
     dig 2
@@ -1170,7 +1169,7 @@ nested_write:
     // box.value.nested.inner.d = value + 4
     pushint 4128
     uncover 2
-    box_replace
+    box_replace // on error: index out of bounds
     // tests/artifacts/BoxContract/contract.py:265
     // box.value.nested.woah[index].arr_arr[index][index] = value + 5
     uncover 2
@@ -1267,7 +1266,7 @@ nested_write:
     // box.value.nested.woah[index].arr_arr[index][index] = value + 5
     swap
     uncover 2
-    box_replace
+    box_replace // on error: index out of bounds
     // tests/artifacts/BoxContract/contract.py:257
     // @arc4.abimethod()
     intc_0 // 1
@@ -1291,7 +1290,7 @@ nested_read:
     // a = box.value.nested.a
     intc 5 // 4098
     intc_3 // 8
-    box_extract
+    box_extract // on error: index out of bounds
     btoi
     // tests/artifacts/BoxContract/contract.py:269
     // box = Box(LargeNestedStruct, key="box")
@@ -1300,7 +1299,7 @@ nested_read:
     // b = box.value.nested.b
     pushint 4110
     intc_3 // 8
-    box_extract
+    box_extract // on error: index out of bounds
     btoi
     // tests/artifacts/BoxContract/contract.py:269
     // box = Box(LargeNestedStruct, key="box")
@@ -1356,7 +1355,7 @@ nested_read:
     // arr_arr = box.value.nested.inner.arr_arr[i1][i2]
     swap
     intc_3 // 8
-    box_extract
+    box_extract // on error: index out of bounds
     btoi
     // tests/artifacts/BoxContract/contract.py:269
     // box = Box(LargeNestedStruct, key="box")
@@ -1365,7 +1364,7 @@ nested_read:
     // c = box.value.nested.inner.c
     pushint 4118
     intc_3 // 8
-    box_extract
+    box_extract // on error: index out of bounds
     btoi
     // tests/artifacts/BoxContract/contract.py:269
     // box = Box(LargeNestedStruct, key="box")
@@ -1374,7 +1373,7 @@ nested_read:
     // d = box.value.nested.inner.d
     pushint 4128
     intc_3 // 8
-    box_extract
+    box_extract // on error: index out of bounds
     btoi
     // tests/artifacts/BoxContract/contract.py:269
     // box = Box(LargeNestedStruct, key="box")
@@ -1470,7 +1469,7 @@ nested_read:
     // woah_arr_arr = box.value.nested.woah[i1].arr_arr[i2][i3]
     swap
     intc_3 // 8
-    box_extract
+    box_extract // on error: index out of bounds
     btoi
     // tests/artifacts/BoxContract/contract.py:277
     // return a + b + arr_arr + c + d + woah_arr_arr
@@ -1525,7 +1524,7 @@ set_bool:
     setbit
     bytec 8 // "too_many_bools"
     cover 2
-    box_replace
+    box_replace // on error: index out of bounds
     // tests/artifacts/BoxContract/contract.py:283
     // @arc4.abimethod
     intc_0 // 1
@@ -1565,7 +1564,7 @@ sum_bools_for_header@2:
     bytec 8 // "too_many_bools"
     uncover 2
     intc_0 // 1
-    box_extract
+    box_extract // on error: index out of bounds
     swap
     getbit
     // tests/artifacts/BoxContract/contract.py:291
