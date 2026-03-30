@@ -29,6 +29,42 @@ contract.state_a.value = algopy.UInt64(10)
 contract.state_b.value = algopy.UInt64(20)
 ```
 
+## Global Map
+
+`GlobalMap` allows contracts to store collections of key-value pairs in global state, using a common key type and value type with an automatically derived (or explicit) key prefix.
+
+```{testcode}
+class GlobalMapContract(algopy.ARC4Contract):
+    def __init__(self):
+        # Implicit key prefix (derived from attribute name "scores")
+        self.scores = algopy.GlobalMap(algopy.Bytes, algopy.arc4.UInt64)
+        # Explicit key prefix
+        self.labels = algopy.GlobalMap(algopy.Bytes, algopy.arc4.String, key_prefix="my_labels")
+
+# In your test
+contract = GlobalMapContract()
+
+# Set and get values
+contract.scores[algopy.Bytes(b"item_a")] = algopy.arc4.UInt64(100)
+assert contract.scores[algopy.Bytes(b"item_a")] == algopy.arc4.UInt64(100)
+
+# Check existence
+assert algopy.Bytes(b"item_a") in contract.scores
+assert algopy.Bytes(b"item_b") not in contract.scores
+
+# Get with default
+result = contract.scores.get(algopy.Bytes(b"item_b"), default=algopy.arc4.UInt64(0))
+assert result == algopy.arc4.UInt64(0)
+
+# Maybe (returns value and existence flag)
+value, exists = contract.scores.maybe(algopy.Bytes(b"item_a"))
+assert exists
+
+# Delete
+del contract.scores[algopy.Bytes(b"item_a")]
+assert algopy.Bytes(b"item_a") not in contract.scores
+```
+
 ## Local State
 
 Local state is defined similarly to global state, but accessed using account addresses as keys.
@@ -42,6 +78,47 @@ class MyContract(algopy.ARC4Contract):
 contract = MyContract()
 account = context.any.account()
 contract.local_state_a[account] = algopy.UInt64(10)
+```
+
+## Local Map
+
+`LocalMap` is similar to `GlobalMap` but stores per-account state. Values are accessed using an `(account, key)` tuple.
+
+```{testcode}
+class LocalMapContract(algopy.ARC4Contract):
+    def __init__(self):
+        self.balances = algopy.LocalMap(algopy.Bytes, algopy.arc4.UInt64)
+
+# In your test
+contract = LocalMapContract()
+account = context.any.account()
+
+# Set and get values using (account, key) tuple
+contract.balances[account, algopy.Bytes(b"item_a")] = algopy.arc4.UInt64(500)
+assert contract.balances[account, algopy.Bytes(b"item_a")] == algopy.arc4.UInt64(500)
+
+# Check existence
+assert (account, algopy.Bytes(b"item_a")) in contract.balances
+assert (account, algopy.Bytes(b"item_b")) not in contract.balances
+
+# Get with default
+result = contract.balances.get(account, algopy.Bytes(b"item_b"), default=algopy.arc4.UInt64(0))
+assert result == algopy.arc4.UInt64(0)
+
+# Maybe
+value, exists = contract.balances.maybe(account, algopy.Bytes(b"item_a"))
+assert exists
+
+# Delete
+del contract.balances[account, algopy.Bytes(b"item_a")]
+assert (account, algopy.Bytes(b"item_a")) not in contract.balances
+
+# Different accounts have independent state
+account2 = context.any.account()
+contract.balances[account, algopy.Bytes(b"item_a")] = algopy.arc4.UInt64(100)
+contract.balances[account2, algopy.Bytes(b"item_a")] = algopy.arc4.UInt64(200)
+assert contract.balances[account, algopy.Bytes(b"item_a")] == algopy.arc4.UInt64(100)
+assert contract.balances[account2, algopy.Bytes(b"item_a")] == algopy.arc4.UInt64(200)
 ```
 
 ## Boxes
