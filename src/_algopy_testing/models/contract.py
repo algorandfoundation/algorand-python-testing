@@ -115,7 +115,7 @@ class Contract(metaclass=_ContractMeta):
 
             def create_txn_group(*args: typing.Any, **kwargs: dict[str, typing.Any]) -> typing.Any:
                 context = lazy_context.value
-                app = context.ledger.get_app(_get_self_or_active_app_id(self))
+                app = context.ledger.get_app(self.__app_id__)
                 txn_fields = get_active_txn_fields(app)
                 txns = [context.any.txn.application_call(**txn_fields)]
                 with context.txn._maybe_implicit_txn_group(txns):
@@ -143,9 +143,7 @@ class Contract(metaclass=_ContractMeta):
             unproxied_global_state_type = cls.global_state_types[name]
         except KeyError:
             return attr
-        value = lazy_context.ledger.get_global_state(
-            _get_self_or_active_app_id(self), name.encode("utf8")
-        )
+        value = lazy_context.ledger.get_global_state(self.__app_id__, name.encode("utf8"))
 
         value = deserialize(unproxied_global_state_type, value)
         return set_attr_on_mutate(self, name, value)
@@ -156,39 +154,31 @@ class Contract(metaclass=_ContractMeta):
             case (_algopy_testing.Box() | _algopy_testing.BoxRef()) as box if not box._key:
                 box._key = name_bytes
             case _algopy_testing.GlobalState() as state:
-                state.app_id = _get_self_or_active_app_id(self)
+                state.app_id = self.__app_id__
                 if not state._key:
                     state.set_key(name_bytes)
             case _algopy_testing.GlobalMap() as global_map:
-                global_map.app_id = _get_self_or_active_app_id(self)
+                global_map.app_id = self.__app_id__
                 if global_map._key_prefix is None:
                     global_map._key_prefix = name_bytes
             case _algopy_testing.LocalState() as state:
-                state.app_id = _get_self_or_active_app_id(self)
+                state.app_id = self.__app_id__
                 if not state._key:
                     state._key = name_bytes
             case _algopy_testing.LocalMap() as local_map:
-                local_map.app_id = _get_self_or_active_app_id(self)
+                local_map.app_id = self.__app_id__
                 if local_map._key_prefix is None:
                     local_map._key_prefix = name_bytes
             case _algopy_testing.BoxMap() as box_map if box_map._key_prefix is None:
                 box_map._key_prefix = name_bytes
             case Bytes() | UInt64() | BytesBacked() | Serializable() | UInt64Backed() | bool():
-                app_id = _get_self_or_active_app_id(self)
+                app_id = self.__app_id__
                 lazy_context.ledger.set_global_state(app_id, name_bytes, serialize(value))
                 cls = type(self)
                 assert isinstance(cls, _ContractMeta)
                 cls.global_state_types[name] = type(value)
 
         super().__setattr__(name, value)
-
-
-def _get_self_or_active_app_id(contract: Contract) -> int:
-    try:
-        return contract.__app_id__
-    # during construction app_id is not available, get from context instead
-    except AttributeError:
-        return lazy_context.active_group.active_app_id
 
 
 class ARC4Contract(Contract):
