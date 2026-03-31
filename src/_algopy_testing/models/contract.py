@@ -37,10 +37,7 @@ class _ContractMeta(type):
     _scratch_slots: typing.Any
     _state_totals: StateTotals | None
     _avm_version: int
-
-    def __init__(cls, *args: typing.Any, **kwargs: typing.Any) -> None:
-        super().__init__(*args, **kwargs)
-        cls.global_state_types = dict[str, type]()
+    _global_state_types: dict[str, type]
 
     def __call__(cls, *args: typing.Any, **kwargs: dict[str, typing.Any]) -> object:
         context = lazy_context.value
@@ -96,6 +93,7 @@ class Contract(metaclass=_ContractMeta):
         state_totals: StateTotals | None = None,
         avm_version: int = 11,
     ):
+        cls._global_state_types = dict[str, type]()  # ensure each subclass gets its own
         cls._name = name or cls.__name__
         cls._scratch_slots = scratch_slots
         cls._state_totals = state_totals
@@ -138,9 +136,8 @@ class Contract(metaclass=_ContractMeta):
             return set_is_creating
 
         cls = type(self)
-        assert isinstance(cls, _ContractMeta)
         try:
-            unproxied_global_state_type = cls.global_state_types[name]
+            unproxied_global_state_type = cls._global_state_types[name]
         except KeyError:
             return attr
         value = lazy_context.ledger.get_global_state(self.__app_id__, name.encode("utf8"))
@@ -173,8 +170,7 @@ class Contract(metaclass=_ContractMeta):
                 app_id = self.__app_id__
                 lazy_context.ledger.set_global_state(app_id, name_bytes, serialize(value))
                 cls = type(self)
-                assert isinstance(cls, _ContractMeta)
-                cls.global_state_types[name] = type(value)
+                cls._global_state_types[name] = type(value)
 
         super().__setattr__(name, value)
 
