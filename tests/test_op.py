@@ -807,7 +807,7 @@ def test_app_global_ex_get(
     mock_secondary_contract = StateAppGlobalExContract()
     mock_secondary_app = context.ledger.get_app(mock_secondary_contract)
     assert mock_secondary_app.global_num_uint == 2
-    assert mock_secondary_app.global_num_bytes == 4
+    assert mock_secondary_app.global_num_bytes == 5
 
     avm_result = get_state_app_global_avm_result(
         "verify_get_ex_bytes",
@@ -838,7 +838,7 @@ def test_app_global_ex_get_arc4(
     mock_secondary_contract = StateAppGlobalExContract()
     mock_secondary_app = context.ledger.get_app(mock_secondary_contract)
     assert mock_secondary_app.global_num_uint == 2
-    assert mock_secondary_app.global_num_bytes == 4
+    assert mock_secondary_app.global_num_bytes == 5
 
     avm_result = get_state_app_global_avm_result(
         "verify_get_ex_bytes",
