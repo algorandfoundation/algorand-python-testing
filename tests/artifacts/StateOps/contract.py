@@ -443,6 +443,7 @@ class StateAppGlobalExContract(ARC4Contract):
             algopy.arc4.DynamicBytes(b"dummy_arc4_bytes"), key="global_arc4_bytes"
         )
         self.global_arc4_bytes_explicit = algopy.arc4.DynamicBytes(b"dummy_arc4_bytes")
+        self.global_tuple = (UInt64(0), UInt64(1))
 
 
 class StateAppGlobalContract(ARC4Contract):

@@ -180,7 +180,9 @@ class Contract(metaclass=_ContractMeta):
 
 
 def _is_data_type(value: object) -> bool:
-    return isinstance(value, Bytes | UInt64 | BytesBacked | Serializable | UInt64Backed | bool)
+    return isinstance(
+        value, Bytes | UInt64 | BytesBacked | Serializable | UInt64Backed | bool | tuple
+    )
 
 
 class ARC4Contract(Contract):
@@ -196,18 +198,15 @@ class ARC4Contract(Contract):
 
 
 def _get_state_totals(contract: Contract, cls_state_totals: StateTotals) -> _StateTotals:
-    from _algopy_testing.primitives import UInt64
-    from _algopy_testing.protocols import UInt64Backed
-
     global_bytes = global_uints = local_bytes = local_uints = 0
     state_types = get_state_types(contract)
     for type_ in state_types.global_types:
-        if issubclass(type_, UInt64 | UInt64Backed | bool):
+        if _is_uint_state(type_):
             global_uints += 1
         else:
             global_bytes += 1
     for type_ in state_types.local_types:
-        if issubclass(type_, UInt64 | UInt64Backed | bool):
+        if _is_uint_state(type_):
             local_uints += 1
         else:
             local_bytes += 1
@@ -227,6 +226,20 @@ def _get_state_totals(contract: Contract, cls_state_totals: StateTotals) -> _Sta
         local_uints=local_uints,
         local_bytes=local_bytes,
     )
+
+
+def _is_uint_state(type_: type) -> bool:
+    from _algopy_testing.primitives import UInt64
+    from _algopy_testing.protocols import UInt64Backed
+
+    # check to make sure it's actually a type first, otherwise issubclass will
+    # fail on Python 3.13
+    if not isinstance(type_, type):
+        # this should only occur for tuples, bit of a hole in the type-system
+        assert typing.get_origin(type_) is tuple
+        return False
+    else:
+        return issubclass(type_, UInt64 | UInt64Backed | bool)
 
 
 def _has_create_methods(contract_cls: _ContractMeta) -> bool:
