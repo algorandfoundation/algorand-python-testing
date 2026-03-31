@@ -40,10 +40,13 @@ class _ContractMeta(type):
     _global_state_types: dict[str, type]
 
     def __call__(cls, *args: typing.Any, **kwargs: dict[str, typing.Any]) -> object:
+        # cls is both _ContractMeta and a (sub)class of Contract, but mypy can't
+        # handle intersection types (and assumes that cls is just _ContractMeta)
+        assert issubclass(cls, Contract)
         context = lazy_context.value
         app_ref = context.any.application()  # new reference to get a unique app_id
         app_id = app_ref.id.value
-        instance: Contract = cls.__new__(cls, *args, **kwargs)  # type: ignore[arg-type]
+        instance = cls.__new__(cls, *args, **kwargs)
         instance.__app_id__ = app_id
         app_data = lazy_context.get_app_data(app_id)
         app_data.contract = instance
@@ -51,6 +54,9 @@ class _ContractMeta(type):
 
         fields = get_active_txn_fields(app_ref)
         txn = context.any.txn.application_call(**fields)
+        # the below is the key reason for this being a metaclass, rather than overriding
+        # the __new__ method in Contract itself: we get to control the calling of __init__,
+        # and place it inside the following context manager
         with context.txn._maybe_implicit_txn_group([txn]) as active_group:
             if active_group.active_app_id != app_id:
                 raise ValueError(
@@ -61,10 +67,9 @@ class _ContractMeta(type):
                 app_id,
                 creator=creator,
             )
-            instance.__init__(*args, **kwargs)  # type: ignore[misc]
+            cls.__init__(instance, *args, **kwargs)
         app_data.is_creating = _has_create_methods(cls)
 
-        assert isinstance(instance, Contract)
         cls_state_totals = cls._state_totals or StateTotals()
         state_totals = _get_state_totals(instance, cls_state_totals)
         context.ledger.update_app(
@@ -238,7 +243,7 @@ def _is_uint_state(type_: type) -> bool:
         return issubclass(type_, UInt64 | UInt64Backed | bool)
 
 
-def _has_create_methods(contract_cls: _ContractMeta) -> bool:
+def _has_create_methods(contract_cls: type[Contract]) -> bool:
     for method in vars(contract_cls).values():
         if callable(method) and (arc4_meta := maybe_arc4_metadata(method)) and arc4_meta.is_create:
             return True
