@@ -260,13 +260,9 @@ def get_state_types(contract: Contract) -> _StateTypes:
     result = _StateTypes(local_types=[], global_types=[])
     for attribute in contract.__dict__.values():
         match attribute:
-            case _algopy_testing.LocalState(type_=value_type) | _algopy_testing.LocalMap(
-                value_type=value_type
-            ):
+            case _algopy_testing.LocalState(type_=value_type):
                 result.local_types.append(value_type)
-            case _algopy_testing.GlobalState(type_=value_type) | _algopy_testing.GlobalMap(
-                value_type=value_type
-            ):
+            case _algopy_testing.GlobalState(type_=value_type):
                 result.global_types.append(value_type)
             case _ if _is_data_type(attribute):
                 result.global_types.append(type(attribute))
