@@ -151,27 +151,25 @@ class Contract(metaclass=_ContractMeta):
     def __setattr__(self, name: str, value: typing.Any) -> None:
         name_bytes = _algopy_testing.String(name).bytes
         match value:
-            case (_algopy_testing.Box() | _algopy_testing.BoxRef()) as box if not box._key:
-                box._key = name_bytes
+            case (_algopy_testing.Box() | _algopy_testing.BoxRef()) as box:
+                if not box._key:
+                    box._key = name_bytes
+            case _algopy_testing.BoxMap() as box_map:
+                if box_map._key_prefix is None:
+                    box_map._key_prefix = name_bytes
             case _algopy_testing.GlobalState() as state:
                 state.app_id = self.__app_id__
                 if not state._key:
                     state.set_key(name_bytes)
-            case _algopy_testing.GlobalMap() as global_map:
-                global_map.app_id = self.__app_id__
-                if global_map._key_prefix is None:
-                    global_map._key_prefix = name_bytes
             case _algopy_testing.LocalState() as state:
                 state.app_id = self.__app_id__
                 if not state._key:
                     state._key = name_bytes
-            case _algopy_testing.LocalMap() as local_map:
-                local_map.app_id = self.__app_id__
-                if local_map._key_prefix is None:
-                    local_map._key_prefix = name_bytes
-            case _algopy_testing.BoxMap() as box_map if box_map._key_prefix is None:
-                box_map._key_prefix = name_bytes
-            case Bytes() | UInt64() | BytesBacked() | Serializable() | UInt64Backed() | bool():
+            case _algopy_testing.GlobalMap() | _algopy_testing.LocalMap() as state_map:
+                state_map.app_id = self.__app_id__
+                if state_map._key_prefix is None:
+                    state_map._key_prefix = name_bytes
+            case _ if _is_data_type(value):
                 app_id = self.__app_id__
                 lazy_context.ledger.set_global_state(app_id, name_bytes, serialize(value))
                 cls = type(self)
@@ -179,6 +177,10 @@ class Contract(metaclass=_ContractMeta):
                 cls.global_state_types[name] = type(value)
 
         super().__setattr__(name, value)
+
+
+def _is_data_type(value: object) -> bool:
+    return isinstance(value, Bytes | UInt64 | BytesBacked | Serializable | UInt64Backed | bool)
 
 
 class ARC4Contract(Contract):
@@ -198,13 +200,14 @@ def _get_state_totals(contract: Contract, cls_state_totals: StateTotals) -> _Sta
     from _algopy_testing.protocols import UInt64Backed
 
     global_bytes = global_uints = local_bytes = local_uints = 0
-    for type_ in get_global_states(contract):
-        if isinstance(type_, type) and issubclass(type_, UInt64 | UInt64Backed | bool):
+    state_types = get_state_types(contract)
+    for type_ in state_types.global_types:
+        if issubclass(type_, UInt64 | UInt64Backed | bool):
             global_uints += 1
         else:
             global_bytes += 1
-    for type_ in get_local_states(contract):
-        if isinstance(type_, type) and issubclass(type_, UInt64 | UInt64Backed | bool):
+    for type_ in state_types.local_types:
+        if issubclass(type_, UInt64 | UInt64Backed | bool):
             local_uints += 1
         else:
             local_bytes += 1
@@ -234,33 +237,24 @@ def _has_create_methods(contract_cls: _ContractMeta) -> bool:
     return False
 
 
-def get_local_states(contract: Contract) -> list[type]:
-    local_states: list[type] = []
-    for attribute in vars(contract).values():
-        if isinstance(attribute, _algopy_testing.LocalState):
-            local_states.append(attribute.type_)
-        elif isinstance(attribute, _algopy_testing.LocalMap):
-            local_states.append(attribute.value_type)
-    return local_states
+@dataclass
+class _StateTypes:
+    local_types: list[type]
+    global_types: list[type]
 
 
-def get_global_states(contract: Contract) -> list[type]:
-    global_states: list[type] = []
-    for attribute in vars(contract).values():
-        if isinstance(
-            attribute,
-            _algopy_testing.LocalState
-            | _algopy_testing.LocalMap
-            | _algopy_testing.Box
-            | _algopy_testing.BoxMap
-            | _algopy_testing.BoxRef,
-        ) or callable(attribute):
-            continue
-        if isinstance(attribute, _algopy_testing.GlobalState):
-            global_states.append(attribute.type_)
-        elif isinstance(attribute, _algopy_testing.GlobalMap):
-            global_states.append(attribute.value_type)
-        elif isinstance(attribute, UInt64Backed | BytesBacked | UInt64 | Bytes | bool):
-            global_states.append(type(attribute))
-
-    return global_states
+def get_state_types(contract: Contract) -> _StateTypes:
+    result = _StateTypes(local_types=[], global_types=[])
+    for attribute in contract.__dict__.values():
+        match attribute:
+            case _algopy_testing.LocalState(type_=value_type) | _algopy_testing.LocalMap(
+                value_type=value_type
+            ):
+                result.local_types.append(value_type)
+            case _algopy_testing.GlobalState(type_=value_type) | _algopy_testing.GlobalMap(
+                value_type=value_type
+            ):
+                result.global_types.append(value_type)
+            case _ if _is_data_type(attribute):
+                result.global_types.append(type(attribute))
+    return result
