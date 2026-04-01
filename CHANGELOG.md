@@ -1,4 +1,22 @@
 # CHANGELOG
+## v1.2.0-beta.5 (2026-04-01)
+
+### Features
+
+* add LocalMap ([`447cd47`](https://github.com/algorandfoundation/algorand-python-testing/commit/447cd479a24b8a1fc0c91b51a97b222ba1ea27f8))
+
+* add GlobalMap ([`8d75a3b`](https://github.com/algorandfoundation/algorand-python-testing/commit/8d75a3b65a083b6f1484de44a660a58c8abfd2ef))
+
+### Bug fixes
+
+* do not count GlobalMap and LocalMap in stateTotals ([`d7da98a`](https://github.com/algorandfoundation/algorand-python-testing/commit/d7da98a5802e7a6f172c63a8fad5c7bec292b9bc))
+
+* state totals now correctly handle direct tuple storage ([`8e7d214`](https://github.com/algorandfoundation/algorand-python-testing/commit/8e7d21481de91767c25c1311c4b4ee6363af83b9))
+
+### Documentation
+
+* add GlobalMap and LocalMap to state-management guide ([`e8ca7f8`](https://github.com/algorandfoundation/algorand-python-testing/commit/e8ca7f835f66ac0ae1bc6d953d8bdd43cef7e1f5))
+
 ## v1.2.0-beta.4 (2026-03-16)
 
 ## v1.2.0-beta.3 (2025-12-08)
