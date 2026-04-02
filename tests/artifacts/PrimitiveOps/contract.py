@@ -1,6 +1,18 @@
 import typing
 
-from algopy import ARC4Contract, BigUInt, Bytes, FixedBytes, String, UInt64, arc4, log, op
+from algopy import (
+    ARC4Contract,
+    BigUInt,
+    Bytes,
+    FixedBytes,
+    String,
+    UInt64,
+    arc4,
+    log,
+    logged_assert,
+    logged_err,
+    op,
+)
 
 
 class PrimitiveOpsContract(ARC4Contract):
@@ -371,3 +383,27 @@ class PrimitiveOpsContract(ARC4Contract):
         arc4_m = arc4.DynamicArray[arc4.UInt16].from_bytes(m)
         arc4_n = arc4.Tuple[arc4.UInt32, arc4.UInt64, arc4.String].from_bytes(n)
         log(a, b, c, d_biguint, e, f, g, h, i, j, arc4_k, arc4_m, arc4_n, o, sep="-")
+
+    @arc4.abimethod
+    def verify_logged_errs(self, arg: UInt64) -> None:
+        # "ERR:01"
+        logged_assert(arg != 1, "01")
+        # "ERR:arg02:arg is two"
+        logged_assert(arg != 2, "arg02", error_message="arg is two")
+        # "AER:arg03"
+        logged_assert(arg != 3, "arg03", prefix="AER")
+        # "AER:arg04:arg is 4"
+        logged_assert(arg != 4, "arg04", error_message="arg is 4", prefix="AER")
+
+        # "ERR:arg05"
+        if arg == 5:
+            logged_err("arg05")
+        # "ERR:arg06:arg was 6"
+        if arg == 6:
+            logged_err("06", error_message="arg was 6")
+        # "AER:arg07"
+        if arg == 7:
+            logged_err("arg07", prefix="AER")
+        # "AER:arg08:arg is seven (08)"
+        if arg == 8:
+            logged_err("arg08", error_message="arg is eight (08)", prefix="AER")
