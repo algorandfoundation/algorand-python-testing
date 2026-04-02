@@ -41,6 +41,8 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | algopy.compile_logicsig                     | Mockable            |
 | algopy.ensure_budget                        | Emulated            |
 | algopy.log                                  | Emulated            |
+| algopy.logged_assert                        | Emulated            |
+| algopy.log_err                              | Emulated            |
 | algopy.logicsig                             | Emulated            |
 | algopy.public                               | Emulated            |
 | algopy.size_of                              | Emulated            |
