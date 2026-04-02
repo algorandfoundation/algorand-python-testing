@@ -75,15 +75,13 @@ verify_acct_balance:
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:36
-    // assert value == algopy.op.balance(_get_1st_ref_index()), (
+    // tests/artifacts/StateOps/contract.py:36-38
+    // assert value == algopy.op.balance(
+    //     _get_1st_ref_index()
+    // ), "expected op.balance by index to match"
     balance
     dig 1
     ==
-    // tests/artifacts/StateOps/contract.py:36-38
-    // assert value == algopy.op.balance(_get_1st_ref_index()), (
-    //     "expected op.balance by index to match"
-    // )
     assert // expected op.balance by index to match
     // tests/artifacts/StateOps/contract.py:28
     // @arc4.abimethod(resource_encoding="index")
@@ -143,15 +141,13 @@ verify_acct_min_balance:
     // return op.btoi(Txn.application_args(1))
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/StateOps/contract.py:49
-    // assert value == algopy.op.min_balance(_get_1st_ref_index()), (
+    // tests/artifacts/StateOps/contract.py:49-51
+    // assert value == algopy.op.min_balance(
+    //     _get_1st_ref_index()
+    // ), "expected op.min_balance by index to match"
     min_balance
     dig 1
     ==
-    // tests/artifacts/StateOps/contract.py:49-51
-    // assert value == algopy.op.min_balance(_get_1st_ref_index()), (
-    //     "expected op.min_balance by index to match"
-    // )
     assert // expected op.min_balance by index to match
     // tests/artifacts/StateOps/contract.py:41
     // @arc4.abimethod(resource_encoding="index")

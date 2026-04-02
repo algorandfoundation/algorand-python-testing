@@ -58,6 +58,10 @@ main:
     // tests/artifacts/StateOps/contract.py:445
     // self.global_arc4_bytes_explicit = algopy.arc4.DynamicBytes(b"dummy_arc4_bytes")
     app_global_put
+    // tests/artifacts/StateOps/contract.py:446
+    // self.global_tuple = (UInt64(0), UInt64(1))
+    pushbytess "global_tuple" 0x00000000000000000000000000000001
+    app_global_put
 
 main_after_if_else@2:
     // tests/artifacts/StateOps/contract.py:430
