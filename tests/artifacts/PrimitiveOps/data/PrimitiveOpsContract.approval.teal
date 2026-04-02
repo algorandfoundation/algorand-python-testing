@@ -5,21 +5,21 @@
 main:
     intcblock 1 0
     bytecblock 0x151f7c75 0x00 "-" 0x151f7c750020
-    // tests/artifacts/PrimitiveOps/contract.py:6
+    // tests/artifacts/PrimitiveOps/contract.py:18
     // class PrimitiveOpsContract(ARC4Contract):
     txn NumAppArgs
-    bz main___algopy_default_create@67
+    bz main___algopy_default_create@68
     txn OnCompletion
     !
     assert
     txn ApplicationID
     assert
-    pushbytess 0x725c692b 0x17314559 0x53f34893 0x88c8b269 0xa464b7ab 0x9c8b11b8 0x6f40654e 0xec9a2974 0xc793708f 0x7ddb7499 0xa21c443d 0x6e7fb212 0xb007fcb0 0x2ebc20d4 0xb0954b66 0xdd140aef 0xace474da 0xba694990 0x6db581c0 0x91c8db89 0xdbe77158 0x9a0f22e1 0x64033d37 0x2a7237c5 0xe3a94458 0x42f87f7d 0x2b5542a4 0x9be2fbe9 0x1cd92515 0x64e1705c 0xf1271c50 0x2ab63b70 0x834bb7d2 0x531620d7 0x3fb9e769 0xfa8db0bc 0xa72ea485 0xb7b0ba19 0x74460c42 0xab320738 0x52ad4654 0x10156399 0x0f075957 0xbd843dff 0xb377d381 0x89767265 0x456b4b23 0x33d1b88c 0x6bf973ea 0x67cd6bb2 0x3f58805a 0x1e130039 0x509dc91d 0xa564a202 0x23650763 0xf8c8f8d5 0x23faf7a4 0x7d0afe15 0x48581adf 0x3daef9cd // method "verify_uint64_init(byte[])uint64", method "verify_uint64_add(uint64,uint64)uint64", method "verify_uint64_sub(uint64,uint64)uint64", method "verify_uint64_mul(uint64,uint64)uint64", method "verify_uint64_div(uint64,uint64)uint64", method "verify_uint64_mod(uint64,uint64)uint64", method "verify_uint64_and(uint64,uint64)uint64", method "verify_uint64_or(uint64,uint64)uint64", method "verify_uint64_xor(uint64,uint64)uint64", method "verify_uint64_not(uint64)uint64", method "verify_uint64_lshift(uint64,uint64)uint64", method "verify_uint64_rshift(uint64,uint64)uint64", method "verify_uint64_pow(uint64,uint64)uint64", method "verify_uint64_eq(uint64,uint64)bool", method "verify_uint64_ne(uint64,uint64)bool", method "verify_uint64_lt(uint64,uint64)bool", method "verify_uint64_le(uint64,uint64)bool", method "verify_uint64_gt(uint64,uint64)bool", method "verify_uint64_ge(uint64,uint64)bool", method "verify_bytes_init(uint64)byte[]", method "verify_bytes_add(byte[],byte[],uint64,uint64)byte[]", method "verify_bytes_eq(byte[],byte[])bool", method "verify_bytes_ne(byte[],byte[])bool", method "verify_bytes_and(byte[],byte[])byte[]", method "verify_bytes_or(byte[],byte[])byte[]", method "verify_bytes_xor(byte[],byte[])byte[]", method "verify_bytes_not(byte[],uint64)byte[]", method "verify_biguint_add(byte[],byte[])byte[]", method "verify_biguint_add_uint64(byte[],uint64)byte[]", method "verify_biguint_sub(byte[],byte[])byte[]", method "verify_biguint_sub_uint64(byte[],uint64)byte[]", method "verify_biguint_mul(byte[],byte[])byte[]", method "verify_biguint_mul_uint64(byte[],uint64)byte[]", method "verify_biguint_div(byte[],byte[])byte[]", method "verify_biguint_div_uint64(byte[],uint64)byte[]", method "verify_biguint_mod(byte[],byte[])byte[]", method "verify_biguint_mod_uint64(byte[],uint64)byte[]", method "verify_biguint_and(byte[],byte[])byte[]", method "verify_biguint_and_uint64(byte[],uint64)byte[]", method "verify_biguint_or(byte[],byte[])byte[]", method "verify_biguint_or_uint64(byte[],uint64)byte[]", method "verify_biguint_xor(byte[],byte[])byte[]", method "verify_biguint_xor_uint64(byte[],uint64)byte[]", method "verify_biguint_eq(byte[],byte[])bool", method "verify_biguint_eq_uint64(byte[],uint64)bool", method "verify_biguint_ne(byte[],byte[])bool", method "verify_biguint_ne_uint64(byte[],uint64)bool", method "verify_biguint_lt(byte[],byte[])bool", method "verify_biguint_lt_uint64(byte[],uint64)bool", method "verify_biguint_le(byte[],byte[])bool", method "verify_biguint_le_uint64(byte[],uint64)bool", method "verify_biguint_gt(byte[],byte[])bool", method "verify_biguint_gt_uint64(byte[],uint64)bool", method "verify_biguint_ge(byte[],byte[])bool", method "verify_biguint_ge_uint64(byte[],uint64)bool", method "verify_string_init(string)string", method "verify_string_startswith(string,string)bool", method "verify_string_endswith(string,string)bool", method "verify_string_join(string,string)string", method "verify_log(string,uint64,byte[],byte[],bool,string,uint64,uint256,ufixed32x8,ufixed256x16,byte[],byte[],byte[],byte[5])void"
+    pushbytess 0x725c692b 0x17314559 0x53f34893 0x88c8b269 0xa464b7ab 0x9c8b11b8 0x6f40654e 0xec9a2974 0xc793708f 0x7ddb7499 0xa21c443d 0x6e7fb212 0xb007fcb0 0x2ebc20d4 0xb0954b66 0xdd140aef 0xace474da 0xba694990 0x6db581c0 0x91c8db89 0xdbe77158 0x9a0f22e1 0x64033d37 0x2a7237c5 0xe3a94458 0x42f87f7d 0x2b5542a4 0x9be2fbe9 0x1cd92515 0x64e1705c 0xf1271c50 0x2ab63b70 0x834bb7d2 0x531620d7 0x3fb9e769 0xfa8db0bc 0xa72ea485 0xb7b0ba19 0x74460c42 0xab320738 0x52ad4654 0x10156399 0x0f075957 0xbd843dff 0xb377d381 0x89767265 0x456b4b23 0x33d1b88c 0x6bf973ea 0x67cd6bb2 0x3f58805a 0x1e130039 0x509dc91d 0xa564a202 0x23650763 0xf8c8f8d5 0x23faf7a4 0x7d0afe15 0x48581adf 0x3daef9cd 0xed6755e1 // method "verify_uint64_init(byte[])uint64", method "verify_uint64_add(uint64,uint64)uint64", method "verify_uint64_sub(uint64,uint64)uint64", method "verify_uint64_mul(uint64,uint64)uint64", method "verify_uint64_div(uint64,uint64)uint64", method "verify_uint64_mod(uint64,uint64)uint64", method "verify_uint64_and(uint64,uint64)uint64", method "verify_uint64_or(uint64,uint64)uint64", method "verify_uint64_xor(uint64,uint64)uint64", method "verify_uint64_not(uint64)uint64", method "verify_uint64_lshift(uint64,uint64)uint64", method "verify_uint64_rshift(uint64,uint64)uint64", method "verify_uint64_pow(uint64,uint64)uint64", method "verify_uint64_eq(uint64,uint64)bool", method "verify_uint64_ne(uint64,uint64)bool", method "verify_uint64_lt(uint64,uint64)bool", method "verify_uint64_le(uint64,uint64)bool", method "verify_uint64_gt(uint64,uint64)bool", method "verify_uint64_ge(uint64,uint64)bool", method "verify_bytes_init(uint64)byte[]", method "verify_bytes_add(byte[],byte[],uint64,uint64)byte[]", method "verify_bytes_eq(byte[],byte[])bool", method "verify_bytes_ne(byte[],byte[])bool", method "verify_bytes_and(byte[],byte[])byte[]", method "verify_bytes_or(byte[],byte[])byte[]", method "verify_bytes_xor(byte[],byte[])byte[]", method "verify_bytes_not(byte[],uint64)byte[]", method "verify_biguint_add(byte[],byte[])byte[]", method "verify_biguint_add_uint64(byte[],uint64)byte[]", method "verify_biguint_sub(byte[],byte[])byte[]", method "verify_biguint_sub_uint64(byte[],uint64)byte[]", method "verify_biguint_mul(byte[],byte[])byte[]", method "verify_biguint_mul_uint64(byte[],uint64)byte[]", method "verify_biguint_div(byte[],byte[])byte[]", method "verify_biguint_div_uint64(byte[],uint64)byte[]", method "verify_biguint_mod(byte[],byte[])byte[]", method "verify_biguint_mod_uint64(byte[],uint64)byte[]", method "verify_biguint_and(byte[],byte[])byte[]", method "verify_biguint_and_uint64(byte[],uint64)byte[]", method "verify_biguint_or(byte[],byte[])byte[]", method "verify_biguint_or_uint64(byte[],uint64)byte[]", method "verify_biguint_xor(byte[],byte[])byte[]", method "verify_biguint_xor_uint64(byte[],uint64)byte[]", method "verify_biguint_eq(byte[],byte[])bool", method "verify_biguint_eq_uint64(byte[],uint64)bool", method "verify_biguint_ne(byte[],byte[])bool", method "verify_biguint_ne_uint64(byte[],uint64)bool", method "verify_biguint_lt(byte[],byte[])bool", method "verify_biguint_lt_uint64(byte[],uint64)bool", method "verify_biguint_le(byte[],byte[])bool", method "verify_biguint_le_uint64(byte[],uint64)bool", method "verify_biguint_gt(byte[],byte[])bool", method "verify_biguint_gt_uint64(byte[],uint64)bool", method "verify_biguint_ge(byte[],byte[])bool", method "verify_biguint_ge_uint64(byte[],uint64)bool", method "verify_string_init(string)string", method "verify_string_startswith(string,string)bool", method "verify_string_endswith(string,string)bool", method "verify_string_join(string,string)string", method "verify_log(string,uint64,byte[],byte[],bool,string,uint64,uint256,ufixed32x8,ufixed256x16,byte[],byte[],byte[],byte[5])void", method "verify_logged_errs(uint64)void"
     txna ApplicationArgs 0
-    match verify_uint64_init verify_uint64_add verify_uint64_sub verify_uint64_mul verify_uint64_div verify_uint64_mod verify_uint64_and verify_uint64_or verify_uint64_xor verify_uint64_not verify_uint64_lshift verify_uint64_rshift verify_uint64_pow verify_uint64_eq verify_uint64_ne verify_uint64_lt verify_uint64_le verify_uint64_gt verify_uint64_ge verify_bytes_init verify_bytes_add verify_bytes_eq verify_bytes_ne verify_bytes_and verify_bytes_or verify_bytes_xor verify_bytes_not verify_biguint_add verify_biguint_add_uint64 verify_biguint_sub verify_biguint_sub_uint64 verify_biguint_mul verify_biguint_mul_uint64 verify_biguint_div verify_biguint_div_uint64 verify_biguint_mod verify_biguint_mod_uint64 verify_biguint_and verify_biguint_and_uint64 verify_biguint_or verify_biguint_or_uint64 verify_biguint_xor verify_biguint_xor_uint64 verify_biguint_eq verify_biguint_eq_uint64 verify_biguint_ne verify_biguint_ne_uint64 verify_biguint_lt verify_biguint_lt_uint64 verify_biguint_le verify_biguint_le_uint64 verify_biguint_gt verify_biguint_gt_uint64 verify_biguint_ge verify_biguint_ge_uint64 verify_string_init verify_string_startswith verify_string_endswith verify_string_join verify_log
+    match verify_uint64_init verify_uint64_add verify_uint64_sub verify_uint64_mul verify_uint64_div verify_uint64_mod verify_uint64_and verify_uint64_or verify_uint64_xor verify_uint64_not verify_uint64_lshift verify_uint64_rshift verify_uint64_pow verify_uint64_eq verify_uint64_ne verify_uint64_lt verify_uint64_le verify_uint64_gt verify_uint64_ge verify_bytes_init verify_bytes_add verify_bytes_eq verify_bytes_ne verify_bytes_and verify_bytes_or verify_bytes_xor verify_bytes_not verify_biguint_add verify_biguint_add_uint64 verify_biguint_sub verify_biguint_sub_uint64 verify_biguint_mul verify_biguint_mul_uint64 verify_biguint_div verify_biguint_div_uint64 verify_biguint_mod verify_biguint_mod_uint64 verify_biguint_and verify_biguint_and_uint64 verify_biguint_or verify_biguint_or_uint64 verify_biguint_xor verify_biguint_xor_uint64 verify_biguint_eq verify_biguint_eq_uint64 verify_biguint_ne verify_biguint_ne_uint64 verify_biguint_lt verify_biguint_lt_uint64 verify_biguint_le verify_biguint_le_uint64 verify_biguint_gt verify_biguint_gt_uint64 verify_biguint_ge verify_biguint_ge_uint64 verify_string_init verify_string_startswith verify_string_endswith verify_string_join verify_log verify_logged_errs
     err
 
-main___algopy_default_create@67:
+main___algopy_default_create@68:
     txn OnCompletion
     !
     txn ApplicationID
@@ -30,14 +30,14 @@ main___algopy_default_create@67:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_init[routing]() -> void:
 verify_uint64_init:
-    // tests/artifacts/PrimitiveOps/contract.py:7
+    // tests/artifacts/PrimitiveOps/contract.py:19
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:9
+    // tests/artifacts/PrimitiveOps/contract.py:21
     // result = op.btoi(raw_value)
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:7
+    // tests/artifacts/PrimitiveOps/contract.py:19
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -50,16 +50,16 @@ verify_uint64_init:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_add[routing]() -> void:
 verify_uint64_add:
-    // tests/artifacts/PrimitiveOps/contract.py:12
+    // tests/artifacts/PrimitiveOps/contract.py:24
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:14
+    // tests/artifacts/PrimitiveOps/contract.py:26
     // result = a + b
     +
-    // tests/artifacts/PrimitiveOps/contract.py:12
+    // tests/artifacts/PrimitiveOps/contract.py:24
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -72,16 +72,16 @@ verify_uint64_add:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_sub[routing]() -> void:
 verify_uint64_sub:
-    // tests/artifacts/PrimitiveOps/contract.py:17
+    // tests/artifacts/PrimitiveOps/contract.py:29
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:19
+    // tests/artifacts/PrimitiveOps/contract.py:31
     // result = a - b
     -
-    // tests/artifacts/PrimitiveOps/contract.py:17
+    // tests/artifacts/PrimitiveOps/contract.py:29
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -94,16 +94,16 @@ verify_uint64_sub:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_mul[routing]() -> void:
 verify_uint64_mul:
-    // tests/artifacts/PrimitiveOps/contract.py:22
+    // tests/artifacts/PrimitiveOps/contract.py:34
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:24
+    // tests/artifacts/PrimitiveOps/contract.py:36
     // result = a * b
     *
-    // tests/artifacts/PrimitiveOps/contract.py:22
+    // tests/artifacts/PrimitiveOps/contract.py:34
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -116,16 +116,16 @@ verify_uint64_mul:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_div[routing]() -> void:
 verify_uint64_div:
-    // tests/artifacts/PrimitiveOps/contract.py:27
+    // tests/artifacts/PrimitiveOps/contract.py:39
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:29
+    // tests/artifacts/PrimitiveOps/contract.py:41
     // result = a // b
     /
-    // tests/artifacts/PrimitiveOps/contract.py:27
+    // tests/artifacts/PrimitiveOps/contract.py:39
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -138,16 +138,16 @@ verify_uint64_div:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_mod[routing]() -> void:
 verify_uint64_mod:
-    // tests/artifacts/PrimitiveOps/contract.py:32
+    // tests/artifacts/PrimitiveOps/contract.py:44
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:34
+    // tests/artifacts/PrimitiveOps/contract.py:46
     // result = a % b
     %
-    // tests/artifacts/PrimitiveOps/contract.py:32
+    // tests/artifacts/PrimitiveOps/contract.py:44
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -160,16 +160,16 @@ verify_uint64_mod:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_and[routing]() -> void:
 verify_uint64_and:
-    // tests/artifacts/PrimitiveOps/contract.py:37
+    // tests/artifacts/PrimitiveOps/contract.py:49
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:39
+    // tests/artifacts/PrimitiveOps/contract.py:51
     // result = a & b
     &
-    // tests/artifacts/PrimitiveOps/contract.py:37
+    // tests/artifacts/PrimitiveOps/contract.py:49
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -182,16 +182,16 @@ verify_uint64_and:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_or[routing]() -> void:
 verify_uint64_or:
-    // tests/artifacts/PrimitiveOps/contract.py:42
+    // tests/artifacts/PrimitiveOps/contract.py:54
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:44
+    // tests/artifacts/PrimitiveOps/contract.py:56
     // result = a | b
     |
-    // tests/artifacts/PrimitiveOps/contract.py:42
+    // tests/artifacts/PrimitiveOps/contract.py:54
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -204,16 +204,16 @@ verify_uint64_or:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_xor[routing]() -> void:
 verify_uint64_xor:
-    // tests/artifacts/PrimitiveOps/contract.py:47
+    // tests/artifacts/PrimitiveOps/contract.py:59
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:49
+    // tests/artifacts/PrimitiveOps/contract.py:61
     // result = a ^ b
     ^
-    // tests/artifacts/PrimitiveOps/contract.py:47
+    // tests/artifacts/PrimitiveOps/contract.py:59
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -226,14 +226,14 @@ verify_uint64_xor:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_not[routing]() -> void:
 verify_uint64_not:
-    // tests/artifacts/PrimitiveOps/contract.py:52
+    // tests/artifacts/PrimitiveOps/contract.py:64
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:54
+    // tests/artifacts/PrimitiveOps/contract.py:66
     // result = ~a
     ~
-    // tests/artifacts/PrimitiveOps/contract.py:52
+    // tests/artifacts/PrimitiveOps/contract.py:64
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -246,16 +246,16 @@ verify_uint64_not:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_lshift[routing]() -> void:
 verify_uint64_lshift:
-    // tests/artifacts/PrimitiveOps/contract.py:57
+    // tests/artifacts/PrimitiveOps/contract.py:69
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:59
+    // tests/artifacts/PrimitiveOps/contract.py:71
     // result = a << b
     shl
-    // tests/artifacts/PrimitiveOps/contract.py:57
+    // tests/artifacts/PrimitiveOps/contract.py:69
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -268,16 +268,16 @@ verify_uint64_lshift:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_rshift[routing]() -> void:
 verify_uint64_rshift:
-    // tests/artifacts/PrimitiveOps/contract.py:62
+    // tests/artifacts/PrimitiveOps/contract.py:74
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:64
+    // tests/artifacts/PrimitiveOps/contract.py:76
     // result = a >> b
     shr
-    // tests/artifacts/PrimitiveOps/contract.py:62
+    // tests/artifacts/PrimitiveOps/contract.py:74
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -290,16 +290,16 @@ verify_uint64_rshift:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_pow[routing]() -> void:
 verify_uint64_pow:
-    // tests/artifacts/PrimitiveOps/contract.py:67
+    // tests/artifacts/PrimitiveOps/contract.py:79
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:69
+    // tests/artifacts/PrimitiveOps/contract.py:81
     // result = a**b
     exp
-    // tests/artifacts/PrimitiveOps/contract.py:67
+    // tests/artifacts/PrimitiveOps/contract.py:79
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -312,16 +312,16 @@ verify_uint64_pow:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_eq[routing]() -> void:
 verify_uint64_eq:
-    // tests/artifacts/PrimitiveOps/contract.py:72
+    // tests/artifacts/PrimitiveOps/contract.py:84
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:74
+    // tests/artifacts/PrimitiveOps/contract.py:86
     // result = a == b
     ==
-    // tests/artifacts/PrimitiveOps/contract.py:72
+    // tests/artifacts/PrimitiveOps/contract.py:84
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -337,16 +337,16 @@ verify_uint64_eq:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_ne[routing]() -> void:
 verify_uint64_ne:
-    // tests/artifacts/PrimitiveOps/contract.py:77
+    // tests/artifacts/PrimitiveOps/contract.py:89
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:79
+    // tests/artifacts/PrimitiveOps/contract.py:91
     // result = a != b
     !=
-    // tests/artifacts/PrimitiveOps/contract.py:77
+    // tests/artifacts/PrimitiveOps/contract.py:89
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -362,16 +362,16 @@ verify_uint64_ne:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_lt[routing]() -> void:
 verify_uint64_lt:
-    // tests/artifacts/PrimitiveOps/contract.py:82
+    // tests/artifacts/PrimitiveOps/contract.py:94
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:84
+    // tests/artifacts/PrimitiveOps/contract.py:96
     // result = a < b
     <
-    // tests/artifacts/PrimitiveOps/contract.py:82
+    // tests/artifacts/PrimitiveOps/contract.py:94
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -387,16 +387,16 @@ verify_uint64_lt:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_le[routing]() -> void:
 verify_uint64_le:
-    // tests/artifacts/PrimitiveOps/contract.py:87
+    // tests/artifacts/PrimitiveOps/contract.py:99
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:89
+    // tests/artifacts/PrimitiveOps/contract.py:101
     // result = a <= b
     <=
-    // tests/artifacts/PrimitiveOps/contract.py:87
+    // tests/artifacts/PrimitiveOps/contract.py:99
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -412,16 +412,16 @@ verify_uint64_le:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_gt[routing]() -> void:
 verify_uint64_gt:
-    // tests/artifacts/PrimitiveOps/contract.py:92
+    // tests/artifacts/PrimitiveOps/contract.py:104
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:94
+    // tests/artifacts/PrimitiveOps/contract.py:106
     // result = a > b
     >
-    // tests/artifacts/PrimitiveOps/contract.py:92
+    // tests/artifacts/PrimitiveOps/contract.py:104
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -437,16 +437,16 @@ verify_uint64_gt:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_uint64_ge[routing]() -> void:
 verify_uint64_ge:
-    // tests/artifacts/PrimitiveOps/contract.py:97
+    // tests/artifacts/PrimitiveOps/contract.py:109
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:99
+    // tests/artifacts/PrimitiveOps/contract.py:111
     // result = a >= b
     >=
-    // tests/artifacts/PrimitiveOps/contract.py:97
+    // tests/artifacts/PrimitiveOps/contract.py:109
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -462,14 +462,14 @@ verify_uint64_ge:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_bytes_init[routing]() -> void:
 verify_bytes_init:
-    // tests/artifacts/PrimitiveOps/contract.py:102
+    // tests/artifacts/PrimitiveOps/contract.py:114
     // @arc4.abimethod()
     txna ApplicationArgs 1
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:104
+    // tests/artifacts/PrimitiveOps/contract.py:116
     // result = op.itob(raw_value)
     itob
-    // tests/artifacts/PrimitiveOps/contract.py:102
+    // tests/artifacts/PrimitiveOps/contract.py:114
     // @arc4.abimethod()
     pushbytes 0x151f7c750008
     swap
@@ -481,7 +481,7 @@ verify_bytes_init:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_bytes_add[routing]() -> void:
 verify_bytes_add:
-    // tests/artifacts/PrimitiveOps/contract.py:107
+    // tests/artifacts/PrimitiveOps/contract.py:119
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
@@ -491,25 +491,25 @@ verify_bytes_add:
     btoi
     txna ApplicationArgs 4
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:111
+    // tests/artifacts/PrimitiveOps/contract.py:123
     // a = op.bzero(pad_a_size) + a
     swap
     bzero
     uncover 3
     concat
-    // tests/artifacts/PrimitiveOps/contract.py:112
+    // tests/artifacts/PrimitiveOps/contract.py:124
     // b = op.bzero(pad_b_size) + b
     swap
     bzero
     uncover 2
     concat
-    // tests/artifacts/PrimitiveOps/contract.py:113
+    // tests/artifacts/PrimitiveOps/contract.py:125
     // result = a + b
     concat
-    // tests/artifacts/PrimitiveOps/contract.py:114
+    // tests/artifacts/PrimitiveOps/contract.py:126
     // result = op.sha256(result)
     sha256
-    // tests/artifacts/PrimitiveOps/contract.py:107
+    // tests/artifacts/PrimitiveOps/contract.py:119
     // @arc4.abimethod()
     bytec_3 // 0x151f7c750020
     swap
@@ -521,16 +521,16 @@ verify_bytes_add:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_bytes_eq[routing]() -> void:
 verify_bytes_eq:
-    // tests/artifacts/PrimitiveOps/contract.py:117
+    // tests/artifacts/PrimitiveOps/contract.py:129
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:119
+    // tests/artifacts/PrimitiveOps/contract.py:131
     // result = a == b
     ==
-    // tests/artifacts/PrimitiveOps/contract.py:117
+    // tests/artifacts/PrimitiveOps/contract.py:129
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -546,16 +546,16 @@ verify_bytes_eq:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_bytes_ne[routing]() -> void:
 verify_bytes_ne:
-    // tests/artifacts/PrimitiveOps/contract.py:122
+    // tests/artifacts/PrimitiveOps/contract.py:134
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:124
+    // tests/artifacts/PrimitiveOps/contract.py:136
     // result = a != b
     !=
-    // tests/artifacts/PrimitiveOps/contract.py:122
+    // tests/artifacts/PrimitiveOps/contract.py:134
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -571,16 +571,16 @@ verify_bytes_ne:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_bytes_and[routing]() -> void:
 verify_bytes_and:
-    // tests/artifacts/PrimitiveOps/contract.py:127
+    // tests/artifacts/PrimitiveOps/contract.py:139
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:129
+    // tests/artifacts/PrimitiveOps/contract.py:141
     // result = a & b
     b&
-    // tests/artifacts/PrimitiveOps/contract.py:127
+    // tests/artifacts/PrimitiveOps/contract.py:139
     // @arc4.abimethod()
     dup
     len
@@ -598,16 +598,16 @@ verify_bytes_and:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_bytes_or[routing]() -> void:
 verify_bytes_or:
-    // tests/artifacts/PrimitiveOps/contract.py:132
+    // tests/artifacts/PrimitiveOps/contract.py:144
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:134
+    // tests/artifacts/PrimitiveOps/contract.py:146
     // result = a | b
     b|
-    // tests/artifacts/PrimitiveOps/contract.py:132
+    // tests/artifacts/PrimitiveOps/contract.py:144
     // @arc4.abimethod()
     dup
     len
@@ -625,16 +625,16 @@ verify_bytes_or:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_bytes_xor[routing]() -> void:
 verify_bytes_xor:
-    // tests/artifacts/PrimitiveOps/contract.py:137
+    // tests/artifacts/PrimitiveOps/contract.py:149
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:139
+    // tests/artifacts/PrimitiveOps/contract.py:151
     // result = a ^ b
     b^
-    // tests/artifacts/PrimitiveOps/contract.py:137
+    // tests/artifacts/PrimitiveOps/contract.py:149
     // @arc4.abimethod()
     dup
     len
@@ -652,24 +652,24 @@ verify_bytes_xor:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_bytes_not[routing]() -> void:
 verify_bytes_not:
-    // tests/artifacts/PrimitiveOps/contract.py:142
+    // tests/artifacts/PrimitiveOps/contract.py:154
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:144
+    // tests/artifacts/PrimitiveOps/contract.py:156
     // a = op.bzero(pad_size) + a
     bzero
     swap
     concat
-    // tests/artifacts/PrimitiveOps/contract.py:145
+    // tests/artifacts/PrimitiveOps/contract.py:157
     // result = ~a
     b~
-    // tests/artifacts/PrimitiveOps/contract.py:146
+    // tests/artifacts/PrimitiveOps/contract.py:158
     // result = op.sha256(result)
     sha256
-    // tests/artifacts/PrimitiveOps/contract.py:142
+    // tests/artifacts/PrimitiveOps/contract.py:154
     // @arc4.abimethod()
     bytec_3 // 0x151f7c750020
     swap
@@ -681,16 +681,16 @@ verify_bytes_not:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_add[routing]() -> void:
 verify_biguint_add:
-    // tests/artifacts/PrimitiveOps/contract.py:149
+    // tests/artifacts/PrimitiveOps/contract.py:161
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:153
+    // tests/artifacts/PrimitiveOps/contract.py:165
     // result = a_biguint + b_biguint
     b+
-    // tests/artifacts/PrimitiveOps/contract.py:149
+    // tests/artifacts/PrimitiveOps/contract.py:161
     // @arc4.abimethod()
     dup
     len
@@ -708,17 +708,17 @@ verify_biguint_add:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_add_uint64[routing]() -> void:
 verify_biguint_add_uint64:
-    // tests/artifacts/PrimitiveOps/contract.py:156
+    // tests/artifacts/PrimitiveOps/contract.py:168
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:159
+    // tests/artifacts/PrimitiveOps/contract.py:171
     // result = a_biguint + b
     itob
     b+
-    // tests/artifacts/PrimitiveOps/contract.py:156
+    // tests/artifacts/PrimitiveOps/contract.py:168
     // @arc4.abimethod()
     dup
     len
@@ -736,16 +736,16 @@ verify_biguint_add_uint64:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_sub[routing]() -> void:
 verify_biguint_sub:
-    // tests/artifacts/PrimitiveOps/contract.py:162
+    // tests/artifacts/PrimitiveOps/contract.py:174
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:166
+    // tests/artifacts/PrimitiveOps/contract.py:178
     // result = a_biguint - b_biguint
     b-
-    // tests/artifacts/PrimitiveOps/contract.py:162
+    // tests/artifacts/PrimitiveOps/contract.py:174
     // @arc4.abimethod()
     dup
     len
@@ -763,17 +763,17 @@ verify_biguint_sub:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_sub_uint64[routing]() -> void:
 verify_biguint_sub_uint64:
-    // tests/artifacts/PrimitiveOps/contract.py:169
+    // tests/artifacts/PrimitiveOps/contract.py:181
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:172
+    // tests/artifacts/PrimitiveOps/contract.py:184
     // result = a_biguint - b
     itob
     b-
-    // tests/artifacts/PrimitiveOps/contract.py:169
+    // tests/artifacts/PrimitiveOps/contract.py:181
     // @arc4.abimethod()
     dup
     len
@@ -791,16 +791,16 @@ verify_biguint_sub_uint64:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_mul[routing]() -> void:
 verify_biguint_mul:
-    // tests/artifacts/PrimitiveOps/contract.py:175
+    // tests/artifacts/PrimitiveOps/contract.py:187
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:179
+    // tests/artifacts/PrimitiveOps/contract.py:191
     // result = a_biguint * b_biguint
     b*
-    // tests/artifacts/PrimitiveOps/contract.py:175
+    // tests/artifacts/PrimitiveOps/contract.py:187
     // @arc4.abimethod()
     dup
     len
@@ -818,17 +818,17 @@ verify_biguint_mul:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_mul_uint64[routing]() -> void:
 verify_biguint_mul_uint64:
-    // tests/artifacts/PrimitiveOps/contract.py:182
+    // tests/artifacts/PrimitiveOps/contract.py:194
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:185
+    // tests/artifacts/PrimitiveOps/contract.py:197
     // result = a_biguint * b
     itob
     b*
-    // tests/artifacts/PrimitiveOps/contract.py:182
+    // tests/artifacts/PrimitiveOps/contract.py:194
     // @arc4.abimethod()
     dup
     len
@@ -846,16 +846,16 @@ verify_biguint_mul_uint64:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_div[routing]() -> void:
 verify_biguint_div:
-    // tests/artifacts/PrimitiveOps/contract.py:188
+    // tests/artifacts/PrimitiveOps/contract.py:200
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:192
+    // tests/artifacts/PrimitiveOps/contract.py:204
     // result = a_biguint // b_biguint
     b/
-    // tests/artifacts/PrimitiveOps/contract.py:188
+    // tests/artifacts/PrimitiveOps/contract.py:200
     // @arc4.abimethod()
     dup
     len
@@ -873,17 +873,17 @@ verify_biguint_div:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_div_uint64[routing]() -> void:
 verify_biguint_div_uint64:
-    // tests/artifacts/PrimitiveOps/contract.py:195
+    // tests/artifacts/PrimitiveOps/contract.py:207
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:198
+    // tests/artifacts/PrimitiveOps/contract.py:210
     // result = a_biguint // b
     itob
     b/
-    // tests/artifacts/PrimitiveOps/contract.py:195
+    // tests/artifacts/PrimitiveOps/contract.py:207
     // @arc4.abimethod()
     dup
     len
@@ -901,16 +901,16 @@ verify_biguint_div_uint64:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_mod[routing]() -> void:
 verify_biguint_mod:
-    // tests/artifacts/PrimitiveOps/contract.py:201
+    // tests/artifacts/PrimitiveOps/contract.py:213
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:205
+    // tests/artifacts/PrimitiveOps/contract.py:217
     // result = a_biguint % b_biguint
     b%
-    // tests/artifacts/PrimitiveOps/contract.py:201
+    // tests/artifacts/PrimitiveOps/contract.py:213
     // @arc4.abimethod()
     dup
     len
@@ -928,17 +928,17 @@ verify_biguint_mod:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_mod_uint64[routing]() -> void:
 verify_biguint_mod_uint64:
-    // tests/artifacts/PrimitiveOps/contract.py:208
+    // tests/artifacts/PrimitiveOps/contract.py:220
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:211
+    // tests/artifacts/PrimitiveOps/contract.py:223
     // result = a_biguint % b
     itob
     b%
-    // tests/artifacts/PrimitiveOps/contract.py:208
+    // tests/artifacts/PrimitiveOps/contract.py:220
     // @arc4.abimethod()
     dup
     len
@@ -956,16 +956,16 @@ verify_biguint_mod_uint64:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_and[routing]() -> void:
 verify_biguint_and:
-    // tests/artifacts/PrimitiveOps/contract.py:214
+    // tests/artifacts/PrimitiveOps/contract.py:226
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:218
+    // tests/artifacts/PrimitiveOps/contract.py:230
     // result = a_biguint & b_biguint
     b&
-    // tests/artifacts/PrimitiveOps/contract.py:214
+    // tests/artifacts/PrimitiveOps/contract.py:226
     // @arc4.abimethod()
     dup
     len
@@ -983,17 +983,17 @@ verify_biguint_and:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_and_uint64[routing]() -> void:
 verify_biguint_and_uint64:
-    // tests/artifacts/PrimitiveOps/contract.py:221
+    // tests/artifacts/PrimitiveOps/contract.py:233
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:224
+    // tests/artifacts/PrimitiveOps/contract.py:236
     // result = a_biguint & b
     itob
     b&
-    // tests/artifacts/PrimitiveOps/contract.py:221
+    // tests/artifacts/PrimitiveOps/contract.py:233
     // @arc4.abimethod()
     dup
     len
@@ -1011,16 +1011,16 @@ verify_biguint_and_uint64:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_or[routing]() -> void:
 verify_biguint_or:
-    // tests/artifacts/PrimitiveOps/contract.py:227
+    // tests/artifacts/PrimitiveOps/contract.py:239
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:231
+    // tests/artifacts/PrimitiveOps/contract.py:243
     // result = a_biguint | b_biguint
     b|
-    // tests/artifacts/PrimitiveOps/contract.py:227
+    // tests/artifacts/PrimitiveOps/contract.py:239
     // @arc4.abimethod()
     dup
     len
@@ -1038,17 +1038,17 @@ verify_biguint_or:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_or_uint64[routing]() -> void:
 verify_biguint_or_uint64:
-    // tests/artifacts/PrimitiveOps/contract.py:234
+    // tests/artifacts/PrimitiveOps/contract.py:246
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:237
+    // tests/artifacts/PrimitiveOps/contract.py:249
     // result = a_biguint | b
     itob
     b|
-    // tests/artifacts/PrimitiveOps/contract.py:234
+    // tests/artifacts/PrimitiveOps/contract.py:246
     // @arc4.abimethod()
     dup
     len
@@ -1066,16 +1066,16 @@ verify_biguint_or_uint64:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_xor[routing]() -> void:
 verify_biguint_xor:
-    // tests/artifacts/PrimitiveOps/contract.py:240
+    // tests/artifacts/PrimitiveOps/contract.py:252
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:244
+    // tests/artifacts/PrimitiveOps/contract.py:256
     // result = a_biguint ^ b_biguint
     b^
-    // tests/artifacts/PrimitiveOps/contract.py:240
+    // tests/artifacts/PrimitiveOps/contract.py:252
     // @arc4.abimethod()
     dup
     len
@@ -1093,17 +1093,17 @@ verify_biguint_xor:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_xor_uint64[routing]() -> void:
 verify_biguint_xor_uint64:
-    // tests/artifacts/PrimitiveOps/contract.py:247
+    // tests/artifacts/PrimitiveOps/contract.py:259
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:250
+    // tests/artifacts/PrimitiveOps/contract.py:262
     // result = a_biguint ^ b
     itob
     b^
-    // tests/artifacts/PrimitiveOps/contract.py:247
+    // tests/artifacts/PrimitiveOps/contract.py:259
     // @arc4.abimethod()
     dup
     len
@@ -1121,16 +1121,16 @@ verify_biguint_xor_uint64:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_eq[routing]() -> void:
 verify_biguint_eq:
-    // tests/artifacts/PrimitiveOps/contract.py:253
+    // tests/artifacts/PrimitiveOps/contract.py:265
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:257
+    // tests/artifacts/PrimitiveOps/contract.py:269
     // result = a_biguint == b_biguint
     b==
-    // tests/artifacts/PrimitiveOps/contract.py:253
+    // tests/artifacts/PrimitiveOps/contract.py:265
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -1146,17 +1146,17 @@ verify_biguint_eq:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_eq_uint64[routing]() -> void:
 verify_biguint_eq_uint64:
-    // tests/artifacts/PrimitiveOps/contract.py:260
+    // tests/artifacts/PrimitiveOps/contract.py:272
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:263
+    // tests/artifacts/PrimitiveOps/contract.py:275
     // result = a_biguint == b
     itob
     b==
-    // tests/artifacts/PrimitiveOps/contract.py:260
+    // tests/artifacts/PrimitiveOps/contract.py:272
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -1172,16 +1172,16 @@ verify_biguint_eq_uint64:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_ne[routing]() -> void:
 verify_biguint_ne:
-    // tests/artifacts/PrimitiveOps/contract.py:266
+    // tests/artifacts/PrimitiveOps/contract.py:278
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:270
+    // tests/artifacts/PrimitiveOps/contract.py:282
     // result = a_biguint != b_biguint
     b!=
-    // tests/artifacts/PrimitiveOps/contract.py:266
+    // tests/artifacts/PrimitiveOps/contract.py:278
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -1197,17 +1197,17 @@ verify_biguint_ne:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_ne_uint64[routing]() -> void:
 verify_biguint_ne_uint64:
-    // tests/artifacts/PrimitiveOps/contract.py:273
+    // tests/artifacts/PrimitiveOps/contract.py:285
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:276
+    // tests/artifacts/PrimitiveOps/contract.py:288
     // result = a_biguint != b
     itob
     b!=
-    // tests/artifacts/PrimitiveOps/contract.py:273
+    // tests/artifacts/PrimitiveOps/contract.py:285
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -1223,16 +1223,16 @@ verify_biguint_ne_uint64:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_lt[routing]() -> void:
 verify_biguint_lt:
-    // tests/artifacts/PrimitiveOps/contract.py:279
+    // tests/artifacts/PrimitiveOps/contract.py:291
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:283
+    // tests/artifacts/PrimitiveOps/contract.py:295
     // result = a_biguint < b_biguint
     b<
-    // tests/artifacts/PrimitiveOps/contract.py:279
+    // tests/artifacts/PrimitiveOps/contract.py:291
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -1248,17 +1248,17 @@ verify_biguint_lt:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_lt_uint64[routing]() -> void:
 verify_biguint_lt_uint64:
-    // tests/artifacts/PrimitiveOps/contract.py:286
+    // tests/artifacts/PrimitiveOps/contract.py:298
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:289
+    // tests/artifacts/PrimitiveOps/contract.py:301
     // result = a_biguint < b
     itob
     b<
-    // tests/artifacts/PrimitiveOps/contract.py:286
+    // tests/artifacts/PrimitiveOps/contract.py:298
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -1274,16 +1274,16 @@ verify_biguint_lt_uint64:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_le[routing]() -> void:
 verify_biguint_le:
-    // tests/artifacts/PrimitiveOps/contract.py:292
+    // tests/artifacts/PrimitiveOps/contract.py:304
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:296
+    // tests/artifacts/PrimitiveOps/contract.py:308
     // result = a_biguint <= b_biguint
     b<=
-    // tests/artifacts/PrimitiveOps/contract.py:292
+    // tests/artifacts/PrimitiveOps/contract.py:304
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -1299,17 +1299,17 @@ verify_biguint_le:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_le_uint64[routing]() -> void:
 verify_biguint_le_uint64:
-    // tests/artifacts/PrimitiveOps/contract.py:299
+    // tests/artifacts/PrimitiveOps/contract.py:311
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:302
+    // tests/artifacts/PrimitiveOps/contract.py:314
     // result = a_biguint <= b
     itob
     b<=
-    // tests/artifacts/PrimitiveOps/contract.py:299
+    // tests/artifacts/PrimitiveOps/contract.py:311
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -1325,16 +1325,16 @@ verify_biguint_le_uint64:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_gt[routing]() -> void:
 verify_biguint_gt:
-    // tests/artifacts/PrimitiveOps/contract.py:305
+    // tests/artifacts/PrimitiveOps/contract.py:317
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:309
+    // tests/artifacts/PrimitiveOps/contract.py:321
     // result = a_biguint > b_biguint
     b>
-    // tests/artifacts/PrimitiveOps/contract.py:305
+    // tests/artifacts/PrimitiveOps/contract.py:317
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -1350,17 +1350,17 @@ verify_biguint_gt:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_gt_uint64[routing]() -> void:
 verify_biguint_gt_uint64:
-    // tests/artifacts/PrimitiveOps/contract.py:312
+    // tests/artifacts/PrimitiveOps/contract.py:324
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:315
+    // tests/artifacts/PrimitiveOps/contract.py:327
     // result = a_biguint > b
     itob
     b>
-    // tests/artifacts/PrimitiveOps/contract.py:312
+    // tests/artifacts/PrimitiveOps/contract.py:324
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -1376,16 +1376,16 @@ verify_biguint_gt_uint64:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_ge[routing]() -> void:
 verify_biguint_ge:
-    // tests/artifacts/PrimitiveOps/contract.py:318
+    // tests/artifacts/PrimitiveOps/contract.py:330
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:322
+    // tests/artifacts/PrimitiveOps/contract.py:334
     // result = a_biguint >= b_biguint
     b>=
-    // tests/artifacts/PrimitiveOps/contract.py:318
+    // tests/artifacts/PrimitiveOps/contract.py:330
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -1401,17 +1401,17 @@ verify_biguint_ge:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_biguint_ge_uint64[routing]() -> void:
 verify_biguint_ge_uint64:
-    // tests/artifacts/PrimitiveOps/contract.py:325
+    // tests/artifacts/PrimitiveOps/contract.py:337
     // @arc4.abimethod()
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/PrimitiveOps/contract.py:328
+    // tests/artifacts/PrimitiveOps/contract.py:340
     // result = a_biguint >= b
     itob
     b>=
-    // tests/artifacts/PrimitiveOps/contract.py:325
+    // tests/artifacts/PrimitiveOps/contract.py:337
     // @arc4.abimethod()
     bytec_1 // 0x00
     intc_1 // 0
@@ -1427,16 +1427,16 @@ verify_biguint_ge_uint64:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_string_init[routing]() -> void:
 verify_string_init:
-    // tests/artifacts/PrimitiveOps/contract.py:331
+    // tests/artifacts/PrimitiveOps/contract.py:343
     // @arc4.abimethod
     txna ApplicationArgs 1
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:333
+    // tests/artifacts/PrimitiveOps/contract.py:345
     // result = String("Hello, ") + a
     pushbytes "Hello, "
     swap
     concat
-    // tests/artifacts/PrimitiveOps/contract.py:331
+    // tests/artifacts/PrimitiveOps/contract.py:343
     // @arc4.abimethod
     dup
     len
@@ -1454,7 +1454,7 @@ verify_string_init:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_string_startswith[routing]() -> void:
 verify_string_startswith:
-    // tests/artifacts/PrimitiveOps/contract.py:336
+    // tests/artifacts/PrimitiveOps/contract.py:348
     // @arc4.abimethod
     txna ApplicationArgs 1
     extract 2 0
@@ -1463,7 +1463,7 @@ verify_string_startswith:
     extract 2 0
     dup
     cover 2
-    // tests/artifacts/PrimitiveOps/contract.py:338
+    // tests/artifacts/PrimitiveOps/contract.py:350
     // result = a.startswith(b)
     len
     dup
@@ -1474,7 +1474,7 @@ verify_string_startswith:
     intc_1 // 0
 
 verify_string_startswith_ternary_merge@4:
-    // tests/artifacts/PrimitiveOps/contract.py:336
+    // tests/artifacts/PrimitiveOps/contract.py:348
     // @arc4.abimethod
     bytec_1 // 0x00
     intc_1 // 0
@@ -1488,7 +1488,7 @@ verify_string_startswith_ternary_merge@4:
     return
 
 verify_string_startswith_ternary_false@3:
-    // tests/artifacts/PrimitiveOps/contract.py:338
+    // tests/artifacts/PrimitiveOps/contract.py:350
     // result = a.startswith(b)
     dig 2
     intc_1 // 0
@@ -1501,7 +1501,7 @@ verify_string_startswith_ternary_false@3:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_string_endswith[routing]() -> void:
 verify_string_endswith:
-    // tests/artifacts/PrimitiveOps/contract.py:341
+    // tests/artifacts/PrimitiveOps/contract.py:353
     // @arc4.abimethod
     txna ApplicationArgs 1
     extract 2 0
@@ -1510,7 +1510,7 @@ verify_string_endswith:
     extract 2 0
     dup
     cover 2
-    // tests/artifacts/PrimitiveOps/contract.py:343
+    // tests/artifacts/PrimitiveOps/contract.py:355
     // result = a.endswith(b)
     len
     dup
@@ -1523,7 +1523,7 @@ verify_string_endswith:
     intc_1 // 0
 
 verify_string_endswith_ternary_merge@4:
-    // tests/artifacts/PrimitiveOps/contract.py:341
+    // tests/artifacts/PrimitiveOps/contract.py:353
     // @arc4.abimethod
     bytec_1 // 0x00
     intc_1 // 0
@@ -1537,7 +1537,7 @@ verify_string_endswith_ternary_merge@4:
     return
 
 verify_string_endswith_ternary_false@3:
-    // tests/artifacts/PrimitiveOps/contract.py:343
+    // tests/artifacts/PrimitiveOps/contract.py:355
     // result = a.endswith(b)
     dup
     dig 2
@@ -1555,20 +1555,20 @@ verify_string_endswith_ternary_false@3:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_string_join[routing]() -> void:
 verify_string_join:
-    // tests/artifacts/PrimitiveOps/contract.py:346
+    // tests/artifacts/PrimitiveOps/contract.py:358
     // @arc4.abimethod
     txna ApplicationArgs 1
     extract 2 0
     txna ApplicationArgs 2
     extract 2 0
-    // tests/artifacts/PrimitiveOps/contract.py:348
+    // tests/artifacts/PrimitiveOps/contract.py:360
     // result = String(", ").join((a, b))
     swap
     pushbytes ", "
     concat
     swap
     concat
-    // tests/artifacts/PrimitiveOps/contract.py:346
+    // tests/artifacts/PrimitiveOps/contract.py:358
     // @arc4.abimethod
     dup
     len
@@ -1586,7 +1586,7 @@ verify_string_join:
 
 // tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_log[routing]() -> void:
 verify_log:
-    // tests/artifacts/PrimitiveOps/contract.py:351
+    // tests/artifacts/PrimitiveOps/contract.py:363
     // @arc4.abimethod
     txna ApplicationArgs 1
     extract 2 0
@@ -1609,7 +1609,7 @@ verify_log:
     txna ApplicationArgs 13
     extract 2 0
     txna ApplicationArgs 14
-    // tests/artifacts/PrimitiveOps/contract.py:373
+    // tests/artifacts/PrimitiveOps/contract.py:385
     // log(a, b, c, d_biguint, e, f, g, h, i, j, arc4_k, arc4_m, arc4_n, o, sep="-")
     uncover 13
     bytec_2 // "-"
@@ -1666,7 +1666,123 @@ verify_log:
     swap
     concat
     log
-    // tests/artifacts/PrimitiveOps/contract.py:351
+    // tests/artifacts/PrimitiveOps/contract.py:363
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+
+// tests.artifacts.PrimitiveOps.contract.PrimitiveOpsContract.verify_logged_errs[routing]() -> void:
+verify_logged_errs:
+    // tests/artifacts/PrimitiveOps/contract.py:387
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    btoi
+    dup
+    // tests/artifacts/PrimitiveOps/contract.py:389-390
+    // # "ERR:01"
+    // logged_assert(arg != 1, "01")
+    intc_0 // 1
+    !=
+    bnz verify_logged_errs_after_assert@3
+    pushbytes "ERR:01"
+    log
+    err // ERR:01
+
+verify_logged_errs_after_assert@3:
+    // tests/artifacts/PrimitiveOps/contract.py:391-392
+    // # "ERR:arg02:arg is two"
+    // logged_assert(arg != 2, "arg02", error_message="arg is two")
+    dup
+    pushint 2
+    !=
+    bnz verify_logged_errs_after_assert@5
+    pushbytes "ERR:arg02:arg is two"
+    log
+    err // ERR:arg02:arg is two
+
+verify_logged_errs_after_assert@5:
+    // tests/artifacts/PrimitiveOps/contract.py:393-394
+    // # "AER:arg03"
+    // logged_assert(arg != 3, "arg03", prefix="AER")
+    dup
+    pushint 3
+    !=
+    bnz verify_logged_errs_after_assert@7
+    pushbytes "AER:arg03"
+    log
+    err // AER:arg03
+
+verify_logged_errs_after_assert@7:
+    // tests/artifacts/PrimitiveOps/contract.py:395-396
+    // # "AER:arg04:arg is 4"
+    // logged_assert(arg != 4, "arg04", error_message="arg is 4", prefix="AER")
+    dup
+    pushint 4
+    !=
+    bnz verify_logged_errs_after_assert@9
+    pushbytes "AER:arg04:arg is 4"
+    log
+    err // AER:arg04:arg is 4
+
+verify_logged_errs_after_assert@9:
+    // tests/artifacts/PrimitiveOps/contract.py:398-399
+    // # "ERR:arg05"
+    // if arg == 5:
+    dup
+    pushint 5
+    ==
+    bz verify_logged_errs_after_if_else@11
+    // tests/artifacts/PrimitiveOps/contract.py:400
+    // logged_err("arg05")
+    pushbytes "ERR:arg05"
+    log
+    err // ERR:arg05
+
+verify_logged_errs_after_if_else@11:
+    // tests/artifacts/PrimitiveOps/contract.py:401-402
+    // # "ERR:arg06:arg was 6"
+    // if arg == 6:
+    dup
+    pushint 6
+    ==
+    bz verify_logged_errs_after_if_else@13
+    // tests/artifacts/PrimitiveOps/contract.py:403
+    // logged_err("06", error_message="arg was 6")
+    pushbytes "ERR:06:arg was 6"
+    log
+    err // ERR:06:arg was 6
+
+verify_logged_errs_after_if_else@13:
+    // tests/artifacts/PrimitiveOps/contract.py:404-405
+    // # "AER:arg07"
+    // if arg == 7:
+    dup
+    pushint 7
+    ==
+    bz verify_logged_errs_after_if_else@15
+    // tests/artifacts/PrimitiveOps/contract.py:406
+    // logged_err("arg07", prefix="AER")
+    pushbytes "AER:arg07"
+    log
+    err // AER:arg07
+
+verify_logged_errs_after_if_else@15:
+    // tests/artifacts/PrimitiveOps/contract.py:407-408
+    // # "AER:arg08:arg is seven (08)"
+    // if arg == 8:
+    dup
+    pushint 8
+    ==
+    bz verify_logged_errs_after_if_else@17
+    // tests/artifacts/PrimitiveOps/contract.py:409
+    // logged_err("arg08", error_message="arg is eight (08)", prefix="AER")
+    pushbytes "AER:arg08:arg is eight (08)"
+    log
+    err // AER:arg08:arg is eight (08)
+
+verify_logged_errs_after_if_else@17:
+    // tests/artifacts/PrimitiveOps/contract.py:387
     // @arc4.abimethod
     intc_0 // 1
     return

@@ -60,7 +60,7 @@
         "schema": {
             "global": {
                 "ints": 0,
-                "bytes": 4
+                "bytes": 3
             },
             "local": {
                 "ints": 0,
