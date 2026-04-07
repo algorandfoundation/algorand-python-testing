@@ -1,4 +1,10 @@
 # CHANGELOG
+## v1.2.0-beta.6 (2026-04-07)
+
+### Features
+
+* add arc65 support: loggedErr() and loggedAssert() functions, to log a formatted error string before failing ([`5ac27a5`](https://github.com/algorandfoundation/algorand-python-testing/commit/5ac27a5f96d075224c47dc7c8b6ceba65db0e5e3))
+
 ## v1.2.0-beta.5 (2026-04-01)
 
 ### Features
