@@ -404,6 +404,6 @@ class PrimitiveOpsContract(ARC4Contract):
         # "AER:arg07"
         if arg == 7:
             logged_err("arg07", prefix="AER")
-        # "AER:arg08:arg is seven (08)"
+        # "AER:arg08:arg is eight (08)"
         if arg == 8:
             logged_err("arg08", error_message="arg is eight (08)", prefix="AER")
