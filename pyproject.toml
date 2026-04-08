@@ -25,7 +25,7 @@ dependencies = [
     "ecdsa>=0.17.0",
     "coincurve>=19.0.1",
     "algorand-python>=3",
-    "algokit-utils>=5.0.0a20",
+    "algokit-utils>=5.0.0b1",
 ]
 
 [project.urls]
@@ -123,7 +123,7 @@ dependencies = [
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
     "pytest-cov>=4.1.0",
-    "puyapy>=5.7.1",
+    "puyapy>=5.8.0",
 ]
 
 [tool.hatch.envs.test.scripts]
