@@ -1,14 +1,14 @@
 from __future__ import annotations
 
+import inspect
 import typing
 
 from _algopy_testing.context_helpers import LedgerContext, TransactionContext
+from _algopy_testing.state.utils import cast_to_bytes
 from _algopy_testing.utils import generate_random_account
 from _algopy_testing.value_generators import AlgopyValueGenerator
 
 if typing.TYPE_CHECKING:
-    from collections.abc import Sequence
-
     import algopy
 
 
@@ -35,7 +35,7 @@ class AlgopyTestContext:
         self._default_sender = algopy.Account(default_sender or generate_random_account().addr)
         self._template_vars: dict[str, typing.Any] = template_vars or {}
 
-        self._active_lsig_args: Sequence[algopy.Bytes] = ()
+        self._active_lsig_args = list[bytes]()
         self._ledger_context = LedgerContext()
         self._txn_context = TransactionContext()
         self._value_generator = AlgopyValueGenerator()
@@ -84,14 +84,23 @@ class AlgopyTestContext:
         """
         self._template_vars[name] = value
 
-    def execute_logicsig(self, lsig: algopy.LogicSig, *args: algopy.Bytes) -> bool | algopy.UInt64:
-        """Execute a logic signature using provided args."""
+    def execute_logicsig(
+        self, lsig: algopy.LogicSig, /, *args: typing.Any
+    ) -> bool | algopy.UInt64:
+        """Execute a logic signature.
 
-        self._active_lsig_args = args
+        If the logicsig's wrapped function accepts parameters, args are passed directly.
+        args are also available via algopy.op.arg().
+        """
+        sig = inspect.signature(lsig.func)
+        self._active_lsig_args = [cast_to_bytes(a) for a in args]
         try:
-            return lsig.func()
+            if sig.parameters:
+                return lsig.func(*args)
+            else:
+                return lsig.func()
         finally:
-            self._active_lsig_args = ()
+            self._active_lsig_args = []
 
     def clear_transaction_context(self) -> None:
         """Clear the transaction context."""
