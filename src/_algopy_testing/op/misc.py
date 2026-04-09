@@ -504,7 +504,7 @@ AppGlobal = _AppGlobal()
 
 
 def arg(a: UInt64 | int, /) -> Bytes:
-    return lazy_context.value._active_lsig_args[int(a)]
+    return Bytes(lazy_context.value._active_lsig_args[int(a)])
 
 
 class Box:
