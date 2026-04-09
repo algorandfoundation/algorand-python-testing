@@ -1769,7 +1769,7 @@ verify_logged_errs_after_if_else@13:
 
 verify_logged_errs_after_if_else@15:
     // tests/artifacts/PrimitiveOps/contract.py:407-408
-    // # "AER:arg08:arg is seven (08)"
+    // # "AER:arg08:arg is eight (08)"
     // if arg == 8:
     dup
     pushint 8
