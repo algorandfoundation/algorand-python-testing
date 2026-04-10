@@ -1,4 +1,10 @@
 # CHANGELOG
+## v1.2.0-beta.9 (2026-04-10)
+
+### Features
+
+* add arguments to logicsig ([`74ac11e`](https://github.com/algorandfoundation/algorand-python-testing/commit/74ac11e74af79cf50c9b64de74221ef8f8d5bae4))
+
 ## v1.2.0-beta.8 (2026-04-09)
 
 ## v1.2.0-beta.7 (2026-04-09)
