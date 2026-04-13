@@ -1,5 +1,6 @@
 import typing
 from collections.abc import Generator
+from dataclasses import FrozenInstanceError
 
 import _algopy_testing
 import pytest
@@ -32,6 +33,22 @@ class MixedStruct(arc4.Struct):
 class NativeStructWithAccount(arc4.Struct):
     owner: Account
     balance: UInt64
+
+
+class NativeStructWithResources(arc4.Struct):
+    asset: Asset
+    app: Application
+    owner: Account
+
+
+class OuterStruct(arc4.Struct):
+    tag: UInt64
+    inner: NativeStruct
+
+
+class FrozenNativeStruct(arc4.Struct, frozen=True):
+    x: UInt64
+    y: bool
 
 
 class MyNamedTuple(typing.NamedTuple):
@@ -223,6 +240,45 @@ def test_native_struct_bytes_match_tuple_bytes() -> None:
     struct_val = NativeStruct(a=UInt64(1), b=True)
     tuple_bytes = abi.ABIType.from_string("(uint64,bool)").encode((1, True))
     assert arc4.encode(struct_val).value == tuple_bytes
+
+
+def test_encode_decode_nested_native_struct() -> None:
+    # a struct field whose type is itself an arc4.Struct with native fields —
+    # exercises the recursive serializer path through Struct → Struct
+    original = OuterStruct(tag=UInt64(7), inner=NativeStruct(a=UInt64(1), b=True))
+    encoded = arc4.encode(original)
+    decoded = arc4.decode(OuterStruct, encoded)
+    assert decoded == original
+    assert isinstance(decoded.tag, UInt64)
+    assert isinstance(decoded.inner, NativeStruct)
+    assert isinstance(decoded.inner.a, UInt64)
+    assert isinstance(decoded.inner.b, bool)
+
+
+def test_encode_decode_native_struct_with_resource_fields() -> None:
+    # Asset and Application are UInt64Backed natives — the per-field
+    # arc4_to_native path routes through `from_int` rather than the simple map
+    original = NativeStructWithResources(
+        asset=Asset(42),
+        app=Application(123),
+        owner=Account("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ"),
+    )
+    encoded = arc4.encode(original)
+    decoded = arc4.decode(NativeStructWithResources, encoded)
+    assert decoded == original
+    assert isinstance(decoded.asset, Asset)
+    assert isinstance(decoded.app, Application)
+    assert isinstance(decoded.owner, Account)
+
+
+def test_frozen_native_struct_round_trip_and_mutation_guard() -> None:
+    original = FrozenNativeStruct(x=UInt64(9), y=True)
+    encoded = arc4.encode(original)
+    decoded = arc4.decode(FrozenNativeStruct, encoded)
+    assert decoded == original
+    # frozen-mutation detection must still fire when native-wrapping is in play
+    with pytest.raises(FrozenInstanceError):
+        decoded.x = UInt64(10)  # type: ignore[misc]
 
 
 def test_encode_decode_account() -> None:
