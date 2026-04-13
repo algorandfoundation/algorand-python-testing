@@ -1,10 +1,13 @@
 import typing
+from collections.abc import Generator
 
+import _algopy_testing
 import pytest
 from _algopy_testing import arc4
 from algokit_utils.applications import abi
 from algopy import Account, Application, Asset, BigUInt, Bytes, String, UInt64
 
+from tests.artifacts.Arc4PrimitiveOps.contract import Arc4PrimitiveOpsContract
 from tests.common import AVMInvoker
 
 
@@ -13,9 +16,33 @@ class Arc4Struct(arc4.Struct):
     y: arc4.String
 
 
+class NativeStruct(arc4.Struct):
+    a: UInt64
+    b: bool
+
+
+class MixedStruct(arc4.Struct):
+    native_u: UInt64
+    arc4_u: arc4.UInt64
+    native_s: String
+    arc4_s: arc4.String
+    flag: bool
+
+
+class NativeStructWithAccount(arc4.Struct):
+    owner: Account
+    balance: UInt64
+
+
 class MyNamedTuple(typing.NamedTuple):
     x: UInt64
     y: String
+
+
+@pytest.fixture()
+def context() -> Generator[_algopy_testing.AlgopyTestContext, None, None]:
+    with _algopy_testing.algopy_testing_context() as ctx:
+        yield ctx
 
 
 @pytest.mark.parametrize(
@@ -144,6 +171,60 @@ def test_encode_decode_arc4_struct() -> None:
     assert decoded == original
 
 
+def test_encode_decode_native_struct() -> None:
+    # arc4.Struct with native-typed fields: serialized via native_to_arc4
+    # on the way in, and arc4_to_native on the way out, so the decoded fields
+    # retain their declared native types.
+    original = NativeStruct(a=UInt64(1), b=True)
+    encoded = arc4.encode(original)
+    # 8-byte UInt64 + 1-byte bool (0x80 = True)
+    assert encoded == bytes.fromhex("000000000000000180")
+    decoded = arc4.decode(NativeStruct, encoded)
+    assert decoded == original
+    # ensure the decoded field types match the declared native annotations
+    assert isinstance(decoded.a, UInt64)
+    assert isinstance(decoded.b, bool)
+
+
+def test_encode_decode_struct_with_mixed_native_and_arc4_fields() -> None:
+    original = MixedStruct(
+        native_u=UInt64(5),
+        arc4_u=arc4.UInt64(6),
+        native_s=String("native"),
+        arc4_s=arc4.String("arc4"),
+        flag=True,
+    )
+    encoded = arc4.encode(original)
+    decoded = arc4.decode(MixedStruct, encoded)
+    assert decoded == original
+    # declared types are preserved per-field after round-trip
+    assert isinstance(decoded.native_u, UInt64)
+    assert isinstance(decoded.arc4_u, arc4.UInt64)
+    assert isinstance(decoded.native_s, String)
+    assert isinstance(decoded.arc4_s, arc4.String)
+    assert isinstance(decoded.flag, bool)
+
+
+def test_encode_decode_native_struct_with_account_field() -> None:
+    # covers a native field whose serializer goes through Account<->Address
+    original = NativeStructWithAccount(
+        owner=Account("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ"),
+        balance=UInt64(1000),
+    )
+    encoded = arc4.encode(original)
+    decoded = arc4.decode(NativeStructWithAccount, encoded)
+    assert decoded == original
+    assert isinstance(decoded.owner, Account)
+    assert isinstance(decoded.balance, UInt64)
+
+
+def test_native_struct_bytes_match_tuple_bytes() -> None:
+    # the struct's encoded bytes must match the canonical ABI tuple encoding
+    struct_val = NativeStruct(a=UInt64(1), b=True)
+    tuple_bytes = abi.ABIType.from_string("(uint64,bool)").encode((1, True))
+    assert arc4.encode(struct_val).value == tuple_bytes
+
+
 def test_encode_decode_account() -> None:
     value = Account("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ")
     encoded = arc4.encode(value)
@@ -184,6 +265,11 @@ def test_decode_rejects_unsupported_type() -> None:
         arc4.decode(list, b"\x00" * 8)
 
 
-def test_verify_encode_decode_avm_parity(get_avm_result: AVMInvoker) -> None:
+def test_verify_encode_decode_avm_parity(
+    get_avm_result: AVMInvoker,
+    context: _algopy_testing.AlgopyTestContext,  # noqa: ARG001
+) -> None:
     # ensure the same encode/decode cases also succeed on the AVM
     get_avm_result("verify_encode_decode")
+    contract = Arc4PrimitiveOpsContract()
+    contract.verify_encode_decode()
