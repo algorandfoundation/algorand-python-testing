@@ -74,7 +74,9 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | algopy.arc4.abimethod                       | Emulated            |
 | algopy.arc4.arc4_signature                  | Native              |
 | algopy.arc4.baremethod                      | Emulated            |
+| algopy.arc4.decode                          | Emulated            |
 | algopy.arc4.emit                            | Emulated            |
+| algopy.arc4.encode                          | Emulated            |
 | algopy.arc4.abi_call                        | Mockable            |
 | algopy.arc4.arc4_create                     | Mockable            |
 | algopy.arc4.arc4_update                     | Mockable            |

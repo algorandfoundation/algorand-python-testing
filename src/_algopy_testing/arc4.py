@@ -26,7 +26,7 @@ from _algopy_testing.mutable import (
 )
 from _algopy_testing.primitives import Bytes
 from _algopy_testing.protocols import BytesBacked
-from _algopy_testing.serialize import get_native_to_arc4_serializer
+from _algopy_testing.serialize import get_native_to_arc4_serializer, native_to_arc4
 from _algopy_testing.utils import (
     as_bytes,
     as_int,
@@ -73,7 +73,9 @@ __all__ = [
     "arc4_create",
     "arc4_signature",
     "arc4_update",
+    "decode",
     "emit",
+    "encode",
 ]
 
 _ABI_LENGTH_SIZE = 2
@@ -1270,9 +1272,38 @@ def emit(event: str | Struct, /, *args: object) -> None:
     log(event_hash[:4] + event_data.value)
 
 
-def _cast_arg_as_arc4(arg: object) -> _ABIEncoded:
-    from _algopy_testing.serialize import native_to_arc4
+def encode(value: object, /) -> algopy.Bytes:
+    if isinstance(value, _ABIEncoded):
+        return value.bytes
+    return native_to_arc4(value).bytes
 
+
+_TDecode = typing.TypeVar("_TDecode")
+
+
+def decode(
+    typ: type[_TDecode],
+    value: algopy.Bytes | bytes,
+    /,
+    *,
+    validate: typing.Literal[True, False] = True,
+) -> _TDecode:
+    raw = value.value if isinstance(value, Bytes) else value
+
+    if isinstance(typ, type) and issubclass(typ, _ABIEncoded):
+        arc4_value = typ.from_bytes(raw)
+        if validate:
+            arc4_value.validate()
+        return arc4_value
+
+    serializer = get_native_to_arc4_serializer(typ)
+    arc4_value = serializer.arc4_type.from_bytes(raw)
+    if validate:
+        arc4_value.validate()
+    return serializer.arc4_to_native(arc4_value)  # type: ignore[no-any-return]
+
+
+def _cast_arg_as_arc4(arg: object) -> _ABIEncoded:
     if isinstance(arg, int) and not isinstance(arg, bool):
         return UInt64(arg) if arg <= MAX_UINT64 else UInt512(arg)
     if isinstance(arg, bytes):
