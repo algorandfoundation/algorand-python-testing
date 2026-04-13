@@ -1154,9 +1154,20 @@ class _StructMeta(type):
     pass
 
 
+def _arc4_type_for_field(field_type: typing.Any) -> type[_ABIEncoded]:
+    """Resolve a struct field's declared type to its ARC-4 equivalent.
+
+    Fields annotated with ARC-4 types are returned as-is; native/algopy types
+    are mapped via the serializer registry so `arc4.Struct` accepts either.
+    """
+    if isinstance(field_type, type) and issubclass(field_type, _ABIEncoded):
+        return field_type
+    return get_native_to_arc4_serializer(field_type).arc4_type
+
+
 def _tuple_type_from_struct(struct: type[Struct]) -> type[Tuple]:  # type: ignore[type-arg]
-    field_types = [f.type for f in struct._type_info.fields]
-    return parameterize_type(Tuple, *field_types)  # type: ignore[arg-type]
+    field_types = [_arc4_type_for_field(f.type) for f in struct._type_info.fields]
+    return parameterize_type(Tuple, *field_types)
 
 
 class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):
@@ -1200,7 +1211,17 @@ class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):
         tuple_value = tuple_type.from_bytes(value)
         if not tuple_value:
             return typing.cast("typing.Self", tuple_value)
-        return cls(*tuple_value.native)
+        # for fields declared as native types, convert each decoded ARC-4 item
+        # back to its native representation so the struct fields match their
+        # declared types
+        items = []
+        for arc4_item, field in zip(tuple_value.native, cls._type_info.fields, strict=True):
+            if isinstance(field.type, type) and not issubclass(field.type, _ABIEncoded):
+                items.append(get_native_to_arc4_serializer(field.type).arc4_to_native(arc4_item))
+            else:
+                items.append(arc4_item)
+
+        return cls(*items)
 
     @property
     def bytes(self) -> algopy.Bytes:
@@ -1211,7 +1232,10 @@ class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):
     def _as_tuple(self) -> Tuple:  # type: ignore[type-arg]
         # can't use dataclass.astuple here as that processes all dataclasses
         # in the object graph, not just immediate fields
-        tuple_items = tuple(getattr(self, field.name) for field in dataclasses.fields(self))
+        tuple_items = tuple(
+            v if isinstance(v := getattr(self, field.name), _ABIEncoded) else native_to_arc4(v)
+            for field in dataclasses.fields(self)
+        )
         return Tuple(tuple_items)
 
     def _replace(self, **kwargs: typing.Any) -> typing.Self:
