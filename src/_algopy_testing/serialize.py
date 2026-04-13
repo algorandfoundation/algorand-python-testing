@@ -61,7 +61,7 @@ def get_native_to_arc4_serializer(  # noqa: PLR0911
             return _Serializer(
                 arc4_type=arc4.UInt64,
                 native_to_arc4=lambda n: arc4.UInt64(n.int_),
-                arc4_to_native=lambda a: typ.from_int(a.native),
+                arc4_to_native=lambda a: typ.from_int(a.as_uint64()),
             )
         if issubclass(typ, FixedBytes):
             length_type = get_type_generic_from_int_literal(typ._length)
@@ -89,8 +89,8 @@ def get_native_to_arc4_serializer(  # noqa: PLR0911
                 native_to_arc4=lambda arr: arc4_type(
                     *[element_serializer.native_to_arc4(e) for e in arr]
                 ),
-                arc4_to_native=lambda arr: (
-                    typ([element_serializer.arc4_to_native(e) for e in arr])
+                arc4_to_native=lambda arr: typ(
+                    [element_serializer.arc4_to_native(e) for e in arr]
                 ),
             )
         if issubclass(typ, FixedArray | ImmutableFixedArray):
