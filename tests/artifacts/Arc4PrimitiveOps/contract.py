@@ -4,10 +4,15 @@ from algopy import (
     Account,
     Application,
     ARC4Contract,
+    Array,
     Asset,
     BigUInt,
     Bytes,
+    FixedArray,
+    ImmutableArray,
+    ImmutableFixedArray,
     String,
+    Struct,
     UInt64,
     arc4,
     subroutine,
@@ -347,6 +352,7 @@ class Arc4PrimitiveOpsContract(ARC4Contract):
     @arc4.abimethod()
     def verify_encode_decode(self) -> None:
         test_native_struct()
+        test_arc4_native_struct()
         test_arc4_struct()
         test_uint64()
         test_biguint()
@@ -362,6 +368,10 @@ class Arc4PrimitiveOpsContract(ARC4Contract):
         test_named_tuple()
         test_arc4_dynamic_array()
         test_arc4_static_array()
+        test_array()
+        test_immutable_array()
+        test_fixed_array()
+        test_immutable_fixed_array()
 
 
 class SwappedArc4(arc4.Struct):
@@ -375,7 +385,12 @@ class SwappedArc4(arc4.Struct):
     t: arc4.Tuple[arc4.UInt32, arc4.UInt64, arc4.String]
 
 
-class NativeStruct(arc4.Struct):
+class NativeStruct(Struct):
+    a: UInt64
+    b: bool
+
+
+class Arc4NativeStruct(arc4.Struct):
     a: UInt64
     b: bool
 
@@ -396,6 +411,15 @@ def test_native_struct() -> None:
     encoded = arc4.encode(original)
     assert encoded == Bytes.from_hex("000000000000000180")
     decoded = arc4.decode(NativeStruct, encoded)
+    assert decoded == original
+
+
+@subroutine()
+def test_arc4_native_struct() -> None:
+    original = Arc4NativeStruct(a=UInt64(1), b=True)
+    encoded = arc4.encode(original)
+    assert encoded == Bytes.from_hex("000000000000000180")
+    decoded = arc4.decode(Arc4NativeStruct, encoded)
     assert decoded == original
 
 
@@ -532,4 +556,36 @@ def test_arc4_static_array() -> None:
     value = arc4.StaticArray(arc4.UInt64(10), arc4.UInt64(20))
     encoded = arc4.encode(value)
     decoded = arc4.decode(arc4.StaticArray[arc4.UInt64, typing.Literal[2]], encoded)
+    assert decoded == value
+
+
+@subroutine()
+def test_array() -> None:
+    value = Array((UInt64(10), UInt64(20)))
+    encoded = arc4.encode(value)
+    decoded = arc4.decode(Array[UInt64], encoded)
+    assert decoded == value
+
+
+@subroutine()
+def test_immutable_array() -> None:
+    value = ImmutableArray((UInt64(10), UInt64(20)))
+    encoded = arc4.encode(value)
+    decoded = arc4.decode(ImmutableArray[UInt64], encoded)
+    assert decoded == value
+
+
+@subroutine()
+def test_fixed_array() -> None:
+    value = FixedArray[UInt64, typing.Literal[2]]((UInt64(10), UInt64(20)))
+    encoded = arc4.encode(value)
+    decoded = arc4.decode(FixedArray[UInt64, typing.Literal[2]], encoded)
+    assert decoded == value
+
+
+@subroutine()
+def test_immutable_fixed_array() -> None:
+    value = ImmutableFixedArray[UInt64, typing.Literal[2]]((UInt64(10), UInt64(20)))
+    encoded = arc4.encode(value)
+    decoded = arc4.decode(ImmutableFixedArray[UInt64, typing.Literal[2]], encoded)
     assert decoded == value
