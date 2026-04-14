@@ -1,4 +1,16 @@
 # CHANGELOG
+## v1.2.0-beta.10 (2026-04-14)
+
+### Features
+
+* support native-typed fields in arc4.Struct ([`6ec0127`](https://github.com/algorandfoundation/algorand-python-testing/commit/6ec0127d096f4c2972a6ce844d8a196c384828f6))
+
+  This unblocks `arc4.encode`/`arc4.decode` of structs with mixed field annotations and lets the AVM parity test invoke the contract directly in-process alongside the AVM check, exercising `test_native_struct` on both paths instead of AVM only.
+
+* add support for arc4.encode and arc4.decode functions ([`032b2a8`](https://github.com/algorandfoundation/algorand-python-testing/commit/032b2a826338bc3ff92bca774f3361b39e3afc6e))
+
+  also migrate `UInt64Backed` serializer off the deprecated `.native` accessor
+
 ## v1.2.0-beta.9 (2026-04-10)
 
 ### Features
