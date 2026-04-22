@@ -47,6 +47,30 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Verify production puyapy dependency
+        if: ${{ env.PRERELEASE == 'false' }}
+        run: |
+          set -euo pipefail
+          deps=$(grep -oE '"puyapy[^"]+"' pyproject.toml | tr -d '"' || true)
+          if [ -z "$deps" ]; then
+            echo "ERROR: No puyapy dependency found in pyproject.toml"
+            exit 1
+          fi
+          echo "Found puyapy dependencies:"
+          echo "$deps"
+          echo ""
+          failed=0
+          while IFS= read -r dep; do
+            version=$(echo "$dep" | sed -E 's/^puyapy[><=!~]*//')
+            if [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "OK: $dep"
+            else
+              echo "ERROR: '$dep' uses non-production version ('$version')"
+              failed=1
+            fi
+          done <<< "$deps"
+          exit $failed
+
       - name: Install hatch
         run: pipx install hatch
 
