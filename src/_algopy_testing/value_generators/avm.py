@@ -36,7 +36,8 @@ class AVMValueGenerator:
         :param min_value: Minimum value. Defaults to 0.
         :param max_value: Maximum value. Defaults to MAX_UINT64.
         :returns: The randomly generated UInt64 value.
-        :raises ValueError: If `max_value` exceeds MAX_UINT64 or `min_value` exceeds `max_value`.
+        :raises ValueError: If `max_value` exceeds MAX_UINT64 or `min_value` exceeds
+            `max_value`.
         """
         if max_value > MAX_UINT64:
             raise ValueError("max_value must be less than or equal to MAX_UINT64")
@@ -146,7 +147,6 @@ class AVMValueGenerator:
         **application_fields: typing.Unpack[ApplicationFields],
     ) -> algopy.Application:
         r"""Generate and add a new application with a unique ID."""
-
         new_app_id = id if id is not None else lazy_context.ledger._get_next_app_id()
 
         if new_app_id in lazy_context.ledger._app_data:

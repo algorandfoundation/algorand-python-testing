@@ -20,7 +20,6 @@ class ARC4ValueGenerator:
 
         :returns: A new, random Algorand address.
         """
-
         address = generate_random_account().addr
         return arc4.Address(address)
 
@@ -94,8 +93,8 @@ class ARC4ValueGenerator:
     def dynamic_bytes(self, n: int) -> algopy.arc4.DynamicBytes:
         """Generate a random dynamic bytes of size `n` bits.
 
-        :param n: The number of bits for the dynamic bytes. Must be a multiple of 8, otherwise
-                the last byte will be truncated.
+        :param n: The number of bits for the dynamic bytes. Must be a multiple of 8,
+            otherwise the last byte will be truncated.
         :returns: A new, random dynamic bytes of size `n` bits.
         """
         # rounding up

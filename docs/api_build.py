@@ -22,8 +22,7 @@ _PACKAGES_ALT = "|".join(re.escape(p) for p in PACKAGES)
 
 _HEADING_RE = re.compile(r"^#{3,4}\s")
 _LINKED_QUALIFIED_RE = re.compile(
-    rf"\[\\?(?:{_PACKAGES_ALT}|typing_extensions|collections\.abc)"
-    r"(?:\.\w+)*\.(\w+)\]"
+    rf"\[\\?(?:{_PACKAGES_ALT}|typing_extensions|collections\.abc)" r"(?:\.\w+)*\.(\w+)\]"
 )
 _PLAIN_QUALIFIED_RE = re.compile(
     rf"(?<!\[)(?<!#)(?<!/)(?<!\.md)\\?(?:{_PACKAGES_ALT}|typing_extensions|collections\.abc)"
@@ -57,6 +56,7 @@ def _run_sphinx_build() -> None:
         cwd=str(REPO_ROOT),
         capture_output=True,
         text=True,
+        check=False,
     )
     if result.returncode != 0:
         print(f"ERROR: Sphinx build failed (exit code {result.returncode})", file=sys.stderr)
@@ -94,8 +94,10 @@ def _flatten_autoapi() -> None:
     if not source.is_dir():
         print(
             f"ERROR: Expected autoapi output directory not found: {source}\n"
-            "This likely means the Sphinx autoapi configuration or package structure has changed.\n"
-            "Check that 'autoapi_dirs' in docs/sphinx/conf.py points to the correct source directories.",
+            "This likely means the Sphinx autoapi configuration or"
+            " package structure has changed.\n"
+            "Check that 'autoapi_dirs' in docs/sphinx/conf.py points to"
+            " the correct source directories.",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -115,15 +117,13 @@ def _rename_source_package_in_content() -> None:
     escaped = "\\" + SOURCE_PACKAGE
     for md_file in API_OUT.rglob("*.md"):
         content = md_file.read_text(encoding="utf-8")
-        updated = content.replace(escaped, PUBLIC_PACKAGE).replace(
-            SOURCE_PACKAGE, PUBLIC_PACKAGE
-        )
+        updated = content.replace(escaped, PUBLIC_PACKAGE).replace(SOURCE_PACKAGE, PUBLIC_PACKAGE)
         if updated != content:
             md_file.write_text(updated, encoding="utf-8")
 
 
 def _extract_title(file_path: Path) -> str:
-    with open(file_path, encoding="utf-8") as f:
+    with file_path.open(encoding="utf-8") as f:
         for line in f:
             if line.startswith("# "):
                 return re.sub(r"\\(?=\w)", "", line[2:].strip())
@@ -139,7 +139,8 @@ def _inject_frontmatter() -> None:
         content = md_file.read_text(encoding="utf-8")
         content = re.sub(r"^# [^\n]*\n+", "", content)
         md_file.write_text(
-            f'---\ntitle: "{escaped_title}"\n---\n\n<div class="api-ref">\n\n{content}\n\n</div>\n',
+            f'---\ntitle: "{escaped_title}"\n---\n\n'
+            f'<div class="api-ref">\n\n{content}\n\n</div>\n',
             encoding="utf-8",
         )
 
@@ -251,13 +252,9 @@ def _restructure_top_sections() -> None:
             start, end = sections[name]
             block = content[start:end].rstrip() + "\n\n"
             new_name = _SUMMARY_RENAME[name]
-            summary_blocks[name] = re.sub(
-                r"^## .+", f"### {new_name}", block, count=1
-            )
+            summary_blocks[name] = re.sub(r"^## .+", f"### {new_name}", block, count=1)
 
-        ranges = sorted(
-            (sections[n] for n in summary_blocks), key=lambda r: r[0], reverse=True
-        )
+        ranges = sorted((sections[n] for n in summary_blocks), key=lambda r: r[0], reverse=True)
         new_content = content
         for start, end in ranges:
             new_content = new_content[:start] + new_content[end:]
@@ -360,9 +357,9 @@ def _fix_member_index_anchors() -> None:
         if not slug_map:
             continue
 
-        def fix_anchor(m: re.Match) -> str:
+        def fix_anchor(m: re.Match, _slug_map: dict[str, str] = slug_map) -> str:
             anchor = m.group(1)
-            return f"(#{slug_map.get(anchor, anchor)})"
+            return f"(#{_slug_map.get(anchor, anchor)})"
 
         updated = _SAME_PAGE_ANCHOR_RE.sub(fix_anchor, content)
         if updated != content:

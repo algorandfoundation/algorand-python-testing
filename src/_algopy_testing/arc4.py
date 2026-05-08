@@ -1161,8 +1161,8 @@ def _is_arc4_type(field_type: typing.Any) -> bool:
 def _arc4_type_for_field(field_type: typing.Any) -> type[_ABIEncoded]:
     """Resolve a struct field's declared type to its ARC-4 equivalent.
 
-    Fields annotated with ARC-4 types are returned as-is; native/algopy types
-    are mapped via the serializer registry so `arc4.Struct` accepts either.
+    Fields annotated with ARC-4 types are returned as-is; native/algopy types are mapped
+    via the serializer registry so `arc4.Struct` accepts either.
     """
     if _is_arc4_type(field_type):
         return field_type  # type: ignore[no-any-return]

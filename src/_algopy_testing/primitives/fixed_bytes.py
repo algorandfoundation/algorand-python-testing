@@ -106,7 +106,6 @@ class FixedBytes(
     def __eq__(self, other: FixedBytes[_TBytesLength_Arg] | Bytes | bytes) -> bool:  # type: ignore[override]
         """FixedBytes can be compared using the `==` operator with another FixedBytes,
         Bytes or bytes."""
-
         if isinstance(other, FixedBytes) and other.length != self.length:
             return False
 
