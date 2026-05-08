@@ -26,7 +26,7 @@ context = ctx_manager.__enter__()
 
 Subclasses of `algopy.ARC4Contract` are **required** to be instantiated with an active test context. As part of instantiation, the test context will automatically create a matching `algopy.Application` object instance.
 
-Within the class implementation, methods decorated with `algopy.arc4.abimethod` (or its alias, `algopy.public`) and `algopy.arc4.baremethod` will automatically assemble an `algopy.gtxn.ApplicationCallTransaction` to emulate the AVM application call. This behaviour can be overridden by setting the transaction group manually as part of test setup; this is done via implicit invocation of the `algopy_testing.context.any_application()` _value generator_ (refer to the [API](/algorand-python-testing/api/) for more details).
+Within the class implementation, methods decorated with `algopy.arc4.abimethod` (or its alias, `algopy.public`) and `algopy.arc4.baremethod` will automatically assemble an `algopy.gtxn.ApplicationCallTransaction` to emulate the AVM application call. This behaviour can be overridden by setting the transaction group manually as part of test setup; this is done via implicit invocation of the `algopy_testing.context.any_application()` _value generator_ (refer to the [API](/algorand-python-testing/api/algopy_testing/) for more details).
 
 ```python
 class SimpleVotingContract(algopy.ARC4Contract):

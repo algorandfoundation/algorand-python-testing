@@ -56,7 +56,7 @@ const buildExamplePages = (): ExamplePage[] => {
 
   const dirs = fs
     .readdirSync(examplesRoot, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
+    .filter((entry) => entry.isDirectory() && !entry.name.startsWith('__'))
     .map((entry) => entry.name)
     .sort()
 
@@ -115,6 +115,7 @@ const cleanOutput = () => {
   if (!fs.existsSync(outputDir)) return
 
   for (const entry of fs.readdirSync(outputDir)) {
+    if (entry.startsWith('index.')) continue
     fs.rmSync(path.join(outputDir, entry), { recursive: true, force: true })
   }
 }

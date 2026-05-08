@@ -5,7 +5,7 @@ description: Frequently asked questions about using Algorand Python Testing.
 
 ## What is a Test Context?
 
-A Test Context is a context manager that provides a simulated Algorand environment for testing Python smart contracts. It allows developers to create and manipulate a virtual Algorand ecosystem for testing purposes. For more details, see the [Test Context section](/algorand-python-testing/testing-guide/concepts/#test-context) in our documentation.
+A Test Context is a context manager that provides a simulated Algorand environment for testing Python smart contracts. It allows developers to create and manipulate a virtual Algorand ecosystem for testing purposes. For more details, see the [Test Context section](/algorand-python-testing/concepts/test-context/) in our documentation.
 
 ## What is the Algorand Virtual Machine (AVM)?
 
@@ -17,7 +17,7 @@ Operational Codes, or opcodes, are AVM instructions that are executed directly b
 
 ## What are Value Generators?
 
-Value Generators are helper methods that produce randomized values for testing when the exact value of a type isn't important. In Algorand Python testing these generators are exposed as properties on the test context manager and accessed via `any.*` (for example, `any.arc4.*` and `any.txn.*` for ARC4 types). To learn more, see the [Value Generators section](/algorand-python-testing/testing-guide/concepts/#value-generators).
+Value Generators are helper methods that produce randomized values for testing when the exact value of a type isn't important. In Algorand Python testing these generators are exposed as properties on the test context manager and accessed via `any.*` (for example, `any.arc4.*` and `any.txn.*` for ARC4 types). To learn more, see the [Value Generators section](/algorand-python-testing/concepts/value-generators/).
 
 ## What are the limitations of the Algorand Python Testing framework?
 
@@ -45,7 +45,7 @@ The framework does not implement a strict opcode budget system. For scenarios wh
 
 ## Are all cryptographic operations fully implemented?
 
-Some cryptographic operations are mocked or simplified in the framework. For a detailed list of which operations are mocked, refer to the _mockable_ types under the [coverage](/algorand-python-testing/coverage/) section.
+Some cryptographic operations are mocked or simplified in the framework. For a detailed list of which operations are mocked, refer to the _mockable_ types under the [coverage](/algorand-python-testing/reference/coverage/) section.
 
 ## Can I use this framework for security-critical validations?
 

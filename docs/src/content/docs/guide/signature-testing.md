@@ -69,7 +69,7 @@ secret = algopy.Bytes(b"secret")
 assert context.execute_logicsig(hashed_time_locked_lsig, secret)
 ```
 
-For more details on available operations, see the [coverage](/algorand-python-testing/coverage/).
+For more details on available operations, see the [coverage](/algorand-python-testing/reference/coverage/).
 
 ```python
 ctx_manager.__exit__(None, None, None)

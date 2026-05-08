@@ -177,7 +177,7 @@ scratch_space = context.txn.last_group.get_scratch_space()
 assert scratch_space[1] == algopy.UInt64(5)
 ```
 
-For more detailed information, explore the example contracts in the `examples/` directory, the [coverage](/algorand-python-testing/coverage/) page, and the [API documentation](/algorand-python-testing/api/).
+For more detailed information, explore the example contracts in the `examples/` directory, the [coverage](/algorand-python-testing/reference/coverage/) page, and the [API documentation](/algorand-python-testing/api/algopy_testing/).
 
 ```python
 ctx_manager.__exit__(None, None, None)

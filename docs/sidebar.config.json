@@ -1,42 +1,45 @@
 [
   { "label": "Home", "link": "/" },
   {
+    "label": "Getting Started",
+    "items": [{ "slug": "tutorials/quick-start" }]
+  },
+  {
     "label": "Guides",
     "items": [
-      { "slug": "testing-guide" },
-      { "slug": "testing-guide/concepts" },
-      { "slug": "testing-guide/avm-types" },
-      { "slug": "testing-guide/arc4-types" },
-      { "slug": "testing-guide/transactions" },
-      { "slug": "testing-guide/contract-testing" },
-      { "slug": "testing-guide/signature-testing" },
-      { "slug": "testing-guide/state-management" },
-      { "slug": "testing-guide/subroutines" },
-      { "slug": "testing-guide/opcodes" }
+      { "slug": "guide/contract-testing" },
+      { "slug": "guide/signature-testing" },
+      { "slug": "guide/state-management" },
+      { "slug": "guide/subroutines" },
+      { "slug": "guide/transactions" }
     ]
   },
   {
-    "label": "Resources",
+    "label": "Concepts",
     "items": [
-      { "slug": "coverage" },
-      { "slug": "faq" },
-      { "slug": "algopy" }
+      { "slug": "concepts/overview" },
+      { "slug": "concepts/test-context" },
+      { "slug": "concepts/value-generators" },
+      { "slug": "concepts/avm-types" },
+      { "slug": "concepts/arc4-types" },
+      { "slug": "concepts/opcodes" },
+      { "slug": "concepts/algopy" }
+    ]
+  },
+  {
+    "label": "Examples",
+    "autogenerate": { "directory": "examples" }
+  },
+  {
+    "label": "Reference",
+    "items": [
+      { "slug": "reference/coverage" },
+      { "slug": "reference/faq" }
     ]
   },
   {
     "label": "API Reference",
     "collapsed": true,
-    "items": [
-      { "slug": "api" },
-      { "label": "Package", "autogenerate": { "directory": "api/algopy_testing" } }
-    ]
-  },
-  {
-    "label": "Examples",
-    "collapsed": true,
-    "items": [
-      { "slug": "examples" },
-      { "label": "Catalog", "autogenerate": { "directory": "examples" } }
-    ]
+    "autogenerate": { "directory": "api/algopy_testing" }
   }
 ]

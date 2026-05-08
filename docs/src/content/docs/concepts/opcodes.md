@@ -3,7 +3,7 @@ title: AVM Opcodes
 description: Overview of key opcodes and opcode types in algorand-python-testing.
 ---
 
-The [coverage](/algorand-python-testing/coverage/) file provides a comprehensive list of all opcodes and their respective types, categorized as _Mockable_, _Emulated_, or _Native_ within the `algorand-python-testing` package. This section highlights a **subset** of opcodes and types that typically require interaction with the test context manager.
+The [coverage](/algorand-python-testing/reference/coverage/) file provides a comprehensive list of all opcodes and their respective types, categorized as _Mockable_, _Emulated_, or _Native_ within the `algorand-python-testing` package. This section highlights a **subset** of opcodes and types that typically require interaction with the test context manager.
 
 `Native` opcodes are assumed to function as they do in the Algorand Virtual Machine, given their stateless nature. If you encounter issues with any `Native` opcodes, please raise an issue in the [`algorand-python-testing` repo](https://github.com/algorandfoundation/algorand-python-testing/issues/new/choose) or contribute a PR following the [Contributing](https://github.com/algorandfoundation/algorand-python-testing/blob/main/CONTRIBUTING.md) guide.
 
@@ -73,7 +73,7 @@ is_bit_set = op.getbit(value, 3)
 new_value = op.setbit_uint64(value, 2, 1)
 ```
 
-For a comprehensive list of all opcodes and types, refer to the [coverage](/algorand-python-testing/coverage/) page.
+For a comprehensive list of all opcodes and types, refer to the [coverage](/algorand-python-testing/reference/coverage/) page.
 
 ## Emulated Types Requiring Transaction Context
 

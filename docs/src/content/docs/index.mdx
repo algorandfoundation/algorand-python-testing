@@ -1,0 +1,80 @@
+---
+title: Algorand Python Testing
+description: Offline unit testing toolkit for Algorand Python smart contracts.
+template: splash
+hero:
+  title: Algorand Python Testing
+  tagline: Offline unit testing for Algorand Python smart contracts — fast, Pythonic, network-free.
+  actions:
+    - text: Get Started
+      link: tutorials/quick-start/
+      icon: right-arrow
+    - text: API Reference
+      link: api/algopy_testing/
+      variant: minimal
+---
+
+import { Card, CardGrid, Tabs, TabItem } from "@astrojs/starlight/components";
+
+## Installation
+
+`algorand-python-testing` is a companion to [Algorand Python](https://github.com/algorandfoundation/puya) and requires Python 3.12+.
+
+<Tabs>
+  <TabItem label="pip">
+    ```bash
+    pip install algorand-python-testing
+    ```
+  </TabItem>
+  <TabItem label="poetry">
+    ```bash
+    poetry add algorand-python-testing
+    ```
+  </TabItem>
+  <TabItem label="uv">
+    ```bash
+    uv add algorand-python-testing
+    ```
+  </TabItem>
+</Tabs>
+
+## Quick Example
+
+```python
+import algopy
+from algopy_testing import algopy_testing_context
+
+class Counter(algopy.ARC4Contract):
+    def __init__(self) -> None:
+        self.count = algopy.GlobalState(algopy.UInt64(0))
+
+    @algopy.arc4.abimethod
+    def increment(self) -> algopy.arc4.UInt64:
+        self.count.value += algopy.UInt64(1)
+        return algopy.arc4.UInt64(self.count.value)
+
+with algopy_testing_context() as ctx:
+    contract = Counter()
+    result = contract.increment()
+    assert result.native == 1
+    assert contract.count.value == 1
+```
+
+See the [Quick Start tutorial](/algorand-python-testing/tutorials/quick-start/) for a richer walkthrough.
+
+## Features
+
+<CardGrid>
+  <Card title="Offline AVM Simulation" icon="rocket">
+    Emulate AVM behaviour in pure Python — no sandbox, no network, no waiting.
+  </Card>
+  <Card title="ARC4 Support" icon="document">
+    First-class testing for `ARC4Contract` classes, ABI methods, and ARC4 types.
+  </Card>
+  <Card title="Transaction & State Helpers" icon="setting">
+    Build transaction groups, manage global/local/box state, and inspect inner txns.
+  </Card>
+  <Card title="pytest-native" icon="approve-check">
+    Plain Python tests — works with pytest, unittest, and hypothesis out of the box.
+  </Card>
+</CardGrid>

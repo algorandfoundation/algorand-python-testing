@@ -255,7 +255,7 @@ assert itxns.asset_config(4).asset_name == b"abc"
 
 ## References
 
--   [API](/algorand-python-testing/api/) for more details on the test context manager and inner transactions related methods that perform implicit inner transaction type validation.
+-   [API](/algorand-python-testing/api/algopy_testing/) for more details on the test context manager and inner transactions related methods that perform implicit inner transaction type validation.
 -   [Examples](/algorand-python-testing/examples/) for more examples of smart contracts and associated tests that interact with inner transactions.
 
 ```python
