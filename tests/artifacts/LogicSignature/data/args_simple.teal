@@ -1,0 +1,92 @@
+#pragma version 11
+#pragma typetrack false
+
+// tests.artifacts.LogicSignature.lsig_args_simple.args_simple() -> uint64:
+main:
+    intcblock 10 0
+    pushbytes ""
+    // tests/artifacts/LogicSignature/lsig_args_simple.py:5
+    // def args_simple(arg0: UInt64, arg1: Bytes, arg2: bool) -> UInt64:  # noqa: FBT001
+    arg_0
+    btoi
+    dup
+    arg_1
+    extract 2 0
+    dup
+    uncover 2
+    arg_2
+    intc_1 // 0
+    getbit
+    dup
+    cover 3
+    cover 3
+    // tests/artifacts/LogicSignature/lsig_args_simple.py:6-7
+    // # verify args match raw op.arg values
+    // assert arg0 == arc4.UInt64.from_bytes(op.arg(0)).as_uint64()
+    arg_0
+    btoi
+    dig 1
+    ==
+    assert
+    // tests/artifacts/LogicSignature/lsig_args_simple.py:8
+    // assert arg1 == op.arg(1)
+    arg_1
+    uncover 2
+    ==
+    assert
+    // tests/artifacts/LogicSignature/lsig_args_simple.py:9
+    // assert arg2 == arc4.Bool(op.btoi(op.arg(2)) != 0)
+    arg_2
+    btoi
+    intc_1 // 0
+    !=
+    uncover 2
+    ==
+    assert
+    // tests/artifacts/LogicSignature/lsig_args_simple.py:11-12
+    // # mutate all
+    // if arg0 < 10:
+    intc_0 // 10
+    <
+    bz main_after_if_else@2
+    // tests/artifacts/LogicSignature/lsig_args_simple.py:13
+    // arg0 = UInt64(10)
+    intc_0 // 10
+    bury 3
+
+main_after_if_else@2:
+    // tests/artifacts/LogicSignature/lsig_args_simple.py:14
+    // arg1 = arg1 + b"suffix"
+    dig 1
+    pushbytes 0x737566666978
+    concat
+    // tests/artifacts/LogicSignature/lsig_args_simple.py:17-18
+    // # assert all
+    // assert arg0 >= 10
+    dig 3
+    intc_0 // 10
+    >=
+    assert
+    // tests/artifacts/LogicSignature/lsig_args_simple.py:19
+    // assert arg1.length > 0
+    len
+    dup
+    bury 5
+    assert
+    // tests/artifacts/LogicSignature/lsig_args_simple.py:21-22
+    // # some random cross-arg operations
+    // if arg2:
+    dup
+    bnz main_after_if_else@4
+    // tests/artifacts/LogicSignature/lsig_args_simple.py:23
+    // arg0 += arg1.length
+    dig 2
+    dig 4
+    +
+    bury 3
+
+main_after_if_else@4:
+    // tests/artifacts/LogicSignature/lsig_args_simple.py:24
+    // return arg0
+    dig 2
+    return

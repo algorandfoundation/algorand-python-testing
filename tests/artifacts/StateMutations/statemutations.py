@@ -3,6 +3,7 @@ from algopy import (
     ARC4Contract,
     Box,
     BoxMap,
+    GlobalMap,
     GlobalState,
     LocalState,
     Txn,
@@ -27,6 +28,7 @@ class StateMutations(ARC4Contract):
         self.loc = LocalState(MyArray)
         self.box = Box(MyArray)
         self.map = BoxMap(Account, MyArray)
+        self.global_map = GlobalMap(Account, MyArray)
 
     @arc4.baremethod(allow_actions=["OptIn"])
     def opt_in(self) -> None:
@@ -35,6 +37,7 @@ class StateMutations(ARC4Contract):
         self.box.value = MyArray()
         self.loc[Txn.sender] = MyArray()
         self.map[Txn.sender] = MyArray()
+        self.global_map[Txn.sender] = MyArray()
 
     @arc4.abimethod
     def append(self) -> None:
@@ -48,6 +51,7 @@ class StateMutations(ARC4Contract):
         self.loc[Txn.sender].append(struct.copy())
         self.box.value.append(struct.copy())
         self.map[Txn.sender].append(struct.copy())
+        self.global_map[Txn.sender].append(struct.copy())
 
     @arc4.abimethod
     def modify(self) -> None:
@@ -62,6 +66,7 @@ class StateMutations(ARC4Contract):
         self.loc[Txn.sender][0].baz = modified
         self.box.value[0].baz = modified
         self.map[Txn.sender][0].baz = modified
+        self.global_map[Txn.sender][0].baz = modified
 
     @arc4.abimethod
     def get(self) -> MyArray:
@@ -71,12 +76,14 @@ class StateMutations(ARC4Contract):
         a3 = self.loc[Txn.sender].copy()
         a4 = self.box.value.copy()
         a5 = self.map[Txn.sender].copy()
+        a6 = self.global_map[Txn.sender].copy()
 
         assert a0 == a1, "expected global assign == no_proxy"
         assert a0 == a2, "expected global == no_proxy"
         assert a0 == a3, "expected local == no_proxy"
         assert a0 == a4, "expected box == no_proxy"
         assert a0 == a5, "expected map == no_proxy"
+        assert a0 == a6, "expected global_map == no_proxy"
         return a0
 
 

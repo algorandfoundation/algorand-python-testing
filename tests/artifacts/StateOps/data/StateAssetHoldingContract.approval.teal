@@ -4,7 +4,7 @@
 // algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
     bytecblock 0x151f7c75
-    // tests/artifacts/StateOps/contract.py:162
+    // tests/artifacts/StateOps/contract.py:165
     // class StateAssetHoldingContract(ARC4Contract):
     txn NumAppArgs
     bz main___algopy_default_create@9
@@ -29,16 +29,16 @@ main___algopy_default_create@9:
 
 // tests.artifacts.StateOps.contract.StateAssetHoldingContract.verify_asset_holding_get[routing]() -> void:
 verify_asset_holding_get:
-    // tests/artifacts/StateOps/contract.py:163
+    // tests/artifacts/StateOps/contract.py:166
     // @arc4.abimethod()
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/StateOps/contract.py:165
+    // tests/artifacts/StateOps/contract.py:168
     // balance, _val = op.AssetHoldingGet.asset_balance(a, b)
     asset_holding_get AssetBalance
     pop
-    // tests/artifacts/StateOps/contract.py:163
+    // tests/artifacts/StateOps/contract.py:166
     // @arc4.abimethod()
     itob
     bytec_0 // 0x151f7c75
@@ -51,16 +51,16 @@ verify_asset_holding_get:
 
 // tests.artifacts.StateOps.contract.StateAssetHoldingContract.verify_asset_frozen_get[routing]() -> void:
 verify_asset_frozen_get:
-    // tests/artifacts/StateOps/contract.py:168
+    // tests/artifacts/StateOps/contract.py:171
     // @arc4.abimethod()
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     btoi
-    // tests/artifacts/StateOps/contract.py:170
+    // tests/artifacts/StateOps/contract.py:173
     // frozen, _val = op.AssetHoldingGet.asset_frozen(a, b)
     asset_holding_get AssetFrozen
     pop
-    // tests/artifacts/StateOps/contract.py:168
+    // tests/artifacts/StateOps/contract.py:171
     // @arc4.abimethod()
     pushbytes 0x00
     pushint 0

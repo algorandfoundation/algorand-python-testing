@@ -10,19 +10,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -47,18 +42,14 @@
         }
     },
     "bareActions": {
-        "create": [
-            "NoOp"
-        ],
+        "create": ["NoOp"],
         "call": []
     },
     "sourceInfo": {
         "approval": {
             "sourceInfo": [
                 {
-                    "pc": [
-                        56
-                    ],
+                    "pc": [56],
                     "errorMessage": "Txn must be pay"
                 }
             ],
@@ -81,7 +72,7 @@
         "compiler": "puya",
         "compilerVersion": {
             "major": 5,
-            "minor": 7,
+            "minor": 8,
             "patch": 1
         }
     },

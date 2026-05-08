@@ -26,7 +26,7 @@ from _algopy_testing.mutable import (
 )
 from _algopy_testing.primitives import Bytes
 from _algopy_testing.protocols import BytesBacked
-from _algopy_testing.serialize import get_native_to_arc4_serializer
+from _algopy_testing.serialize import get_native_to_arc4_serializer, native_to_arc4
 from _algopy_testing.utils import (
     as_bytes,
     as_int,
@@ -73,7 +73,9 @@ __all__ = [
     "arc4_create",
     "arc4_signature",
     "arc4_update",
+    "decode",
     "emit",
+    "encode",
 ]
 
 _ABI_LENGTH_SIZE = 2
@@ -1152,9 +1154,40 @@ class _StructMeta(type):
     pass
 
 
+def _is_arc4_type(field_type: typing.Any) -> bool:
+    return isinstance(field_type, type) and issubclass(field_type, _ABIEncoded)
+
+
+def _arc4_type_for_field(field_type: typing.Any) -> type[_ABIEncoded]:
+    """Resolve a struct field's declared type to its ARC-4 equivalent.
+
+    Fields annotated with ARC-4 types are returned as-is; native/algopy types
+    are mapped via the serializer registry so `arc4.Struct` accepts either.
+    """
+    if _is_arc4_type(field_type):
+        return field_type  # type: ignore[no-any-return]
+    return get_native_to_arc4_serializer(field_type).arc4_type
+
+
+def _encode_to_arc4(value: object) -> _ABIEncoded:
+    """Wrap a struct field value for encoding — ARC-4 instances pass through, native
+    values are converted via the serializer registry."""
+    if isinstance(value, _ABIEncoded):
+        return value
+    return native_to_arc4(value)
+
+
+def _to_native_type(field_type: typing.Any, arc4_value: _ABIEncoded) -> object:
+    """Convert a decoded ARC-4 value back to the declared field type — ARC-4 annotations
+    pass through, native annotations go through `arc4_to_native`."""
+    if _is_arc4_type(field_type):
+        return arc4_value
+    return get_native_to_arc4_serializer(field_type).arc4_to_native(arc4_value)
+
+
 def _tuple_type_from_struct(struct: type[Struct]) -> type[Tuple]:  # type: ignore[type-arg]
-    field_types = [f.type for f in struct._type_info.fields]
-    return parameterize_type(Tuple, *field_types)  # type: ignore[arg-type]
+    field_types = [_arc4_type_for_field(f.type) for f in struct._type_info.fields]
+    return parameterize_type(Tuple, *field_types)
 
 
 class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):
@@ -1198,7 +1231,13 @@ class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):
         tuple_value = tuple_type.from_bytes(value)
         if not tuple_value:
             return typing.cast("typing.Self", tuple_value)
-        return cls(*tuple_value.native)
+        # convert each decoded ARC-4 item to the declared field type (ARC-4
+        # annotations pass through, native annotations go through arc4_to_native)
+        items = [
+            _to_native_type(field.type, arc4_item)
+            for arc4_item, field in zip(tuple_value.native, cls._type_info.fields, strict=True)
+        ]
+        return cls(*items)
 
     @property
     def bytes(self) -> algopy.Bytes:
@@ -1208,8 +1247,10 @@ class Struct(MutableBytes, _ABIEncoded, metaclass=_StructMeta):
     @property
     def _as_tuple(self) -> Tuple:  # type: ignore[type-arg]
         # can't use dataclass.astuple here as that processes all dataclasses
-        # in the object graph, not just immediate fields
-        tuple_items = tuple(getattr(self, field.name) for field in dataclasses.fields(self))
+        # in the object graph, not just immediate fields.
+        tuple_items = tuple(
+            _encode_to_arc4(getattr(self, field.name)) for field in dataclasses.fields(self)
+        )
         return Tuple(tuple_items)
 
     def _replace(self, **kwargs: typing.Any) -> typing.Self:
@@ -1270,9 +1311,36 @@ def emit(event: str | Struct, /, *args: object) -> None:
     log(event_hash[:4] + event_data.value)
 
 
-def _cast_arg_as_arc4(arg: object) -> _ABIEncoded:
-    from _algopy_testing.serialize import native_to_arc4
+def encode(value: object, /) -> algopy.Bytes:
+    return _encode_to_arc4(value).bytes
 
+
+_TDecode = typing.TypeVar("_TDecode")
+
+
+def decode(
+    typ: type[_TDecode],
+    value: algopy.Bytes | bytes,
+    /,
+    *,
+    validate: typing.Literal[True, False] = True,
+) -> _TDecode:
+    raw = value.value if isinstance(value, Bytes) else value
+
+    if isinstance(typ, type) and issubclass(typ, _ABIEncoded):
+        arc4_value = typ.from_bytes(raw)
+        if validate:
+            arc4_value.validate()
+        return arc4_value
+
+    serializer = get_native_to_arc4_serializer(typ)
+    arc4_value = serializer.arc4_type.from_bytes(raw)
+    if validate:
+        arc4_value.validate()
+    return serializer.arc4_to_native(arc4_value)  # type: ignore[no-any-return]
+
+
+def _cast_arg_as_arc4(arg: object) -> _ABIEncoded:
     if isinstance(arg, int) and not isinstance(arg, bool):
         return UInt64(arg) if arg <= MAX_UINT64 else UInt512(arg)
     if isinstance(arg, bytes):

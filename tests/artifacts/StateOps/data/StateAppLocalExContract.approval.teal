@@ -3,7 +3,7 @@
 
 // algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
-    // tests/artifacts/StateOps/contract.py:346
+    // tests/artifacts/StateOps/contract.py:349
     // class StateAppLocalExContract(ARC4Contract):
     txn NumAppArgs
     bz main___algopy_default_create@7
@@ -13,7 +13,7 @@ main:
     err
 
 main_opt_in_route@5:
-    // tests/artifacts/StateOps/contract.py:363
+    // tests/artifacts/StateOps/contract.py:366
     // @arc4.abimethod(allow_actions=["OptIn"])
     txn OnCompletion
     pushint 1 // OptIn
@@ -34,27 +34,27 @@ main___algopy_default_create@7:
 
 // tests.artifacts.StateOps.contract.StateAppLocalExContract.opt_in[routing]() -> void:
 opt_in:
-    // tests/artifacts/StateOps/contract.py:365
+    // tests/artifacts/StateOps/contract.py:368
     // self.local_bytes[Global.creator_address] = Bytes(b"dummy_bytes_from_external_contract")
     global CreatorAddress
     pushbytess "local_bytes" 0x64756d6d795f62797465735f66726f6d5f65787465726e616c5f636f6e7472616374
     app_local_put
-    // tests/artifacts/StateOps/contract.py:366
+    // tests/artifacts/StateOps/contract.py:369
     // self.local_uint64[Global.creator_address] = UInt64(99)
     global CreatorAddress
     pushbytes "local_uint64"
     pushint 99
     app_local_put
-    // tests/artifacts/StateOps/contract.py:367
+    // tests/artifacts/StateOps/contract.py:370
     // self.local_arc4_bytes[Global.creator_address] = algopy.arc4.DynamicBytes(
     global CreatorAddress
-    // tests/artifacts/StateOps/contract.py:367-369
+    // tests/artifacts/StateOps/contract.py:370-372
     // self.local_arc4_bytes[Global.creator_address] = algopy.arc4.DynamicBytes(
     //     b"dummy_arc4_bytes"
     // )
     pushbytess "local_arc4_bytes" 0x001064756d6d795f617263345f6279746573
     app_local_put
-    // tests/artifacts/StateOps/contract.py:363
+    // tests/artifacts/StateOps/contract.py:366
     // @arc4.abimethod(allow_actions=["OptIn"])
     pushint 1
     return

@@ -206,6 +206,18 @@ class FixedArray(
         self._items = list(items)
         self._value = serialize_to_bytes(self)
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, self.__class__):
+            return (
+                self._element_type == other._element_type
+                and self._length == other._length
+                and self.serialize() == other.serialize()
+            )
+        return NotImplemented
+
+    def __hash__(self) -> int:
+        return hash(self.serialize())
+
     @classmethod
     def full(cls, item: _TArrayItem) -> typing.Self:
         return cls([item] * cls._length)
@@ -358,6 +370,16 @@ class ImmutableArray(Serializable, typing.Generic[_TArrayItem], metaclass=_Immut
         typ = ImmutableArray[el_type]  # type: ignore[valid-type]
         return typ(items)
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, self.__class__):
+            return (
+                self._element_type == other._element_type and self.serialize() == other.serialize()
+            )
+        return NotImplemented
+
+    def __hash__(self) -> int:
+        return hash(self.serialize())
+
     def __bool__(self) -> bool:
         return bool(self._items)
 
@@ -508,6 +530,16 @@ class Array(Serializable, MutableBytes, typing.Generic[_TArrayItem], metaclass=_
         el_type = self._element_type
         typ = Array[el_type]  # type: ignore[valid-type]
         return typ(items)
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, self.__class__):
+            return (
+                self._element_type == other._element_type and self.serialize() == other.serialize()
+            )
+        return NotImplemented
+
+    def __hash__(self) -> int:
+        return hash(self.serialize())
 
     def __bool__(self) -> bool:
         return bool(self._items)

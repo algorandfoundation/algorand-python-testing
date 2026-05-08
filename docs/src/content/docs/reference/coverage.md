@@ -23,9 +23,11 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | algopy.FixedArray                           | Native              |
 | algopy.FixedBytes                           | Native              |
 | algopy.Global                               | Emulated            |
+| algopy.GlobalMap                            | Emulated            |
 | algopy.GlobalState                          | Emulated            |
 | algopy.ImmutableArray                       | Native              |
 | algopy.ImmutableFixedArray                  | Native              |
+| algopy.LocalMap                             | Emulated            |
 | algopy.LocalState                           | Emulated            |
 | algopy.LogicSig                             | Emulated            |
 | algopy.OnCompleteAction                     | Native              |
@@ -42,6 +44,8 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | algopy.compile_logicsig                     | Mockable            |
 | algopy.ensure_budget                        | Emulated            |
 | algopy.log                                  | Emulated            |
+| algopy.logged_assert                        | Emulated            |
+| algopy.log_err                              | Emulated            |
 | algopy.logicsig                             | Emulated            |
 | algopy.public                               | Emulated            |
 | algopy.size_of                              | Emulated            |
@@ -73,7 +77,9 @@ See which `algorand-python` stubs are implemented by the `algorand-python-testin
 | algopy.arc4.abimethod                       | Emulated            |
 | algopy.arc4.arc4_signature                  | Native              |
 | algopy.arc4.baremethod                      | Emulated            |
+| algopy.arc4.decode                          | Emulated            |
 | algopy.arc4.emit                            | Emulated            |
+| algopy.arc4.encode                          | Emulated            |
 | algopy.arc4.abi_call                        | Mockable            |
 | algopy.arc4.arc4_create                     | Mockable            |
 | algopy.arc4.arc4_update                     | Mockable            |

@@ -6,8 +6,11 @@ from algopy import (
     Asset,
     Bytes,
     Global,
+    GlobalMap,
     GlobalState,
+    LocalMap,
     LocalState,
+    StateTotals,
     Txn,
     UInt64,
     arc4,
@@ -440,6 +443,7 @@ class StateAppGlobalExContract(ARC4Contract):
             algopy.arc4.DynamicBytes(b"dummy_arc4_bytes"), key="global_arc4_bytes"
         )
         self.global_arc4_bytes_explicit = algopy.arc4.DynamicBytes(b"dummy_arc4_bytes")
+        self.global_tuple = (UInt64(0), UInt64(1))
 
 
 class StateAppGlobalContract(ARC4Contract):
@@ -660,6 +664,136 @@ class GlobalStateContract(ARC4Contract):
         self.arc4_dynamic_bytes.value = value.copy()
 
 
+class GlobalMapContract(ARC4Contract, state_totals=StateTotals(global_uints=11, global_bytes=11)):
+    def __init__(self) -> None:
+        # Implicit key_prefix (derived from attribute name)
+        self.implicit_key_arc4_uint = GlobalMap(UInt64, arc4.UInt64)
+        self.implicit_key_arc4_string = GlobalMap(UInt64, arc4.String)
+        self.implicit_key_arc4_byte = GlobalMap(UInt64, arc4.Byte)
+        self.implicit_key_arc4_bool = GlobalMap(UInt64, arc4.Bool)
+        self.implicit_key_arc4_address = GlobalMap(UInt64, arc4.Address)
+        self.implicit_key_arc4_uint128 = GlobalMap(UInt64, arc4.UInt128)
+        self.implicit_key_arc4_dynamic_bytes = GlobalMap(UInt64, arc4.DynamicBytes)
+        self.implicit_key_tuple = GlobalMap(tuple[UInt64, Bytes, bool], UInt64)
+
+        # Explicit key_prefix
+        self.arc4_uint = GlobalMap(UInt64, arc4.UInt64, key_prefix="explicit_arc4_uint")
+        self.arc4_string = GlobalMap(UInt64, arc4.String, key_prefix="explicit_arc4_string")
+        self.arc4_bool = GlobalMap(UInt64, arc4.Bool, key_prefix=b"explicit_arc4_bool")
+
+    # --- Implicit key_prefix: getters ---
+    @arc4.abimethod()
+    def get_implicit_key_arc4_uint(self, key: UInt64) -> arc4.UInt64:
+        return self.implicit_key_arc4_uint[key]
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_string(self, key: UInt64) -> arc4.String:
+        return self.implicit_key_arc4_string[key]
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_byte(self, key: UInt64) -> arc4.Byte:
+        return self.implicit_key_arc4_byte[key]
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_bool(self, key: UInt64) -> arc4.Bool:
+        return self.implicit_key_arc4_bool[key]
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_address(self, key: UInt64) -> arc4.Address:
+        return self.implicit_key_arc4_address[key]
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_uint128(self, key: UInt64) -> arc4.UInt128:
+        return self.implicit_key_arc4_uint128[key]
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_dynamic_bytes(self, key: UInt64) -> arc4.DynamicBytes:
+        return self.implicit_key_arc4_dynamic_bytes[key]
+
+    @arc4.abimethod()
+    def get_implicit_key_tuple(self, key: tuple[UInt64, Bytes, bool]) -> UInt64:
+        return self.implicit_key_tuple[key]
+
+    # --- Implicit key_prefix: setters ---
+    @arc4.abimethod()
+    def set_implicit_key_arc4_uint(self, key: UInt64, value: arc4.UInt64) -> None:
+        self.implicit_key_arc4_uint[key] = value
+
+    @arc4.abimethod()
+    def set_implicit_key_arc4_string(self, key: UInt64, value: arc4.String) -> None:
+        self.implicit_key_arc4_string[key] = value
+
+    @arc4.abimethod()
+    def set_implicit_key_arc4_byte(self, key: UInt64, value: arc4.Byte) -> None:
+        self.implicit_key_arc4_byte[key] = value
+
+    @arc4.abimethod()
+    def set_implicit_key_arc4_bool(self, key: UInt64, value: arc4.Bool) -> None:
+        self.implicit_key_arc4_bool[key] = value
+
+    @arc4.abimethod()
+    def set_implicit_key_arc4_address(self, key: UInt64, value: arc4.Address) -> None:
+        self.implicit_key_arc4_address[key] = value
+
+    @arc4.abimethod()
+    def set_implicit_key_arc4_uint128(self, key: UInt64, value: arc4.UInt128) -> None:
+        self.implicit_key_arc4_uint128[key] = value
+
+    @arc4.abimethod()
+    def set_implicit_key_arc4_dynamic_bytes(self, key: UInt64, value: arc4.DynamicBytes) -> None:
+        self.implicit_key_arc4_dynamic_bytes[key] = value.copy()
+
+    @arc4.abimethod()
+    def set_implicit_key_tuple(self, key: tuple[UInt64, Bytes, bool], value: UInt64) -> None:
+        self.implicit_key_tuple[key] = value
+
+    # --- Implicit key_prefix: delete ---
+    @arc4.abimethod()
+    def delete_implicit_key_arc4_uint(self, key: UInt64) -> None:
+        del self.implicit_key_arc4_uint[key]
+
+    # --- Implicit key_prefix: contains ---
+    @arc4.abimethod()
+    def contains_implicit_key_arc4_uint(self, key: UInt64) -> bool:
+        return key in self.implicit_key_arc4_uint
+
+    # --- Implicit key_prefix: maybe ---
+    @arc4.abimethod()
+    def maybe_implicit_key_arc4_uint(self, key: UInt64) -> tuple[arc4.UInt64, bool]:
+        return self.implicit_key_arc4_uint.maybe(key)
+
+    # --- Implicit key_prefix: get with default ---
+    @arc4.abimethod()
+    def get_default_implicit_key_arc4_uint(self, key: UInt64, default: arc4.UInt64) -> arc4.UInt64:
+        return self.implicit_key_arc4_uint.get(key, default=default)
+
+    # --- Explicit key_prefix: getters ---
+    @arc4.abimethod()
+    def get_arc4_uint(self, key: UInt64) -> arc4.UInt64:
+        return self.arc4_uint[key]
+
+    @arc4.abimethod()
+    def get_arc4_string(self, key: UInt64) -> arc4.String:
+        return self.arc4_string[key]
+
+    @arc4.abimethod()
+    def get_arc4_bool(self, key: UInt64) -> arc4.Bool:
+        return self.arc4_bool[key]
+
+    # --- Explicit key_prefix: setters ---
+    @arc4.abimethod()
+    def set_arc4_uint(self, key: UInt64, value: arc4.UInt64) -> None:
+        self.arc4_uint[key] = value
+
+    @arc4.abimethod()
+    def set_arc4_string(self, key: UInt64, value: arc4.String) -> None:
+        self.arc4_string[key] = value
+
+    @arc4.abimethod()
+    def set_arc4_bool(self, key: UInt64, value: arc4.Bool) -> None:
+        self.arc4_bool[key] = value
+
+
 class LocalStateContract(ARC4Contract):
     def __init__(self) -> None:
         # Implicit key state variables
@@ -767,3 +901,161 @@ class LocalStateContract(ARC4Contract):
     @arc4.abimethod()
     def get_arc4_dynamic_bytes(self, a: Account) -> arc4.DynamicBytes:
         return self.arc4_dynamic_bytes[a]
+
+
+class LocalMapContract(ARC4Contract):
+    def __init__(self) -> None:
+        # Implicit key_prefix (derived from attribute name)
+        self.implicit_key_arc4_uint = LocalMap(UInt64, arc4.UInt64)
+        self.implicit_key_arc4_string = LocalMap(UInt64, arc4.String)
+        self.implicit_key_arc4_byte = LocalMap(UInt64, arc4.Byte)
+        self.implicit_key_arc4_bool = LocalMap(UInt64, arc4.Bool)
+        self.implicit_key_arc4_address = LocalMap(UInt64, arc4.Address)
+        self.implicit_key_arc4_uint128 = LocalMap(UInt64, arc4.UInt128)
+        self.implicit_key_arc4_dynamic_bytes = LocalMap(UInt64, arc4.DynamicBytes)
+        self.implicit_key_tuple = LocalMap(tuple[UInt64, Bytes, bool], UInt64)
+
+        # Explicit key_prefix
+        self.arc4_uint = LocalMap(UInt64, arc4.UInt64, key_prefix="explicit_arc4_uint")
+        self.arc4_string = LocalMap(UInt64, arc4.String, key_prefix="explicit_arc4_string")
+        self.arc4_bool = LocalMap(UInt64, arc4.Bool, key_prefix=b"explicit_arc4_bool")
+
+    @arc4.abimethod(allow_actions=["OptIn"])
+    def opt_in(self) -> None:
+        key = UInt64(0)
+        self.implicit_key_arc4_uint[Global.creator_address, key] = arc4.UInt64(1337)
+        self.implicit_key_arc4_string[Global.creator_address, key] = arc4.String("Hello")
+        self.implicit_key_arc4_byte[Global.creator_address, key] = arc4.Byte(0)
+        self.implicit_key_arc4_bool[Global.creator_address, key] = arc4.Bool(True)
+        self.implicit_key_arc4_address[Global.creator_address, key] = arc4.Address(
+            Global.creator_address
+        )
+        self.implicit_key_arc4_uint128[Global.creator_address, key] = arc4.UInt128(2**100)
+        self.implicit_key_arc4_dynamic_bytes[Global.creator_address, key] = arc4.DynamicBytes(
+            b"dynamic bytes"
+        )
+        self.implicit_key_tuple[Global.creator_address, (UInt64(10), Bytes(b"test"), False)] = (
+            UInt64(10)
+        )
+
+        self.arc4_uint[Global.creator_address, key] = arc4.UInt64(1337)
+        self.arc4_string[Global.creator_address, key] = arc4.String("Hello")
+        self.arc4_bool[Global.creator_address, key] = arc4.Bool(True)
+
+    # --- Implicit key_prefix: getters ---
+    @arc4.abimethod()
+    def get_implicit_key_arc4_uint(self, a: Account, key: UInt64) -> arc4.UInt64:
+        return self.implicit_key_arc4_uint[a, key]
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_string(self, a: Account, key: UInt64) -> arc4.String:
+        return self.implicit_key_arc4_string[a, key]
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_byte(self, a: Account, key: UInt64) -> arc4.Byte:
+        return self.implicit_key_arc4_byte[a, key]
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_bool(self, a: Account, key: UInt64) -> arc4.Bool:
+        return self.implicit_key_arc4_bool[a, key]
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_address(self, a: Account, key: UInt64) -> arc4.Address:
+        return self.implicit_key_arc4_address[a, key]
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_uint128(self, a: Account, key: UInt64) -> arc4.UInt128:
+        return self.implicit_key_arc4_uint128[a, key]
+
+    @arc4.abimethod()
+    def get_implicit_key_arc4_dynamic_bytes(self, a: Account, key: UInt64) -> arc4.DynamicBytes:
+        return self.implicit_key_arc4_dynamic_bytes[a, key]
+
+    @arc4.abimethod()
+    def get_implicit_key_tuple(self, a: Account, key: tuple[UInt64, Bytes, bool]) -> UInt64:
+        return self.implicit_key_tuple[a, key]
+
+    # --- Implicit key_prefix: setters ---
+    @arc4.abimethod()
+    def set_implicit_key_arc4_uint(self, a: Account, key: UInt64, value: arc4.UInt64) -> None:
+        self.implicit_key_arc4_uint[a, key] = value
+
+    @arc4.abimethod()
+    def set_implicit_key_arc4_string(self, a: Account, key: UInt64, value: arc4.String) -> None:
+        self.implicit_key_arc4_string[a, key] = value
+
+    @arc4.abimethod()
+    def set_implicit_key_arc4_byte(self, a: Account, key: UInt64, value: arc4.Byte) -> None:
+        self.implicit_key_arc4_byte[a, key] = value
+
+    @arc4.abimethod()
+    def set_implicit_key_arc4_bool(self, a: Account, key: UInt64, value: arc4.Bool) -> None:
+        self.implicit_key_arc4_bool[a, key] = value
+
+    @arc4.abimethod()
+    def set_implicit_key_arc4_address(self, a: Account, key: UInt64, value: arc4.Address) -> None:
+        self.implicit_key_arc4_address[a, key] = value
+
+    @arc4.abimethod()
+    def set_implicit_key_arc4_uint128(self, a: Account, key: UInt64, value: arc4.UInt128) -> None:
+        self.implicit_key_arc4_uint128[a, key] = value
+
+    @arc4.abimethod()
+    def set_implicit_key_arc4_dynamic_bytes(
+        self, a: Account, key: UInt64, value: arc4.DynamicBytes
+    ) -> None:
+        self.implicit_key_arc4_dynamic_bytes[a, key] = value.copy()
+
+    @arc4.abimethod()
+    def set_implicit_key_tuple(
+        self, a: Account, key: tuple[UInt64, Bytes, bool], value: UInt64
+    ) -> None:
+        self.implicit_key_tuple[a, key] = value
+
+    # --- Implicit key_prefix: delete ---
+    @arc4.abimethod()
+    def delete_implicit_key_arc4_uint(self, a: Account, key: UInt64) -> None:
+        del self.implicit_key_arc4_uint[a, key]
+
+    # --- Implicit key_prefix: contains ---
+    @arc4.abimethod()
+    def contains_implicit_key_arc4_uint(self, a: Account, key: UInt64) -> bool:
+        return (a, key) in self.implicit_key_arc4_uint
+
+    # --- Implicit key_prefix: maybe ---
+    @arc4.abimethod()
+    def maybe_implicit_key_arc4_uint(self, a: Account, key: UInt64) -> tuple[arc4.UInt64, bool]:
+        return self.implicit_key_arc4_uint.maybe(a, key)
+
+    # --- Implicit key_prefix: get with default ---
+    @arc4.abimethod()
+    def get_default_implicit_key_arc4_uint(
+        self, a: Account, key: UInt64, default: arc4.UInt64
+    ) -> arc4.UInt64:
+        return self.implicit_key_arc4_uint.get(a, key, default=default)
+
+    # --- Explicit key_prefix: getters ---
+    @arc4.abimethod()
+    def get_arc4_uint(self, a: Account, key: UInt64) -> arc4.UInt64:
+        return self.arc4_uint[a, key]
+
+    @arc4.abimethod()
+    def get_arc4_string(self, a: Account, key: UInt64) -> arc4.String:
+        return self.arc4_string[a, key]
+
+    @arc4.abimethod()
+    def get_arc4_bool(self, a: Account, key: UInt64) -> arc4.Bool:
+        return self.arc4_bool[a, key]
+
+    # --- Explicit key_prefix: setters ---
+    @arc4.abimethod()
+    def set_arc4_uint(self, a: Account, key: UInt64, value: arc4.UInt64) -> None:
+        self.arc4_uint[a, key] = value
+
+    @arc4.abimethod()
+    def set_arc4_string(self, a: Account, key: UInt64, value: arc4.String) -> None:
+        self.arc4_string[a, key] = value
+
+    @arc4.abimethod()
+    def set_arc4_bool(self, a: Account, key: UInt64, value: arc4.Bool) -> None:
+        self.arc4_bool[a, key] = value

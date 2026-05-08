@@ -1,197 +1,221 @@
+#!/usr/bin/env python3
+"""Generate API reference markdown from Python source using Sphinx + autoapi,
+then post-process the output for Starlight consumption.
+"""
+
 from __future__ import annotations
 
 import re
 import shutil
 import subprocess
-from dataclasses import dataclass
+import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-DOCS_ROOT = ROOT / "docs"
-SPHINX_SOURCE = DOCS_ROOT / "sphinx"
-SPHINX_TMP_SOURCE = DOCS_ROOT / ".tmp" / "api-sphinx-source"
-SPHINX_BUILD = DOCS_ROOT / ".tmp" / "api-sphinx-build"
-API_OUTPUT = DOCS_ROOT / "src" / "content" / "docs" / "api"
+DOCS_DIR = Path(__file__).resolve().parent
+REPO_ROOT = DOCS_DIR.parent
+API_OUT = DOCS_DIR / "src" / "content" / "docs" / "api"
 
-BASE_PATH = "/algorand-python-testing/"
+PACKAGES = ("algopy_testing", "_algopy_testing")
+_PACKAGES_ALT = "|".join(re.escape(p) for p in PACKAGES)
 
+_HEADING_RE = re.compile(r"^#{3,4}\s")
+_LINKED_QUALIFIED_RE = re.compile(
+    rf"\[(?:{_PACKAGES_ALT}|typing_extensions|collections\.abc)"
+    r"(?:\.\w+)*\.(\w+)\]"
+)
+_PLAIN_QUALIFIED_RE = re.compile(
+    rf"(?<!\[)(?<!#)(?<!/)(?<!\.md)(?:{_PACKAGES_ALT}|typing_extensions|collections\.abc)"
+    r"(?:\.\w+)*\.(\w+)"
+)
+_INDEX_MD_RE = re.compile(r"/index\.md")
 
-@dataclass(frozen=True)
-class ModuleDoc:
-    module_name: str
-    source_file: Path
-
-
-def discover_modules(package_path: Path) -> list[ModuleDoc]:
-    modules: list[ModuleDoc] = []
-    package_name = package_path.name
-
-    for file_path in sorted(package_path.rglob("*.py")):
-        relative = file_path.relative_to(package_path)
-        parts = list(relative.parts)
-
-        if parts[-1] == "__init__.py":
-            parts = parts[:-1]
-        else:
-            parts[-1] = parts[-1][:-3]
-
-        if not parts:
-            module_name = package_name
-        else:
-            module_name = ".".join([package_name, *parts])
-
-        modules.append(ModuleDoc(module_name=module_name, source_file=file_path))
-
-    return modules
+_CLASS_ARGS_RE = re.compile(
+    r"^(#{3,4} \*class\* \w+)\(.*\)\s*$",
+    re.MULTILINE,
+)
+_H3_TEXT_RE = re.compile(r"^### (.+)$", re.MULTILINE)
+_QUALIFIED_ANCHOR_RE = re.compile(
+    rf"\(([^()\s\"']*?)#(?:{_PACKAGES_ALT}|typing_extensions|collections\.abc)"
+    r"(?:\.\w+)*\.(\w+)\)"
+)
 
 
-def render_module_page(module_name: str) -> str:
-    return f"""# `{module_name}`
+def _clean_api_output() -> None:
+    print("==> Cleaning previous API output...")
+    if API_OUT.exists():
+        shutil.rmtree(API_OUT)
+    API_OUT.mkdir(parents=True, exist_ok=True)
 
-```{{autodoc2-object}} {module_name}
-```
-"""
 
-
-def write_sphinx_source(modules: list[ModuleDoc]) -> None:
-    if SPHINX_TMP_SOURCE.exists():
-        shutil.rmtree(SPHINX_TMP_SOURCE)
-
-    shutil.copytree(SPHINX_SOURCE, SPHINX_TMP_SOURCE)
-
-    generated_dir = SPHINX_TMP_SOURCE / "generated"
-    generated_dir.mkdir(parents=True, exist_ok=True)
-
-    toctree_entries: list[str] = []
-    for module in modules:
-        relative = Path(*module.module_name.split("."))
-        module_file = generated_dir / f"{relative}.md"
-        module_file.parent.mkdir(parents=True, exist_ok=True)
-        module_file.write_text(render_module_page(module.module_name), encoding="utf-8")
-        toctree_entries.append(f"generated/{relative.as_posix()}")
-
-    index_content = "\n".join(
-        [
-            "# API Reference",
-            "",
-            "```{toctree}",
-            ":maxdepth: 2",
-            ":caption: Modules",
-            "",
-            *toctree_entries,
-            "```",
-            "",
-        ]
+def _run_sphinx_build() -> None:
+    print("==> Running Sphinx markdown build...")
+    result = subprocess.run(
+        ["sphinx-build", "-b", "markdown", "docs/sphinx", str(API_OUT), "-q"],
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
     )
-    (SPHINX_TMP_SOURCE / "index.md").write_text(index_content, encoding="utf-8")
+    if result.returncode != 0:
+        print(f"ERROR: Sphinx build failed (exit code {result.returncode})", file=sys.stderr)
+        if result.stderr:
+            print(result.stderr, file=sys.stderr)
+        if result.stdout:
+            print(result.stdout, file=sys.stderr)
+        sys.exit(1)
 
 
-def rewrite_links(content: str) -> str:
-    def _replace(match: re.Match[str]) -> str:
-        label = match.group(1)
-        href = match.group(2)
+def _remove_sphinx_artifacts() -> None:
+    print("==> Removing Sphinx artifacts...")
+    buildinfo = API_OUT / ".buildinfo"
+    if buildinfo.exists():
+        buildinfo.unlink()
 
-        if href.startswith("http://") or href.startswith("https://") or href.startswith("#"):
-            return match.group(0)
+    doctrees = API_OUT / ".doctrees"
+    if doctrees.exists():
+        shutil.rmtree(doctrees)
 
-        anchor = ""
-        path_part = href
-        if "#" in href:
-            path_part, anchor = href.split("#", 1)
-            anchor = f"#{anchor}"
-
-        if not path_part.endswith(".md"):
-            return match.group(0)
-
-        normalized = path_part
-        normalized = normalized.replace("../", "")
-        normalized = normalized.removeprefix("generated/")
-        normalized = normalized.removesuffix(".md")
-
-        if normalized in {"index", ""}:
-            new_href = f"{BASE_PATH}api/{anchor}"
-        else:
-            new_href = f"{BASE_PATH}api/{normalized}/{anchor}"
-
-        return f"[{label}]({new_href})"
-
-    return re.sub(r"\[([^\]]+)\]\(([^)]+)\)", _replace, content)
+    index_md = API_OUT / "index.md"
+    if index_md.exists():
+        index_md.unlink()
 
 
-def add_frontmatter(content: str, title: str) -> str:
-    body = content
-    title_heading = f"# {title}"
-    if body.startswith(title_heading):
-        body = body[len(title_heading) :].lstrip("\n")
+def _flatten_autoapi() -> None:
+    """Move autoapi/<pkg>/ → <pkg>/ for each documented package."""
+    print("==> Flattening autoapi directory structure...")
+    autoapi_dir = API_OUT / "autoapi"
 
-    return "\n".join(
-        [
-            "---",
-            f"title: {title}",
-            f"description: API reference for {title}.",
-            "---",
-            "",
-            body,
-        ]
-    )
+    for pkg in PACKAGES:
+        source = autoapi_dir / pkg
+        target = API_OUT / pkg
 
+        if not source.is_dir():
+            print(
+                f"ERROR: Expected autoapi output directory not found: {source}\n"
+                "This likely means the Sphinx autoapi configuration or package structure has changed.\n"
+                "Check that 'autoapi_dirs' in docs/sphinx/conf.py points to the correct source directories.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
 
-def build_sphinx_markdown() -> None:
-    if SPHINX_BUILD.exists():
-        shutil.rmtree(SPHINX_BUILD)
+        if target.exists():
+            shutil.rmtree(target)
+        shutil.move(str(source), str(target))
 
-    cmd = [
-        "sphinx-build",
-        "-b",
-        "markdown",
-        "-c",
-        str(SPHINX_TMP_SOURCE),
-        str(SPHINX_TMP_SOURCE),
-        str(SPHINX_BUILD),
-        "-W",
-        "--keep-going",
-    ]
-    subprocess.run(cmd, check=True)
+    if autoapi_dir.exists():
+        shutil.rmtree(autoapi_dir)
 
 
-def write_starlight_api(modules: list[ModuleDoc]) -> None:
-    if API_OUTPUT.exists():
-        shutil.rmtree(API_OUTPUT)
-    API_OUTPUT.mkdir(parents=True, exist_ok=True)
+def _extract_title(file_path: Path) -> str:
+    with open(file_path, encoding="utf-8") as f:
+        for line in f:
+            if line.startswith("# "):
+                return line[2:].strip()
+    return file_path.stem
 
-    index_md = SPHINX_BUILD / "index.md"
-    index_content = index_md.read_text(encoding="utf-8") if index_md.exists() else "# API Reference\n"
-    index_content = rewrite_links(index_content)
-    (API_OUTPUT / "index.md").write_text(add_frontmatter(index_content, "API Reference"), encoding="utf-8")
 
-    for module in modules:
-        module_path = Path(*module.module_name.split("."))
-        source_md = SPHINX_BUILD / "generated" / f"{module_path}.md"
-        if not source_md.exists():
-            continue
+def _inject_frontmatter() -> None:
+    print("==> Injecting Starlight frontmatter into API docs...")
+    for md_file in sorted(API_OUT.rglob("*.md")):
+        title = _extract_title(md_file)
+        escaped_title = title.replace('"', '\\"')
 
-        destination = API_OUTPUT / module_path / "index.md"
-        destination.parent.mkdir(parents=True, exist_ok=True)
+        content = md_file.read_text(encoding="utf-8")
+        content = re.sub(r"^# [^\n]*\n+", "", content)
+        md_file.write_text(
+            f'---\ntitle: "{escaped_title}"\n---\n\n<div class="api-ref">\n\n{content}\n\n</div>\n',
+            encoding="utf-8",
+        )
 
-        page_content = source_md.read_text(encoding="utf-8")
-        page_content = rewrite_links(page_content)
-        page_title = module.module_name
-        destination.write_text(add_frontmatter(page_content, page_title), encoding="utf-8")
+
+def _fix_internal_links() -> None:
+    print("==> Fixing internal links for Starlight...")
+    for md_file in sorted(API_OUT.rglob("*.md")):
+        content = md_file.read_text(encoding="utf-8")
+        updated = _INDEX_MD_RE.sub("/", content)
+        if updated != content:
+            md_file.write_text(updated, encoding="utf-8")
+
+
+def _compute_starlight_anchor(heading_text: str) -> str:
+    text = re.sub(r"\*([^*]+)\*", r"\1", heading_text)
+    text = re.sub(r"`([^`]+)`", r"\1", text)
+    text = re.sub(r"\\.", "", text)
+    text = text.lower()
+    text = re.sub(r"[^a-z0-9-]+", " ", text)
+    return "-".join(text.split())
+
+
+def _simplify_class_headings() -> None:
+    print("==> Simplifying class heading signatures...")
+    for md_file in sorted(API_OUT.rglob("*.md")):
+        content = md_file.read_text(encoding="utf-8")
+        updated = _CLASS_ARGS_RE.sub(r"\1", content)
+        if updated != content:
+            md_file.write_text(updated, encoding="utf-8")
+
+
+def _fix_qualified_anchors() -> None:
+    print("==> Fixing qualified name anchors...")
+    file_maps: dict[str, dict[str, str]] = {}
+    for md_file in sorted(API_OUT.rglob("*.md")):
+        anchor_map: dict[str, str] = {}
+        content = md_file.read_text(encoding="utf-8")
+        for m in _H3_TEXT_RE.finditer(content):
+            heading_text = m.group(1)
+            key_m = re.match(r"(?:\*\w+\*\s+)?(\w+)", heading_text)
+            if key_m:
+                symbol = key_m.group(1)
+                anchor_map[symbol] = _compute_starlight_anchor(heading_text)
+        file_maps[str(md_file)] = anchor_map
+
+    for md_file in sorted(API_OUT.rglob("*.md")):
+        content = md_file.read_text(encoding="utf-8")
+
+        def fix_anchor(m: re.Match, _file: Path = md_file) -> str:
+            path_part, symbol = m.group(1), m.group(2)
+            if path_part:
+                target_md = (_file.parent / path_part).resolve() / "index.md"
+            else:
+                target_md = _file
+            anchor = file_maps.get(str(target_md), {}).get(symbol, symbol.lower())
+            return f"({path_part}#{anchor})"
+
+        updated = _QUALIFIED_ANCHOR_RE.sub(fix_anchor, content)
+        if updated != content:
+            md_file.write_text(updated, encoding="utf-8")
+
+
+def _shorten_qualified_names() -> None:
+    print("==> Shortening qualified names in headings...")
+    for md_file in sorted(API_OUT.rglob("*.md")):
+        lines = md_file.read_text(encoding="utf-8").splitlines(keepends=True)
+        changed = False
+        for i, line in enumerate(lines):
+            if not _HEADING_RE.match(line):
+                continue
+            new_line = _LINKED_QUALIFIED_RE.sub(r"[\1]", line)
+            new_line = _PLAIN_QUALIFIED_RE.sub(r"\1", new_line)
+            if new_line != line:
+                lines[i] = new_line
+                changed = True
+        if changed:
+            md_file.write_text("".join(lines), encoding="utf-8")
 
 
 def main() -> None:
-    package_roots = [ROOT / "src" / "algopy_testing", ROOT / "src" / "_algopy_testing"]
-    modules: list[ModuleDoc] = []
-    for package_root in package_roots:
-        modules.extend(discover_modules(package_root))
+    _clean_api_output()
+    _run_sphinx_build()
+    _remove_sphinx_artifacts()
+    _flatten_autoapi()
+    _inject_frontmatter()
+    _fix_internal_links()
+    _shorten_qualified_names()
+    _simplify_class_headings()
+    _fix_qualified_anchors()
 
-    modules.sort(key=lambda item: item.module_name)
-
-    write_sphinx_source(modules)
-    build_sphinx_markdown()
-    write_starlight_api(modules)
-
-    print(f"Generated API docs for {len(modules)} modules into {API_OUTPUT}")
+    file_count = sum(1 for _ in API_OUT.rglob("*.md"))
+    print(f"==> API docs generated at: {API_OUT}")
+    print(f"    {file_count} markdown files")
 
 
 if __name__ == "__main__":

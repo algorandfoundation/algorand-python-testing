@@ -1,35 +1,25 @@
+# Isolated Sphinx configuration for API-only markdown generation.
+# This config is used by docs/api_build.py to generate API reference
+# markdown that is consumed by Starlight. It intentionally omits HTML
+# themes and other presentation-layer extensions.
+
 project = "Algorand Python Testing API"
 author = "Algorand Foundation"
 copyright = "2026, Algorand Foundation"  # noqa: A001
 
-extensions = [
-    "myst_parser",
-    "autodoc2",
-]
+extensions = ["autoapi.extension"]
 
-autodoc2_packages = [
-    {
-        "path": "../../src/algopy_testing",
-        "auto_mode": True,
-    },
-    {
-        "path": "../../src/_algopy_testing",
-        "auto_mode": True,
-    },
-]
-autodoc2_render_plugin = "myst"
-autodoc2_hidden_objects = [
-    "dunder",
-    "private",
-    "undoc",
-]
-add_module_names = False
-
+templates_path = []
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-source_suffix = {
-    ".md": "markdown",
-}
-master_doc = "index"
-
-myst_enable_extensions = ["colon_fence", "fieldlist"]
+autoapi_dirs = [
+    "../../src/algopy_testing",
+    "../../src/_algopy_testing",
+]
+autoapi_options = [
+    "members",
+    "undoc-members",
+    "private-members",
+    "show-inheritance",
+    "show-module-summary",
+]

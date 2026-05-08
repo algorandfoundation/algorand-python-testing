@@ -19,19 +19,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -56,18 +51,14 @@
         }
     },
     "bareActions": {
-        "create": [
-            "NoOp"
-        ],
+        "create": ["NoOp"],
         "call": []
     },
     "sourceInfo": {
         "approval": {
             "sourceInfo": [
                 {
-                    "pc": [
-                        72
-                    ],
+                    "pc": [72],
                     "errorMessage": "transaction type is appl"
                 }
             ],
@@ -90,7 +81,7 @@
         "compiler": "puya",
         "compilerVersion": {
             "major": 5,
-            "minor": 7,
+            "minor": 8,
             "patch": 1
         }
     },

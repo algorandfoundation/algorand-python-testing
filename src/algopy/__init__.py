@@ -30,8 +30,15 @@ from _algopy_testing.primitives import (
     zero_bytes,
 )
 from _algopy_testing.protocols import BytesBacked
-from _algopy_testing.state import Box, BoxMap, BoxRef, GlobalState, LocalState
-from _algopy_testing.utilities import OpUpFeeSource, ensure_budget, log, size_of
+from _algopy_testing.state import Box, BoxMap, BoxRef, GlobalMap, GlobalState, LocalMap, LocalState
+from _algopy_testing.utilities import (
+    OpUpFeeSource,
+    ensure_budget,
+    log,
+    logged_assert,
+    logged_err,
+    size_of,
+)
 
 from . import arc4, gtxn, itxn, op
 from _algopy_testing.decorators.arc4 import (
@@ -56,9 +63,11 @@ __all__ = [
     "FixedArray",
     "FixedBytes",
     "Global",
+    "GlobalMap",
     "GlobalState",
     "ImmutableArray",
     "ImmutableFixedArray",
+    "LocalMap",
     "LocalState",
     "LogicSig",
     "OnCompleteAction",
@@ -78,6 +87,8 @@ __all__ = [
     "gtxn",
     "itxn",
     "log",
+    "logged_assert",
+    "logged_err",
     "logicsig",
     "op",
     "public",

@@ -433,17 +433,27 @@ test_array_for_header@2:
     len
     dup
     intc_1 // 8
+    /
+    intc_0 // 1
+    - // on error: cannot pop from empty array
+    intc_1 // 8
+    *
+    dig 2
+    swap
+    extract_uint64
+    swap
+    // tests/artifacts/Arrays/uint64.py:286
+    // popped = arr.pop()
+    intc_1 // 8
     -
-    dig 2
-    intc_2 // 0
-    dig 2
-    extract3
-    uncover 3
     uncover 2
-    uncover 3
+    intc_2 // 0
+    uncover 2
     substring3
-    btoi
-    cover 2
+    // tests/artifacts/Arrays/uint64.py:286
+    // popped = arr.pop()
+    uncover 2
+    swap
     stores
     // tests/artifacts/Arrays/uint64.py:287
     // assert popped == expected
@@ -1366,17 +1376,17 @@ test_iteration_for_header@18:
     itob
     dig 12
     dup
-    cover 2
-    dig 1
-    concat // on error: max array length exceeded
-    uncover 2
     intc_2 // 0
     extract_uint16
+    // tests/artifacts/Arrays/uint64.py:165
+    // arc4_arr.append(arc4.UInt64(i))
     intc_0 // 1
     +
     itob
-    extract 6 2
+    extract 6 0
     replace2 0
+    dig 1
+    concat
     bury 13
     dig 11
     // tests/artifacts/Arrays/uint64.py:166
@@ -1392,19 +1402,24 @@ test_iteration_for_header@18:
     b test_iteration_for_header@18
 
 test_iteration_after_for@21:
+    dig 9
     // tests/artifacts/Arrays/uint64.py:167
     // combined_arr = arc4_arr + native_arr
-    dig 10
-    dig 10
-    concat // on error: max array length exceeded
     dup
-    extract 2 0
     len
     intc_1 // 8
     /
+    dig 12
+    dup
+    cover 2
+    intc_2 // 0
+    extract_uint16
+    +
     itob
-    extract 6 2
+    extract 6 0
     replace2 0
+    swap
+    concat
     // tests/artifacts/Arrays/uint64.py:168
     // assert combined_arr.length == 10
     dup

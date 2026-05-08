@@ -36,6 +36,7 @@ class ContractARC4Create(
         self._name = algopy.String("name")
         self._scratch_slots = algopy.UInt64()
         self._state_totals = algopy.UInt64()
+        self._global_state_types = algopy.UInt64()
 
     @algopy.public(create="require")
     def create(self, val: algopy.UInt64) -> None:
@@ -47,6 +48,7 @@ class ContractARC4Create(
         assert self._name == "name"
         assert self._scratch_slots == 0
         assert self._state_totals == 0
+        assert self._global_state_types == 0
 
 
 @pytest.fixture()
