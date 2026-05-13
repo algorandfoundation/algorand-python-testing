@@ -8,7 +8,22 @@ The Algorand Python Testing framework provides powerful tools for testing Algora
 > [!NOTE]
 > For all code examples in the _Testing Guide_ section, assume `context` is an instance of `AlgopyTestContext` obtained using the `algopy_testing_context()` context manager. All subsequent code is executed within this context.
 
-![Txn value generator diagram](/algorand-python-testing/images/txn-value-generator.svg)
+```mermaid
+graph TD
+    subgraph GA["Your Development Environment"]
+        A["algopy (type stubs)"]
+        B["algopy_testing (testing framework)<br>(You are here 📍)"]
+        C["puya (compiler)"]
+    end
+
+    subgraph GB["Your Algorand Project"]
+        D[Your Algorand Python contract]
+    end
+
+    D -->|type hints inferred from| A
+    D -->|compiled using| C
+    D -->|tested via| B
+```
 
 > _High-level overview of the relationship between your smart contracts project, Algorand Python Testing framework, Algorand Python type stubs, and the compiler_
 

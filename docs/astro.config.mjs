@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
+import mermaid from 'astro-mermaid'
 import remarkGithubAlerts from 'remark-github-alerts'
 import sidebar from './sidebar.config.json'
 
@@ -28,6 +29,7 @@ export default defineConfig({
     remarkPlugins: [remarkGithubAlerts],
   },
   integrations: [
+    mermaid({ theme: 'default', autoTheme: true }),
     starlight({
       title: 'Algorand Python Testing',
       favicon: '/algokit_logo.png',

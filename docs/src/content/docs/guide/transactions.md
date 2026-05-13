@@ -21,7 +21,16 @@ context = ctx_manager.__enter__()
 
 Refers to test implementation of transaction stubs available under `algopy.gtxn.*` namespace. Available under [`algopy.TxnValueGenerator`](/algorand-python-testing/api/algopy_testing/value_generators/txn/) instance accessible via `context.any.txn` property:
 
-![Txn value generator diagram](/algorand-python-testing/images/txn-value-generator.svg)
+```mermaid
+graph TD
+    A[TxnValueGenerator] --> B[payment]
+    A --> C[asset_transfer]
+    A --> D[application_call]
+    A --> E[asset_config]
+    A --> F[key_registration]
+    A --> G[asset_freeze]
+    A --> H[transaction]
+```
 
 ```python
 ... # instantiate test context
