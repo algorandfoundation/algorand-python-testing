@@ -130,7 +130,7 @@ const main = () => {
     fs.writeFileSync(path.join(outputDir, `${example.slug}.mdx`), renderExamplePage(example))
   }
 
-  process.stdout.write(`Generated ${examples.length} example page(s) in ${outputDir}\n`)
+  console.log(`Generated ${examples.length} example page(s) in ${outputDir}`)
 }
 
 main()
