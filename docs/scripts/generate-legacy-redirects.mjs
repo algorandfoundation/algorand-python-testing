@@ -79,4 +79,4 @@ for (const family of config.families) {
   }
 }
 
-process.stdout.write('Generated legacy redirect shims\n')
+console.log('Generated legacy redirect shims')
