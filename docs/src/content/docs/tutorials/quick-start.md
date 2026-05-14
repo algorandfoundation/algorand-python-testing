@@ -63,7 +63,7 @@ class VotingContract(algopy.ARC4Contract):
 
 Drive the contract with `algopy_testing_context()`. The context manager exposes value generators (`any`), an emulated ledger, and transaction-group helpers — enough to invoke ABI methods directly and assert against state changes.
 
-```python
+```python continuation
 from algopy_testing import algopy_testing_context
 from algopy import arc4
 
@@ -88,7 +88,7 @@ with algopy_testing_context() as context:
 
     # Read votes back
     contract.votes.value = algopy.UInt64(5)
-    assert contract.get_votes().native == 5
+    assert contract.get_votes().as_uint64() == 5
 ```
 
 This example exercises every layer of the framework:

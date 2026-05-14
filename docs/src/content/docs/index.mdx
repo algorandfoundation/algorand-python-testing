@@ -56,7 +56,7 @@ class Counter(algopy.ARC4Contract):
 with algopy_testing_context() as ctx:
     contract = Counter()
     result = contract.increment()
-    assert result.native == 1
+    assert result.as_uint64() == 1
     assert contract.count.value == 1
 ```
 

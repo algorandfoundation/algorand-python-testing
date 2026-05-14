@@ -123,12 +123,14 @@ dependencies = [
     "pytest-mock>=3.10.0",
     "pytest-xdist[psutil]>=3.3",
     "pytest-cov>=4.1.0",
+    "pytest-markdown-docs>=0.6",
     "puyapy>=5.8.1",
 ]
 
 [tool.hatch.envs.test.scripts]
 run = "pytest --cov=src --cov-report=xml {args}"
 ci = "pytest --cov=src --cov-report=xml --cov-report=term"
+docs = "pytest -o addopts= --markdown-docs docs/src/content/docs --ignore=docs/src/content/docs/api -p no:anyio -p no:cacheprovider {args}"
 
 [[tool.hatch.envs.test.matrix]]
 python = ["3.12", "3.13"]

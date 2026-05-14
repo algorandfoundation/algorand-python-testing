@@ -5,18 +5,6 @@ description: The testing framework follows the Transaction definitions described
 
 The testing framework follows the Transaction definitions described in [`algorand-python` docs](https://algorandfoundation.github.io/puya/lg-transactions.html). This section focuses on _value generators_ and interactions with inner transactions, it also explains how the framework identifies _active_ transaction group during contract method/subroutine/logicsig invocation.
 
-```python
-import algopy
-import algopy_testing
-from algopy_testing import algopy_testing_context
-
-# Create the context manager for snippets below
-ctx_manager = algopy_testing_context()
-
-# Enter the context
-context = ctx_manager.__enter__()
-```
-
 ## Group Transactions
 
 Refers to test implementation of transaction stubs available under `algopy.gtxn.*` namespace. Available under [`algopy.TxnValueGenerator`](/algorand-python-testing/api/algopy_testing/value_generators/txn/) instance accessible via `context.any.txn` property:
@@ -32,7 +20,9 @@ graph TD
     A --> H[transaction]
 ```
 
-```python
+```python fixture:context
+import algopy
+
 ... # instantiate test context
 
 # Generate a random payment transaction
@@ -112,7 +102,7 @@ When a smart contract instance (application) is interacted with on the Algorand 
 
 To emulate this behaviour, the `create_group` context manager is available on [`algopy.TransactionContext`](/algorand-python-testing/api/algopy_testing/context_helpers/txn_context/) instance that allows setting temporary transaction fields within a specific scope, passing in emulated transaction objects and identifying the active transaction index within the transaction group
 
-```python
+```python fixture:context
 import algopy
 from algopy_testing import AlgopyTestContext, algopy_testing_context
 
@@ -144,7 +134,9 @@ Inner transactions are AVM transactions that are signed and executed by AVM appl
 
 When testing smart contracts, to stay consistent with AVM, the framework _does not allow you to submit inner transactions outside of contract/subroutine invocation_, but you can interact with and manage inner transactions using the test context manager as follows:
 
-```python
+```python fixture:context
+import algopy
+
 class MyContract(algopy.ARC4Contract):
     @algopy.public
     def pay_via_itxn(self, asset: algopy.Asset) -> None:
@@ -199,7 +191,7 @@ These methods provide type validation and will raise an error if the requested t
 
 The following example demonstrates how to test this functionality using the `algorand-python-testing` package.
 
-```python
+```python fixture:context
 from algopy import Application, ARC4Contract, Array, Global, arc4, gtxn, itxn, TransactionType, Txn, UInt64, urange
 
 class DynamicItxnGroup(ARC4Contract):
@@ -266,7 +258,3 @@ assert itxns.asset_config(4).asset_name == b"abc"
 
 -   [API](/algorand-python-testing/api/algopy_testing/) for more details on the test context manager and inner transactions related methods that perform implicit inner transaction type validation.
 -   [Examples](/algorand-python-testing/examples/) for more examples of smart contracts and associated tests that interact with inner transactions.
-
-```python
-ctx_manager.__exit__(None, None, None)
-```

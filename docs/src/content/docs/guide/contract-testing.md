@@ -10,25 +10,16 @@ This guide provides an overview of how to test smart contracts using the Algoran
 > [!NOTE]
 > The code snippets showcasing the contract testing capabilities are using [pytest](https://docs.pytest.org/en/latest/) as the test framework. However, note that the `algorand-python-testing` package can be used with any other test framework that supports Python. `pytest` is used for demonstration purposes in this documentation.
 
-```python
-import algopy
-import algopy_testing
-from algopy_testing import algopy_testing_context
-
-# Create the context manager for snippets below
-ctx_manager = algopy_testing_context()
-
-# Enter the context
-context = ctx_manager.__enter__()
-```
-
 ## `algopy.ARC4Contract`
 
 Subclasses of `algopy.ARC4Contract` are **required** to be instantiated with an active test context. As part of instantiation, the test context will automatically create a matching `algopy.Application` object instance.
 
 Within the class implementation, methods decorated with `algopy.arc4.abimethod` (or its alias, `algopy.public`) and `algopy.arc4.baremethod` will automatically assemble an `algopy.gtxn.ApplicationCallTransaction` to emulate the AVM application call. This behaviour can be overridden by setting the transaction group manually as part of test setup; this is done via implicit invocation of the `algopy_testing.context.any_application()` _value generator_ (refer to the [API](/algorand-python-testing/api/algopy_testing/) for more details).
 
-```python
+```python fixture:context
+import algopy
+from algopy import arc4
+
 class SimpleVotingContract(algopy.ARC4Contract):
     def __init__(self) -> None:
         self.topic = algopy.GlobalState(algopy.Bytes(b"default_topic"), key="topic", description="Voting topic")
@@ -113,7 +104,7 @@ Unlike `algopy.ARC4Contract`, `algopy.Contract` requires manual setup of the tra
 
 Here's an updated example demonstrating how to test a `Contract` class:
 
-```python
+```python fixture:context
 import algopy
 import pytest
 from algopy_testing import AlgopyTestContext, algopy_testing_context
@@ -204,7 +195,7 @@ This approach provides more flexibility in setting up the transaction context fo
 
 You can create deferred application calls for more complex testing scenarios where order of transactions needs to be controlled:
 
-```python
+```python fixture:context
 def test_deferred_call(context):
     contract = MyARC4Contract()
 
@@ -220,7 +211,3 @@ def test_deferred_call(context):
 ```
 
 A deferred application call prepares the application call transaction without immediately executing it. The call can be executed later by invoking the `.submit()` method on the deferred application call instance. As demonstrated in the example, you can also include the deferred call in a transaction group creation context manager to execute it as part of a larger transaction group. When `.submit()` is called, only the specific method passed to `defer_app_call()` will be executed.
-
-```python
-ctx_manager.__exit__(None, None, None)
-```

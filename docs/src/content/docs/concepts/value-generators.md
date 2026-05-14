@@ -6,10 +6,13 @@ description: Value generators produce constrained random values for AVM, transac
 The [`AlgopyTestContext`](/algorand-python-testing/concepts/test-context/) exposes value generators via its `any` property. They produce randomized but constrained values for AVM entities (accounts, assets, applications, transactions, ARC4 types) so tests can focus on behaviour rather than fixture plumbing.
 
 ```python
+import algopy
+from algopy_testing import algopy_testing_context
+
 with algopy_testing_context() as ctx:
     sender = ctx.any.account()
     payment = ctx.any.txn.payment(sender=sender, amount=algopy.UInt64(10_000))
-    arc4_string = ctx.any.arc4.string(length=10)
+    arc4_string = ctx.any.arc4.string(n=10)
 ```
 
 ## Generator namespaces

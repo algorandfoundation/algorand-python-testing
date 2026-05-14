@@ -11,20 +11,9 @@ These types are available under the `algopy.arc4` namespace. Refer to the [ARC4 
 > [!NOTE]
 > For all `algopy.arc4` types with and without respective _value generator_, instantiation can be performed directly. If you have a suggestion for a new _value generator_ implementation, please open an issue in the [`algorand-python-testing`](https://github.com/algorandfoundation/algorand-python-testing) repository or contribute by following the [contribution guide](https://github.com/algorandfoundation/algorand-python-testing/blob/main/CONTRIBUTING.md).
 
-```python
-import algopy
-from algopy_testing import algopy_testing_context
-
-# Create the context manager for snippets below
-ctx_manager = algopy_testing_context()
-
-# Enter the context
-context = ctx_manager.__enter__()
-```
-
 ## Unsigned Integers
 
-```python
+```python fixture:context
 from algopy import arc4
 
 # Integer types
@@ -55,7 +44,7 @@ biguint512_custom = context.any.arc4.biguint512(min_value=1000000000000000000000
 
 ## Address
 
-```python
+```python fixture:context
 from algopy import arc4
 
 # Address type
@@ -70,7 +59,7 @@ native = random_address.native
 
 ## Dynamic Bytes
 
-```python
+```python fixture:context
 from algopy import arc4
 
 # Dynamic byte string
@@ -82,7 +71,7 @@ random_dynamic_bytes = context.any.arc4.dynamic_bytes(n=123) # n is the number o
 
 ## String
 
-```python
+```python fixture:context
 from algopy import arc4
 
 # UTF-8 encoded string
@@ -90,8 +79,4 @@ string_value = arc4.String("Hello, Algorand!")
 
 # Generate random string
 random_string = context.any.arc4.string(n=12) # n is the number of bits in the ARC4 string
-```
-
-```python
-ctx_manager.__exit__(None, None, None)
 ```

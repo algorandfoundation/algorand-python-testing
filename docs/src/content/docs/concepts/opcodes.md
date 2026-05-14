@@ -7,17 +7,6 @@ The [coverage](/algorand-python-testing/reference/coverage/) file provides a com
 
 `Native` opcodes are assumed to function as they do in the Algorand Virtual Machine, given their stateless nature. If you encounter issues with any `Native` opcodes, please raise an issue in the [`algorand-python-testing` repo](https://github.com/algorandfoundation/algorand-python-testing/issues/new/choose) or contribute a PR following the [Contributing](https://github.com/algorandfoundation/algorand-python-testing/blob/main/CONTRIBUTING.md) guide.
 
-```python
-import algopy
-from algopy_testing import algopy_testing_context
-
-# Create the context manager for snippets below
-ctx_manager = algopy_testing_context()
-
-# Enter the context
-context = ctx_manager.__enter__()
-```
-
 ## Implemented Types
 
 These types are fully implemented in Python and behave identically to their AVM counterparts:
@@ -30,7 +19,8 @@ The following opcodes are demonstrated:
 -   `op.keccak256`
 -   `op.ecdsa_verify`
 
-```python
+```python fixture:context
+import algopy
 from algopy import op
 
 # SHA256 hash
@@ -60,7 +50,8 @@ The following opcodes are demonstrated:
 -   `op.getbit`
 -   `op.setbit_uint64`
 
-```python
+```python fixture:context
+import algopy
 from algopy import op
 
 # Addition with carry
@@ -81,7 +72,9 @@ These types necessitate interaction with the transaction context:
 
 ### algopy.op.Global
 
-```python
+```python fixture:context
+import algopy
+from algopy import arc4
 from algopy import op
 
 class MyContract(algopy.ARC4Contract):
@@ -103,7 +96,9 @@ assert result == algopy.UInt64(101000)
 
 ### algopy.op.Txn
 
-```python
+```python fixture:context
+import algopy
+from algopy import arc4
 from algopy import op
 
 class MyContract(algopy.ARC4Contract):
@@ -122,7 +117,9 @@ assert result == custom_sender
 
 ### algopy.op.AssetHoldingGet
 
-```python
+```python fixture:context
+import algopy
+from algopy import arc4
 from algopy import op
 
 class AssetContract(algopy.ARC4Contract):
@@ -142,7 +139,9 @@ assert result == algopy.UInt64(5000)
 
 ### algopy.op.AppGlobal
 
-```python
+```python fixture:context
+import algopy
+from algopy import arc4
 from algopy import op
 
 class StateContract(algopy.ARC4Contract):
@@ -163,7 +162,9 @@ assert stored_value == 42
 
 ### algopy.op.Block
 
-```python
+```python fixture:context
+import algopy
+from algopy import arc4
 from algopy import op
 
 class BlockInfoContract(algopy.ARC4Contract):
@@ -181,7 +182,9 @@ assert seed == algopy.op.itob(123456)
 
 ### algopy.op.AcctParamsGet
 
-```python
+```python fixture:context
+import algopy
+from algopy import arc4
 from algopy import op
 
 class AccountParamsContract(algopy.ARC4Contract):
@@ -201,7 +204,11 @@ assert balance == algopy.UInt64(1000000)
 
 ### algopy.op.AppParamsGet
 
-```python
+```python fixture:context
+import algopy
+from algopy import op
+from algopy import arc4
+
 class AppParamsContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
     def get_app_creator(self, app_id: algopy.Application) -> algopy.arc4.Address:
@@ -219,7 +226,9 @@ assert creator == context.default_sender
 
 ### algopy.op.AssetParamsGet
 
-```python
+```python fixture:context
+import algopy
+from algopy import arc4
 from algopy import op
 
 class AssetParamsContract(algopy.ARC4Contract):
@@ -239,7 +248,9 @@ assert total == algopy.UInt64(1000000)
 
 ### algopy.op.Box
 
-```python
+```python fixture:context
+import algopy
+from algopy import arc4
 from algopy import op
 
 class BoxStorageContract(algopy.ARC4Contract):
@@ -266,7 +277,7 @@ These opcodes are mockable in `algorand-python-testing`, allowing for controlled
 
 ### algopy.compile_contract
 
-```python
+```python fixture:context
 from unittest.mock import patch, MagicMock
 import algopy
 
@@ -293,7 +304,7 @@ with patch('algopy.compile_contract', return_value=mocked_response):
 
 ### algopy.arc4.abi_call
 
-```python
+```python fixture:context
 import unittest
 from unittest.mock import patch, MagicMock
 import algopy
@@ -314,7 +325,7 @@ class MockAbiCall:
 class MyContract(algopy.ARC4Contract):
     @algopy.arc4.abimethod
     def my_method(self, arg1: algopy.UInt64, arg2: algopy.UInt64) -> algopy.UInt64:
-        return algopy.arc4.abi_call[algopy.arc4.UInt64]("my_other_method", arg1, arg2)[0].native
+        return algopy.arc4.abi_call[algopy.arc4.UInt64]("my_other_method", arg1, arg2)[0].as_uint64()
 
 ... # setup context (below assumes available under 'ctx' variable)
 
@@ -326,7 +337,7 @@ assert result == 11
 
 ### algopy.op.vrf_verify
 
-```python
+```python fixture:context
 from unittest.mock import patch, MagicMock
 import algopy
 
@@ -352,7 +363,7 @@ test_mock_vrf_verify()
 
 ### algopy.op.EllipticCurve
 
-```python
+```python fixture:context
 from unittest.mock import patch, MagicMock
 import algopy
 
@@ -381,7 +392,3 @@ Mocking these opcodes allows you to:
 1. Control complex operations' behaviour not covered by _implemented_ and _emulated_ types.
 2. Test edge cases and error conditions.
 3. Isolate contract logic from external dependencies.
-
-```python
-ctx_manager.__exit__(None, None, None)
-```

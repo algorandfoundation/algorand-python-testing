@@ -53,6 +53,9 @@ jobs:
       - name: Build docs
         run: hatch run docs:build
 
+      - name: Check doctests
+        run: hatch run test:docs
+
   test-python-matrix:
     runs-on: "ubuntu-latest"
     strategy:

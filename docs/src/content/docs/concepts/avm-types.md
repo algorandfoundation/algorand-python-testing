@@ -8,20 +8,11 @@ These types are available directly under the `algopy` namespace. They represent 
 > [!NOTE]
 > For primitive `algopy` types such as `Account`, `Application`, `Asset`, `UInt64`, `BigUint`, `Bytes`, and `String`, instantiation can be performed directly, with or without a corresponding _value generator_. If you have a suggestion for a new _value generator_ implementation, please open an issue in the [`algorand-python-testing`](https://github.com/algorandfoundation/algorand-python-testing) repository or contribute by following the [contribution guide](https://github.com/algorandfoundation/algorand-python-testing/blob/main/CONTRIBUTING.md).
 
-```python
-import algopy
-from algopy_testing import algopy_testing_context
-
-# Create the context manager for snippets below
-ctx_manager = algopy_testing_context()
-
-# Enter the context
-context = ctx_manager.__enter__()
-```
-
 ## UInt64
 
-```python
+```python fixture:context
+import algopy
+
 # Direct instantiation
 uint64_value = algopy.UInt64(100)
 
@@ -37,7 +28,9 @@ random_uint64 = context.any.uint64(min_value=1000, max_value=9999)
 
 ## Bytes
 
-```python
+```python fixture:context
+import algopy
+
 # Direct instantiation
 bytes_value = algopy.Bytes(b"Hello, Algorand!")
 
@@ -54,7 +47,8 @@ random_bytes = context.any.bytes(length=32)
 
 ## FixedBytes
 
-```python
+```python fixture:context
+import algopy
 import typing
 
 # Direct instantiation
@@ -70,7 +64,9 @@ random_bytes = context.any.fixed_bytes(algopy.FixedBytes[typing.Literal[32]])
 
 ## String
 
-```python
+```python fixture:context
+import algopy
+
 # Direct instantiation
 string_value = algopy.String("Hello, Algorand!")
 
@@ -83,7 +79,9 @@ random_string = context.any.string(length=16)
 
 ## BigUInt
 
-```python
+```python fixture:context
+import algopy
+
 # Direct instantiation
 biguint_value = algopy.BigUInt(100)
 
@@ -93,7 +91,9 @@ random_biguint = context.any.biguint()
 
 ## Asset
 
-```python
+```python fixture:context
+import algopy
+
 # Direct instantiation
 asset = algopy.Asset(asset_id=1001)
 
@@ -137,7 +137,9 @@ context.ledger.update_asset(
 
 ## Account
 
-```python
+```python fixture:context
+import algopy
+
 # Direct instantiation
 raw_address = 'PUYAGEGVCOEBP57LUKPNOCSMRWHZJSU4S62RGC2AONDUEIHC6P7FOPJQ4I'
 account = algopy.Account(raw_address) # zero address by default
@@ -190,7 +192,9 @@ opted_in = account.is_opted_in(mock_asset)
 
 ## Application
 
-```python
+```python fixture:context
+import algopy
+
 # Direct instantiation
 application = algopy.Application()
 
@@ -234,8 +238,4 @@ class MyContract(algopy.ARC4Contract):
 
 contract = MyContract()
 active_app = context.ledger.get_app(contract)
-```
-
-```python
-ctx_manager.__exit__(None, None, None)
 ```

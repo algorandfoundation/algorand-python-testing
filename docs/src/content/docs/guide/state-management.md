@@ -5,22 +5,13 @@ description: import algopy
 
 `algorand-python-testing` provides tools to test state-related abstractions in Algorand smart contracts. This guide covers global state, local state, boxes, and scratch space management.
 
-```python
-import algopy
-from algopy_testing import algopy_testing_context
-
-# Create the context manager for snippets below
-ctx_manager = algopy_testing_context()
-
-# Enter the context
-context = ctx_manager.__enter__()
-```
-
 ## Global State
 
 Global state is represented as instance attributes on `algopy.Contract` and `algopy.ARC4Contract` classes.
 
-```python
+```python fixture:context
+import algopy
+
 class MyContract(algopy.ARC4Contract):
     def __init__(self):
         self.state_a = algopy.GlobalState(algopy.UInt64, key="global_uint64")
@@ -72,7 +63,9 @@ assert algopy.Bytes(b"item_a") not in contract.scores
 
 Local state is defined similarly to global state, but accessed using account addresses as keys.
 
-```python
+```python fixture:context
+import algopy
+
 class MyContract(algopy.ARC4Contract):
     def __init__(self):
         self.local_state_a = algopy.LocalState(algopy.UInt64, key="state_a")
@@ -128,7 +121,11 @@ assert contract.balances[account2, algopy.Bytes(b"item_a")] == algopy.arc4.UInt6
 
 The framework supports various Box abstractions available in `algorand-python`.
 
-```python
+```python fixture:context
+import algopy
+from algopy import op
+from algopy import arc4
+
 class MyContract(algopy.ARC4Contract):
     def __init__(self):
         self.box_map = algopy.BoxMap(algopy.Bytes, algopy.UInt64)
@@ -161,7 +158,10 @@ with context.txn.create_group():
 
 Scratch space is represented as a list of 256 slots for each transaction.
 
-```python
+```python fixture:context
+import algopy
+from algopy import op
+
 class MyContract(algopy.Contract, scratch_slots=(1, 2, algopy.urange(3, 20))):
     def approval_program(self):
         algopy.op.Scratch.store(1, algopy.UInt64(5))
@@ -178,7 +178,3 @@ assert scratch_space[1] == algopy.UInt64(5)
 ```
 
 For more detailed information, explore the example contracts in the `examples/` directory, the [coverage](/algorand-python-testing/reference/coverage/) page, and the [API documentation](/algorand-python-testing/api/algopy_testing/).
-
-```python
-ctx_manager.__exit__(None, None, None)
-```
