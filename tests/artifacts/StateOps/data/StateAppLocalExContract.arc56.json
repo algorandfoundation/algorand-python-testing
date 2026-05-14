@@ -10,19 +10,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "OptIn"
-                ]
+                "call": ["OptIn"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -63,9 +58,7 @@
         }
     },
     "bareActions": {
-        "create": [
-            "NoOp"
-        ],
+        "create": ["NoOp"],
         "call": []
     },
     "sourceInfo": {

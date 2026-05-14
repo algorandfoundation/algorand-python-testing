@@ -19,9 +19,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -40,9 +38,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -61,9 +57,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -86,9 +80,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -107,9 +99,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -128,9 +118,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -149,9 +137,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -170,9 +156,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -203,9 +187,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -236,9 +218,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -265,9 +245,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -281,9 +259,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -306,9 +282,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -331,9 +305,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -360,9 +332,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -381,9 +351,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -406,9 +374,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -431,9 +397,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -456,9 +420,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -481,9 +443,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -506,9 +466,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -531,9 +489,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -552,9 +508,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -577,9 +531,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -606,9 +558,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -635,9 +585,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -664,9 +612,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -693,9 +639,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -722,9 +666,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -751,9 +693,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -776,9 +716,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -801,9 +739,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -822,9 +758,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -851,9 +785,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -876,9 +808,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -901,9 +831,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -926,19 +854,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -963,9 +886,7 @@
         }
     },
     "bareActions": {
-        "create": [
-            "NoOp"
-        ],
+        "create": ["NoOp"],
         "call": []
     },
     "sourceInfo": {

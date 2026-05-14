@@ -1,0 +1,48 @@
+name: "Build Documentation"
+description: "Build Astro Starlight documentation using hatch"
+inputs:
+  node-version:
+    description: "Node.js version"
+    required: false
+    default: "22.x"
+  upload-pages-artifact:
+    description: "Upload docs/dist as a GitHub Pages artifact"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+        cache: "pip"
+
+    - name: Install hatch
+      shell: bash
+      run: pip install hatch
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        package_json_file: docs/package.json
+
+    - name: Install docs dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile --dir docs
+
+    - name: Build docs
+      shell: bash
+      run: hatch run docs:build
+
+    - name: Upload Pages artifact
+      if: inputs.upload-pages-artifact == 'true'
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: docs/dist

@@ -10,9 +10,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -26,9 +24,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -42,9 +38,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -58,9 +52,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -74,9 +66,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -90,9 +80,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -106,9 +94,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -122,9 +108,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -143,9 +127,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -159,9 +141,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -175,9 +155,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -191,19 +169,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -228,118 +201,63 @@
         }
     },
     "bareActions": {
-        "create": [
-            "NoOp"
-        ],
+        "create": ["NoOp"],
         "call": []
     },
     "sourceInfo": {
         "approval": {
             "sourceInfo": [
                 {
-                    "pc": [
-                        888
-                    ],
+                    "pc": [888],
                     "errorMessage": "array is expected length"
                 },
                 {
-                    "pc": [
-                        1311,
-                        1390,
-                        1606
-                    ],
+                    "pc": [1311, 1390, 1606],
                     "errorMessage": "array is not sorted"
                 },
                 {
-                    "pc": [
-                        552
-                    ],
+                    "pc": [552],
                     "errorMessage": "cannot pop from empty array"
                 },
                 {
-                    "pc": [
-                        966,
-                        996,
-                        1004,
-                        1011,
-                        1016
-                    ],
+                    "pc": [966, 996, 1004, 1011, 1016],
                     "errorMessage": "expected 4"
                 },
                 {
-                    "pc": [
-                        944
-                    ],
+                    "pc": [944],
                     "errorMessage": "expected 5"
                 },
                 {
-                    "pc": [
-                        1560
-                    ],
+                    "pc": [1560],
                     "errorMessage": "expected array of length 32"
                 },
                 {
-                    "pc": [
-                        1282
-                    ],
+                    "pc": [1282],
                     "errorMessage": "expected array of length 5"
                 },
                 {
-                    "pc": [
-                        1353
-                    ],
+                    "pc": [1353],
                     "errorMessage": "incorrect array value"
                 },
                 {
                     "pc": [
-                        314,
-                        323,
-                        326,
-                        329,
-                        717,
-                        1112,
-                        1129,
-                        1187,
-                        1641,
-                        1660
+                        314, 323, 326, 329, 717, 1112, 1129, 1187, 1641, 1660
                     ],
                     "errorMessage": "index access is out of bounds"
                 },
                 {
-                    "pc": [
-                        1474
-                    ],
+                    "pc": [1474],
                     "errorMessage": "invalid array length header"
                 },
                 {
                     "pc": [
-                        416,
-                        465,
-                        489,
-                        618,
-                        680,
-                        705,
-                        709,
-                        804,
-                        833,
-                        837,
-                        841,
-                        869,
-                        892,
-                        909,
-                        924,
-                        967,
-                        1043,
-                        1262,
-                        1440,
-                        1540
+                        416, 465, 489, 618, 680, 705, 709, 804, 833, 837, 841,
+                        869, 892, 909, 924, 967, 1043, 1262, 1440, 1540
                     ],
                     "errorMessage": "max array length exceeded"
                 },
                 {
-                    "pc": [
-                        1685
-                    ],
+                    "pc": [1685],
                     "errorMessage": "no available slots"
                 }
             ],

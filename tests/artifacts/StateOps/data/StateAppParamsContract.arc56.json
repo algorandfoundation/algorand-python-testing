@@ -15,9 +15,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -36,9 +34,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -57,9 +53,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -78,9 +72,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -99,9 +91,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -120,9 +110,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -141,9 +129,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -162,9 +148,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -183,19 +167,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -220,40 +199,18 @@
         }
     },
     "bareActions": {
-        "create": [
-            "NoOp"
-        ],
+        "create": ["NoOp"],
         "call": []
     },
     "sourceInfo": {
         "approval": {
             "sourceInfo": [
                 {
-                    "pc": [
-                        121,
-                        155,
-                        189,
-                        216,
-                        243,
-                        270,
-                        297,
-                        324,
-                        350
-                    ],
+                    "pc": [121, 155, 189, 216, 243, 270, 297, 324, 350],
                     "errorMessage": "expected exists by index to match"
                 },
                 {
-                    "pc": [
-                        119,
-                        153,
-                        187,
-                        214,
-                        241,
-                        268,
-                        295,
-                        322,
-                        348
-                    ],
+                    "pc": [119, 153, 187, 214, 241, 268, 295, 322, 348],
                     "errorMessage": "expected value by index to match"
                 }
             ],

@@ -23,9 +23,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -52,19 +50,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -89,47 +82,30 @@
         }
     },
     "bareActions": {
-        "create": [
-            "NoOp"
-        ],
+        "create": ["NoOp"],
         "call": []
     },
     "sourceInfo": {
         "approval": {
             "sourceInfo": [
                 {
-                    "pc": [
-                        85,
-                        217
-                    ],
+                    "pc": [85, 217],
                     "errorMessage": "Funds must be sent to app"
                 },
                 {
-                    "pc": [
-                        141,
-                        250
-                    ],
+                    "pc": [141, 250],
                     "errorMessage": "index access is out of bounds"
                 },
                 {
-                    "pc": [
-                        89,
-                        220
-                    ],
+                    "pc": [89, 220],
                     "errorMessage": "invalid array length header"
                 },
                 {
-                    "pc": [
-                        94,
-                        225
-                    ],
+                    "pc": [94, 225],
                     "errorMessage": "must provide some accounts"
                 },
                 {
-                    "pc": [
-                        72,
-                        204
-                    ],
+                    "pc": [72, 204],
                     "errorMessage": "transaction type is pay"
                 }
             ],

@@ -10,19 +10,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "DeleteApplication"
-                ]
+                "call": ["DeleteApplication"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -47,18 +42,14 @@
         }
     },
     "bareActions": {
-        "create": [
-            "NoOp"
-        ],
+        "create": ["NoOp"],
         "call": []
     },
     "sourceInfo": {
         "approval": {
             "sourceInfo": [
                 {
-                    "pc": [
-                        45
-                    ],
+                    "pc": [45],
                     "errorMessage": "can only update if caller expects this to be currently be v1"
                 }
             ],

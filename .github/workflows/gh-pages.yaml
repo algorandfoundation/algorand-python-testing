@@ -1,11 +1,11 @@
-name: "Sphinx: Render + publish docs"
+name: Publish docs to GitHub Pages
 
 on:
   workflow_call:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-publish-docs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -15,25 +15,11 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Install hatch
-        run: pipx install hatch
-
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v5
+      - name: Build and upload docs artifact
+        uses: ./.github/actions/build-documentation
         with:
-          python-version: "3.12"
-          cache: "pip"
-
-      - name: Test doctests
-        run: hatch run docs:test
-
-      - name: Build doc
-        run: hatch run docs:build
-
-      - name: Upload to GitHub pages
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs/_build
+          node-version: 22.x
+          upload-pages-artifact: 'true'
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4

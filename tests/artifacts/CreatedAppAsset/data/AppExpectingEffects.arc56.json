@@ -19,9 +19,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -40,19 +38,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -77,67 +70,46 @@
         }
     },
     "bareActions": {
-        "create": [
-            "NoOp"
-        ],
+        "create": ["NoOp"],
         "call": []
     },
     "sourceInfo": {
         "approval": {
             "sourceInfo": [
                 {
-                    "pc": [
-                        155
-                    ],
+                    "pc": [155],
                     "errorMessage": "application log value is not the result of an ABI return"
                 },
                 {
-                    "pc": [
-                        96
-                    ],
+                    "pc": [96],
                     "errorMessage": "expected app created"
                 },
                 {
-                    "pc": [
-                        81
-                    ],
+                    "pc": [81],
                     "errorMessage": "expected asset created"
                 },
                 {
-                    "pc": [
-                        105
-                    ],
+                    "pc": [105],
                     "errorMessage": "expected correct app id"
                 },
                 {
-                    "pc": [
-                        90
-                    ],
+                    "pc": [90],
                     "errorMessage": "expected correct asset id"
                 },
                 {
-                    "pc": [
-                        139
-                    ],
+                    "pc": [139],
                     "errorMessage": "expected correct method called"
                 },
                 {
-                    "pc": [
-                        145
-                    ],
+                    "pc": [145],
                     "errorMessage": "expected logs"
                 },
                 {
-                    "pc": [
-                        65
-                    ],
+                    "pc": [65],
                     "errorMessage": "transaction type is acfg"
                 },
                 {
-                    "pc": [
-                        75,
-                        126
-                    ],
+                    "pc": [75, 126],
                     "errorMessage": "transaction type is appl"
                 }
             ],

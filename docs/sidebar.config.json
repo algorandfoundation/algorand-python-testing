@@ -1,0 +1,45 @@
+[
+  { "label": "Home", "link": "/" },
+  {
+    "label": "Getting Started",
+    "items": [{ "slug": "tutorials/quick-start" }]
+  },
+  {
+    "label": "Guides",
+    "items": [
+      { "slug": "guide/contract-testing" },
+      { "slug": "guide/signature-testing" },
+      { "slug": "guide/state-management" },
+      { "slug": "guide/subroutines" },
+      { "slug": "guide/transactions" }
+    ]
+  },
+  {
+    "label": "Concepts",
+    "items": [
+      { "slug": "concepts/overview" },
+      { "slug": "concepts/test-context" },
+      { "slug": "concepts/value-generators" },
+      { "slug": "concepts/avm-types" },
+      { "slug": "concepts/arc4-types" },
+      { "slug": "concepts/opcodes" },
+      { "slug": "concepts/algopy" }
+    ]
+  },
+  {
+    "label": "Examples",
+    "autogenerate": { "directory": "examples" }
+  },
+  {
+    "label": "Reference",
+    "items": [
+      { "slug": "reference/coverage" },
+      { "slug": "reference/faq" }
+    ]
+  },
+  {
+    "label": "API Reference",
+    "collapsed": true,
+    "autogenerate": { "directory": "api/algopy_testing" }
+  }
+]

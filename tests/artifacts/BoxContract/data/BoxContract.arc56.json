@@ -77,9 +77,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -93,9 +91,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -122,9 +118,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -138,9 +132,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -154,9 +146,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -170,9 +160,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -186,9 +174,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -202,9 +188,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -218,9 +202,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -234,9 +216,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -250,9 +230,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -275,9 +253,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -291,9 +267,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -307,9 +281,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -329,9 +301,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -354,9 +324,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -383,9 +351,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -399,9 +365,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -424,9 +388,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -445,9 +407,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -461,9 +421,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -486,9 +444,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -507,9 +463,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -528,9 +482,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -549,19 +501,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -643,120 +590,67 @@
         }
     },
     "bareActions": {
-        "create": [
-            "NoOp"
-        ],
+        "create": ["NoOp"],
         "call": []
     },
     "sourceInfo": {
         "approval": {
             "sourceInfo": [
                 {
-                    "pc": [
-                        842
-                    ],
+                    "pc": [842],
                     "errorMessage": "check Box exists"
                 },
                 {
-                    "pc": [
-                        486
-                    ],
+                    "pc": [486],
                     "errorMessage": "check self.box_a exists"
                 },
                 {
-                    "pc": [
-                        851
-                    ],
+                    "pc": [851],
                     "errorMessage": "check self.box_b exists"
                 },
                 {
-                    "pc": [
-                        514,
-                        857
-                    ],
+                    "pc": [514, 857],
                     "errorMessage": "check self.box_c exists"
                 },
                 {
-                    "pc": [
-                        1875
-                    ],
+                    "pc": [1875],
                     "errorMessage": "check self.box_map entry exists"
                 },
                 {
-                    "pc": [
-                        1128
-                    ],
+                    "pc": [1128],
                     "errorMessage": "check self.many_ints exists"
                 },
                 {
-                    "pc": [
-                        378
-                    ],
+                    "pc": [378],
                     "errorMessage": "check self.oca exists"
                 },
                 {
-                    "pc": [
-                        1745
-                    ],
+                    "pc": [1745],
                     "errorMessage": "check self.too_many_bools exists"
                 },
                 {
-                    "pc": [
-                        390
-                    ],
+                    "pc": [390],
                     "errorMessage": "check self.txn exists"
                 },
                 {
-                    "pc": [
-                        1723
-                    ],
+                    "pc": [1723],
                     "errorMessage": "index access is out of bounds"
                 },
                 {
                     "pc": [
-                        468,
-                        862,
-                        913,
-                        923,
-                        1081,
-                        1150,
-                        1322,
-                        1333,
-                        1348,
-                        1375,
-                        1390,
-                        1403,
-                        1416,
-                        1442,
-                        1467,
-                        1489,
-                        1499,
-                        1518,
-                        1525,
-                        1537,
-                        1564,
-                        1575,
-                        1582,
-                        1589,
-                        1610,
-                        1635,
-                        1660,
-                        1671,
-                        1732,
-                        1768
+                        468, 862, 913, 923, 1081, 1150, 1322, 1333, 1348, 1375,
+                        1390, 1403, 1416, 1442, 1467, 1489, 1499, 1518, 1525,
+                        1537, 1564, 1575, 1582, 1589, 1610, 1635, 1660, 1671,
+                        1732, 1768
                     ],
                     "errorMessage": "index out of bounds"
                 },
                 {
-                    "pc": [
-                        1178
-                    ],
+                    "pc": [1178],
                     "errorMessage": "no data"
                 },
                 {
-                    "pc": [
-                        1279
-                    ],
+                    "pc": [1279],
                     "errorMessage": "struct.a is truthy"
                 }
             ],

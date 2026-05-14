@@ -10,9 +10,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -26,9 +24,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -42,19 +38,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -119,106 +110,62 @@
         }
     },
     "bareActions": {
-        "create": [
-            "NoOp"
-        ],
-        "call": [
-            "OptIn"
-        ]
+        "create": ["NoOp"],
+        "call": ["OptIn"]
     },
     "sourceInfo": {
         "approval": {
             "sourceInfo": [
                 {
-                    "pc": [
-                        562,
-                        719,
-                        827
-                    ],
+                    "pc": [562, 719, 827],
                     "errorMessage": "check self.box exists"
                 },
                 {
-                    "pc": [
-                        533,
-                        666,
-                        817
-                    ],
+                    "pc": [533, 666, 817],
                     "errorMessage": "check self.glob exists"
                 },
                 {
-                    "pc": [
-                        505,
-                        614,
-                        812
-                    ],
+                    "pc": [505, 614, 812],
                     "errorMessage": "check self.glob_assign exists"
                 },
                 {
-                    "pc": [
-                        601,
-                        782,
-                        843
-                    ],
+                    "pc": [601, 782, 843],
                     "errorMessage": "check self.global_map entry exists"
                 },
                 {
-                    "pc": [
-                        550,
-                        695,
-                        824
-                    ],
+                    "pc": [550, 695, 824],
                     "errorMessage": "check self.loc exists for account"
                 },
                 {
-                    "pc": [
-                        581,
-                        750,
-                        834
-                    ],
+                    "pc": [581, 750, 834],
                     "errorMessage": "check self.map entry exists"
                 },
                 {
-                    "pc": [
-                        519,
-                        640,
-                        807
-                    ],
+                    "pc": [519, 640, 807],
                     "errorMessage": "check self.no_proxy exists"
                 },
                 {
-                    "pc": [
-                        867
-                    ],
+                    "pc": [867],
                     "errorMessage": "expected box == no_proxy"
                 },
                 {
-                    "pc": [
-                        855
-                    ],
+                    "pc": [855],
                     "errorMessage": "expected global == no_proxy"
                 },
                 {
-                    "pc": [
-                        849
-                    ],
+                    "pc": [849],
                     "errorMessage": "expected global assign == no_proxy"
                 },
                 {
-                    "pc": [
-                        877
-                    ],
+                    "pc": [877],
                     "errorMessage": "expected global_map == no_proxy"
                 },
                 {
-                    "pc": [
-                        861
-                    ],
+                    "pc": [861],
                     "errorMessage": "expected local == no_proxy"
                 },
                 {
-                    "pc": [
-                        873
-                    ],
+                    "pc": [873],
                     "errorMessage": "expected map == no_proxy"
                 }
             ],

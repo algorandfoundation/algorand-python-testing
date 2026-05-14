@@ -185,7 +185,6 @@ class UInt64:
 
 def _as_maybe_uint64(value: object) -> int | None:
     """Returns int value if `value` is an int or UInt64, otherwise None."""
-
     match value:
         case int(int_value):
             return as_int64(int_value)

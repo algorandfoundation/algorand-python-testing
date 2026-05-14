@@ -121,16 +121,19 @@ class Box(typing.Generic[_TValue]):
         return _BoxRef(key=self.key).extract(start_index, length)
 
     def resize(self, new_size: algopy.UInt64 | int) -> None:
-        """Resizes the box the specified `new_size`. Truncating existing data if the new
-        value is shorter or padding with zero bytes if it is longer.
+        """Resizes the box the specified `new_size`.
+
+        Truncating existing data if the new value is shorter or padding with zero bytes
+        if it is longer.
 
         :arg new_size: The new size of the box
         """
         return _BoxRef(key=self.key).resize(new_size)
 
     def replace(self, start_index: algopy.UInt64 | int, value: algopy.Bytes | bytes) -> None:
-        """Write `value` to the box starting at `start_index`. Fails if the box does not
-        exist, or if `start_index + len(value) > len(box)`
+        """Write `value` to the box starting at `start_index`.
+
+        Fails if the box does not exist, or if `start_index + len(value) > len(box)`
 
         :arg start_index: The offset to start writing bytes from
         :arg value: The bytes to be written
@@ -147,9 +150,9 @@ class Box(typing.Generic[_TValue]):
         `bytes`, followed by the original bytes of the box that began at index
         `start_index + length`
 
-        **Important: This op does not resize the box**
-        If the new value is longer than the box size, it will be truncated.
-        If the new value is shorter than the box size, it will be padded with zero bytes
+        **Important: This op does not resize the box** If the new value is longer than
+        the box size, it will be truncated. If the new value is shorter than the box
+        size, it will be padded with zero bytes
 
         :arg start_index: The index to start inserting `value`
         :arg length: The number of bytes after `start_index` to omit from the new value
@@ -327,8 +330,8 @@ class BoxMap(typing.Generic[_TKey, _TValue]):
     """BoxMap abstracts the reading and writing of a set of boxes using a common key and
     content type.
 
-    Each composite key (prefix + key) still needs to be made available to the application via the
-    `boxes` property of the Transaction.
+    Each composite key (prefix + key) still needs to be made available to the
+    application via the `boxes` property of the Transaction.
     """
 
     def __init__(

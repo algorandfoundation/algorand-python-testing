@@ -10,9 +10,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -26,19 +24,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -63,31 +56,22 @@
         }
     },
     "bareActions": {
-        "create": [
-            "NoOp"
-        ],
+        "create": ["NoOp"],
         "call": []
     },
     "sourceInfo": {
         "approval": {
             "sourceInfo": [
                 {
-                    "pc": [
-                        138,
-                        226
-                    ],
+                    "pc": [138, 226],
                     "errorMessage": "application exists"
                 },
                 {
-                    "pc": [
-                        140
-                    ],
+                    "pc": [140],
                     "errorMessage": "should be version 0"
                 },
                 {
-                    "pc": [
-                        229
-                    ],
+                    "pc": [229],
                     "errorMessage": "should be version 1"
                 }
             ],

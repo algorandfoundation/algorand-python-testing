@@ -27,9 +27,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -48,9 +46,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -69,9 +65,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -90,9 +84,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -111,9 +103,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -132,9 +122,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -148,19 +136,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -191,110 +174,61 @@
         }
     },
     "bareActions": {
-        "create": [
-            "NoOp"
-        ],
+        "create": ["NoOp"],
         "call": []
     },
     "sourceInfo": {
         "approval": {
             "sourceInfo": [
                 {
-                    "pc": [
-                        1187,
-                        1204,
-                        1214
-                    ],
+                    "pc": [1187, 1204, 1214],
                     "errorMessage": "check self.count exists"
                 },
                 {
-                    "pc": [
-                        1032
-                    ],
+                    "pc": [1032],
                     "errorMessage": "expected 3 bytes"
                 },
                 {
-                    "pc": [
-                        750,
-                        761,
-                        861,
-                        1025,
-                        1114
-                    ],
+                    "pc": [750, 761, 861, 1025, 1114],
                     "errorMessage": "expected correct length"
                 },
                 {
-                    "pc": [
-                        1052,
-                        1127
-                    ],
+                    "pc": [1052, 1127],
                     "errorMessage": "expected correct value at 0"
                 },
                 {
-                    "pc": [
-                        1072,
-                        1140
-                    ],
+                    "pc": [1072, 1140],
                     "errorMessage": "expected correct value at 1"
                 },
                 {
-                    "pc": [
-                        1153
-                    ],
+                    "pc": [1153],
                     "errorMessage": "expected correct value at 2"
                 },
                 {
-                    "pc": [
-                        1165
-                    ],
+                    "pc": [1165],
                     "errorMessage": "expected correct value at 3"
                 },
                 {
                     "pc": [
-                        403,
-                        478,
-                        517,
-                        637,
-                        665,
-                        784,
-                        883,
-                        1116,
-                        1129,
-                        1142,
+                        403, 478, 517, 637, 665, 784, 883, 1116, 1129, 1142,
                         1154
                     ],
                     "errorMessage": "index access is out of bounds"
                 },
                 {
-                    "pc": [
-                        1034,
-                        1055
-                    ],
+                    "pc": [1034, 1055],
                     "errorMessage": "index out of bounds"
                 },
                 {
-                    "pc": [
-                        653,
-                        1017
-                    ],
+                    "pc": [653, 1017],
                     "errorMessage": "invalid array length header"
                 },
                 {
-                    "pc": [
-                        729,
-                        753,
-                        840,
-                        998,
-                        1097
-                    ],
+                    "pc": [729, 753, 840, 998, 1097],
                     "errorMessage": "max array length exceeded"
                 },
                 {
-                    "pc": [
-                        283,
-                        342,
-                        377
-                    ],
+                    "pc": [283, 342, 377],
                     "errorMessage": "overflow"
                 }
             ],

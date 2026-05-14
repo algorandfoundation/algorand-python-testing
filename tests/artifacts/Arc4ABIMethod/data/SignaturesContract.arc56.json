@@ -38,9 +38,7 @@
                 "type": "void"
             },
             "actions": {
-                "create": [
-                    "NoOp"
-                ],
+                "create": ["NoOp"],
                 "call": []
             },
             "readonly": false,
@@ -68,9 +66,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -93,9 +89,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -122,9 +116,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -151,9 +143,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -184,9 +174,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -213,9 +201,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -247,9 +233,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -276,9 +260,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -305,19 +287,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -349,122 +326,79 @@
         "approval": {
             "sourceInfo": [
                 {
-                    "pc": [
-                        348,
-                        353,
-                        547,
-                        552
-                    ],
+                    "pc": [348, 353, 547, 552],
                     "errorMessage": "account funded"
                 },
                 {
-                    "pc": [
-                        284
-                    ],
+                    "pc": [284],
                     "errorMessage": "application exists"
                 },
                 {
-                    "pc": [
-                        242
-                    ],
+                    "pc": [242],
                     "errorMessage": "asset exists"
                 },
                 {
-                    "pc": [
-                        639
-                    ],
+                    "pc": [639],
                     "errorMessage": "expected account to be passed by index"
                 },
                 {
-                    "pc": [
-                        693
-                    ],
+                    "pc": [693],
                     "errorMessage": "expected account to be passed by value"
                 },
                 {
-                    "pc": [
-                        280
-                    ],
+                    "pc": [280],
                     "errorMessage": "expected app id to match provided app id"
                 },
                 {
-                    "pc": [
-                        629
-                    ],
+                    "pc": [629],
                     "errorMessage": "expected application to be passed by index"
                 },
                 {
-                    "pc": [
-                        687
-                    ],
+                    "pc": [687],
                     "errorMessage": "expected application to be passed by value"
                 },
                 {
-                    "pc": [
-                        619
-                    ],
+                    "pc": [619],
                     "errorMessage": "expected asset to be passed by index"
                 },
                 {
-                    "pc": [
-                        679
-                    ],
+                    "pc": [679],
                     "errorMessage": "expected asset to be passed by value"
                 },
                 {
-                    "pc": [
-                        138
-                    ],
+                    "pc": [138],
                     "errorMessage": "expected global to have app address"
                 },
                 {
-                    "pc": [
-                        132
-                    ],
+                    "pc": [132],
                     "errorMessage": "expected global to have app id"
                 },
                 {
-                    "pc": [
-                        288
-                    ],
+                    "pc": [288],
                     "errorMessage": "expected other app to have same creator"
                 },
                 {
-                    "pc": [
-                        143,
-                        147
-                    ],
+                    "pc": [143, 147],
                     "errorMessage": "expected txn to have 0"
                 },
                 {
-                    "pc": [
-                        392
-                    ],
+                    "pc": [392],
                     "errorMessage": "invalid array length header"
                 },
                 {
-                    "pc": [
-                        671
-                    ],
+                    "pc": [671],
                     "errorMessage": "invalid number of bytes for account"
                 },
                 {
-                    "pc": [
-                        400
-                    ],
+                    "pc": [400],
                     "errorMessage": "invalid number of bytes for arc4.dynamic_array<arc4.uint8>"
                 },
                 {
-                    "pc": [
-                        129,
-                        294
-                    ],
+                    "pc": [129, 294],
                     "errorMessage": "transaction type is appl"
                 },
                 {
-                    "pc": [
-                        190
-                    ],
+                    "pc": [190],
                     "errorMessage": "transaction type is pay"
                 }
             ],

@@ -10,9 +10,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "OptIn"
-                ]
+                "call": ["OptIn"]
             },
             "readonly": false,
             "events": [],
@@ -31,9 +29,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -52,9 +48,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -73,9 +67,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -94,9 +86,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -115,9 +105,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -136,9 +124,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -157,9 +143,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -178,9 +162,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -199,9 +181,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -220,9 +200,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -241,9 +219,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -262,9 +238,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -283,9 +257,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -304,9 +276,7 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
@@ -325,19 +295,14 @@
             },
             "actions": {
                 "create": [],
-                "call": [
-                    "NoOp"
-                ]
+                "call": ["NoOp"]
             },
             "readonly": false,
             "events": [],
             "recommendations": {}
         }
     ],
-    "arcs": [
-        22,
-        28
-    ],
+    "arcs": [22, 28],
     "networks": {},
     "state": {
         "schema": {
@@ -438,102 +403,70 @@
         }
     },
     "bareActions": {
-        "create": [
-            "NoOp"
-        ],
+        "create": ["NoOp"],
         "call": []
     },
     "sourceInfo": {
         "approval": {
             "sourceInfo": [
                 {
-                    "pc": [
-                        891
-                    ],
+                    "pc": [891],
                     "errorMessage": "check self.arc4_address exists for account"
                 },
                 {
-                    "pc": [
-                        877
-                    ],
+                    "pc": [877],
                     "errorMessage": "check self.arc4_bool exists for account"
                 },
                 {
-                    "pc": [
-                        863
-                    ],
+                    "pc": [863],
                     "errorMessage": "check self.arc4_byte exists for account"
                 },
                 {
-                    "pc": [
-                        919
-                    ],
+                    "pc": [919],
                     "errorMessage": "check self.arc4_dynamic_bytes exists for account"
                 },
                 {
-                    "pc": [
-                        849
-                    ],
+                    "pc": [849],
                     "errorMessage": "check self.arc4_string exists for account"
                 },
                 {
-                    "pc": [
-                        835
-                    ],
+                    "pc": [835],
                     "errorMessage": "check self.arc4_uint exists for account"
                 },
                 {
-                    "pc": [
-                        905
-                    ],
+                    "pc": [905],
                     "errorMessage": "check self.arc4_uint128 exists for account"
                 },
                 {
-                    "pc": [
-                        779
-                    ],
+                    "pc": [779],
                     "errorMessage": "check self.implicit_key_arc4_address exists for account"
                 },
                 {
-                    "pc": [
-                        765
-                    ],
+                    "pc": [765],
                     "errorMessage": "check self.implicit_key_arc4_bool exists for account"
                 },
                 {
-                    "pc": [
-                        751
-                    ],
+                    "pc": [751],
                     "errorMessage": "check self.implicit_key_arc4_byte exists for account"
                 },
                 {
-                    "pc": [
-                        807
-                    ],
+                    "pc": [807],
                     "errorMessage": "check self.implicit_key_arc4_dynamic_bytes exists for account"
                 },
                 {
-                    "pc": [
-                        737
-                    ],
+                    "pc": [737],
                     "errorMessage": "check self.implicit_key_arc4_string exists for account"
                 },
                 {
-                    "pc": [
-                        724
-                    ],
+                    "pc": [724],
                     "errorMessage": "check self.implicit_key_arc4_uint exists for account"
                 },
                 {
-                    "pc": [
-                        793
-                    ],
+                    "pc": [793],
                     "errorMessage": "check self.implicit_key_arc4_uint128 exists for account"
                 },
                 {
-                    "pc": [
-                        821
-                    ],
+                    "pc": [821],
                     "errorMessage": "check self.implicit_key_tuple exists for account"
                 }
             ],

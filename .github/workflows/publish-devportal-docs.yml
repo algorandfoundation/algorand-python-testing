@@ -1,0 +1,39 @@
+name: Publish DevPortal Docs
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  publish-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: docs/package.json
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install hatch
+        run: pip install hatch
+
+      - name: Generate API docs
+        run: hatch run docs:api
+
+      - name: Publish DevPortal Docs
+        uses: algorandfoundation/devportal/.github/actions/publish-devportal-docs@ci/update-publish-devportal-docs-workflow
+        with:
+          docs-dir: docs

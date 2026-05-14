@@ -1,0 +1,28 @@
+{
+  "basePath": "/algorand-python-testing/",
+  "routes": [
+    { "from": "examples.html", "to": "examples/" },
+    { "from": "coverage.html", "to": "reference/coverage/" },
+    { "from": "faq.html", "to": "reference/faq/" },
+    { "from": "algopy.html", "to": "concepts/algopy/" },
+    { "from": "api.html", "to": "api/algopy_testing/" },
+    { "from": "testing-guide.html", "to": "concepts/overview/" },
+    { "from": "testing-guide/index.html", "to": "concepts/overview/" },
+    { "from": "testing-guide/concepts.html", "to": "concepts/test-context/" },
+    { "from": "testing-guide/avm-types.html", "to": "concepts/avm-types/" },
+    { "from": "testing-guide/arc4-types.html", "to": "concepts/arc4-types/" },
+    { "from": "testing-guide/opcodes.html", "to": "concepts/opcodes/" },
+    { "from": "testing-guide/contract-testing.html", "to": "guide/contract-testing/" },
+    { "from": "testing-guide/signature-testing.html", "to": "guide/signature-testing/" },
+    { "from": "testing-guide/state-management.html", "to": "guide/state-management/" },
+    { "from": "testing-guide/subroutines.html", "to": "guide/subroutines/" },
+    { "from": "testing-guide/transactions.html", "to": "guide/transactions/" }
+  ],
+  "families": [
+    {
+      "fromPrefix": "apidocs/",
+      "toPrefix": "api/",
+      "fromExtension": ".html"
+    }
+  ]
+}
