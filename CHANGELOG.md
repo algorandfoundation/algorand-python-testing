@@ -1,4 +1,9 @@
 # CHANGELOG
+## v1.2.0-beta.12 (2026-05-13)
+
+### Features
+
+* check if depending on production release of puyapy, fail prod release otherwise ([`0632a78`](https://github.com/algorandfoundation/algorand-python-testing/commit/0632a78b5c49c8459bcba41bc58f25feac6ad613))
 
 ## v1.2.0-beta.11 (2026-04-14)
 
